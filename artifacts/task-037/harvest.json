@@ -1,0 +1,1645 @@
+[
+  {
+    "id": "anishkhetani",
+    "repository": "AnishKhetani/premier-league-data",
+    "cluster": "football-data-co-uk",
+    "role": "MIRROR",
+    "exists": true,
+    "commit": "d69530c645c10c7844ee416a6af56a4b392e37be",
+    "clone_path": "C:\\Users\\giamm\\Desktop\\app previsioni sportive\\betting predict\\data\\external\\github\\_clones\\AnishKhetani__premier-league-data",
+    "file_count": 22,
+    "bytes": 8587215,
+    "classification": "DATE_ONLY",
+    "level": "NONE",
+    "kickoff_semantics": "calendar date column; not proven UTC kickoff",
+    "timestamp_semantics": "OPEN/CLOSE bookmaker columns. No publish timestamp.",
+    "markets": [
+      "1X2",
+      "OU25",
+      "AH"
+    ],
+    "why": "football-data.co.uk mirror. Date + open/close labels ≠ quote clock.",
+    "bookmakers": [
+      "pinnacle",
+      "bet365",
+      "bwin"
+    ],
+    "events_est": 12704,
+    "records_est": 12704,
+    "date_min": null,
+    "date_max": null,
+    "license": "see upstream repository LICENSE",
+    "files": [
+      {
+        "path": "DATA_LICENSE.md",
+        "sha256": "94c3574315bba2144eebcc30e4deb07e0c99a3aebeefccb54035b8de3e54701a",
+        "bytes": 1340,
+        "records": null,
+        "peeked_header": "# Data provenance & licensing"
+      },
+      {
+        "path": "README.md",
+        "sha256": "9c4f09db1af81ac739c4ef844a25136b251101b682810415f3a9f8c88dbb3557",
+        "bytes": 7030,
+        "records": null,
+        "peeked_header": "# premier-league-data — English Premier League Results & Betting Odds Dataset (Python)"
+      },
+      {
+        "path": "SPEC.md",
+        "sha256": "629aa680a33712217480950a50fa20cf90f604ea81646b4c421f0da22ab20c66",
+        "bytes": 6662,
+        "records": null,
+        "peeked_header": "# SPEC — premier-league-data"
+      },
+      {
+        "path": "src/premier_league_data/data/results.parquet",
+        "sha256": "b5cf82b37914a118bbe9b04bd6d8427f5ca067639e5ef3ba94876ad6cfc07d3d",
+        "bytes": 206846,
+        "records": null,
+        "peeked_header": null
+      },
+      {
+        "path": "src/premier_league_data/data/results_with_odds.parquet",
+        "sha256": "35ccfb0bb9a83170557854913191ea318146f646ea6178dfe091c8c7f81b94c9",
+        "bytes": 912910,
+        "records": null,
+        "peeked_header": null
+      },
+      {
+        "path": "data/processed/results.csv",
+        "sha256": "e3f80563eef122aa52cf5d9558ad41bae92e9a509abb00717864343795459d50",
+        "bytes": 1091870,
+        "records": 12705,
+        "peeked_header": "match_id,season,season_code,date,home_team,away_team,fthg,ftag,ftr,hthg,htag,htr,referee"
+      },
+      {
+        "path": "data/processed/results.parquet",
+        "sha256": "b5cf82b37914a118bbe9b04bd6d8427f5ca067639e5ef3ba94876ad6cfc07d3d",
+        "bytes": 206846,
+        "records": null,
+        "peeked_header": null
+      },
+      {
+        "path": "data/processed/results_with_odds.csv",
+        "sha256": "82337c0e7fb8de9bd39a75fcaf711b4895035edac8a94d2c791fbd0576441cee",
+        "bytes": 4970740,
+        "records": 12705,
+        "peeked_header": "match_id,season,date,home_team,away_team,gamebookers_1x2_home,gamebookers_1x2_draw,gamebookers_1x2_away,interwetten_1x2_home,interwetten_1x2_draw,interwetten_1x2_away,ladbrokes_1x2_home,ladbrokes_1x2_draw,ladbrokes_1x2_away,sportingbet_1x2_home,sportingbet_1x2_draw,sportingbet_1x2_away,williamhill_1x2_home,williamhill_1x2_draw,williamhill_1x2_away,stanleybet_1x2_home,stanleybet_1x2_draw,stanleybet"
+      },
+      {
+        "path": "data/processed/results_with_odds.parquet",
+        "sha256": "35ccfb0bb9a83170557854913191ea318146f646ea6178dfe091c8c7f81b94c9",
+        "bytes": 912910,
+        "records": null,
+        "peeked_header": null
+      }
+    ]
+  },
+  {
+    "id": "nm2890",
+    "repository": "nm2890/football-data",
+    "cluster": "open-close-averages",
+    "role": "RAW",
+    "exists": true,
+    "commit": "279978313f9c16a210fa80e8986fa22f0f866fba",
+    "clone_path": "C:\\Users\\giamm\\Desktop\\app previsioni sportive\\betting predict\\data\\external\\github\\_clones\\nm2890__football-data",
+    "file_count": 21,
+    "bytes": 7513023,
+    "classification": "DATE_ONLY",
+    "level": "NONE",
+    "kickoff_semantics": "naive Date datetime, undocumented TZ",
+    "timestamp_semantics": "home_open/home_close averages. OPEN/CLOSE ≠ clock.",
+    "markets": [
+      "1X2",
+      "OU25",
+      "BTTS"
+    ],
+    "why": "README: average opening/closing odds. Naive datetime. Not STRICT.",
+    "bookmakers": [],
+    "events_est": 5782,
+    "records_est": 5782,
+    "date_min": "2009-08-01",
+    "date_max": "2024/2025",
+    "license": "see upstream repository LICENSE",
+    "files": [
+      {
+        "path": "README.md",
+        "sha256": "d48bae9b986ff497040aa7859a6fbc2449ea2039fccb9a9bec49504fdb05b7bd",
+        "bytes": 2171,
+        "records": null,
+        "peeked_header": "# football-data"
+      },
+      {
+        "path": "data/spain/laliga.csv",
+        "sha256": "7f3019f7d8cf7e596ce5a7490949012519ea6b29bc945f7e6e0c393d239fac78",
+        "bytes": 792640,
+        "records": 5803,
+        "peeked_header": "Date,country,league,Season,HomeTeam,AwayTeam,FTHG,FTAG,HTHG,HTAG,home_close,home_open,draw_close,draw_open,away_close,away_open,over_2.5_close,over_2.5_open,under_2.5_close,under_2.5_open,bts_yes_close,bts_yes_open,bts_no_close,bts_no_open"
+      },
+      {
+        "path": "data/spain/laliga.parquet",
+        "sha256": "4ae2ae5ff4d9ad253dc661789211f70c009632e61d39996a02874453be0c659b",
+        "bytes": 236015,
+        "records": null,
+        "peeked_header": null
+      },
+      {
+        "path": "data/netherlands/eredivisie.csv",
+        "sha256": "772f14e1cfba620ec655e25cdcd4fe4bcb5196d36e8ae010b0fa1467b5499c4b",
+        "bytes": 700868,
+        "records": 4830,
+        "peeked_header": "Date,country,league,Season,HomeTeam,AwayTeam,FTHG,FTAG,HTHG,HTAG,home_close,home_open,draw_close,draw_open,away_close,away_open,over_2.5_close,over_2.5_open,under_2.5_close,under_2.5_open,bts_yes_close,bts_yes_open,bts_no_close,bts_no_open"
+      },
+      {
+        "path": "data/netherlands/eredivisie.parquet",
+        "sha256": "b6b62831ce54e760b391e7bee598b1ba2708f92ccd858236f11524342c48fe73",
+        "bytes": 194763,
+        "records": null,
+        "peeked_header": null
+      },
+      {
+        "path": "data/italy/serie-a.csv",
+        "sha256": "4c87ae0e33ec0e8c4b16511842e6e8d1ff8baad9a8dc03b79c72d49b9b58a361",
+        "bytes": 776231,
+        "records": 5799,
+        "peeked_header": "Date,country,league,Season,HomeTeam,AwayTeam,FTHG,FTAG,HTHG,HTAG,home_close,home_open,draw_close,draw_open,away_close,away_open,over_2.5_close,over_2.5_open,under_2.5_close,under_2.5_open,bts_yes_close,bts_yes_open,bts_no_close,bts_no_open"
+      },
+      {
+        "path": "data/italy/serie-a.parquet",
+        "sha256": "d1e224c9e4ea55c8c1a95b16ef3a4c2a04e5b2eaa1cdca9b688cdf16ca185b4c",
+        "bytes": 214642,
+        "records": null,
+        "peeked_header": null
+      },
+      {
+        "path": "data/germany/bundesliga.csv",
+        "sha256": "77588d9e5c2f21adb162ea43dd0269ffa0c82bce9cdc2b4cc6140d1719064b9d",
+        "bytes": 690576,
+        "records": 4692,
+        "peeked_header": "Date,country,league,Season,HomeTeam,AwayTeam,FTHG,FTAG,HTHG,HTAG,home_close,home_open,draw_close,draw_open,away_close,away_open,over_2.5_close,over_2.5_open,under_2.5_close,under_2.5_open,bts_yes_close,bts_yes_open,bts_no_close,bts_no_open"
+      },
+      {
+        "path": "data/germany/bundesliga.parquet",
+        "sha256": "15b441e63991f42a768a82be5dbe574c9bedf2cf5a0b713b4e76c9656a559138",
+        "bytes": 177096,
+        "records": null,
+        "peeked_header": null
+      },
+      {
+        "path": "data/france/ligue-1.csv",
+        "sha256": "5a228a2811c6da851aab42a0ae21f8dad414d8fe5bc0d33163074c3ec084455d",
+        "bytes": 756152,
+        "records": 5628,
+        "peeked_header": "Date,country,league,Season,HomeTeam,AwayTeam,FTHG,FTAG,HTHG,HTAG,home_close,home_open,draw_close,draw_open,away_close,away_open,over_2.5_close,over_2.5_open,under_2.5_close,under_2.5_open,bts_yes_close,bts_yes_open,bts_no_close,bts_no_open"
+      },
+      {
+        "path": "data/france/ligue-1.parquet",
+        "sha256": "576095335428c446a6f556ab491dd1c6d35710b821b4a29ef264fa18e7e224b9",
+        "bytes": 204668,
+        "records": null,
+        "peeked_header": null
+      },
+      {
+        "path": "data/england/premier-league.csv",
+        "sha256": "bf79632a9892616edf76e7125326814b375258f3eaea889ed4dae9e3a080a80f",
+        "bytes": 856417,
+        "records": 5783,
+        "peeked_header": "Date,country,league,Season,HomeTeam,AwayTeam,FTHG,FTAG,HTHG,HTAG,home_close,home_open,draw_close,draw_open,away_close,away_open,over_2.5_close,over_2.5_open,under_2.5_close,under_2.5_open,bts_yes_close,bts_yes_open,bts_no_close,bts_no_open"
+      },
+      {
+        "path": "data/england/premier-league.parquet",
+        "sha256": "d5040e7e3c04b7583e81371da803ec6332e198b248fd6e1637b2c9c51f693782",
+        "bytes": 214754,
+        "records": null,
+        "peeked_header": null
+      },
+      {
+        "path": "data/egypt/premier-league.csv",
+        "sha256": "c0666bcb59e38f83e65dfe87b912c9f5b85d7710084b68cdd36c19bb0102ac3c",
+        "bytes": 596907,
+        "records": 3930,
+        "peeked_header": "Date,country,league,Season,HomeTeam,AwayTeam,FTHG,FTAG,HTHG,HTAG,home_close,home_open,draw_close,draw_open,away_close,away_open,over_2.5_close,over_2.5_open,under_2.5_close,under_2.5_open,bts_yes_close,bts_yes_open,bts_no_close,bts_no_open"
+      },
+      {
+        "path": "data/egypt/premier-league.parquet",
+        "sha256": "6eac99f7a1e88174089c38612f5487a4adb1964d1a7d605d4b4969ca08ce8318",
+        "bytes": 157899,
+        "records": null,
+        "peeked_header": null
+      },
+      {
+        "path": "data/belgium/jupiler-pro-league.csv",
+        "sha256": "99b24361be7d37e3ed8d18ef86bc2b2a58a861caa4bc5717746a2b9272b6a03c",
+        "bytes": 630119,
+        "records": 4504,
+        "peeked_header": "Date,country,league,Season,HomeTeam,AwayTeam,FTHG,FTAG,HTHG,HTAG,home_close,home_open,draw_close,draw_open,away_close,away_open,over_2.5_close,over_2.5_open,under_2.5_close,under_2.5_open,bts_yes_close,bts_yes_open,bts_no_close,bts_no_open"
+      },
+      {
+        "path": "data/belgium/jupiler-pro-league.parquet",
+        "sha256": "89f171e73ab0871246c71989e2271a7620544a0ee74c4584e88e6ef3614d70de",
+        "bytes": 156381,
+        "records": null,
+        "peeked_header": null
+      }
+    ]
+  },
+  {
+    "id": "akareen",
+    "repository": "akareen/Football-Data-Analysis",
+    "cluster": "scraped-odds-date-time",
+    "role": "RAW",
+    "exists": true,
+    "commit": "3312ab79e40bb4922018bc5597f20fa0702acfa8",
+    "clone_path": "C:\\Users\\giamm\\Desktop\\app previsioni sportive\\betting predict\\data\\external\\github\\_clones\\akareen__Football-Data-Analysis",
+    "file_count": 0,
+    "bytes": 0,
+    "classification": "DATE_ONLY",
+    "level": "NONE",
+    "kickoff_semantics": "date+time naive; 06:45 EPL times are not documented UTC kickoffs",
+    "timestamp_semantics": "single home/draw/away odds. No publish timestamp.",
+    "markets": [
+      "1X2"
+    ],
+    "why": "Scraped odds CSVs. Windows checkout blocked on colon paths. Header inspected via git show. DATE_ONLY/NAIVE.",
+    "bookmakers": [],
+    "events_est": 7531,
+    "records_est": 7531,
+    "date_min": "2003/2004",
+    "date_max": null,
+    "license": "see upstream repository LICENSE",
+    "files": []
+  },
+  {
+    "id": "ivanzou",
+    "repository": "ivanzou29/football_fair",
+    "cluster": "derived-features",
+    "role": "DERIVATIVE",
+    "exists": true,
+    "commit": "43065c777deb441de5b4348cdedff0e8a359f1b2",
+    "clone_path": "C:\\Users\\giamm\\Desktop\\app previsioni sportive\\betting predict\\data\\external\\github\\_clones\\ivanzou29__football_fair",
+    "file_count": 13,
+    "bytes": 1725243,
+    "classification": "DATE_ONLY",
+    "level": "NONE",
+    "kickoff_semantics": "match_date YYYY-MM-DD only",
+    "timestamp_semantics": "one odds triple. No quote clock.",
+    "markets": [
+      "1X2"
+    ],
+    "why": "Small derived feature table. DATE_ONLY. Form columns not as-of.",
+    "bookmakers": [],
+    "events_est": 20,
+    "records_est": 20,
+    "date_min": null,
+    "date_max": null,
+    "license": "see upstream repository LICENSE",
+    "files": [
+      {
+        "path": "README.md",
+        "sha256": "4e0d4d362b04b1d13997ea31b101c8f1a2623d230dc70b96291011f19d20833c",
+        "bytes": 2928,
+        "records": null,
+        "peeked_header": "# football_fair"
+      },
+      {
+        "path": "data_utils/basic_dataset.csv",
+        "sha256": "1fe99b9bd63302855f825c103c6e97c52f94cb2ba58456e4816d99f41ed9932e",
+        "bytes": 29467,
+        "records": 391,
+        "peeked_header": ",match_date,home_team,away_team,home_team_avg_home_goals,home_team_avg_total_goals,away_team_avg_away_goals,away_team_avg_total_goals,home_team_form_score,away_team_form_score,odds_home_team,odds_away_team,odds_draw"
+      },
+      {
+        "path": "data_utils/league_info.csv",
+        "sha256": "031af305e0ff0e2d9ba72c4c08eb987d21f0ba43aa47ee7a638501d04b44fb67",
+        "bytes": 42412,
+        "records": 1170,
+        "peeked_header": ",league_id,league_name,league_type,country"
+      },
+      {
+        "path": "data_utils/team_info.csv",
+        "sha256": "6a1003b9e3b5d8f57fdba83f24aac9b8ab330c8fc90d19e233171fbd90d58070",
+        "bytes": 2808,
+        "records": 93,
+        "peeked_header": ",team_id,name,country,league_id"
+      }
+    ]
+  },
+  {
+    "id": "petermclagan",
+    "repository": "petermclagan/betfair-historical",
+    "cluster": "betfair-historic",
+    "role": "MIRROR",
+    "exists": true,
+    "commit": "50c16a2c4aa838e16e6115c51de61d7aa31be287",
+    "clone_path": "C:\\Users\\giamm\\Desktop\\app previsioni sportive\\betting predict\\data\\external\\github\\_clones\\petermclagan__betfair-historical",
+    "file_count": 15,
+    "bytes": 88780,
+    "classification": "RESEARCH_TEMPORAL",
+    "level": "LEVEL_A",
+    "kickoff_semantics": "marketDefinition.marketTime in BASIC sample",
+    "timestamp_semantics": "pt/publishTime on sample ticks. n=1 football BASIC. Official archive remains login-gated.",
+    "markets": [
+      "1X2"
+    ],
+    "why": "Parser + football-basic-sample.bz2 only. Not a historical dump. Parser-compatibility sample.",
+    "bookmakers": [],
+    "events_est": 1,
+    "records_est": 1,
+    "date_min": null,
+    "date_max": null,
+    "license": "see upstream repository LICENSE",
+    "files": [
+      {
+        "path": "README.md",
+        "sha256": "23ca55763fdd20f4c6654e815993b83e52dc116008968283439232b9e0f81aaa",
+        "bytes": 2903,
+        "records": null,
+        "peeked_header": "# betfairHistorical"
+      },
+      {
+        "path": "tests/README.md",
+        "sha256": "085aa65e85f6072f1993b7f1b24bfe0e48ec2df570f94343e4f57af35599dfd6",
+        "bytes": 1235,
+        "records": null,
+        "peeked_header": "# Running tests"
+      },
+      {
+        "path": "tests/sample_data/football-basic-sample.bz2",
+        "sha256": "cd3eea8fcb67259fb138b28c1efaa95657bbf7be5378a306e2986be8bd3b7da2",
+        "bytes": 57643,
+        "records": null,
+        "peeked_header": null
+      },
+      {
+        "path": "betfairHistorical/validation_schemas/soccer/match_odds.json",
+        "sha256": "3fc1b3fade271f5cf50968525f087971193328f69f17307c4e19255b915ff7af",
+        "bytes": 3018,
+        "records": null,
+        "peeked_header": "{"
+      }
+    ]
+  },
+  {
+    "id": "petermclagan_underscore",
+    "repository": "petermclagan/betfair_historical",
+    "cluster": "betfair-historic",
+    "role": "REPOSITORY",
+    "exists": false,
+    "commit": null,
+    "clone_path": null,
+    "file_count": 0,
+    "bytes": 0,
+    "classification": "NOT_FOUND",
+    "level": "NONE",
+    "kickoff_semantics": "none",
+    "timestamp_semantics": "none",
+    "markets": [],
+    "why": "Repository does not exist on GitHub (404).",
+    "bookmakers": [],
+    "events_est": 0,
+    "records_est": 0,
+    "date_min": null,
+    "date_max": null,
+    "license": null,
+    "files": []
+  },
+  {
+    "id": "tarb",
+    "repository": "tarb/betfair_data",
+    "cluster": "betfair-historic",
+    "role": "PARSER",
+    "exists": true,
+    "commit": "5babe169ef625c193bec405580eaf04daaeb6e5e",
+    "clone_path": "C:\\Users\\giamm\\Desktop\\app previsioni sportive\\betting predict\\data\\external\\github\\_clones\\tarb__betfair_data",
+    "file_count": 65,
+    "bytes": 24448879,
+    "classification": "PARSER_NO_DATA",
+    "level": "NONE",
+    "kickoff_semantics": "demo CSV is horse racing event_date naive",
+    "timestamp_semantics": "parser for official bz2; bundled CSV is AU racing not soccer",
+    "markets": [],
+    "why": "Rust parser. Releases have no soccer archive assets. Demo output is Warrnambool horse racing.",
+    "bookmakers": [],
+    "events_est": 0,
+    "records_est": 0,
+    "date_min": null,
+    "date_max": null,
+    "license": "see upstream repository LICENSE",
+    "files": [
+      {
+        "path": "README.md",
+        "sha256": "d5bbccc97b7102cabc4608e38b2def90ab5b9f295fd92d0c2436b7d7162d46c7",
+        "bytes": 4335,
+        "records": null,
+        "peeked_header": "# Betfair Data"
+      },
+      {
+        "path": "py_src/json2csv/output_pybflw_source.csv",
+        "sha256": "099719be3dc333bda54c13abc01f95c679d9c9818b96ecb518d2a2bc28c75055",
+        "bytes": 7773989,
+        "records": 52483,
+        "peeked_header": "market_id,event_date,country,track,market_name,selection_id,selection_name,result,bsp,pp_min,pp_max,pp_wap,pp_ltp,pp_volume,ip_min,ip_max,ip_wap,ip_ltp,ip_volume"
+      },
+      {
+        "path": "py_src/json2csv/output_py_source.csv",
+        "sha256": "8e0f737dd473c01442d72ee563206a2f0193bbd198d5dfba568a6fc9d6757fff",
+        "bytes": 7774026,
+        "records": 52483,
+        "peeked_header": "market_id,event_date,country,track,market_name,selection_id,selection_name,result,bsp,pp_min,pp_max,pp_wap,pp_ltp,pp_volume,ip_min,ip_max,ip_wap,ip_ltp,ip_volume"
+      },
+      {
+        "path": "py_src/json2csv/output_rust_source.csv",
+        "sha256": "8e0f737dd473c01442d72ee563206a2f0193bbd198d5dfba568a6fc9d6757fff",
+        "bytes": 7774026,
+        "records": 52483,
+        "peeked_header": "market_id,event_date,country,track,market_name,selection_id,selection_name,result,bsp,pp_min,pp_max,pp_wap,pp_ltp,pp_volume,ip_min,ip_max,ip_wap,ip_ltp,ip_volume"
+      }
+    ]
+  },
+  {
+    "id": "hblauth",
+    "repository": "hblauth/betfair_historic_data",
+    "cluster": "betfair-historic",
+    "role": "PARSER",
+    "exists": true,
+    "commit": "dd9d68fe20016ed3eb3a528c0d2172810781c0c4",
+    "clone_path": "C:\\Users\\giamm\\Desktop\\app previsioni sportive\\betting predict\\data\\external\\github\\_clones\\hblauth__betfair_historic_data",
+    "file_count": 20,
+    "bytes": 12635638,
+    "classification": "DATASET_NOT_PRESENT",
+    "level": "NONE",
+    "kickoff_semantics": "none in-repo",
+    "timestamp_semantics": "AvailableData.csv lists official Soccer 2017 file counts — not the files",
+    "markets": [],
+    "why": "Catalog of Betfair Historic files. Actual dumps require official login. No .bz2 soccer archive in tree.",
+    "bookmakers": [],
+    "events_est": 0,
+    "records_est": 0,
+    "date_min": null,
+    "date_max": null,
+    "license": "see upstream repository LICENSE",
+    "files": [
+      {
+        "path": "AvailableData.csv",
+        "sha256": "b326cdd7bf313e7e67c286ca605071df4fb1b15e59aa2f2ba7f2896a96fd9bc6",
+        "bytes": 27418,
+        "records": 928,
+        "peeked_header": "plan,sport,year,month,dataSize,fileCount"
+      },
+      {
+        "path": ".vscode/settings.json",
+        "sha256": "11369eadc738146ba72c6d37edf71ad406037c497cf195ef3ca2d35364063e4e",
+        "bytes": 38,
+        "records": null,
+        "peeked_header": "{"
+      }
+    ]
+  },
+  {
+    "id": "betfair_historicdata",
+    "repository": "betfair/historicdata",
+    "cluster": "betfair-historic",
+    "role": "PARSER",
+    "exists": true,
+    "commit": "285e7209e0ee923995a1a301ba9f683d5460b92c",
+    "clone_path": "C:\\Users\\giamm\\Desktop\\app previsioni sportive\\betting predict\\data\\external\\github\\_clones\\betfair__historicdata",
+    "file_count": 23,
+    "bytes": 198075,
+    "classification": "PARSER_NO_DATA",
+    "level": "NONE",
+    "kickoff_semantics": "none",
+    "timestamp_semantics": "client for historicdata.betfair.com",
+    "markets": [],
+    "why": "Official TS client. No redistributable soccer files.",
+    "bookmakers": [],
+    "events_est": 0,
+    "records_est": 0,
+    "date_min": null,
+    "date_max": null,
+    "license": "see upstream repository LICENSE",
+    "files": [
+      {
+        "path": "package-lock.json",
+        "sha256": "3d301854212488adb0d32042891d8616ad9e1d05395560d61508ad7a79833857",
+        "bytes": 179732,
+        "records": null,
+        "peeked_header": "{"
+      },
+      {
+        "path": "package.json",
+        "sha256": "fea39272fb29e0c490222baea4b507c44d045ada19d916e7b164fee20189dc44",
+        "bytes": 1838,
+        "records": null,
+        "peeked_header": "{"
+      },
+      {
+        "path": "README.md",
+        "sha256": "d118444dc04c1e80973e84132fbd02c1b704b3b70bdb1f185195b4edb08a0eb1",
+        "bytes": 171,
+        "records": null,
+        "peeked_header": "# Read Me"
+      },
+      {
+        "path": "tsconfig.json",
+        "sha256": "6a61c10148e1c42fb4c91260dc61179ee405add08e7ef1890d8f37455056f29b",
+        "bytes": 480,
+        "records": null,
+        "peeked_header": "{"
+      },
+      {
+        "path": "tslint.json",
+        "sha256": "10371a765ed225be198e9ad371bd0d5b0aa2d6811f1c2e5cd7bc8eba139930df",
+        "bytes": 79,
+        "records": null,
+        "peeked_header": "{"
+      },
+      {
+        "path": ".vscode/launch.json",
+        "sha256": "a03b30aa164a22e518f9b2114bad183cd80efe4c704ca25ec56abf13ee797810",
+        "bytes": 959,
+        "records": null,
+        "peeked_header": "{"
+      },
+      {
+        "path": ".vscode/settings.json",
+        "sha256": "7bd5356a6135f89368a8e7f3c4b912d2b70f972180debb8d07d45d44f4bef823",
+        "bytes": 61,
+        "records": null,
+        "peeked_header": "{"
+      },
+      {
+        "path": ".vscode/tasks.json",
+        "sha256": "a396cb70d36f530a497d336c091e009f501ac08b436df80deb3fb92eacfa0d09",
+        "bytes": 1206,
+        "records": null,
+        "peeked_header": "{"
+      }
+    ]
+  },
+  {
+    "id": "betfair_workbook",
+    "repository": "betfair/historic-data-workbook",
+    "cluster": "betfair-historic",
+    "role": "PARSER",
+    "exists": true,
+    "commit": "a6bdb0a43395079e07319a986745b503bf092422",
+    "clone_path": "C:\\Users\\giamm\\Desktop\\app previsioni sportive\\betting predict\\data\\external\\github\\_clones\\betfair__historic-data-workbook",
+    "file_count": 3,
+    "bytes": 840463,
+    "classification": "PARSER_NO_DATA",
+    "level": "NONE",
+    "kickoff_semantics": "none",
+    "timestamp_semantics": "documentation workbook",
+    "markets": [],
+    "why": "xlsx/docx documentation only.",
+    "bookmakers": [],
+    "events_est": 0,
+    "records_est": 0,
+    "date_min": null,
+    "date_max": null,
+    "license": "see upstream repository LICENSE",
+    "files": [
+      {
+        "path": "README.md",
+        "sha256": "618f8f90f8b637b32b3b6acffac73f09b72cb222e4bc3a0412dbb0cb609222e5",
+        "bytes": 1530,
+        "records": null,
+        "peeked_header": "# historic-data-workbook"
+      }
+    ]
+  },
+  {
+    "id": "beatthebookie",
+    "repository": "Lisandro79/BeatTheBookie",
+    "cluster": "beatthebookie",
+    "role": "REPOSITORY",
+    "exists": true,
+    "commit": "7add209d0d097af0f8b714e388cf05849db7f969",
+    "clone_path": "C:\\Users\\giamm\\Desktop\\app previsioni sportive\\betting predict\\data\\external\\github\\_clones\\Lisandro79__BeatTheBookie",
+    "file_count": 54,
+    "bytes": 7718970,
+    "classification": "DATASET_NOT_PRESENT",
+    "level": "NONE",
+    "kickoff_semantics": "MATLAB/PHP generators; dumps were on Kaggle",
+    "timestamp_semantics": "odds_series* not in this git tree",
+    "markets": [
+      "1X2"
+    ],
+    "why": "Code + README. odds_series CSV.gz not present. Local TASK_031_BASE remains the frozen derived STRICT_B file (not counted as new 037 STRICT).",
+    "bookmakers": [],
+    "events_est": 0,
+    "records_est": 0,
+    "date_min": null,
+    "date_max": null,
+    "license": "see upstream repository LICENSE",
+    "files": [
+      {
+        "path": "README.md",
+        "sha256": "b84df2995d5d139c9bfb5d94221c24f92897553fd80c1b1fc5a9dca1c87c8f25",
+        "bytes": 11364,
+        "records": null,
+        "peeked_header": "## Beating the bookies with their own numbers. "
+      },
+      {
+        "path": "sql/closing_odds_csv_export.sql",
+        "sha256": "b1342bd5c51e6873f89981add4ac0a3c22de5f90846a23c7858ece6bb4dacf42",
+        "bytes": 792,
+        "records": null,
+        "peeked_header": null
+      }
+    ]
+  },
+  {
+    "id": "soccer_dataset",
+    "repository": "v-eatpizzanot/soccer-dataset",
+    "cluster": "soccer-dataset",
+    "role": "RAW",
+    "exists": true,
+    "commit": "af71e692edbda9e4697ce1bda2e06b551f3a0052",
+    "clone_path": "C:\\Users\\giamm\\Desktop\\app previsioni sportive\\betting predict\\data\\external\\github\\_clones\\v-eatpizzanot__soccer-dataset",
+    "file_count": 49,
+    "bytes": 1148561,
+    "classification": "DATE_ONLY",
+    "level": "NONE",
+    "kickoff_semantics": "fixtures elsewhere; sample known_at naive",
+    "timestamp_semantics": "API-Football-closing. known_at ≠ bookmaker publish time",
+    "markets": [
+      "1X2"
+    ],
+    "why": "GitHub holds samples. Full parquet is on HuggingFace. Closing odds. Already audited TASK 024/035.",
+    "bookmakers": [],
+    "events_est": 1000,
+    "records_est": 1000,
+    "date_min": null,
+    "date_max": null,
+    "license": "see upstream repository LICENSE",
+    "files": [
+      {
+        "path": "CHANGELOG.md",
+        "sha256": "852086452159b3dd8fc5b970ef2b2df69dc5035bb2e4073c41ab8b6e2d3d9319",
+        "bytes": 2025,
+        "records": null,
+        "peeked_header": "# Changelog"
+      },
+      {
+        "path": "QUALITY_REPORT.md",
+        "sha256": "400b3134995e40e2c81321a0967a20a69585fb540e8be11056949410f5ef6d87",
+        "bytes": 5792,
+        "records": null,
+        "peeked_header": "# Data Quality Report"
+      },
+      {
+        "path": "README.md",
+        "sha256": "59209d2c2a43ae29b80de00e81872af5135f64d4bf15cc4c2901991878866f5e",
+        "bytes": 3547,
+        "records": null,
+        "peeked_header": "# Global Football (Soccer) Data Lake"
+      },
+      {
+        "path": "README_HF.md",
+        "sha256": "24ab25c8db3211ca19f98e8d5c4089e713bedfd47c00b59d1deac095ee66e296",
+        "bytes": 2126,
+        "records": null,
+        "peeked_header": "---"
+      },
+      {
+        "path": "scripts/pg_verify.sql",
+        "sha256": "f828b632d79c1745c77e8b1440169db1d64b9e450197f50c9e23770b900f8414",
+        "bytes": 1127,
+        "records": null,
+        "peeked_header": null
+      },
+      {
+        "path": "samples/fixtures.csv",
+        "sha256": "c7a4fe16428b51ccce72db312d6dc3d126801cadda28ec087afa31b304ba9d96",
+        "bytes": 147807,
+        "records": 1001,
+        "peeked_header": "id,api_football_id,date_utc,league_id,home_team_id,away_team_id,goals_home,goals_away,status,referee_name,referee_api_id,created_at,updated_at,in_csv,in_pq,merged_rows,merged_football_data,status_norm,is_played,calendar_year,btts"
+      },
+      {
+        "path": "samples/fixture_lineups.csv",
+        "sha256": "159b6ca891ea15d90f0c90affd9a337bf45c9ff4d681bef21b18be3240165381",
+        "bytes": 53961,
+        "records": 1001,
+        "peeked_header": "fixture_id,team_id,team_name,coach_name,coach_api_id,formation,in_csv,in_pq"
+      },
+      {
+        "path": "samples/fixture_players.csv",
+        "sha256": "684adaecd438e1ce511e1a267d771e530ea3a1bd99af495c1685c099e30e4a74",
+        "bytes": 61066,
+        "records": 1001,
+        "peeked_header": "id,fixture_id,team_id,player_id,player_name,is_starter,position,number,captain,minutes,rating"
+      },
+      {
+        "path": "samples/fixture_players_stats_flat.csv",
+        "sha256": "5b2199a3205a5f8b4f80cc1ab9be3fec33691c40562d6c0bb48498d32cf9f859",
+        "bytes": 105600,
+        "records": 1001,
+        "peeked_header": "fixture_player_id,fixture_id,player_id,cards_red,cards_yellow,dribbles_attempts,dribbles_past,dribbles_success,duels_total,duels_won,fouls_committed,fouls_drawn,games_captain,games_minutes,games_number,games_position,games_rating,games_substitute,goals_assists,goals_conceded,goals_saves,goals_total,offsides,passes_accuracy,passes_key,passes_total,penalty_commited,penalty_missed,penalty_saved,penal"
+      },
+      {
+        "path": "samples/leagues.csv",
+        "sha256": "fddc2b70cb4afb1e2ad5a8504fa07211f1fb29618bb4ce149f7e14c78dd3bc13",
+        "bytes": 12454,
+        "records": 272,
+        "peeked_header": "id,name,country,fd_code,api_football_id,in_csv,in_pq"
+      },
+      {
+        "path": "samples/league_catalogue.csv",
+        "sha256": "a7fd1af6a88e027944cbff77f7c444e498ae3c477524a4ecb887da4bb07ce966",
+        "bytes": 92374,
+        "records": 1001,
+        "peeked_header": "af_league_id,af_name,af_country,af_type,af_has_stats,min_season,max_season,in_dataset,dataset_league_id,in_cloudbet,cloudbet_key,cloudbet_name,present_years,avail_years,history_status"
+      },
+      {
+        "path": "samples/match_stats.csv",
+        "sha256": "9e8b5d55f5992ea8c18e12af6443ab6d7baac5552d3bec25f3d2de68b56741bc",
+        "bytes": 112312,
+        "records": 1001,
+        "peeked_header": "fixture_id,home_shots_total,away_shots_total,home_shots_on_goal,away_shots_on_goal,home_shots_inside_box,away_shots_inside_box,home_shots_outside_box,away_shots_outside_box,home_blocked_shots,away_blocked_shots,home_penalties,away_penalties,home_corners,away_corners,home_yellow_cards,away_yellow_cards,home_red_cards,away_red_cards,home_xg,away_xg,home_possession,away_possession,home_fouls,away_fou"
+      },
+      {
+        "path": "samples/odds.csv",
+        "sha256": "5ccb816ef9e99b8f990f3c21208c8b856e3f42513bf40cf7437a4172d46f9300",
+        "bytes": 79709,
+        "records": 1001,
+        "peeked_header": "fixture_id,home_win,draw,away_win,bookmaker,source,in_csv,in_pq,known_at"
+      },
+      {
+        "path": "samples/players.csv",
+        "sha256": "87f05575fd58263774900fafb0f085ac4f2c1c0dfccdb5f432d946e1d2e29ba1",
+        "bytes": 69056,
+        "records": 1001,
+        "peeked_header": "id,api_football_id,name,firstname,lastname,age,nationality,height,weight,photo,in_csv,in_pq"
+      },
+      {
+        "path": "samples/teams.csv",
+        "sha256": "ae20228a4ee83770ab70157245d24c33e54b89ee0f4416c1e0397865a1e2c5b2",
+        "bytes": 60038,
+        "records": 1001,
+        "peeked_header": "id,name,api_football_id,fd_name,rating_mu,rating_sigma,in_csv,in_pq"
+      },
+      {
+        "path": "samples/xg_training.csv",
+        "sha256": "f8f046f2f6e772c490e819561a5abea13c5221cee12f3c51fafe9cd97a01e12d",
+        "bytes": 67914,
+        "records": 1001,
+        "peeked_header": "fixture_id,league_id,date_utc,calendar_year,side,is_home,shots_total,shots_on_goal,shots_inside_box,shots_outside_box,blocked_shots,corners,possession,pass_accuracy,xg"
+      },
+      {
+        "path": "metadata/cloudbet_catalog.csv",
+        "sha256": "2a6d6c773c70088736699b6d347c2331607157d8630486942a69e4b127e0110a",
+        "bytes": 19909,
+        "records": 286,
+        "peeked_header": "key,name,category_key,category_name,max_events,times_seen,sources"
+      },
+      {
+        "path": "metadata/cloudbet_catalog.json",
+        "sha256": "a0317d47c4e04fa09011a8b4593ec57fc4b2bb91166c8c396f4f6eef2447e593",
+        "bytes": 59685,
+        "records": null,
+        "peeked_header": "["
+      },
+      {
+        "path": "metadata/croissant.json",
+        "sha256": "ff1cf4fc4960a07175f20aecf2844745bfda60b678d9d2475a5bf2073687a8ef",
+        "bytes": 7086,
+        "records": null,
+        "peeked_header": "{"
+      },
+      {
+        "path": "metadata/datapackage.json",
+        "sha256": "f222ccfd2ff5af1373f4b7bf496be911a2e470366bbb29e786ed7b123d94acb1",
+        "bytes": 29091,
+        "records": null,
+        "peeked_header": "{"
+      },
+      {
+        "path": "docs/data_dictionary.md",
+        "sha256": "1fa50479bb7f80ccd407c610bd078315b1513eb5e00c9a911e3ecf4fa729c23e",
+        "bytes": 10781,
+        "records": null,
+        "peeked_header": "# Data Dictionary"
+      },
+      {
+        "path": "docs/PIPELINE.md",
+        "sha256": "c577f3f77be714fc6f59cff037af7014d89a28980c2b23dc591b5ebc74a9fc64",
+        "bytes": 4852,
+        "records": null,
+        "peeked_header": "# Pipeline"
+      }
+    ]
+  },
+  {
+    "id": "oddsharvester",
+    "repository": "jordantete/OddsHarvester",
+    "cluster": "oddsportal-scraper",
+    "role": "PARSER",
+    "exists": true,
+    "commit": "06e57082a82673e090438d0638eb83591e5dd6ce",
+    "clone_path": "C:\\Users\\giamm\\Desktop\\app previsioni sportive\\betting predict\\data\\external\\github\\_clones\\jordantete__OddsHarvester",
+    "file_count": 245,
+    "bytes": 173567072,
+    "classification": "RESEARCH_TEMPORAL",
+    "level": "NONE",
+    "kickoff_semantics": "match_date ISO-Z in test fixtures",
+    "timestamp_semantics": "scraped_date is collector retrieval, forbidden as quote clock. OddsPortal page snapshot, no bookmaker last_update.",
+    "markets": [
+      "1X2",
+      "OU",
+      "BTTS"
+    ],
+    "why": "Scraper + test fixtures (n handful). Historic scrape ≠ historical publish timestamp. RESEARCH_ONLY.",
+    "bookmakers": [
+      "OddsPortal-page"
+    ],
+    "events_est": 4,
+    "records_est": 4,
+    "date_min": null,
+    "date_max": null,
+    "license": "see upstream repository LICENSE",
+    "files": [
+      {
+        "path": ".mcp.json",
+        "sha256": "e0414c9215d91b0b16ac7fcd4e9ef89f83bbe1fae98283335fe5ab23d8ed31dc",
+        "bytes": 185,
+        "records": null,
+        "peeked_header": "{"
+      },
+      {
+        "path": "CLAUDE.md",
+        "sha256": "861ef1dfb6b735cf6a00b513acd97a5fd31cf611116616e6705e4a02e7fb7fbc",
+        "bytes": 10164,
+        "records": null,
+        "peeked_header": "# CLAUDE.md"
+      },
+      {
+        "path": "README.md",
+        "sha256": "d116dc5767fa7563a37dda4dd7ba18af7c0a3837a91dec14e0cf4bc779edf44e",
+        "bytes": 31951,
+        "records": null,
+        "peeked_header": "<div align=\"center\">"
+      },
+      {
+        "path": "uv.json",
+        "sha256": "b69a47d50ad6d554d4cf74dc52b4531867e90fea76ca16cb12dab79d739d52dc",
+        "bytes": 264,
+        "records": null,
+        "peeked_header": "{"
+      },
+      {
+        "path": "tests/integration/fixtures/README.md",
+        "sha256": "07537c7a58a4758bc0462227e9d34a65128d4b18ed06833cf3205fc94b43ba3d",
+        "bytes": 2403,
+        "records": null,
+        "peeked_header": "# Integration Test Fixtures"
+      },
+      {
+        "path": "tests/integration/fixtures/volleyball/italy-superlega/piacenza-IXfYN7pB/home_away_full_time_all.json",
+        "sha256": "a4a8201ac3956757d43dee192d9abac43cd31e3c186e5c44fb3339095f90697a",
+        "bytes": 1539,
+        "records": null,
+        "peeked_header": "["
+      },
+      {
+        "path": "tests/integration/fixtures/volleyball/italy-superlega/piacenza-IXfYN7pB/metadata.json",
+        "sha256": "82253aaf8ec82f4fc54b4064b9afbdea6eab09ebdc9d051a1dccd5ecd6c20080",
+        "bytes": 573,
+        "records": null,
+        "peeked_header": "{"
+      },
+      {
+        "path": "tests/integration/fixtures/tennis/australian-open/humbert-ugo-zverev-alexander-MssXFOD7/match_winner_full_time_all.json",
+        "sha256": "0244ff197de8af0d86195f53709b3c64d3d89474bd41ddd6ad5ad6d0a8eb3e20",
+        "bytes": 1637,
+        "records": null,
+        "peeked_header": "["
+      },
+      {
+        "path": "tests/integration/fixtures/tennis/australian-open/humbert-ugo-zverev-alexander-MssXFOD7/metadata.json",
+        "sha256": "f410ccffd7e16c11760da4b2a57d9033f10df5cc49719f7de3789d9dbb4ad1ac",
+        "bytes": 584,
+        "records": null,
+        "peeked_header": "{"
+      },
+      {
+        "path": "tests/integration/fixtures/tennis/australian-open/djokovic-novak-sinner-jannik-IwSMNP62/match_winner_1st_set_all.json",
+        "sha256": "229ce319f2099ca725b002f2722345a8178d67e3adae424d8980bf7a7a37af83",
+        "bytes": 1138,
+        "records": null,
+        "peeked_header": "["
+      },
+      {
+        "path": "tests/integration/fixtures/tennis/australian-open/djokovic-novak-sinner-jannik-IwSMNP62/match_winner_full_time_all.json",
+        "sha256": "3ebb08be3a51fe82e3ff026ddfb82f958acd5cfce689ab8e931c08e9f6d4230d",
+        "bytes": 1377,
+        "records": null,
+        "peeked_header": "["
+      },
+      {
+        "path": "tests/integration/fixtures/tennis/australian-open/djokovic-novak-sinner-jannik-IwSMNP62/match_winner_over_under_sets_2_5_full_time_all.json",
+        "sha256": "05fc2d98e41b81032234e37e0677656b3c9a2291b8c3e755411f909a4d2bb6a3",
+        "bytes": 1420,
+        "records": null,
+        "peeked_header": "["
+      },
+      {
+        "path": "tests/integration/fixtures/tennis/australian-open/djokovic-novak-sinner-jannik-IwSMNP62/metadata.json",
+        "sha256": "d94bf6c2f247524435991d352668e4d1f0670218323407e2f5e8de8cd8b2fd8d",
+        "bytes": 691,
+        "records": null,
+        "peeked_header": "{"
+      },
+      {
+        "path": "tests/integration/fixtures/tennis/australian-open/djokovic-novak-lehecka-jiri-0ShOHpqe/match_winner_full_time_all.json",
+        "sha256": "c471a6f192804b87d60ec8cef545d95faacc11340922dbfe36f82ddd87f8a354",
+        "bytes": 1635,
+        "records": null,
+        "peeked_header": "["
+      },
+      {
+        "path": "tests/integration/fixtures/tennis/australian-open/djokovic-novak-lehecka-jiri-0ShOHpqe/metadata.json",
+        "sha256": "2c8775eddf29ec92224a340d73fbb30a9b3adcc0b6b0704c93ce328d6c404bc6",
+        "bytes": 638,
+        "records": null,
+        "peeked_header": "{"
+      },
+      {
+        "path": "tests/integration/fixtures/tennis/australian-open/djokovic-novak-lehecka-jiri-0ShOHpqe/over_under_games_22_5_full_time_all.json",
+        "sha256": "08d3ef9b02174cb21a607116d8ecfe5dad577cabe595e05b09dfdf4bfb7358d4",
+        "bytes": 682,
+        "records": null,
+        "peeked_header": "["
+      },
+      {
+        "path": "tests/integration/fixtures/handball/germany-bundesliga/sc-magdeburg-t8qpYkr1/1x2_full_time_all.json",
+        "sha256": "20eba4f103b73d27429cb3dd10780540ba608c5a83b4f60df06d1977a7f4b466",
+        "bytes": 1761,
+        "records": null,
+        "peeked_header": "["
+      },
+      {
+        "path": "tests/integration/fixtures/handball/germany-bundesliga/sc-magdeburg-t8qpYkr1/metadata.json",
+        "sha256": "6ce4dc9aba98b5893d922ca21e07f2bced25dc14a93f2d8ab02e72b860d6bfed",
+        "bytes": 580,
+        "records": null,
+        "peeked_header": "{"
+      },
+      {
+        "path": "tests/integration/fixtures/football/super-cup-2025/real-madrid-barcelona-bZrHkILa/1x2_btts_full_time_all.json",
+        "sha256": "b961ab9e1f503ec0ab043816ec5c8920765a090120b894e67eb23b990158d01b",
+        "bytes": 1656,
+        "records": null,
+        "peeked_header": "["
+      },
+      {
+        "path": "tests/integration/fixtures/football/super-cup-2025/real-madrid-barcelona-bZrHkILa/metadata.json",
+        "sha256": "f4adb7c230ce2eeae68507f307ab55c6969f6090122fe912f9d53f4a8e4a9a94",
+        "bytes": 577,
+        "records": null,
+        "peeked_header": "{"
+      },
+      {
+        "path": "tests/integration/fixtures/football/premier-league/leicester-brentford-xQ77QTN0/1x2_1st_half_all.json",
+        "sha256": "6aa3a696d52d766e9e1abfbecea5990f2dc215a8ee2c54be15511eb47f683e38",
+        "bytes": 1397,
+        "records": null,
+        "peeked_header": "["
+      },
+      {
+        "path": "tests/integration/fixtures/football/premier-league/leicester-brentford-xQ77QTN0/1x2_btts_double_chance_full_time_all.json",
+        "sha256": "3bcc205afe8e914a1875168c10653b6c5c44dd190337a71ae1228aa2c3ab7d09",
+        "bytes": 2742,
+        "records": null,
+        "peeked_header": "["
+      },
+      {
+        "path": "tests/integration/fixtures/football/premier-league/leicester-brentford-xQ77QTN0/1x2_full_time_all.json",
+        "sha256": "b0a0980939f4ab8efb4426e7d61621b5527834fbf7e178651767b5bf13fb90b5",
+        "bytes": 1641,
+        "records": null,
+        "peeked_header": "["
+      },
+      {
+        "path": "tests/integration/fixtures/football/premier-league/leicester-brentford-xQ77QTN0/1x2_full_time_classic.json",
+        "sha256": "77632bad96a2432c3355000749364d51ff3b3081525fffb9a41b2ef710b8b6b7",
+        "bytes": 1641,
+        "records": null,
+        "peeked_header": "["
+      },
+      {
+        "path": "tests/integration/fixtures/football/premier-league/leicester-brentford-xQ77QTN0/metadata.json",
+        "sha256": "1ac7cf49100191f46ebc12abe0c6e20728a8bacdf29c9b3d5a6984b55228c4ce",
+        "bytes": 756,
+        "records": null,
+        "peeked_header": "{"
+      },
+      {
+        "path": "tests/integration/fixtures/football/premier-league/leicester-brentford-xQ77QTN0/over_under_1_5_over_under_2_5_full_time_all.json",
+        "sha256": "fb0309955ae8dd60ac30d17e4bec2f256b062ce1d83eecf6f86bdb2691cabe5b",
+        "bytes": 2684,
+        "records": null,
+        "peeked_header": "["
+      },
+      {
+        "path": "tests/integration/fixtures/football/laliga/leganes-Mi0rXQg7/1x2_full_time_all.json",
+        "sha256": "00bb611fea5ff63b9639a5b77fe81720f1e3c146f55d40ec5ca0a636b88e9038",
+        "bytes": 1605,
+        "records": null,
+        "peeked_header": "["
+      },
+      {
+        "path": "tests/integration/fixtures/football/laliga/leganes-Mi0rXQg7/metadata.json",
+        "sha256": "6b88add63103d82a14f1e1c6986e732a450b0d68a95773c34bb1f9fbda4038df",
+        "bytes": 1061,
+        "records": null,
+        "peeked_header": "{"
+      },
+      {
+        "path": "tests/integration/fixtures/football/club-friendly/samgurali-spaeri-0nx5GXqB/live_1x2_all.json",
+        "sha256": "ae5f292ffbed5908354644c8a62b603b7199d537924be3676b11f8a6bef468c6",
+        "bytes": 1049,
+        "records": null,
+        "peeked_header": "["
+      },
+      {
+        "path": "tests/integration/fixtures/football/club-friendly/samgurali-spaeri-0nx5GXqB/live_listing.json",
+        "sha256": "2acedf88bb235941cd188917d0b61e9fe89dd5a40e9128bb81d21fcf0eedde22",
+        "bytes": 787,
+        "records": null,
+        "peeked_header": "["
+      },
+      {
+        "path": "tests/integration/fixtures/cricket/one-day-international/india-fcOzl2uI/home_away_full_including_ot_all.json",
+        "sha256": "5b7014bc511fcb2e17e0fd1a62df1d81432e6a390b0bbfdca99a9f22873d4298",
+        "bytes": 1299,
+        "records": null,
+        "peeked_header": "["
+      },
+      {
+        "path": "tests/integration/fixtures/cricket/one-day-international/india-fcOzl2uI/metadata.json",
+        "sha256": "5e4fd7ceb381bcaf7191e571d3a292a2d0b0c161626fd453d0f93d9518c748a1",
+        "bytes": 736,
+        "records": null,
+        "peeked_header": "{"
+      },
+      {
+        "path": "tests/integration/fixtures/community/match_community_fulham_chelsea.json",
+        "sha256": "c46a5c249f132d305cb14421c8699677103f4913503d52b85a4c51c7330c9098",
+        "bytes": 961,
+        "records": null,
+        "peeked_header": "["
+      },
+      {
+        "path": "tests/integration/fixtures/community/top_predictions_football.json",
+        "sha256": "c7aef94cecf078fefc2aac41a699a0c979b1556b7b57a34f061ef06e26eb8389",
+        "bytes": 8802,
+        "records": null,
+        "peeked_header": "["
+      },
+      {
+        "path": "tests/integration/fixtures/community/user_profile_blapro.json",
+        "sha256": "e2be395f01bca6d841f178893dc2185b459164dcce5a15e73021936a5d7e8789",
+        "bytes": 18326,
+        "records": null,
+        "peeked_header": "["
+      },
+      {
+        "path": "tests/integration/fixtures/basketball/nba/los-angeles-lakers-golden-state-warriors-jZvOnVBk/home_away_1st_half_all.json",
+        "sha256": "8a206816e5dc122c6c720cf563e5e5ba793371f8ea5db7fd62c98942d80caa91",
+        "bytes": 1582,
+        "records": null,
+        "peeked_header": "["
+      },
+      {
+        "path": "tests/integration/fixtures/basketball/nba/los-angeles-lakers-golden-state-warriors-jZvOnVBk/home_away_full_including_ot_all.json",
+        "sha256": "b146ffc48e02f8863943c675fea77fa9d8745d2b5e4b458a977aae4f4f260b87",
+        "bytes": 1606,
+        "records": null,
+        "peeked_header": "["
+      },
+      {
+        "path": "tests/integration/fixtures/basketball/nba/los-angeles-lakers-golden-state-warriors-jZvOnVBk/metadata.json",
+        "sha256": "60b4991ff72d88ea2e0b0cd6f25d2c7e9e68f5230a5afae845055e2e83d67f10",
+        "bytes": 661,
+        "records": null,
+        "peeked_header": "{"
+      },
+      {
+        "path": "tests/integration/fixtures/basketball/nba/los-angeles-lakers-boston-celtics-0fwUQJEk/1x2_home_away_full_including_ot_all.json",
+        "sha256": "952d4ff201d50d23abdea810ddd55af1bc40265d283b513811b2bbf1afbde7fe",
+        "bytes": 2652,
+        "records": null,
+        "peeked_header": "["
+      },
+      {
+        "path": "tests/integration/fixtures/basketball/nba/los-angeles-lakers-boston-celtics-0fwUQJEk/home_away_1st_half_all.json",
+        "sha256": "1bee58e5cbe424399d1900495762a6558719370de43afead47206cf0c4d805ec",
+        "bytes": 1567,
+        "records": null,
+        "peeked_header": "["
+      }
+    ]
+  },
+  {
+    "id": "iredchuk",
+    "repository": "iredchuk/soccer-bookmaker-odds",
+    "cluster": "average-odds-no-date",
+    "role": "RAW",
+    "exists": true,
+    "commit": "101f44ea17777cfc2942ea4164fe937e6cd76e3e",
+    "clone_path": "C:\\Users\\giamm\\Desktop\\app previsioni sportive\\betting predict\\data\\external\\github\\_clones\\iredchuk__soccer-bookmaker-odds",
+    "file_count": 19,
+    "bytes": 8070525,
+    "classification": "DATE_ONLY",
+    "level": "NONE",
+    "kickoff_semantics": "season/round only — no match date",
+    "timestamp_semantics": "average decimal odds. No timestamp field in schema.",
+    "markets": [
+      "1X2"
+    ],
+    "why": "2005–2019 averages. Schema has no date, no kickoff, no quote clock.",
+    "bookmakers": [],
+    "events_est": 5320,
+    "records_est": 5320,
+    "date_min": "2005",
+    "date_max": "2018/2019",
+    "license": "see upstream repository LICENSE",
+    "files": [
+      {
+        "path": "package-lock.json",
+        "sha256": "4a56d0aead00ac4ef109161260031df57abedad8d054b1c58935bdff8efafc68",
+        "bytes": 2321,
+        "records": null,
+        "peeked_header": "{"
+      },
+      {
+        "path": "package.json",
+        "sha256": "8bccc51dcea68155e6a13d7a920f5d25d9373c3e3090911887200b4840208933",
+        "bytes": 636,
+        "records": null,
+        "peeked_header": "{"
+      },
+      {
+        "path": "README.md",
+        "sha256": "21a02627badb1abe6335471e4f0a12eb806818ed6ba3f379cb99b26099c2033b",
+        "bytes": 2266,
+        "records": null,
+        "peeked_header": "# soccer-bookmaker-odds"
+      },
+      {
+        "path": "schema/league.json",
+        "sha256": "ae146df2fae505b597693b8363cbb705bab4495ee296508ac9a4ac87f6c0a659",
+        "bytes": 1686,
+        "records": null,
+        "peeked_header": "{"
+      },
+      {
+        "path": "data/json/england_premier-league.json",
+        "sha256": "d20edbee2f5f718c55abb52954808232242ac8ec66313f8cd90d38667d8b8acf",
+        "bytes": 1022209,
+        "records": null,
+        "peeked_header": "[{\"season\":\"2005-2006\",\"rounds\":[{\"round\":\"1\",\"games\":[{\"hTeam\":\"Everton FC\",\"aTeam\":\"Manchester United\",\"hScore\":0,\"aScore\":2,\"hOdd\":4.8,\"dOdd\":3.4,\"aOdd\":1.7,\"hProb\":0.19101123595505617,\"dProb\":0.2696629213483146,\"aProb\":0.5393258426966292},{\"hTeam\":\"Sunderland AFC\",\"aTeam\":\"Charlton Athletic\",\"hScore\":1,\"aScore\":3,\"hOdd\":2.3,\"dOdd\":3.2,\"aOdd\":2.9,\"hProb\":0.3981123981123982,\"dProb\":0.28614328614"
+      },
+      {
+        "path": "data/json/france_league-1.json",
+        "sha256": "7946e4e0063d718a72235e9d54a528948c4123b108ba53fabc1d023747a40ce8",
+        "bytes": 1006528,
+        "records": null,
+        "peeked_header": "[{\"season\":\"2005-2006\",\"rounds\":[{\"round\":\"1\",\"games\":[{\"hTeam\":\"Paris St. Germain\",\"aTeam\":\"FC Metz\",\"hScore\":4,\"aScore\":1,\"hOdd\":1.5,\"dOdd\":3.42,\"aOdd\":6.24,\"hProb\":0.5955993167889078,\"dProb\":0.2612277705214508,\"aProb\":0.1431729126896413},{\"hTeam\":\"Olympique Marseille\",\"aTeam\":\"Girondins Bordeaux\",\"hScore\":0,\"aScore\":2,\"hOdd\":1.71,\"dOdd\":3.22,\"aOdd\":4.87,\"hProb\":0.5312973271489703,\"dProb\":0.2821"
+      },
+      {
+        "path": "data/json/germany_bundesliga.json",
+        "sha256": "09029016b62ed3a20fd33acc3b7768c39d54bf2532554a374a4a75d45980b28c",
+        "bytes": 831542,
+        "records": null,
+        "peeked_header": "[{\"season\":\"2005-2006\",\"rounds\":[{\"round\":\"1\",\"games\":[{\"hTeam\":\"Bayern München\",\"aTeam\":\"Bor. Mönchengladbach\",\"hScore\":3,\"aScore\":0,\"hOdd\":1.31,\"dOdd\":4.5,\"aOdd\":9,\"hProb\":0.6960556844547564,\"dProb\":0.2026295436968291,\"aProb\":0.10131477184841454},{\"hTeam\":\"MSV Duisburg\",\"aTeam\":\"VfB Stuttgart\",\"hScore\":1,\"aScore\":1,\"hOdd\":3,\"dOdd\":3.25,\"aOdd\":2.15,\"hProb\":0.3013477088948787,\"dProb\":0.27816711590"
+      },
+      {
+        "path": "data/json/italy_serie-a.json",
+        "sha256": "f0dd936dbdb71f4929c3e5bb0f513d2786f8516e397a66aaef1e2ca927e13835",
+        "bytes": 998660,
+        "records": null,
+        "peeked_header": "[{\"season\":\"2005-2006\",\"rounds\":[{\"round\":\"1\",\"games\":[{\"hTeam\":\"AS Livorno\",\"aTeam\":\"US Lecce\",\"hScore\":2,\"aScore\":1,\"hOdd\":1.9,\"dOdd\":3.05,\"aOdd\":4,\"hProb\":0.47665559679624925,\"dProb\":0.29693299472553236,\"aProb\":0.2264114084782184},{\"hTeam\":\"ACF Fiorentina\",\"aTeam\":\"Sampdoria\",\"hScore\":2,\"aScore\":1,\"hOdd\":2.22,\"dOdd\":2.9,\"aOdd\":3.32,\"hProb\":0.4108139475346042,\"dProb\":0.314485159836835,\"aProb\":0."
+      },
+      {
+        "path": "data/json/spain_primera.json",
+        "sha256": "f56ceadce130b382afe1770a4c593d45427c99d6db7c87cfd3530ba04f31aed2",
+        "bytes": 1013053,
+        "records": null,
+        "peeked_header": "[{\"season\":\"2005-2006\",\"rounds\":[{\"round\":\"1\",\"games\":[{\"hTeam\":\"CD Alavés\",\"aTeam\":\"FC Barcelona\",\"hScore\":0,\"aScore\":0,\"hOdd\":7,\"dOdd\":3.75,\"aOdd\":1.45,\"hProb\":0.1299671347475351,\"dProb\":0.24260531819539888,\"aProb\":0.6274275470570662},{\"hTeam\":\"Valencia CF\",\"aTeam\":\"Real Betis\",\"hScore\":1,\"aScore\":0,\"hOdd\":1.95,\"dOdd\":3.25,\"aOdd\":3.7,\"hProb\":0.47013977128335455,\"dProb\":0.2820838627700127,\"aProb\""
+      },
+      {
+        "path": "data/csv/england_premier-league.csv",
+        "sha256": "f134a3d3beb742c8ddd243924b6bcec241601654e32adbc53e88488953253922",
+        "bytes": 672233,
+        "records": 5321,
+        "peeked_header": "\"season\",\"round\",\"hTeam\",\"aTeam\",\"hScore\",\"aScore\",\"hOdd\",\"dOdd\",\"aOdd\",\"hProb\",\"dProb\",\"aProb\""
+      },
+      {
+        "path": "data/csv/france_league-1.csv",
+        "sha256": "d7e3f0a4171f045d0fe28765dda3a8aecfee1e7b8113c2244d9cf99f4b206074",
+        "bytes": 656572,
+        "records": 5321,
+        "peeked_header": "\"season\",\"round\",\"hTeam\",\"aTeam\",\"hScore\",\"aScore\",\"hOdd\",\"dOdd\",\"aOdd\",\"hProb\",\"dProb\",\"aProb\""
+      },
+      {
+        "path": "data/csv/germany_bundesliga.csv",
+        "sha256": "4d25ec57b5891740566c8440f22b085d075a20a2af3c58f46bd35b8931c6dcf9",
+        "bytes": 548360,
+        "records": 4285,
+        "peeked_header": "\"season\",\"round\",\"hTeam\",\"aTeam\",\"hScore\",\"aScore\",\"hOdd\",\"dOdd\",\"aOdd\",\"hProb\",\"dProb\",\"aProb\""
+      },
+      {
+        "path": "data/csv/italy_serie-a.csv",
+        "sha256": "07f295b2bf7923f48f2acc851fe157f9be39fc5cf636a89ae0a6a4b898fda8d1",
+        "bytes": 648684,
+        "records": 5321,
+        "peeked_header": "\"season\",\"round\",\"hTeam\",\"aTeam\",\"hScore\",\"aScore\",\"hOdd\",\"dOdd\",\"aOdd\",\"hProb\",\"dProb\",\"aProb\""
+      },
+      {
+        "path": "data/csv/spain_primera.csv",
+        "sha256": "a6bd8ca9d350201fd80bb860558e92e8b539227924ae95db614acb11bdcb0ebb",
+        "bytes": 663077,
+        "records": 5321,
+        "peeked_header": "\"season\",\"round\",\"hTeam\",\"aTeam\",\"hScore\",\"aScore\",\"hOdd\",\"dOdd\",\"aOdd\",\"hProb\",\"dProb\",\"aProb\""
+      }
+    ]
+  },
+  {
+    "id": "sportyhack",
+    "repository": "odafeigho/SportyOddsHack",
+    "cluster": "models-no-archive",
+    "role": "REPOSITORY",
+    "exists": true,
+    "commit": "71b1d4587e32d18f70cff8b187098e98b526db50",
+    "clone_path": "C:\\Users\\giamm\\Desktop\\app previsioni sportive\\betting predict\\data\\external\\github\\_clones\\odafeigho__SportyOddsHack",
+    "file_count": 5,
+    "bytes": 35184,
+    "classification": "DATASET_NOT_PRESENT",
+    "level": "NONE",
+    "kickoff_semantics": "none",
+    "timestamp_semantics": "none",
+    "markets": [],
+    "why": "Model sketch. No odds archive.",
+    "bookmakers": [],
+    "events_est": 0,
+    "records_est": 0,
+    "date_min": null,
+    "date_max": null,
+    "license": "see upstream repository LICENSE",
+    "files": [
+      {
+        "path": "README.md",
+        "sha256": "bd6b2698d535f48156384ef1e6ddb4f2870ae7a9150d048735bb2d57a639c13e",
+        "bytes": 341,
+        "records": null,
+        "peeked_header": "# SportyOddsHack"
+      }
+    ]
+  },
+  {
+    "id": "betfairutil",
+    "repository": "mberk/betfairutil",
+    "cluster": "betfair-historic",
+    "role": "PARSER",
+    "exists": true,
+    "commit": "12ab5c8c55957f97774c03c76d6c7c85ed1d40e1",
+    "clone_path": "C:\\Users\\giamm\\Desktop\\app previsioni sportive\\betting predict\\data\\external\\github\\_clones\\mberk__betfairutil",
+    "file_count": 12,
+    "bytes": 247823,
+    "classification": "PARSER_NO_DATA",
+    "level": "NONE",
+    "kickoff_semantics": "none",
+    "timestamp_semantics": "library for official historic files",
+    "markets": [],
+    "why": "Parser without soccer dump.",
+    "bookmakers": [],
+    "events_est": 0,
+    "records_est": 0,
+    "date_min": null,
+    "date_max": null,
+    "license": "see upstream repository LICENSE",
+    "files": [
+      {
+        "path": "HISTORY.md",
+        "sha256": "218ae997f28d6e50c0b44b2ef8940519a3c4d1383d61bf7a3a62816c7de57a3a",
+        "bytes": 6667,
+        "records": null,
+        "peeked_header": "# Release History"
+      },
+      {
+        "path": "README.md",
+        "sha256": "6bd2101cbd27dc6c4482f20d609cbfed5987e49801dbb6e251ca80c02c615bcf",
+        "bytes": 6872,
+        "records": null,
+        "peeked_header": "# betfairutil"
+      }
+    ]
+  },
+  {
+    "id": "liampauling",
+    "repository": "liampauling/betfair",
+    "cluster": "betfair-historic",
+    "role": "PARSER",
+    "exists": true,
+    "commit": "b00072113e9a1017d5b9cc705e9d1d3444a91036",
+    "clone_path": "C:\\Users\\giamm\\Desktop\\app previsioni sportive\\betting predict\\data\\external\\github\\_clones\\liampauling__betfair",
+    "file_count": 185,
+    "bytes": 5139076,
+    "classification": "PARSER_NO_DATA",
+    "level": "NONE",
+    "kickoff_semantics": "none",
+    "timestamp_semantics": "library for official historic files",
+    "markets": [],
+    "why": "Parser without soccer dump.",
+    "bookmakers": [],
+    "events_est": 0,
+    "records_est": 0,
+    "date_min": null,
+    "date_max": null,
+    "license": "see upstream repository LICENSE",
+    "files": [
+      {
+        "path": "README.md",
+        "sha256": "732aea3bd1243ae6f02b86c7f93fd9ec302e8b4938c654035a07694490249196",
+        "bytes": 5897,
+        "records": null,
+        "peeked_header": "<p align=\"center\">"
+      },
+      {
+        "path": "tests/resources/availableevents.json",
+        "sha256": "3760ff7dcc680ada5bd696b0a0271ade3405546cb2a04b1cdeee149347a63e2b",
+        "bytes": 1797,
+        "records": null,
+        "peeked_header": "[{\"eventId\":\"28237283\",\"eventTypeId\":\"2\",\"eventStatus\":\"IN_PROGRESS\"},{\"eventId\":\"28233473\",\"eventTypeId\":\"2\",\"eventStatus\":\"IN_PROGRESS\"},{\"eventId\":\"28236987\",\"eventTypeId\":\"2\",\"eventStatus\":\"IN_PROGRESS\"},{\"eventId\":\"28205434\",\"eventTypeId\":\"2\",\"eventStatus\":\"IN_PROGRESS\"},{\"eventId\":\"28205674\",\"eventTypeId\":\"2\",\"eventStatus\":\"IN_PROGRESS\"},{\"eventId\":\"28233483\",\"eventTypeId\":\"2\",\"eventStatus\":"
+      },
+      {
+        "path": "tests/resources/base_endpoint_fail.json",
+        "sha256": "5920a2f62c6560b75d27a46612931f385d4b4d1309ef609e411ef68e2893058e",
+        "bytes": 22,
+        "records": null,
+        "peeked_header": "{\"error\":\"An error..\"}"
+      },
+      {
+        "path": "tests/resources/base_endpoint_success.json",
+        "sha256": "dd530134aa9d5249aaa2ecd07edf336d2bdd732f22df1765d4dd5ae593468c1a",
+        "bytes": 24,
+        "records": null,
+        "peeked_header": "{\"result\":\"yellow bugs\"}"
+      },
+      {
+        "path": "tests/resources/base_resource.json",
+        "sha256": "9cd62925aebe89cf8306a43d33959b4331daf875fc09d35ee0d5aaf3b28bec8a",
+        "bytes": 12,
+        "records": null,
+        "peeked_header": "{\"id\":12345}"
+      },
+      {
+        "path": "tests/resources/base_resource_dict.json",
+        "sha256": "79ea320a2de11a5c9a6544a4edb4512e3155ad812f4d25b838eb3f46465a0910",
+        "bytes": 119,
+        "records": null,
+        "peeked_header": "{"
+      },
+      {
+        "path": "tests/resources/base_resource_sub.json",
+        "sha256": "99929a73663e525c1b8a7079a934e01a715627874ab799770d026940c75fc8c7",
+        "bytes": 151,
+        "records": null,
+        "peeked_header": "{"
+      },
+      {
+        "path": "tests/resources/cancel_orders.json",
+        "sha256": "8e6090b7ea742c009a9fe5d1f22f136d0f935843b4dc32cad708153c62486e17",
+        "bytes": 296,
+        "records": null,
+        "peeked_header": "{"
+      },
+      {
+        "path": "tests/resources/eventtimeline.json",
+        "sha256": "95ddf6a5c90ead88f0d704de2e19bd27809b4f8cc78b8f5735ecb318d56f7ae1",
+        "bytes": 2418,
+        "records": null,
+        "peeked_header": "{"
+      },
+      {
+        "path": "tests/resources/incidents.json",
+        "sha256": "bae20ab90fd55c1b43a9fab9cdbac75fc29151608168e9c41347ad91978582c1",
+        "bytes": 48798,
+        "records": null,
+        "peeked_header": "[{\"eventId\":\"28237283\",\"eventTypeId\":\"2\",\"incidents\":{\"0\":{\"updateContext\":{\"eventTime\":\"\",\"lastUpdated\":\"2017-05-16T10:51:18.000Z\",\"updateSequence\":0,\"updateType\":\"\"},\"values\":{\"player1\":\"4729711\",\"player2\":\"8792467\",\"startDate\":\"2017-05-16T10:51:00.000Z\"}},\"1\":{\"updateContext\":{\"eventTime\":\"\",\"lastUpdated\":\"2017-05-16T10:51:18.000Z\",\"updateSequence\":1,\"updateType\":\"\"},\"values\":{\"tossWinner\":\"NA\""
+      },
+      {
+        "path": "tests/resources/keep_alive_fail.json",
+        "sha256": "11da27cf061e67e9de1fd4101df2e5fbcde6bdab9318b2bf365967d59787680c",
+        "bytes": 81,
+        "records": null,
+        "peeked_header": "{\"token\":\"\",\"product\":\"app_key\",\"status\":\"FAIL\",\"error\":\"INPUT_VALIDATION_ERROR\"}"
+      },
+      {
+        "path": "tests/resources/keep_alive_success.json",
+        "sha256": "528d3bdfb43b04c9b1f011fa06b04b8af870fc65b162f30d0416fc0f3f4ebcea",
+        "bytes": 75,
+        "records": null,
+        "peeked_header": "{\"token\":\"session_token\",\"product\":\"app_key\",\"status\":\"SUCCESS\",\"error\":\"\"}"
+      },
+      {
+        "path": "tests/resources/list_cleared_orders.json",
+        "sha256": "57b514e47b9188dad8c0df73ee72b96ece5773add8553bdac33777f9cd8678a1",
+        "bytes": 515,
+        "records": null,
+        "peeked_header": "{\"jsonrpc\":\"2.0\",\"result\":{\"clearedOrders\":[{\"eventTypeId\":\"7\",\"eventId\":\"27869685\",\"marketId\":\"1.125875592\",\"selectionId\":6412775,\"handicap\":0.0,\"betId\":\"71958694780\",\"placedDate\":\"2016-07-30T16:21:49.000Z\",\"persistenceType\":\"LAPSE\",\"orderType\":\"LIMIT\",\"side\":\"LAY\",\"betOutcome\":\"LOST\",\"priceRequested\":1.22,\"settledDate\":\"2016-07-30T16:26:13.000Z\",\"lastMatchedDate\":\"2016-07-30T16:21:50.000Z\",\"betC"
+      },
+      {
+        "path": "tests/resources/list_competitions.json",
+        "sha256": "2095f9ee427876206d0638f05d78c9c728c01ad88b5b46f751aa0aa0350200a6",
+        "bytes": 2270,
+        "records": null,
+        "peeked_header": "{\"jsonrpc\":\"2.0\",\"result\":[{\"competition\":{\"id\":\"101\",\"name\":\"Premier Division\"},\"marketCount\":6,\"competitionRegion\":\"RUS\"},{\"competition\":{\"id\":\"141\",\"name\":\"MLS\"},\"marketCount\":5,\"competitionRegion\":\"USA\"},{\"competition\":{\"id\":\"89979\",\"name\":\"Belgian Jupiler League\"},\"marketCount\":8,\"competitionRegion\":\"BEL\"},{\"competition\":{\"id\":\"129\",\"name\":\"Allsvenskan\"},\"marketCount\":6,\"competitionRegion\":\"S"
+      },
+      {
+        "path": "tests/resources/list_countries.json",
+        "sha256": "d58dc1aa846b514d33569448870bf7c14f5a33751c543ab8f880532171f29fab",
+        "bytes": 188,
+        "records": null,
+        "peeked_header": "{\"jsonrpc\":\"2.0\",\"result\":[{\"countryCode\":\"GB\",\"marketCount\":336},{\"countryCode\":\"ZA\",\"marketCount\":9},{\"countryCode\":\"IE\",\"marketCount\":14},{\"countryCode\":\"US\",\"marketCount\":122}],\"id\":1}"
+      },
+      {
+        "path": "tests/resources/list_current_orders.json",
+        "sha256": "1ea2ce1fc1c4a7665660d51ee59deea1acf6c02d6c985555222f5d0f2e5c56ae",
+        "bytes": 590,
+        "records": null,
+        "peeked_header": "{\"jsonrpc\":\"2.0\",\"result\":{\"currentOrders\":[{\"betId\":\"71958694780\",\"marketId\":\"1.125875592\",\"selectionId\":6412775,\"handicap\":0.0,\"priceSize\":{\"price\":1.22,\"size\":2.0},\"bspLiability\":0.0,\"side\":\"LAY\",\"status\":\"EXECUTION_COMPLETE\",\"persistenceType\":\"LAPSE\",\"orderType\":\"LIMIT\",\"placedDate\":\"2016-07-30T16:21:49.000Z\",\"matchedDate\":\"2016-07-30T16:21:50.000Z\",\"averagePriceMatched\":1.22,\"sizeMatched\":2.0"
+      },
+      {
+        "path": "tests/resources/list_current_orders_description.json",
+        "sha256": "f1cbc448f78b7d05754831f9050cf15fe891720563c2d4697401af4fab4cac3e",
+        "bytes": 654,
+        "records": null,
+        "peeked_header": "{\"jsonrpc\":\"2.0\",\"result\":{\"currentOrders\":[{\"betId\":\"71958694780\",\"marketId\":\"1.125875592\",\"selectionId\":6412775,\"handicap\":0.0,\"priceSize\":{\"price\":1.22,\"size\":2.0},\"bspLiability\":0.0,\"side\":\"LAY\",\"status\":\"EXECUTION_COMPLETE\",\"persistenceType\":\"LAPSE\",\"orderType\":\"LIMIT\",\"placedDate\":\"2016-07-30T16:21:49.000Z\",\"matchedDate\":\"2016-07-30T16:21:50.000Z\",\"averagePriceMatched\":1.22,\"sizeMatched\":2.0"
+      },
+      {
+        "path": "tests/resources/list_events.json",
+        "sha256": "e02a90ad0b5c56ae0a723bfafaebd54c8192de18fdd3de53935ac722781c29c0",
+        "bytes": 1220,
+        "records": null,
+        "peeked_header": "{\"jsonrpc\":\"2.0\",\"result\":[{\"event\":{\"id\":\"27867922\",\"name\":\"Thirsk 29th Jul\",\"countryCode\":\"GB\",\"timezone\":\"Europe/London\",\"venue\":\"Thirsk\",\"openDate\":\"2016-07-29T12:50:00.000Z\"},\"marketCount\":6},{\"event\":{\"id\":\"27866801\",\"name\":\"Good 29th Jul\",\"countryCode\":\"GB\",\"timezone\":\"Europe/London\",\"venue\":\"Goodwood\",\"openDate\":\"2016-07-29T13:00:00.000Z\"},\"marketCount\":6},{\"event\":{\"id\":\"27868203\",\"name\":"
+      },
+      {
+        "path": "tests/resources/list_event_types.json",
+        "sha256": "2aa717b423f71de586e8ad1facdcdfeaad92a60c9abbf6b2a151aba96163929a",
+        "bytes": 161,
+        "records": null,
+        "peeked_header": "{\"jsonrpc\":\"2.0\",\"result\":[{\"eventType\":{\"id\":\"1\",\"name\":\"Soccer\"},\"marketCount\":16178},{\"eventType\":{\"id\":\"468328\",\"name\":\"Handball\"},\"marketCount\":10}],\"id\":1}"
+      },
+      {
+        "path": "tests/resources/list_market_book.json",
+        "sha256": "6e1c7a2c44c3e7ac5ddca7982033655238234c2e517b3c5a8c181dce0a163aa4",
+        "bytes": 32789,
+        "records": null,
+        "peeked_header": "{\"jsonrpc\":\"2.0\",\"result\":[{\"marketId\":\"1.125875153\",\"isMarketDataDelayed\":false,\"betDelayModels\": [\"PASSIVE\"],\"status\":\"SUSPENDED\",\"betDelay\":1,\"bspReconciled\":true,\"complete\":true,\"inplay\":true,\"numberOfWinners\":1,\"numberOfRunners\":6,\"numberOfActiveRunners\":5,\"lastMatchTime\":\"2016-07-30T15:41:44.503Z\",\"totalMatched\":744286.88,\"totalAvailable\":17183.93,\"crossMatching\":true,\"runnersVoidable\":false"
+      },
+      {
+        "path": "tests/resources/list_market_catalogue.json",
+        "sha256": "ec35ea91790fd7429f5facbed80bb00e0958bd80ce24c33ac987894a840643d8",
+        "bytes": 2562,
+        "records": null,
+        "peeked_header": "{\"jsonrpc\":\"2.0\",\"result\":[{\"marketId\":\"1.125818641\",\"marketName\":\"Winner 2016/17\",\"marketStartTime\":\"2005-03-07T14:30:00.000Z\",\"description\":{\"betDelayModels\": [\"PASSIVE\"],\"priceLadderDescription\": {\"type\": \"CLASSIC\"}, \"persistenceEnabled\":true,\"bspMarket\":false,\"marketTime\":\"2005-03-07T14:30:00.000Z\",\"suspendTime\":\"2005-03-07T14:30:00.000Z\",\"bettingType\":\"ODDS\",\"turnInPlayEnabled\":true,\"marketTy"
+      },
+      {
+        "path": "tests/resources/list_market_catalogue_no_ero.json",
+        "sha256": "5a14d6a0f4cbebf7f36397f25992af35136193641ad9e0c4eac1c93c83417a87",
+        "bytes": 4103,
+        "records": null,
+        "peeked_header": "{\"jsonrpc\":\"2.0\",\"result\":[{\"marketId\":\"1.125818641\",\"marketName\":\"Winner 2016/17\",\"marketStartTime\":\"2005-03-07T14:30:00.000Z\",\"description\":{\"priceLadderDescription\": {\"type\": \"CLASSIC\"}, \"persistenceEnabled\":true,\"bspMarket\":false,\"marketTime\":\"2005-03-07T14:30:00.000Z\",\"suspendTime\":\"2005-03-07T14:30:00.000Z\",\"bettingType\":\"ODDS\",\"turnInPlayEnabled\":true,\"marketType\":\"WINNER\",\"regulator\":\"GIBR"
+      },
+      {
+        "path": "tests/resources/list_market_profit_and_loss.json",
+        "sha256": "447052aefe428a494608a8b62015c6fcf8e48bdebffa4515a638c9246cda1ac0",
+        "bytes": 627,
+        "records": null,
+        "peeked_header": "{\"jsonrpc\":\"2.0\",\"result\":[{\"marketId\":\"1.125877820\",\"profitAndLosses\":[{\"selectionId\":635848,\"ifWin\":2.0},{\"selectionId\":5528779,\"ifWin\":2.0},{\"selectionId\":9173803,\"ifWin\":2.0},{\"selectionId\":10452285,\"ifWin\":-0.4},{\"selectionId\":10083049,\"ifWin\":2.0},{\"selectionId\":10389246,\"ifWin\":2.0},{\"selectionId\":8593654,\"ifWin\":2.0},{\"selectionId\":9489757,\"ifWin\":2.0},{\"selectionId\":6873988,\"ifWin\":2.0},{"
+      },
+      {
+        "path": "tests/resources/list_market_types.json",
+        "sha256": "c8d4cec5e4c06f0adb490c1a3e56c5c9f4bd52b0a32124c043e5982d84aacce0",
+        "bytes": 1213,
+        "records": null,
+        "peeked_header": "{\"jsonrpc\":\"2.0\",\"result\":[{\"marketType\":\"WINNER\",\"marketCount\":1},{\"marketType\":\"FIRST_HALF_GOALS_25\",\"marketCount\":5},{\"marketType\":\"OVER_UNDER_75\",\"marketCount\":5},{\"marketType\":\"TEAM_A_1\",\"marketCount\":5},{\"marketType\":\"DRAW_NO_BET\",\"marketCount\":5},{\"marketType\":\"DOUBLE_CHANCE\",\"marketCount\":5},{\"marketType\":\"ASIAN_HANDICAP\",\"marketCount\":5},{\"marketType\":\"OVER_UNDER_35\",\"marketCount\":5},{\"ma"
+      },
+      {
+        "path": "tests/resources/list_race_details.json",
+        "sha256": "60b2cb48bec6edfe0132f58d15370e1ed019dd253aa1580101a0870951e24d22",
+        "bytes": 64621,
+        "records": null,
+        "peeked_header": "{\"jsonrpc\":\"2.0\",\"result\":[{\"meetingId\":\"27873033\",\"raceId\":\"27873033.1300\",\"lastUpdated\":\"2016-08-04T10:54:42.479Z\",\"raceStatus\":\"WEIGHEDIN\",\"responseCode\":\"OK\"},{\"meetingId\":\"27866797\",\"raceId\":\"27866797.1535\",\"lastUpdated\":\"2016-08-04T10:54:42.791Z\",\"raceStatus\":\"WEIGHEDIN\",\"responseCode\":\"OK\"},{\"meetingId\":\"27867977\",\"raceId\":\"27867977.1650\",\"lastUpdated\":\"2016-08-04T10:54:42.793Z\",\"raceStatus"
+      },
+      {
+        "path": "tests/resources/list_runner_book.json",
+        "sha256": "1343f5d139514ad58c46c1e67002705791b5f7dc9b66ccf542376855c40592c1",
+        "bytes": 507,
+        "records": null,
+        "peeked_header": "{\"jsonrpc\":\"2.0\",\"result\":[{\"marketId\":\"1.156770587\",\"isMarketDataDelayed\":true,\"status\":\"OPEN\",\"betDelay\":5,\"bspReconciled\":false,\"complete\":true,\"inplay\":true,\"numberOfWinners\":1,\"numberOfRunners\":3,\"numberOfActiveRunners\":3,\"lastMatchTime\":\"2019-04-03T18:57:47.558Z\",\"totalMatched\":108804.79,\"totalAvailable\":19232.85,\"crossMatching\":true,\"runnersVoidable\":false,\"version\":2720210433,\"runners\":[{\""
+      },
+      {
+        "path": "tests/resources/list_time_ranges.json",
+        "sha256": "7f8565a8276dfae3b6f30786da87e18591cada5260e3d9e723b6d021fe561244",
+        "bytes": 2980,
+        "records": null,
+        "peeked_header": "{\"jsonrpc\":\"2.0\",\"result\":[{\"timeRange\":{\"from\":\"2005-03-07T00:00:00.000Z\",\"to\":\"2005-03-08T00:00:00.000Z\"},\"marketCount\":1},{\"timeRange\":{\"from\":\"2005-07-29T00:00:00.000Z\",\"to\":\"2005-07-30T00:00:00.000Z\"},\"marketCount\":1},{\"timeRange\":{\"from\":\"2006-09-12T00:00:00.000Z\",\"to\":\"2006-09-13T00:00:00.000Z\"},\"marketCount\":1},{\"timeRange\":{\"from\":\"2007-08-12T00:00:00.000Z\",\"to\":\"2007-08-13T00:00:00.000Z\""
+      },
+      {
+        "path": "tests/resources/list_venues.json",
+        "sha256": "576cbe21e2c3637e1680a25183527d86415a934e54e273b25905700011aa0c75",
+        "bytes": 1218,
+        "records": null,
+        "peeked_header": "{\"jsonrpc\":\"2.0\",\"result\":[{\"venue\":\"Kinsley\",\"marketCount\":28},{\"venue\":\"Swindon\",\"marketCount\":28},{\"venue\":\"Fairview\",\"marketCount\":9},{\"venue\":\"Bangor\",\"marketCount\":14},{\"venue\":\"Thirsk\",\"marketCount\":14},{\"venue\":\"Goodwood\",\"marketCount\":28},{\"venue\":\"Hove\",\"marketCount\":28},{\"venue\":\"Monmore\",\"marketCount\":28},{\"venue\":\"Galway\",\"marketCount\":14},{\"venue\":\"Newmarket\",\"marketCount\":14},{\"venu"
+      },
+      {
+        "path": "tests/resources/login_fail.json",
+        "sha256": "bb2a59818cb9f080df375c5ae5f4aa91b940ef093ab7b2b034cd8981556a81a2",
+        "bytes": 46,
+        "records": null,
+        "peeked_header": "{\"loginStatus\":\"INVALID_USERNAME_OR_PASSWORD\"}"
+      },
+      {
+        "path": "tests/resources/login_interactive_fail.json",
+        "sha256": "3eb5f0fcd2f8f35e81508042aafdd7e88a890b2af7bf04487b28c7f9f9b262d8",
+        "bytes": 41,
+        "records": null,
+        "peeked_header": "{\"status\":\"INVALID_USERNAME_OR_PASSWORD\"}"
+      },
+      {
+        "path": "tests/resources/login_interactive_success.json",
+        "sha256": "09dd5edf2ef9d1f8c8985f9fdc7af68c3ba849a871c7258ac8cc3ef5b7702130",
+        "bytes": 44,
+        "records": null,
+        "peeked_header": "{\"token\":\"session_token\",\"status\":\"SUCCESS\"}"
+      },
+      {
+        "path": "tests/resources/login_success.json",
+        "sha256": "78fb48687adcb9fe4d85ce0cd44266442fc2274acc01f2fef83999a29f6788d5",
+        "bytes": 56,
+        "records": null,
+        "peeked_header": "{\"sessionToken\":\"session_token\",\"loginStatus\":\"SUCCESS\"}"
+      },
+      {
+        "path": "tests/resources/logout_fail.json",
+        "sha256": "46d23775758179f3fa8aa2b5e534c5519a1813dc505fe5e07757c7830b0edb3b",
+        "bytes": 82,
+        "records": null,
+        "peeked_header": "{\"token\":\"session_token\",\"product\":\"app_key\",\"status\":\"FAIL\",\"error\":\"NO_SESSION\"}"
+      },
+      {
+        "path": "tests/resources/logout_success.json",
+        "sha256": "528d3bdfb43b04c9b1f011fa06b04b8af870fc65b162f30d0416fc0f3f4ebcea",
+        "bytes": 75,
+        "records": null,
+        "peeked_header": "{\"token\":\"session_token\",\"product\":\"app_key\",\"status\":\"SUCCESS\",\"error\":\"\"}"
+      },
+      {
+        "path": "tests/resources/place_orders.json",
+        "sha256": "7d85270ab42214aa75e1e47b712c8e631a8bd2bc8920d6ae3c2ba01405a6123c",
+        "bytes": 380,
+        "records": null,
+        "peeked_header": "{\"jsonrpc\":\"2.0\",\"result\":{\"status\":\"SUCCESS\",\"marketId\":\"1.125897784\",\"instructionReports\":[{\"status\":\"SUCCESS\",\"instruction\":{\"selectionId\":9486865,\"handicap\":0.0,\"limitOrder\":{\"size\":2.0,\"price\":1.01,\"persistenceType\":\"LAPSE\"},\"orderType\":\"LIMIT\",\"side\":\"LAY\"},\"betId\":\"71962975289\",\"placedDate\":\"2016-07-30T17:04:40.000Z\",\"averagePriceMatched\":0.0,\"sizeMatched\":0.0}]},\"id\":1}"
+      },
+      {
+        "path": "tests/resources/racedetails.json",
+        "sha256": "784d589c71c66d7ff2a7564385af4e15a574271ace4aa2cb75da93dfde3d63cf",
+        "bytes": 157,
+        "records": null,
+        "peeked_header": "{"
+      },
+      {
+        "path": "tests/resources/replace_orders.json",
+        "sha256": "07f04a4b64e8c1b882cabdd5a9cdd79235d7d586a23ec4616bae7c10e103353a",
+        "bytes": 561,
+        "records": null,
+        "peeked_header": "{\"jsonrpc\":\"2.0\",\"result\":{\"status\":\"SUCCESS\",\"marketId\":\"1.125897784\",\"instructionReports\":[{\"status\":\"SUCCESS\",\"cancelInstructionReport\":{\"status\":\"SUCCESS\",\"instruction\":{\"betId\":\"71968034904\"},\"sizeCancelled\":2.0,\"cancelledDate\":\"2016-07-30T17:59:00.000Z\"},\"placeInstructionReport\":{\"status\":\"SUCCESS\",\"instruction\":{\"selectionId\":9486865,\"limitOrder\":{\"size\":2.0,\"price\":1.02,\"persistenceType\":\""
+      },
+      {
+        "path": "tests/resources/score.json",
+        "sha256": "7a5ddbc40fce5f437a8d90414610bb0a7e0f7efa4f70db20256c570415c2c2d9",
+        "bytes": 523,
+        "records": null,
+        "peeked_header": "[{\"eventId\":\"28237283\",\"eventTypeId\":\"2\",\"updateContext\":{\"eventTime\":\"11:24:06\",\"lastUpdated\":\"2017-05-16T11:24:06.000Z\",\"updateSequence\":77,\"updateType\":\"score\"},\"values\":{\"player2PointsWon\":\"40\",\"player1\":\"4729711\",\"player2\":\"8792467\",\"player1SetScores\":\"1\",\"player2GamesWon\":\"2\",\"player1GamesWon\":\"1\",\"player1SetsWon\":\"0\",\"player2SetsWon\":\"0\",\"player2SetScores\":\"2\",\"isLive\":\"1\",\"player1PointsWon"
+      },
+      {
+        "path": "tests/resources/scores.json",
+        "sha256": "3ac5ca79719b8c65d5101066a7c53e7313556b4defe1e7d71d5fbc1eb8edff3f",
+        "bytes": 1282,
+        "records": null,
+        "peeked_header": "{"
+      },
+      {
+        "path": "tests/resources/scoresandbroadcast.json",
+        "sha256": "711c3f5956bc5623714344f0eefc48a4701d8f1806d90e2af3c982cff5d6632d",
+        "bytes": 1595,
+        "records": null,
+        "peeked_header": "{"
+      }
+    ]
+  }
+]

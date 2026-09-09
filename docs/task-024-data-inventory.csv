@@ -1,0 +1,8 @@
+source,events,odds,exact_timestamp,exact_kickoff,temporal_relation_proven,strict,independence,status
+football-data.co.uk,13247,341637,false,false,false,0,upstream (lineageRoot football-data.co.uk),DATE_ONLY
+BeatTheBookie closing_odds.csv,479440,479440,false,false,false,0,REDISTRIBUTION of Lisandro79/BeatTheBookie,DATE_ONLY
+BeatTheBookie odds_series / odds_series_b / SQL,0,0,false,false,false,0,same BeatTheBookie root,NOT_ACQUIRED
+eatpizzanot/soccer-dataset,186813,213983,true,mixed,equals_kickoff,0,DERIVED (API-Football + football-data.co.uk + The-Odds-API),CLOSING_AT_KICKOFF
+Betfair Historic official BASIC,0,0,true,true,false,0,OFFICIAL historicdata.betfair.com,ACQUISITION_BLOCKED
+Betfair Historic GitHub MIRROR,1,3,true,true,true,1,MIRROR of historicdata.betfair.com,PARTIAL_STRICT
+Zenodo 10.5281/zenodo.12673394,0,0,false,false,false,0,REDISTRIBUTION of football-data.co.uk,NOT_ACQUIRED (semantics proven; FD cluster)

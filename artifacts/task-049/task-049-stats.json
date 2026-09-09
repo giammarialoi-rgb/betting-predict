@@ -1,0 +1,34 @@
+{
+  "EVENTS_ANALYZED": 233,
+  "EVENTS_TODAY": 7,
+  "EVENTS_NEXT_24H": 7,
+  "EVENTS_NEXT_72H": 36,
+  "EVENTS_NEXT_7D": 138,
+  "SOCCER": 233,
+  "TENNIS": 0,
+  "BASKETBALL": 0,
+  "VOLLEYBALL": 0,
+  "HOCKEY": 0,
+  "OTHER": 0,
+  "MARKETS_OBSERVED": [
+    "1X2",
+    "AH",
+    "H2H_LAY",
+    "OU"
+  ],
+  "MARKETS_ANALYZED": 135108,
+  "TOTAL_PREDICTIONS": 1954,
+  "NO_BET": 233,
+  "BET_CANDIDATE": 0,
+  "STRONG_CANDIDATE": 0,
+  "LOCKED": 114,
+  "SETTLED": 0,
+  "AUTOPSIED": 0,
+  "LEARNING_CASES": 0,
+  "sport_coverage": {
+    "at": null,
+    "sports": []
+  },
+  "artificial_cap": false,
+  "catalog_note": "114 LAB A SEED — NOT A CATALOG CAP — no artificial event ceiling"
+}

@@ -1,0 +1,14 @@
+services:
+  betmind:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: production
+      # Provide real values via host env / secrets manager — never commit secrets.
+      DATABASE_URL: ${DATABASE_URL:-}
+      REAL_MONEY: "false"
+    volumes:
+      # Required for BetMind disk APIs (snapshot/event/health).
+      - ./audit/external/task-044:/app/audit/external/task-044
+    restart: unless-stopped

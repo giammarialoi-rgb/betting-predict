@@ -1,0 +1,8 @@
+{
+  "exact": 0,
+  "probable": 1107,
+  "ambiguous": 58,
+  "failed": 278,
+  "unmatched": 6,
+  "collisions": []
+}

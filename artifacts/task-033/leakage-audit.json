@@ -1,0 +1,102 @@
+[
+  {
+    "id": "future_timestamp",
+    "throws": true
+  },
+  {
+    "id": "kickoff_leakage",
+    "throws": true
+  },
+  {
+    "id": "FT",
+    "throws": true
+  },
+  {
+    "id": "HT",
+    "throws": true
+  },
+  {
+    "id": "outcome",
+    "throws": true
+  },
+  {
+    "id": "closing_odds",
+    "throws": true
+  },
+  {
+    "id": "post_match_odds",
+    "throws": true
+  },
+  {
+    "id": "ambiguous_match",
+    "throws": true
+  },
+  {
+    "id": "future_bookmaker_quote",
+    "throws": true
+  },
+  {
+    "id": "future_lineup",
+    "throws": true
+  },
+  {
+    "id": "future_news",
+    "throws": true
+  },
+  {
+    "id": "aggregate_leakage",
+    "throws": true
+  },
+  {
+    "id": "cross_event_leakage",
+    "throws": true
+  },
+  {
+    "id": "date_only_to_strict",
+    "throws": true
+  },
+  {
+    "id": "naive_as_utc",
+    "throws": true
+  },
+  {
+    "id": "invented_ts",
+    "throws": true
+  },
+  {
+    "id": "test_lock",
+    "throws": true
+  },
+  {
+    "id": "holdout_lock",
+    "throws": true
+  },
+  {
+    "id": "feature_test",
+    "throws": true
+  },
+  {
+    "id": "holdout_train",
+    "throws": true
+  },
+  {
+    "id": "lock",
+    "throws": true
+  },
+  {
+    "id": "auto_promote",
+    "throws": true
+  },
+  {
+    "id": "masaniello",
+    "throws": true
+  },
+  {
+    "id": "task_034",
+    "throws": true
+  },
+  {
+    "id": "frozen_flags",
+    "throws": true
+  }
+]

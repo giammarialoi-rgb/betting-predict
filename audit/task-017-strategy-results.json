@@ -1,0 +1,107 @@
+[
+  {
+    "strategy": "flat",
+    "mean_final": 1001.8005263113578,
+    "median_final": 1002.0592547582229,
+    "worst_year": 961.2191740749248,
+    "best_year": 1035.7538171311176,
+    "max_dd": 0.09234850567837487,
+    "ruin": 0,
+    "roi": 0.0018005263113577712,
+    "calibration": null,
+    "status": "COMPARED_NO_AUTO_WINNER",
+    "n_ok_years": 6,
+    "finals": [
+      981.6944071746991,
+      1001.5184962516463,
+      1028.0172499709593,
+      1035.7538171311176,
+      961.2191740749248,
+      1002.6000132647995
+    ]
+  },
+  {
+    "strategy": "fractional_kelly",
+    "mean_final": 999.876661946742,
+    "median_final": 1000,
+    "worst_year": 999.3761696818466,
+    "best_year": 1000,
+    "max_dd": 0.0006238303181534092,
+    "ruin": 0,
+    "roi": -0.0001233380532579531,
+    "calibration": null,
+    "status": "COMPARED_NO_AUTO_WINNER",
+    "n_ok_years": 6,
+    "finals": [
+      1000,
+      1000,
+      999.3761696818466,
+      1000,
+      999.8838019986057,
+      1000
+    ]
+  },
+  {
+    "strategy": "risk_capped_kelly",
+    "mean_final": 999.876661946742,
+    "median_final": 1000,
+    "worst_year": 999.3761696818466,
+    "best_year": 1000,
+    "max_dd": 0.0006238303181534092,
+    "ruin": 0,
+    "roi": -0.0001233380532579531,
+    "calibration": null,
+    "status": "COMPARED_NO_AUTO_WINNER",
+    "n_ok_years": 6,
+    "finals": [
+      1000,
+      1000,
+      999.3761696818466,
+      1000,
+      999.8838019986057,
+      1000
+    ]
+  },
+  {
+    "strategy": "actuarial_v1",
+    "mean_final": 999.9282194034763,
+    "median_final": 1000,
+    "worst_year": 999.650655021834,
+    "best_year": 1000,
+    "max_dd": 0.0003493449781659592,
+    "ruin": 0,
+    "roi": -0.00007178059652369484,
+    "calibration": null,
+    "status": "COMPARED_NO_AUTO_WINNER",
+    "n_ok_years": 6,
+    "finals": [
+      1000,
+      1000,
+      999.650655021834,
+      1000,
+      999.9186613990239,
+      1000
+    ]
+  },
+  {
+    "strategy": "masaniello_challenger",
+    "mean_final": 993.6833636111438,
+    "median_final": 993.6938443474828,
+    "worst_year": 974.2904252410559,
+    "best_year": 1020.9043181568,
+    "max_dd": 0.05168050314465406,
+    "ruin": 0,
+    "roi": -0.006316636388856182,
+    "calibration": null,
+    "status": "COMPARED_NO_AUTO_WINNER",
+    "n_ok_years": 6,
+    "finals": [
+      974.2904252410559,
+      987.9860871767578,
+      1002.5065030041599,
+      1020.9043181568,
+      977.0112465698816,
+      999.4016015182079
+    ]
+  }
+]

@@ -1,0 +1,20 @@
+[
+  {
+    "model_id": "MODEL_v2_DECISION_ENGINE",
+    "role": "CHAMPION",
+    "status": "OBSERVATION_ONLY",
+    "auto_promotion": false,
+    "real_money": false,
+    "settled_required_for_edge": 100,
+    "note": "Active observation model — MODEL_EDGE UNKNOWN until SETTLED>=100 + stats gates"
+  },
+  {
+    "model_id": "MODEL_V3_WHY_SHADOW",
+    "role": "CHALLENGER",
+    "status": "OBSERVATION_ONLY",
+    "auto_promotion": false,
+    "real_money": false,
+    "settled_required_for_edge": 100,
+    "note": "Shadow WHY/machine-readable labels only — does not invent BET from market mirror"
+  }
+]

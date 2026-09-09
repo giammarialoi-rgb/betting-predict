@@ -1,0 +1,384 @@
+{
+  "probes": [
+    {
+      "channel": "betfair-mcm-fixture",
+      "url": "https://github.com/petermclagan/betfair-historical",
+      "http_status": 200,
+      "acquired": true,
+      "license": "local cache / committed fixture",
+      "note": "Committed MATCH_ODDS ndjson (1 EPL event, STRICT candidate) bytes=14050"
+    },
+    {
+      "channel": "betfair-basic-sample-json",
+      "url": "https://github.com/petermclagan/betfair-historical",
+      "http_status": 200,
+      "acquired": true,
+      "license": "local cache / committed fixture",
+      "note": "petermclagan football-basic-sample extracted JSON (gitignored) bytes=1472599"
+    },
+    {
+      "channel": "kaggle-betfair-sports-csv",
+      "url": "https://www.kaggle.com/datasets/zygmunt/betfair-sports",
+      "http_status": 200,
+      "acquired": true,
+      "license": "local cache / committed fixture",
+      "note": "Kaggle weekly CSV cache bytes=337478465"
+    },
+    {
+      "channel": "club-football-matches",
+      "url": "https://github.com/xgabora/Club-Football-Match-Data",
+      "http_status": 200,
+      "acquired": true,
+      "license": "local cache / committed fixture",
+      "note": "Club-Football Matches.csv RESEARCH_ONLY bytes=45608878"
+    },
+    {
+      "channel": "btb-closing-odds",
+      "url": "https://github.com/Lisandro79/BeatTheBookie",
+      "http_status": 200,
+      "acquired": true,
+      "license": "local cache / committed fixture",
+      "note": "BeatTheBookie closing_odds.csv DATE_ONLY bytes=69340934"
+    },
+    {
+      "channel": "soccer-odds-parquet",
+      "url": "https://huggingface.co/datasets/eatpizzanot/soccer-dataset",
+      "http_status": 200,
+      "acquired": true,
+      "license": "local cache / committed fixture",
+      "note": "soccer-dataset odds.parquet CLOSING_AT_KICKOFF bytes=2591808"
+    },
+    {
+      "channel": "kaggle-api-view",
+      "url": "https://www.kaggle.com/api/v1/datasets/view/zygmunt/betfair-sports",
+      "http_status": 200,
+      "acquired": false,
+      "license": "Kaggle Other",
+      "note": "HTTP 200 zip=false {\"subtitleNullable\":\"A detailed history of prices traded for each event\",\"creato"
+    },
+    {
+      "channel": "kaggle-download",
+      "url": "https://www.kaggle.com/api/v1/datasets/download/zygmunt/betfair-sports",
+      "http_status": 206,
+      "acquired": false,
+      "license": "Kaggle Other",
+      "note": "HTTP 206 zip=true PK  -     ä 5OÓÌgÿÿÿÿÿÿÿÿ    betfair_140901.csv    A      è  "
+    },
+    {
+      "channel": "betfair-historic-portal",
+      "url": "https://historicdata.betfair.com/",
+      "http_status": 200,
+      "acquired": false,
+      "license": "Betfair terms",
+      "note": "HTTP 200 zip=false <!doctype html><html lang=\"en\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\""
+    },
+    {
+      "channel": "betfair-data-sample-host",
+      "url": "http://data.betfair.com/",
+      "http_status": null,
+      "acquired": false,
+      "license": "Betfair",
+      "note": "fetch failed"
+    },
+    {
+      "channel": "betfair-automation-hub",
+      "url": "https://betfair-datascientists.github.io/data/usingHistoricDataSite/",
+      "http_status": 200,
+      "acquired": false,
+      "license": "public docs",
+      "note": "HTTP 200 zip=false  <!doctype html> <html lang=\"en\" class=\"no-js\">   <head>            <meta charse"
+    },
+    {
+      "channel": "football-data-co-uk-e0",
+      "url": "https://www.football-data.co.uk/mmz4281/2425/E0.csv",
+      "http_status": 503,
+      "acquired": false,
+      "license": "football-data.co.uk",
+      "note": "BLOCKED HTTP 503 — optional source, laboratory continues. <html> <head> <title>The page is temporarily unavailable</title> <style> body { "
+    },
+    {
+      "channel": "ucd-wp2025-22-pdf",
+      "url": "https://www.ucd.ie/economics/t4media/WP2025_22.pdf",
+      "http_status": 403,
+      "acquired": false,
+      "license": "paper",
+      "note": "HTTP 403 zip=false <!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.or"
+    },
+    {
+      "channel": "zenodo-12673394",
+      "url": "https://zenodo.org/api/records/12673394",
+      "http_status": 200,
+      "acquired": false,
+      "license": "CC-BY-4.0",
+      "note": "HTTP 200 zip=false {\"created\": \"2024-07-06T15:15:22.006433+00:00\", \"modified\": \"2024-07-06T15:15:22"
+    },
+    {
+      "channel": "kaggle-bulk-acquire",
+      "url": "https://www.kaggle.com/datasets/zygmunt/betfair-sports",
+      "http_status": 200,
+      "acquired": true,
+      "license": "local cache / committed fixture",
+      "note": "Kaggle weekly CSV already cached (gitignored). License Other — local research only, not redistributed. bytes=337478465"
+    }
+  ],
+  "github": [
+    {
+      "repo": "betfair/historic-data-workbook",
+      "license": "HTTP 404",
+      "hasRawData": false,
+      "provenance": "OFFICIAL_DOCS",
+      "redistributionOk": false,
+      "note": "Official workbook (xlsm/docx). No market JSON/BZ2. License unspecified on GitHub. BASIC download still requires a Betfair account. LICENSE fetch 404."
+    },
+    {
+      "repo": "petermclagan/betfair-historical",
+      "license": "MIT License Copyright (c) 2020 Peter McLagan Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the \"Software\"), to deal in the Software without restriction, i",
+      "hasRawData": true,
+      "provenance": "MIRROR",
+      "redistributionOk": null,
+      "note": "Parser/downloader plus football-basic-sample.bz2. MIRROR of historicdata.betfair.com — not an independent bookmaker. Redistribution of the sample is not a license to republish the full historic archive. LICENSE fetch 200."
+    },
+    {
+      "repo": "mzaja/betfair-database",
+      "license": "HTTP 404",
+      "hasRawData": false,
+      "provenance": "TOOLING",
+      "redistributionOk": true,
+      "note": "MIT indexer. No soccer dump in the repo. Needs local Betfair files the user already owns. LICENSE fetch 404."
+    },
+    {
+      "repo": "AnishKhetani/premier-league-data",
+      "license": "MIT License Copyright (c) 2026 Anish Khetani Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the \"Software\"), to deal in the Software without restriction, i",
+      "hasRawData": true,
+      "provenance": "FD_CLUSTER",
+      "redistributionOk": null,
+      "note": "EPL 1993–present odds. football-data.co.uk cluster — not an independent bookmaker source. LICENSE fetch 200."
+    },
+    {
+      "repo": "Lisandro79/BeatTheBookie",
+      "license": " GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007 Copyright (C) 2007 Free Software Foundation, Inc. <http://fsf.org/> Everyone is permitted to copy and distribute verbatim copies of this licen",
+      "hasRawData": false,
+      "provenance": "RESEARCH_CODE",
+      "redistributionOk": null,
+      "note": "Generator + MATLAB. Bulk odds_series on Dropbox/Drive, not in git. DATE_ONLY / relative bins. LICENSE fetch 200."
+    },
+    {
+      "repo": "xgabora/Club-Football-Match-Data (local clone)",
+      "license": "MIT License Copyright (c) 2025 xgabora Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the \"Software\"), to deal",
+      "hasRawData": true,
+      "provenance": "LOCAL_CLONE RESEARCH_ONLY DATE_ONLY odds",
+      "redistributionOk": null,
+      "note": "Inspected Matches.csv on disk. Odd* are not STRICT quote clocks. Form*/C_*/Max* forbidden in STRICT."
+    }
+  ],
+  "academic": [
+    {
+      "name": "UCD WP2025/22 Whelan — Agreeing to Disagree",
+      "paperUrl": "https://www.ucd.ie/economics/t4media/WP2025_22.pdf",
+      "datasetUrl": null,
+      "license": "Paper CC; dataset is Betfair Advanced commercial product given to the author on request — not supplementary data",
+      "files": "none public (author processed ~214,992 MATCH_ODDS triples to spreadsheet; files not posted)",
+      "coverage": "soccer 2022–2024 (declared)",
+      "events": "~214,992 with pre-kickoff LTP on H/D/A (declared, not in our possession)",
+      "timestampPrecision": "1-second MCM (declared Advanced)",
+      "kickoff": "market metadata in JSON (declared)",
+      "odds": "back/lay/LTP/volume/in-play (declared)",
+      "provenance": "Betfair Advanced, research request — not a public dump",
+      "redistribution": "NOT_PUBLIC. Do not scrape. Do not assume availability.",
+      "acquired": false
+    },
+    {
+      "name": "MPRA 126351 (same paper)",
+      "paperUrl": "https://mpra.ub.uni-muenchen.de/126351/",
+      "datasetUrl": null,
+      "license": "paper only",
+      "files": "PDF only",
+      "coverage": "same 2022–2024 claim",
+      "events": "same",
+      "timestampPrecision": "same",
+      "kickoff": "same",
+      "odds": "same",
+      "provenance": "duplicate distribution of WP2025/22",
+      "redistribution": "no dataset",
+      "acquired": false
+    },
+    {
+      "name": "Zenodo 10.5281/zenodo.12673394 Hegarty IJF 2024",
+      "paperUrl": "https://zenodo.org/records/12673394",
+      "datasetUrl": "https://zenodo.org/records/12673394",
+      "license": "CC-BY-4.0",
+      "files": "Stata/R replication; Raw to Tidy Data.zip (football-data.co.uk lineage)",
+      "coverage": "football-data.co.uk cluster",
+      "events": "FD-scale (not Betfair MCM)",
+      "timestampPrecision": "DATE_ONLY",
+      "kickoff": "match date",
+      "odds": "opening/closing bookmaker columns",
+      "provenance": "REDISTRIBUTION of football-data.co.uk",
+      "redistribution": "yes (CC-BY) but not STRICT and not independent of FD",
+      "acquired": false
+    },
+    {
+      "name": "Kaggle zygmunt/betfair-sports",
+      "paperUrl": "https://www.kaggle.com/datasets/zygmunt/betfair-sports",
+      "datasetUrl": "https://www.kaggle.com/datasets/zygmunt/betfair-sports",
+      "license": "Other (Kaggle description)",
+      "files": "CSV ~321MB uncompressed / ~85MB zip — login required for bulk",
+      "coverage": "one week, 23 sports, not multi-year",
+      "events": "1,306,731 rows declared (trades, not unique matches)",
+      "timestampPrecision": "FIRST_TAKEN/LATEST_TAKEN/SCHEDULED_OFF as naive clocks unless ISO offset present",
+      "kickoff": "SCHEDULED_OFF / ACTUAL_OFF",
+      "odds": "ODDS + VOLUME_MATCHED + NUMBER_BETS + IN_PLAY",
+      "provenance": "Betfair exchange week sample via Kaggle",
+      "redistribution": "do not mirror without license; unauthenticated download blocked",
+      "acquired": false
+    }
+  ],
+  "scores": [
+    {
+      "sourceId": "betfair-historic-official-basic",
+      "temporalPrecision": 10,
+      "eventCoverage": 9,
+      "marketCoverage": 6,
+      "bookmakerCoverage": 3,
+      "provenance": 10,
+      "license": 6,
+      "independence": 10,
+      "accessibility": 2,
+      "cost": 0,
+      "matchingQuality": 8,
+      "expectedInformationGain": 10,
+      "capitalEligible": true,
+      "dataClass": "A_STRICT",
+      "eigOverCost": 10
+    },
+    {
+      "sourceId": "ucd-wp2025-22-betfair-advanced",
+      "temporalPrecision": 10,
+      "eventCoverage": 10,
+      "marketCoverage": 9,
+      "bookmakerCoverage": 3,
+      "provenance": 9,
+      "license": 2,
+      "independence": 10,
+      "accessibility": 1,
+      "cost": 0,
+      "matchingQuality": 8,
+      "expectedInformationGain": 10,
+      "capitalEligible": true,
+      "dataClass": "A_STRICT",
+      "eigOverCost": 10
+    },
+    {
+      "sourceId": "kaggle-zygmunt-betfair-sports",
+      "temporalPrecision": 7,
+      "eventCoverage": 2,
+      "marketCoverage": 4,
+      "bookmakerCoverage": 3,
+      "provenance": 7,
+      "license": 3,
+      "independence": 3,
+      "accessibility": 3,
+      "cost": 0,
+      "matchingQuality": 5,
+      "expectedInformationGain": 6,
+      "capitalEligible": false,
+      "dataClass": "B_RESEARCH_TEMPORAL",
+      "eigOverCost": 6
+    },
+    {
+      "sourceId": "club-football-match-data",
+      "temporalPrecision": 2,
+      "eventCoverage": 8,
+      "marketCoverage": 4,
+      "bookmakerCoverage": 2,
+      "provenance": 6,
+      "license": 6,
+      "independence": 4,
+      "accessibility": 10,
+      "cost": 0,
+      "matchingQuality": 7,
+      "expectedInformationGain": 5,
+      "capitalEligible": false,
+      "dataClass": "C_RESEARCH_ONLY",
+      "eigOverCost": 5
+    },
+    {
+      "sourceId": "petermclagan-football-basic-sample",
+      "temporalPrecision": 10,
+      "eventCoverage": 1,
+      "marketCoverage": 8,
+      "bookmakerCoverage": 3,
+      "provenance": 8,
+      "license": 5,
+      "independence": 2,
+      "accessibility": 10,
+      "cost": 0,
+      "matchingQuality": 9,
+      "expectedInformationGain": 4,
+      "capitalEligible": true,
+      "dataClass": "A_STRICT",
+      "eigOverCost": 4
+    },
+    {
+      "sourceId": "football-data-co-uk",
+      "temporalPrecision": 2,
+      "eventCoverage": 7,
+      "marketCoverage": 5,
+      "bookmakerCoverage": 8,
+      "provenance": 9,
+      "license": 8,
+      "independence": 10,
+      "accessibility": 4,
+      "cost": 0,
+      "matchingQuality": 8,
+      "expectedInformationGain": 4,
+      "capitalEligible": false,
+      "dataClass": "C_RESEARCH_ONLY",
+      "eigOverCost": 4
+    },
+    {
+      "sourceId": "eatpizzanot-soccer-dataset",
+      "temporalPrecision": 3,
+      "eventCoverage": 10,
+      "marketCoverage": 3,
+      "bookmakerCoverage": 5,
+      "provenance": 7,
+      "license": 9,
+      "independence": 3,
+      "accessibility": 10,
+      "cost": 0,
+      "matchingQuality": 6,
+      "expectedInformationGain": 3,
+      "capitalEligible": false,
+      "dataClass": "C_RESEARCH_ONLY",
+      "eigOverCost": 3
+    }
+  ],
+  "kaggle": {
+    "bulk_acquired": true,
+    "bulk_bytes": 337478465,
+    "bulk_sha256": "ce72ba2ebdc79bf22b169f32fa279a4adee7ef5b6b946ae87e2a39decb291fb4",
+    "sample_rows": 1306748,
+    "class_counts": {
+      "A_STRICT": 0,
+      "B_RESEARCH_TEMPORAL": 150837,
+      "C_RESEARCH_ONLY": 0,
+      "D_INVALID": 1155911
+    },
+    "unique_events_sample": 32873,
+    "soccer_rows": 857936,
+    "soccer_events": 23423,
+    "license": "Other (specified in description)",
+    "meta": {
+      "url": "https://www.kaggle.com/datasets/zygmunt/betfair-sports",
+      "rows_declared": 1306731,
+      "bytes_uncompressed_declared": 321000000,
+      "zip_bytes_declared": 85387576,
+      "requiresSubscription": true,
+      "isAccessibleForFree": true,
+      "license": "Other (specified in description)",
+      "soccer_sports_id": "1",
+      "note": "One week of Betfair exchange trades across 23 sports. Not a multi-year history."
+    }
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "normalized_events": 5,
+  "sample_fixture_id": "1208021",
+  "contract": {
+    "model_probability": null,
+    "market_probability": null,
+    "edge": null,
+    "ev": null,
+    "decision": null,
+    "why": {
+      "primary_reason": "CONTRACT_ONLY_NO_MODEL",
+      "supporting_signals": [],
+      "negative_signals": [],
+      "missing_information": [
+        "independent_model_not_implemented"
+      ]
+    },
+    "note": "CONTRACT_ONLY_NO_MODEL_v3"
+  }
+}

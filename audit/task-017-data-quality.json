@@ -1,0 +1,335 @@
+{
+  "primary_dataset": "real_truth_lab_v1_e0_2019_2024",
+  "primary_events": 61,
+  "primary_quotes": 1220,
+  "year_inventory": [
+    {
+      "year": 2001,
+      "events_usable_primary": 0,
+      "events_excluded": 24797,
+      "exclusion_reason": "secondary_club_football_present_but_STRICT_blind_bankroll_excludes_undocumented_odds_clocks",
+      "quality": "SECONDARY_ONLY_CATALOGUED",
+      "secondary_catalogued_bucket": "2000-2005"
+    },
+    {
+      "year": 2002,
+      "events_usable_primary": 0,
+      "events_excluded": 24797,
+      "exclusion_reason": "secondary_club_football_present_but_STRICT_blind_bankroll_excludes_undocumented_odds_clocks",
+      "quality": "SECONDARY_ONLY_CATALOGUED",
+      "secondary_catalogued_bucket": "2000-2005"
+    },
+    {
+      "year": 2003,
+      "events_usable_primary": 0,
+      "events_excluded": 24797,
+      "exclusion_reason": "secondary_club_football_present_but_STRICT_blind_bankroll_excludes_undocumented_odds_clocks",
+      "quality": "SECONDARY_ONLY_CATALOGUED",
+      "secondary_catalogued_bucket": "2000-2005"
+    },
+    {
+      "year": 2004,
+      "events_usable_primary": 0,
+      "events_excluded": 24797,
+      "exclusion_reason": "secondary_club_football_present_but_STRICT_blind_bankroll_excludes_undocumented_odds_clocks",
+      "quality": "SECONDARY_ONLY_CATALOGUED",
+      "secondary_catalogued_bucket": "2000-2005"
+    },
+    {
+      "year": 2005,
+      "events_usable_primary": 0,
+      "events_excluded": 24797,
+      "exclusion_reason": "secondary_club_football_present_but_STRICT_blind_bankroll_excludes_undocumented_odds_clocks",
+      "quality": "SECONDARY_ONLY_CATALOGUED",
+      "secondary_catalogued_bucket": "2000-2005"
+    },
+    {
+      "year": 2006,
+      "events_usable_primary": 0,
+      "events_excluded": 34086,
+      "exclusion_reason": "secondary_club_football_present_but_STRICT_blind_bankroll_excludes_undocumented_odds_clocks",
+      "quality": "SECONDARY_ONLY_CATALOGUED",
+      "secondary_catalogued_bucket": "2005-2010"
+    },
+    {
+      "year": 2007,
+      "events_usable_primary": 0,
+      "events_excluded": 34086,
+      "exclusion_reason": "secondary_club_football_present_but_STRICT_blind_bankroll_excludes_undocumented_odds_clocks",
+      "quality": "SECONDARY_ONLY_CATALOGUED",
+      "secondary_catalogued_bucket": "2005-2010"
+    },
+    {
+      "year": 2008,
+      "events_usable_primary": 0,
+      "events_excluded": 34086,
+      "exclusion_reason": "secondary_club_football_present_but_STRICT_blind_bankroll_excludes_undocumented_odds_clocks",
+      "quality": "SECONDARY_ONLY_CATALOGUED",
+      "secondary_catalogued_bucket": "2005-2010"
+    },
+    {
+      "year": 2009,
+      "events_usable_primary": 0,
+      "events_excluded": 34086,
+      "exclusion_reason": "secondary_club_football_present_but_STRICT_blind_bankroll_excludes_undocumented_odds_clocks",
+      "quality": "SECONDARY_ONLY_CATALOGUED",
+      "secondary_catalogued_bucket": "2005-2010"
+    },
+    {
+      "year": 2010,
+      "events_usable_primary": 0,
+      "events_excluded": 34086,
+      "exclusion_reason": "secondary_club_football_present_but_STRICT_blind_bankroll_excludes_undocumented_odds_clocks",
+      "quality": "SECONDARY_ONLY_CATALOGUED",
+      "secondary_catalogued_bucket": "2005-2010"
+    },
+    {
+      "year": 2011,
+      "events_usable_primary": 0,
+      "events_excluded": 48654,
+      "exclusion_reason": "secondary_club_football_present_but_STRICT_blind_bankroll_excludes_undocumented_odds_clocks",
+      "quality": "SECONDARY_ONLY_CATALOGUED",
+      "secondary_catalogued_bucket": "2010-2015"
+    },
+    {
+      "year": 2012,
+      "events_usable_primary": 0,
+      "events_excluded": 48654,
+      "exclusion_reason": "secondary_club_football_present_but_STRICT_blind_bankroll_excludes_undocumented_odds_clocks",
+      "quality": "SECONDARY_ONLY_CATALOGUED",
+      "secondary_catalogued_bucket": "2010-2015"
+    },
+    {
+      "year": 2013,
+      "events_usable_primary": 0,
+      "events_excluded": 48654,
+      "exclusion_reason": "secondary_club_football_present_but_STRICT_blind_bankroll_excludes_undocumented_odds_clocks",
+      "quality": "SECONDARY_ONLY_CATALOGUED",
+      "secondary_catalogued_bucket": "2010-2015"
+    },
+    {
+      "year": 2014,
+      "events_usable_primary": 0,
+      "events_excluded": 48654,
+      "exclusion_reason": "secondary_club_football_present_but_STRICT_blind_bankroll_excludes_undocumented_odds_clocks",
+      "quality": "SECONDARY_ONLY_CATALOGUED",
+      "secondary_catalogued_bucket": "2010-2015"
+    },
+    {
+      "year": 2015,
+      "events_usable_primary": 0,
+      "events_excluded": 48654,
+      "exclusion_reason": "secondary_club_football_present_but_STRICT_blind_bankroll_excludes_undocumented_odds_clocks",
+      "quality": "SECONDARY_ONLY_CATALOGUED",
+      "secondary_catalogued_bucket": "2010-2015"
+    },
+    {
+      "year": 2016,
+      "events_usable_primary": 0,
+      "events_excluded": 60876,
+      "exclusion_reason": "secondary_club_football_present_but_STRICT_blind_bankroll_excludes_undocumented_odds_clocks",
+      "quality": "SECONDARY_ONLY_CATALOGUED",
+      "secondary_catalogued_bucket": "2015-2020"
+    },
+    {
+      "year": 2017,
+      "events_usable_primary": 0,
+      "events_excluded": 60876,
+      "exclusion_reason": "secondary_club_football_present_but_STRICT_blind_bankroll_excludes_undocumented_odds_clocks",
+      "quality": "SECONDARY_ONLY_CATALOGUED",
+      "secondary_catalogued_bucket": "2015-2020"
+    },
+    {
+      "year": 2018,
+      "events_usable_primary": 0,
+      "events_excluded": 60876,
+      "exclusion_reason": "secondary_club_football_present_but_STRICT_blind_bankroll_excludes_undocumented_odds_clocks",
+      "quality": "SECONDARY_ONLY_CATALOGUED",
+      "secondary_catalogued_bucket": "2015-2020"
+    },
+    {
+      "year": 2019,
+      "events_usable_primary": 12,
+      "events_excluded": 0,
+      "exclusion_reason": "none",
+      "quality": "OK",
+      "secondary_catalogued_bucket": "2015-2020"
+    },
+    {
+      "year": 2020,
+      "events_usable_primary": 10,
+      "events_excluded": 0,
+      "exclusion_reason": "none",
+      "quality": "OK",
+      "secondary_catalogued_bucket": "2015-2020"
+    },
+    {
+      "year": 2021,
+      "events_usable_primary": 11,
+      "events_excluded": 0,
+      "exclusion_reason": "none",
+      "quality": "OK",
+      "secondary_catalogued_bucket": "2020-2025"
+    },
+    {
+      "year": 2022,
+      "events_usable_primary": 11,
+      "events_excluded": 0,
+      "exclusion_reason": "none",
+      "quality": "OK",
+      "secondary_catalogued_bucket": "2020-2025"
+    },
+    {
+      "year": 2023,
+      "events_usable_primary": 11,
+      "events_excluded": 0,
+      "exclusion_reason": "none",
+      "quality": "OK",
+      "secondary_catalogued_bucket": "2020-2025"
+    },
+    {
+      "year": 2024,
+      "events_usable_primary": 6,
+      "events_excluded": 0,
+      "exclusion_reason": "none",
+      "quality": "OK",
+      "secondary_catalogued_bucket": "2020-2025"
+    },
+    {
+      "year": 2025,
+      "events_usable_primary": 0,
+      "events_excluded": 0,
+      "exclusion_reason": "incomplete_year_no_primary_events",
+      "quality": "INCOMPLETE_YEAR",
+      "secondary_catalogued_bucket": "2020-2025"
+    },
+    {
+      "year": 2026,
+      "events_usable_primary": 0,
+      "events_excluded": 0,
+      "exclusion_reason": "incomplete_year_no_primary_events",
+      "quality": "INCOMPLETE_YEAR",
+      "secondary_catalogued_bucket": "2025+"
+    }
+  ],
+  "market_inventory": [
+    {
+      "market": "result",
+      "observed": true,
+      "temporally_validated": false,
+      "model_ready": false,
+      "n_primary": 1098,
+      "status": "ADMITTED"
+    },
+    {
+      "market": "total_goals",
+      "observed": true,
+      "temporally_validated": false,
+      "model_ready": false,
+      "n_primary": 122,
+      "status": "CATALOGUED_ONLY"
+    },
+    {
+      "market": "team_goals",
+      "observed": false,
+      "temporally_validated": false,
+      "model_ready": false,
+      "n_primary": 0,
+      "status": "BLOCKED"
+    },
+    {
+      "market": "both_teams_to_score",
+      "observed": false,
+      "temporally_validated": false,
+      "model_ready": false,
+      "n_primary": 0,
+      "status": "BLOCKED"
+    },
+    {
+      "market": "asian_handicap",
+      "observed": false,
+      "temporally_validated": false,
+      "model_ready": false,
+      "n_primary": 0,
+      "status": "BLOCKED"
+    },
+    {
+      "market": "corners",
+      "observed": false,
+      "temporally_validated": false,
+      "model_ready": false,
+      "n_primary": 0,
+      "status": "BLOCKED"
+    },
+    {
+      "market": "cards",
+      "observed": false,
+      "temporally_validated": false,
+      "model_ready": false,
+      "n_primary": 0,
+      "status": "BLOCKED"
+    },
+    {
+      "market": "player_goals",
+      "observed": false,
+      "temporally_validated": false,
+      "model_ready": false,
+      "n_primary": 0,
+      "status": "BLOCKED"
+    },
+    {
+      "market": "ht_ft",
+      "observed": false,
+      "temporally_validated": false,
+      "model_ready": false,
+      "n_primary": 0,
+      "status": "BLOCKED"
+    },
+    {
+      "market": "correct_score",
+      "observed": false,
+      "temporally_validated": false,
+      "model_ready": false,
+      "n_primary": 0,
+      "status": "BLOCKED"
+    },
+    {
+      "market": "double_chance",
+      "observed": false,
+      "temporally_validated": false,
+      "model_ready": false,
+      "n_primary": 0,
+      "status": "BLOCKED"
+    },
+    {
+      "market": "draw_no_bet",
+      "observed": false,
+      "temporally_validated": false,
+      "model_ready": false,
+      "n_primary": 0,
+      "status": "BLOCKED"
+    }
+  ],
+  "secondary": {
+    "id": "club-football-match-data",
+    "role": "SECONDARY_BENCHMARK_RESEARCH",
+    "status": "EXTERNAL_CLONE_MISSING_OR_NOT_USED_IN_STRICT",
+    "audit_summary": "audit/club-football-match-data/summary.json",
+    "commit_sha_from_audit": "25882a58a736daf7ece3781940eac17ae1117a66",
+    "forbidden_in_strict": [
+      "C_*",
+      "Form*",
+      "Max*/Avg* as bookmaker",
+      "provisional Elo",
+      "undocumented odds clocks"
+    ],
+    "external_matches_csv_present": true,
+    "audit_present": true,
+    "commit_sha": "25882a58a736daf7ece3781940eac17ae1117a66",
+    "retrieved_at": "2026-09-06T19:35:29.554Z",
+    "row_count_from_audit": 238858
+  },
+  "temporal_precision_note": "dataset_open/close = unknown clocks; RESEARCH labeled; never promoted to exact",
+  "leakage_violations": 0,
+  "holdout_touched": false
+}

@@ -1,0 +1,10 @@
+{
+  "experiment_id": "exp_013_blind_market_lab_v1",
+  "dataset_version": "real_truth_lab_v1_e0_2019_2024",
+  "feature_version": "feature_engine_v4",
+  "model_version": "champion_market_devig_v1",
+  "as_of_policy": "STRICT_AS_OF",
+  "champion": "market_devig",
+  "created_at": "2026-04-06T00:00:00.000Z",
+  "notes": "TASK 013 — Blind Market Lab V1; live football-data.co.uk BLOCKED HTTP_503; offline pack primary; MODEL_READY may be 0; no auto-promote; real_money=false"
+}

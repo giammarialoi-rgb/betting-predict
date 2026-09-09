@@ -1,0 +1,30 @@
+{
+  "TOTAL_ANALYZED": 233,
+  "TOTAL_PREDICTIONS": 1042,
+  "NO_BET": 233,
+  "BET_CANDIDATE": 0,
+  "STRONG_CANDIDATE": 0,
+  "SETTLED": 0,
+  "CORRECT": 0,
+  "WRONG": 0,
+  "accuracy": null,
+  "Brier": null,
+  "LogLoss": null,
+  "calibration": null,
+  "mean_confidence": 50.96137339055794,
+  "mean_edge": 0,
+  "edge_distribution": {
+    "below_0": 0,
+    "mid": 192,
+    "above_003": 0
+  },
+  "why_performance": [],
+  "MODEL_EDGE": "UNKNOWN",
+  "MARKET_BRIER": null,
+  "MODEL_BRIER": null,
+  "DELTA_BRIER": null,
+  "CI_95": null,
+  "HOLM": null,
+  "HOLDOUT": null,
+  "note": "SETTLED < 100 — no definitive statistical edge metrics"
+}

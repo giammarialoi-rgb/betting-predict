@@ -1,0 +1,16 @@
+{
+  "partition": "RESEARCH_ONLY",
+  "usable_for_capital": false,
+  "sources": [
+    "anishkhetani",
+    "nm2890",
+    "akareen",
+    "ivanzou",
+    "petermclagan",
+    "soccer_dataset",
+    "oddsharvester",
+    "iredchuk",
+    "task-031-base"
+  ],
+  "events": 32358
+}

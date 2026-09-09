@@ -1,0 +1,76 @@
+{
+  "odds_rows": 213983,
+  "odds_fixtures": 186813,
+  "known_at_eq_kickoff": 213983,
+  "known_at_before": 0,
+  "known_at_after": 0,
+  "kickoff_midnight": 74763,
+  "kickoff_has_clock": 139220,
+  "bookmakers": {
+    "Pinnacle": 181406,
+    "Bet365": 27762,
+    "Betfair": 1964,
+    "888sport": 826,
+    "1xBet": 368,
+    "William Hill": 352,
+    "Unibet": 339,
+    "Maximum": 263,
+    "Nordic Bet": 89,
+    "Betfair Exchange": 86,
+    "Marathon Bet": 65,
+    "Betclic": 59,
+    "MyBookie.ag": 55,
+    "Unibet (NL)": 53,
+    "Suprabets": 45,
+    "Unibet (SE)": 41,
+    "Unibet (IT)": 35,
+    "Winamax (DE)": 33,
+    "Betsson": 33,
+    "LeoVegas (SE)": 28
+  },
+  "sources": {
+    "API-Football-closing": 175908,
+    "CSV": 24412,
+    "The-Odds-API": 12655,
+    "API-Football": 1008
+  },
+  "year_min": 2012,
+  "year_max": 2026,
+  "files": {
+    "odds.parquet": {
+      "bytes": 2591808,
+      "sha256": "33286ac0c288a2dfd149a1cb26db92eba2ddb33fec74b30967607035592d720d"
+    },
+    "fixtures.parquet": {
+      "bytes": 12938933,
+      "sha256": "7ba90661dbed29eb940daf5ea385c7d76d5751d16be86bd9063293a982abc7b7"
+    },
+    "leagues.parquet": {
+      "bytes": 8240,
+      "sha256": "55c8e198650f5e2864fac85823196f6b5b45caf8342c1308e87e351098242c58"
+    },
+    "teams.parquet": {
+      "bytes": 321028,
+      "sha256": "5529282b37ad51437142dd7c6d32fb60bbbdd56953dc432e3b9247dca17a2fa5"
+    },
+    "match_stats.parquet": {
+      "bytes": 7027755,
+      "sha256": "2fb85b14b4428e1a36efe6d651de4ca8f7a6169ecfa3edb9cda49cb5e58d97e9"
+    },
+    "fixture_lineups.parquet": {
+      "bytes": 7042165,
+      "sha256": "dcd9181f54df52193877ffd8a41b5d1097b404eb46b4890069c0e4d1c8c13abd"
+    }
+  },
+  "match_stats_rows": 283834,
+  "match_stats_known_at_offset_sec": 6300,
+  "lineups_rows": 565370,
+  "teams": 11104,
+  "leagues": 271,
+  "fixtures": 673966,
+  "odds_fixtures_midnight": 74438,
+  "odds_fixtures_clock": 112375,
+  "dictionary_odds_known_at": "Odds known at/around kick-off (closing line)",
+  "dictionary_fixtures_date_utc": "Kick-off time, UTC (tz-naive)",
+  "dictionary_match_stats_known_at": "kickoff + 105 min leakage guard"
+}

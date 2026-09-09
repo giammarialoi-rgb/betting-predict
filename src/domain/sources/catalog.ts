@@ -1,0 +1,544 @@
+import { getSport } from "../sports/catalog";
+import {
+  unknownQuality,
+  type SourceCapability,
+  type SourceDefinition,
+  type SourceDiscoveryQuery,
+  type SourceType,
+} from "./types";
+
+function source(definition: Omit<SourceDefinition, "quality">): SourceDefinition {
+  return Object.freeze({
+    ...definition,
+    sports: Object.freeze([...definition.sports]),
+    capabilities: Object.freeze([...definition.capabilities]),
+    scrapingAllowed: "unknown",
+    quality: unknownQuality(),
+  });
+}
+
+const SOURCES: readonly SourceDefinition[] = Object.freeze([
+  source({
+    id: "football-data-org",
+    name: "football-data.org",
+    domain: "football-data.org",
+    sourceType: "api",
+    sports: ["football"],
+    capabilities: ["fixtures", "results"],
+    historicalData: "unknown",
+    realtime: false,
+    official: false,
+    requiresAuth: true,
+    freeTier: true,
+    scrapingAllowed: "unknown",
+    priority: "high",
+  }),
+  source({
+    id: "api-football",
+    name: "API-Football",
+    domain: "api-football.com",
+    sourceType: "api",
+    sports: ["football"],
+    capabilities: ["fixtures", "results", "team_stats", "lineups", "injuries"],
+    historicalData: "unknown",
+    realtime: "unknown",
+    official: false,
+    requiresAuth: true,
+    freeTier: true,
+    scrapingAllowed: "unknown",
+    priority: "high",
+  }),
+  source({
+    id: "diretta",
+    name: "Diretta",
+    domain: "diretta.it",
+    sourceType: "website",
+    sports: ["football"],
+    capabilities: ["fixtures", "results"],
+    historicalData: "unknown",
+    realtime: "unknown",
+    official: false,
+    requiresAuth: "unknown",
+    freeTier: true,
+    scrapingAllowed: "unknown",
+    priority: "medium",
+  }),
+  source({
+    id: "sofascore",
+    name: "SofaScore",
+    domain: "sofascore.com",
+    sourceType: "website",
+    sports: ["football"],
+    capabilities: ["fixtures", "results"],
+    historicalData: "unknown",
+    realtime: "unknown",
+    official: false,
+    requiresAuth: "unknown",
+    freeTier: true,
+    scrapingAllowed: "unknown",
+    priority: "medium",
+  }),
+  source({
+    id: "soccervista",
+    name: "SoccerVista",
+    domain: "soccervista.com",
+    sourceType: "website",
+    sports: ["football"],
+    capabilities: [],
+    historicalData: "unknown",
+    realtime: "unknown",
+    official: "unknown",
+    requiresAuth: "unknown",
+    freeTier: "unknown",
+    scrapingAllowed: "unknown",
+    priority: "low",
+  }),
+  source({
+    id: "soccervital",
+    name: "SoccerVital",
+    domain: "soccervital.com",
+    sourceType: "website",
+    sports: ["football"],
+    capabilities: [],
+    historicalData: "unknown",
+    realtime: "unknown",
+    official: "unknown",
+    requiresAuth: "unknown",
+    freeTier: "unknown",
+    scrapingAllowed: "unknown",
+    priority: "low",
+  }),
+  source({
+    id: "oddspedia",
+    name: "Oddspedia",
+    domain: "oddspedia.com",
+    sourceType: "website",
+    sports: ["football"],
+    capabilities: ["odds"],
+    historicalData: "unknown",
+    realtime: "unknown",
+    official: false,
+    requiresAuth: "unknown",
+    freeTier: true,
+    scrapingAllowed: "unknown",
+    priority: "medium",
+  }),
+  source({
+    id: "betshoot",
+    name: "Betshoot",
+    domain: "betshoot.com",
+    sourceType: "website",
+    sports: ["football"],
+    capabilities: [],
+    historicalData: "unknown",
+    realtime: "unknown",
+    official: false,
+    requiresAuth: "unknown",
+    freeTier: "unknown",
+    scrapingAllowed: "unknown",
+    priority: "low",
+  }),
+  source({
+    id: "click4soccer",
+    name: "Click4Soccer",
+    domain: "click4soccer.com",
+    sourceType: "website",
+    sports: ["football"],
+    capabilities: [],
+    historicalData: "unknown",
+    realtime: "unknown",
+    official: "unknown",
+    requiresAuth: "unknown",
+    freeTier: "unknown",
+    scrapingAllowed: "unknown",
+    priority: "low",
+  }),
+  source({
+    id: "sky-sport",
+    name: "Sky Sport",
+    domain: "sport.sky.it",
+    sourceType: "news",
+    sports: ["football"],
+    capabilities: ["news"],
+    historicalData: "unknown",
+    realtime: "unknown",
+    official: false,
+    requiresAuth: "unknown",
+    freeTier: "unknown",
+    scrapingAllowed: "unknown",
+    priority: "low",
+  }),
+  source({
+    id: "ansa",
+    name: "ANSA",
+    domain: "ansa.it",
+    sourceType: "news",
+    sports: ["football"],
+    capabilities: ["news"],
+    historicalData: "unknown",
+    realtime: "unknown",
+    official: false,
+    requiresAuth: false,
+    freeTier: true,
+    scrapingAllowed: "unknown",
+    priority: "low",
+  }),
+  source({
+    id: "analysisportiva",
+    name: "Analysisportiva",
+    sourceType: "website",
+    sports: ["football"],
+    capabilities: [],
+    historicalData: "unknown",
+    realtime: "unknown",
+    official: "unknown",
+    requiresAuth: "unknown",
+    freeTier: "unknown",
+    scrapingAllowed: "unknown",
+    priority: "low",
+  }),
+  source({
+    id: "sportytrader",
+    name: "SportyTrader",
+    domain: "sportytrader.com",
+    sourceType: "website",
+    sports: ["football"],
+    capabilities: [],
+    historicalData: "unknown",
+    realtime: "unknown",
+    official: false,
+    requiresAuth: "unknown",
+    freeTier: "unknown",
+    scrapingAllowed: "unknown",
+    priority: "low",
+  }),
+  source({
+    id: "il-veggente",
+    name: "Il Veggente",
+    sourceType: "website",
+    sports: ["football"],
+    capabilities: [],
+    historicalData: "unknown",
+    realtime: "unknown",
+    official: false,
+    requiresAuth: "unknown",
+    freeTier: "unknown",
+    scrapingAllowed: "unknown",
+    priority: "low",
+  }),
+  source({
+    id: "opta-stats-perform",
+    name: "Opta / Stats Perform",
+    domain: "statsperform.com",
+    sourceType: "official",
+    sports: [
+      "football",
+      "basketball",
+      "tennis",
+      "baseball",
+      "american-football",
+      "ice-hockey",
+    ],
+    capabilities: [
+      "fixtures",
+      "results",
+      "team_stats",
+      "player_stats",
+      "injuries",
+      "lineups",
+      "advanced_stats",
+    ],
+    historicalData: true,
+    realtime: true,
+    official: true,
+    requiresAuth: true,
+    freeTier: false,
+    scrapingAllowed: "unknown",
+    priority: "high",
+  }),
+  source({
+    id: "cies-football-observatory",
+    name: "CIES Football Observatory",
+    domain: "football-observatory.com",
+    sourceType: "research",
+    sports: ["football"],
+    capabilities: ["research"],
+    historicalData: "unknown",
+    realtime: false,
+    official: "unknown",
+    requiresAuth: "unknown",
+    freeTier: "unknown",
+    scrapingAllowed: "unknown",
+    priority: "medium",
+  }),
+  source({
+    id: "whoscored",
+    name: "WhoScored",
+    domain: "whoscored.com",
+    sourceType: "website",
+    sports: ["football"],
+    capabilities: ["team_stats", "player_stats", "advanced_stats"],
+    historicalData: "unknown",
+    realtime: "unknown",
+    official: false,
+    requiresAuth: "unknown",
+    freeTier: true,
+    scrapingAllowed: "unknown",
+    priority: "medium",
+  }),
+  source({
+    id: "understat",
+    name: "Understat",
+    domain: "understat.com",
+    sourceType: "website",
+    sports: ["football"],
+    capabilities: ["results", "advanced_stats"],
+    historicalData: true,
+    realtime: "unknown",
+    official: false,
+    requiresAuth: false,
+    freeTier: true,
+    scrapingAllowed: "unknown",
+    priority: "medium",
+  }),
+  source({
+    id: "fbref",
+    name: "FBref",
+    domain: "fbref.com",
+    sourceType: "website",
+    sports: ["football"],
+    capabilities: [
+      "results",
+      "team_stats",
+      "player_stats",
+      "historical_results",
+      "advanced_stats",
+    ],
+    historicalData: true,
+    realtime: false,
+    official: false,
+    requiresAuth: false,
+    freeTier: true,
+    scrapingAllowed: "unknown",
+    priority: "high",
+  }),
+  source({
+    id: "the-athletic",
+    name: "The Athletic",
+    domain: "nytimes.com",
+    sourceType: "news",
+    sports: ["football"],
+    capabilities: ["news"],
+    historicalData: "unknown",
+    realtime: "unknown",
+    official: false,
+    requiresAuth: true,
+    freeTier: false,
+    scrapingAllowed: "unknown",
+    priority: "low",
+  }),
+  source({
+    id: "the-analyst",
+    name: "The Analyst",
+    domain: "theanalyst.com",
+    sourceType: "research",
+    sports: ["football"],
+    capabilities: ["research", "advanced_stats"],
+    historicalData: "unknown",
+    realtime: "unknown",
+    official: "unknown",
+    requiresAuth: "unknown",
+    freeTier: "unknown",
+    scrapingAllowed: "unknown",
+    priority: "medium",
+  }),
+  source({
+    id: "abseits",
+    name: "Abseits",
+    sourceType: "website",
+    sports: ["football"],
+    capabilities: [],
+    historicalData: "unknown",
+    realtime: "unknown",
+    official: "unknown",
+    requiresAuth: "unknown",
+    freeTier: "unknown",
+    scrapingAllowed: "unknown",
+    priority: "low",
+  }),
+  source({
+    id: "clubelo",
+    name: "ClubElo",
+    domain: "clubelo.com",
+    sourceType: "dataset",
+    sports: ["football"],
+    capabilities: ["elo", "rankings"],
+    historicalData: true,
+    realtime: false,
+    official: false,
+    requiresAuth: false,
+    freeTier: true,
+    scrapingAllowed: "unknown",
+    priority: "high",
+  }),
+  source({
+    id: "football-data-co-uk",
+    name: "football-data.co.uk",
+    domain: "football-data.co.uk",
+    sourceType: "dataset",
+    sports: ["football"],
+    capabilities: ["historical_results", "historical_odds", "results"],
+    historicalData: true,
+    realtime: false,
+    official: false,
+    requiresAuth: false,
+    freeTier: true,
+    scrapingAllowed: "unknown",
+    priority: "high",
+  }),
+  source({
+    id: "club-football-match-data",
+    name: "Club-Football-Match-Data",
+    domain: "github.com/xgabora/Club-Football-Match-Data",
+    sourceType: "dataset",
+    sports: ["football"],
+    capabilities: ["historical_results", "elo", "historical_odds"],
+    historicalData: true,
+    realtime: false,
+    official: false,
+    requiresAuth: false,
+    freeTier: true,
+    scrapingAllowed: "unknown",
+    priority: "medium",
+  }),
+  source({
+    id: "open-meteo",
+    name: "Open-Meteo",
+    domain: "open-meteo.com",
+    sourceType: "api",
+    sports: ["football"],
+    capabilities: ["weather"],
+    historicalData: true,
+    realtime: true,
+    official: false,
+    requiresAuth: false,
+    freeTier: true,
+    scrapingAllowed: "unknown",
+    priority: "low",
+  }),
+  source({
+    id: "tennis-explorer",
+    name: "Tennis Explorer",
+    domain: "tennisexplorer.com",
+    sourceType: "website",
+    sports: ["tennis"],
+    capabilities: [],
+    historicalData: "unknown",
+    realtime: "unknown",
+    official: "unknown",
+    requiresAuth: "unknown",
+    freeTier: "unknown",
+    scrapingAllowed: "unknown",
+    priority: "medium",
+  }),
+  source({
+    id: "tennisstats",
+    name: "TennisStats",
+    sourceType: "website",
+    sports: ["tennis"],
+    capabilities: [],
+    historicalData: "unknown",
+    realtime: "unknown",
+    official: "unknown",
+    requiresAuth: "unknown",
+    freeTier: "unknown",
+    scrapingAllowed: "unknown",
+    priority: "low",
+  }),
+  source({
+    id: "tennisinsight",
+    name: "TennisInsight",
+    sourceType: "website",
+    sports: ["tennis"],
+    capabilities: [],
+    historicalData: "unknown",
+    realtime: "unknown",
+    official: "unknown",
+    requiresAuth: "unknown",
+    freeTier: "unknown",
+    scrapingAllowed: "unknown",
+    priority: "low",
+  }),
+]);
+
+const SOURCES_BY_ID = new Map(SOURCES.map((item) => [item.id, item]));
+
+export function listSources(): readonly SourceDefinition[] {
+  return SOURCES;
+}
+
+/** Returns the source definition, or undefined if the id is not in the catalog. */
+export function getSource(id: string): SourceDefinition | undefined {
+  return SOURCES_BY_ID.get(id);
+}
+
+export function getSourcesForSport(sportId: string): readonly SourceDefinition[] {
+  return SOURCES.filter((item) => item.sports.includes(sportId));
+}
+
+export function getSourcesByCapability(
+  capability: SourceCapability,
+): readonly SourceDefinition[] {
+  return SOURCES.filter((item) => item.capabilities.includes(capability));
+}
+
+export function getSourcesForSportAndCapability(
+  sportId: string,
+  capability: SourceCapability,
+): readonly SourceDefinition[] {
+  return SOURCES.filter(
+    (item) =>
+      item.sports.includes(sportId) && item.capabilities.includes(capability),
+  );
+}
+
+export function findCandidateSources(
+  query: SourceDiscoveryQuery,
+): readonly SourceDefinition[] {
+  return SOURCES.filter((item) => {
+    if (!item.sports.includes(query.sport)) {
+      return false;
+    }
+    if (!item.capabilities.includes(query.capability)) {
+      return false;
+    }
+    if (query.sourceType && item.sourceType !== query.sourceType) {
+      return false;
+    }
+    if (query.freeOnly && item.freeTier !== true) {
+      return false;
+    }
+    return true;
+  });
+}
+
+export function assertCatalogIntegrity(): void {
+  for (const item of SOURCES) {
+    for (const sportId of item.sports) {
+      if (!getSport(sportId)) {
+        throw new Error(`Source ${item.id} references unknown sport ${sportId}`);
+      }
+    }
+  }
+}
+
+export function isSourceType(value: string): value is SourceType {
+  return (
+    value === "api" ||
+    value === "website" ||
+    value === "dataset" ||
+    value === "news" ||
+    value === "research" ||
+    value === "official"
+  );
+}

@@ -1,0 +1,921 @@
+[
+  {
+    "id": "task_031_base",
+    "title": "TASK_031_BASE BeatTheBookie T−1h 1X2 LEVEL_B",
+    "axis": "local-legacy",
+    "urls": [
+      "audit/external/task-027/strict-candidates.csv"
+    ],
+    "probe_url": null,
+    "access": "LOCAL",
+    "independent": true,
+    "license": "upstream GPL-3.0 + soccer-dataset CC BY 4.0",
+    "provenance": "Frozen TASK 027/031 STRICT file. Not rewritten.",
+    "local_path": "audit/external/task-027/strict-candidates.csv",
+    "scores": {
+      "clock": 3,
+      "kickoff": 3,
+      "match": 2,
+      "depth": 1,
+      "coverage": 3,
+      "holdout": 0,
+      "total": 12
+    },
+    "temporal_class": "STRICT_B",
+    "why_not_strict": "Already STRICT_B, but window is only 2015-09-01→2016-11-19. HOLDOUT 2020+ empty. Not a 035 calendar breakthrough.",
+    "new_source": false,
+    "can_become_strict": false
+  },
+  {
+    "id": "books_t1h",
+    "title": "TASK 029 cross-book T−1h overlay",
+    "axis": "local-legacy",
+    "urls": [
+      "audit/external/task-029/books-t1h.csv"
+    ],
+    "probe_url": null,
+    "access": "LOCAL",
+    "independent": false,
+    "license": "same cluster as TASK_031_BASE",
+    "provenance": "Same LEVEL_B clock as 031.",
+    "local_path": "audit/external/task-029/books-t1h.csv",
+    "scores": {
+      "clock": 3,
+      "kickoff": 3,
+      "match": 2,
+      "depth": 1,
+      "coverage": 3,
+      "holdout": 0,
+      "total": 12
+    },
+    "temporal_class": "STRICT_B",
+    "why_not_strict": "Overlay on 031. No new years.",
+    "new_source": false,
+    "can_become_strict": false
+  },
+  {
+    "id": "movement_t24",
+    "title": "TASK 030 T−24h movement overlay",
+    "axis": "local-legacy",
+    "urls": [
+      "audit/external/task-030/movement-t24.csv"
+    ],
+    "probe_url": null,
+    "access": "LOCAL",
+    "independent": false,
+    "license": "same cluster as TASK_031_BASE",
+    "provenance": "Same LEVEL_B clock. Second pre-match bin only.",
+    "local_path": "audit/external/task-030/movement-t24.csv",
+    "scores": {
+      "clock": 3,
+      "kickoff": 3,
+      "match": 2,
+      "depth": 2,
+      "coverage": 3,
+      "holdout": 0,
+      "total": 13
+    },
+    "temporal_class": "STRICT_B",
+    "why_not_strict": "Overlay on 031. No T−6h/T−3h. No 2020+.",
+    "new_source": false,
+    "can_become_strict": false
+  },
+  {
+    "id": "beatthebookie_series",
+    "title": "BeatTheBookie odds_series*.csv.gz",
+    "axis": "R",
+    "urls": [
+      "audit/external/task-027/kaggle-austro"
+    ],
+    "probe_url": null,
+    "access": "LOCAL",
+    "independent": false,
+    "license": "GPL-3.0",
+    "provenance": "Parent of TASK_031_BASE. Same 2015–16 clock.",
+    "local_path": "audit/external/task-027/kaggle-austro",
+    "scores": {
+      "clock": 3,
+      "kickoff": 3,
+      "match": 2,
+      "depth": 2,
+      "coverage": 3,
+      "holdout": 0,
+      "total": 13
+    },
+    "temporal_class": "STRICT_B",
+    "why_not_strict": "Same independent cluster as 031. Not a new source.",
+    "new_source": false,
+    "can_become_strict": false
+  },
+  {
+    "id": "closing_odds_date_only",
+    "title": "closing_odds / TilenKopac / football-data averages",
+    "axis": "P",
+    "urls": [
+      "docs/task-026-final-report.md"
+    ],
+    "probe_url": null,
+    "access": "LOCAL",
+    "independent": false,
+    "license": "mixed football-data.co.uk lineage",
+    "provenance": "Date-only or open/close labels.",
+    "local_path": null,
+    "scores": {
+      "clock": 1,
+      "kickoff": 1,
+      "match": 1,
+      "depth": 1,
+      "coverage": 3,
+      "holdout": 2,
+      "total": 9
+    },
+    "temporal_class": "DATE_ONLY",
+    "why_not_strict": "Calendar date ≠ quote timestamp. OPEN/CLOSE ≠ clock.",
+    "new_source": false,
+    "can_become_strict": false
+  },
+  {
+    "id": "club_football",
+    "title": "Club-Football-Match-Data Matches.csv",
+    "axis": "local-legacy",
+    "urls": [
+      "audit/external/Club-Football-Match-Data"
+    ],
+    "probe_url": null,
+    "access": "LOCAL",
+    "independent": true,
+    "license": "dataset license on disk",
+    "provenance": "Form*/C_* post-event features forbidden.",
+    "local_path": "audit/external/Club-Football-Match-Data",
+    "scores": {
+      "clock": 1,
+      "kickoff": 1,
+      "match": 1,
+      "depth": 0,
+      "coverage": 3,
+      "holdout": 2,
+      "total": 8
+    },
+    "temporal_class": "DATE_ONLY",
+    "why_not_strict": "DATE_ONLY / TEMPORALLY_UNKNOWN. Form* forbidden.",
+    "new_source": false,
+    "can_become_strict": false
+  },
+  {
+    "id": "zenodo_12673394",
+    "title": "Zenodo 12673394 football-data tidy",
+    "axis": "J",
+    "urls": [
+      "https://zenodo.org/records/12673394",
+      "audit/external/task-026/zenodo-raw-to-tidy.zip"
+    ],
+    "probe_url": "https://zenodo.org/api/records/12673394",
+    "access": "LOCAL",
+    "independent": false,
+    "license": "CC as published on Zenodo",
+    "provenance": "football-data.co.uk closing averages. Hegarty/Whelan lineage.",
+    "local_path": "audit/external/task-026/zenodo-raw-to-tidy.zip",
+    "scores": {
+      "clock": 1,
+      "kickoff": 1,
+      "match": 1,
+      "depth": 1,
+      "coverage": 3,
+      "holdout": 2,
+      "total": 9
+    },
+    "temporal_class": "DATE_ONLY",
+    "why_not_strict": "Closing averages. Not a quote clock.",
+    "new_source": false,
+    "can_become_strict": false
+  },
+  {
+    "id": "soccer_dataset_odds_parquet",
+    "title": "eatpizzanot soccer-dataset odds.parquet",
+    "axis": "local-legacy",
+    "urls": [
+      "audit/external/task-024/odds.parquet"
+    ],
+    "probe_url": null,
+    "access": "LOCAL",
+    "independent": true,
+    "license": "CC BY 4.0",
+    "provenance": "odds known_at equals kickoff → closing, not pre-match STRICT.",
+    "local_path": "audit/external/task-024/odds.parquet",
+    "scores": {
+      "clock": 2,
+      "kickoff": 3,
+      "match": 2,
+      "depth": 0,
+      "coverage": 3,
+      "holdout": 3,
+      "total": 13
+    },
+    "temporal_class": "DATE_ONLY",
+    "why_not_strict": "known_at = kickoff. Closing, not pre-match publish time.",
+    "new_source": false,
+    "can_become_strict": false
+  },
+  {
+    "id": "petermclagan_basic",
+    "title": "petermclagan Betfair BASIC football sample",
+    "axis": "A",
+    "urls": [
+      "https://github.com/petermclagan/betfair-historical",
+      "audit/external/task-023/football-basic-sample.json"
+    ],
+    "probe_url": "https://api.github.com/repos/petermclagan/betfair-historical/contents/tests/sample_data",
+    "access": "MIRROR",
+    "independent": false,
+    "license": "sample of official Betfair Historic format",
+    "provenance": "n=1 football BASIC. Official dump remains login-gated.",
+    "local_path": "audit/external/task-023/football-basic-sample.json",
+    "scores": {
+      "clock": 5,
+      "kickoff": 3,
+      "match": 0,
+      "depth": 3,
+      "coverage": 0,
+      "holdout": 0,
+      "total": 11
+    },
+    "temporal_class": "RESEARCH_TEMPORAL",
+    "why_not_strict": "n=1 sample. Mirror of Betfair Historic, not an independent archive.",
+    "new_source": false,
+    "can_become_strict": false
+  },
+  {
+    "id": "kaggle_zygmunt_betfair",
+    "title": "Kaggle zygmunt/betfair-sports weekly CSV",
+    "axis": "H",
+    "urls": [
+      "https://www.kaggle.com/datasets/zygmunt/betfair-sports",
+      "audit/external/task-025/betfair_140901.csv"
+    ],
+    "probe_url": null,
+    "access": "LOCAL",
+    "independent": false,
+    "license": "Kaggle dataset terms",
+    "provenance": "Naive FIRST_TAKEN / SCHEDULED_OFF. No documented TZ.",
+    "local_path": "audit/external/task-025/betfair_140901.csv",
+    "scores": {
+      "clock": 2,
+      "kickoff": 2,
+      "match": 1,
+      "depth": 1,
+      "coverage": 3,
+      "holdout": 0,
+      "total": 9
+    },
+    "temporal_class": "RESEARCH_TEMPORAL",
+    "why_not_strict": "Naive timestamps. Not promoted. Same Betfair cluster.",
+    "new_source": false,
+    "can_become_strict": false
+  },
+  {
+    "id": "kaggle_ah_sample",
+    "title": "Kaggle Asian handicap sample (TASK 026)",
+    "axis": "T",
+    "urls": [
+      "audit/external/task-026/kaggle-ah/sample"
+    ],
+    "probe_url": null,
+    "access": "SAMPLE_ONLY",
+    "independent": true,
+    "license": "Kaggle sample",
+    "provenance": "Compact Timestamp YYYYMMDDHHMMSS. No kickoff. Chinese labels. FT on same row.",
+    "local_path": "audit/external/task-026/kaggle-ah/sample",
+    "scores": {
+      "clock": 2,
+      "kickoff": 0,
+      "match": 0,
+      "depth": 2,
+      "coverage": 0,
+      "holdout": 1,
+      "total": 5
+    },
+    "temporal_class": "RESEARCH_TEMPORAL",
+    "why_not_strict": "No kickoff. TZ undocumented. Sample ~90 files. Cannot prove quote < kickoff.",
+    "new_source": false,
+    "can_become_strict": false
+  },
+  {
+    "id": "anishkhetani_epl",
+    "title": "AnishKhetani EPL football-data mirror",
+    "axis": "N",
+    "urls": [
+      "audit/external/task-019"
+    ],
+    "probe_url": null,
+    "access": "MIRROR",
+    "independent": false,
+    "license": "football-data.co.uk redistribution",
+    "provenance": "DATE_ONLY / OPEN-CLOSE.",
+    "local_path": "audit/external/task-019",
+    "scores": {
+      "clock": 1,
+      "kickoff": 2,
+      "match": 1,
+      "depth": 1,
+      "coverage": 2,
+      "holdout": 2,
+      "total": 9
+    },
+    "temporal_class": "DATE_ONLY",
+    "why_not_strict": "Mirror of football-data.co.uk. Time is kickoff, odds lack publish timestamp.",
+    "new_source": false,
+    "can_become_strict": false
+  },
+  {
+    "id": "hf_soccer_odds",
+    "title": "HuggingFace JulienDelavande soccer_odds",
+    "axis": "I",
+    "urls": [
+      "https://huggingface.co/datasets/JulienDelavande/soccer_stats"
+    ],
+    "probe_url": "https://huggingface.co/api/datasets/JulienDelavande/soccer_stats",
+    "access": "PUBLIC_DOWNLOAD",
+    "independent": true,
+    "license": "dataset card as published",
+    "provenance": "Odds-API-shaped. One Brazil Série B match. Naive commence/last_update. datetime_insert is post-match ingest.",
+    "local_path": "audit/external/task-035/hf-soccer_odds.csv",
+    "scores": {
+      "clock": 2,
+      "kickoff": 2,
+      "match": 0,
+      "depth": 0,
+      "coverage": 0,
+      "holdout": 1,
+      "total": 5
+    },
+    "temporal_class": "AMBIGUOUS",
+    "why_not_strict": "n=1. Naive TZ. No FT in odds file. Cannot assume UTC.",
+    "new_source": true,
+    "can_become_strict": false
+  },
+  {
+    "id": "hf_soccer_stats_sql",
+    "title": "HuggingFace soccer_stats.sql pg_dump",
+    "axis": "I",
+    "urls": [
+      "https://huggingface.co/datasets/JulienDelavande/soccer_stats"
+    ],
+    "probe_url": null,
+    "access": "PUBLIC_DOWNLOAD",
+    "independent": false,
+    "license": "same as hf_soccer_odds",
+    "provenance": "PostgreSQL custom dump. soccer_odds timestamps WITHOUT time zone. Same table as CSV.",
+    "local_path": "audit/external/task-035/hf-soccer_stats.sql",
+    "scores": {
+      "clock": 2,
+      "kickoff": 2,
+      "match": 0,
+      "depth": 0,
+      "coverage": 0,
+      "holdout": 1,
+      "total": 5
+    },
+    "temporal_class": "AMBIGUOUS",
+    "why_not_strict": "Same naive soccer_odds table. FBref results are DATE_ONLY outcomes, not a quote clock.",
+    "new_source": true,
+    "can_become_strict": false
+  },
+  {
+    "id": "hf_olivier_closing",
+    "title": "HuggingFace oliviersportsdata closing sample",
+    "axis": "I",
+    "urls": [
+      "https://huggingface.co/datasets/oliviersportsdata/Sample-Historical-Football-Odds"
+    ],
+    "probe_url": "https://huggingface.co/api/datasets/oliviersportsdata/Sample-Historical-Football-Odds",
+    "access": "SAMPLE_ONLY",
+    "independent": true,
+    "license": "sample; master paid/private",
+    "provenance": "Advertised closing odds. Date-only.",
+    "local_path": "audit/external/task-035/hf-olivier-sample.csv",
+    "scores": {
+      "clock": 1,
+      "kickoff": 0,
+      "match": 1,
+      "depth": 1,
+      "coverage": 0,
+      "holdout": 0,
+      "total": 3
+    },
+    "temporal_class": "DATE_ONLY",
+    "why_not_strict": "Closing + calendar date. Paid master not acquired. No user credentials.",
+    "new_source": true,
+    "can_become_strict": false
+  },
+  {
+    "id": "hf_5dollar_inplay",
+    "title": "HuggingFace 5Dollar first-goal impact 2025-26",
+    "axis": "T",
+    "urls": [
+      "https://huggingface.co/datasets/5dollarfootballapi/premier-league-first-goal-impact-2025-26"
+    ],
+    "probe_url": "https://huggingface.co/api/datasets/5dollarfootballapi/premier-league-first-goal-impact-2025-26",
+    "access": "PUBLIC_DOWNLOAD",
+    "independent": true,
+    "license": "dataset card as published",
+    "provenance": "In-play quotes around first goal. kickoff_beijing named Beijing.",
+    "local_path": "audit/external/task-035/hf-5dollar-inplay.csv",
+    "scores": {
+      "clock": 2,
+      "kickoff": 2,
+      "match": 1,
+      "depth": 1,
+      "coverage": 1,
+      "holdout": 1,
+      "total": 8
+    },
+    "temporal_class": "POSTMATCH",
+    "why_not_strict": "Quotes are after kickoff. Beijing-named kickoff. Not pre-match.",
+    "new_source": true,
+    "can_become_strict": false
+  },
+  {
+    "id": "sharpapi_wc2026",
+    "title": "SharpAPI World Cup 2026 snapshot (CC BY 4.0)",
+    "axis": "N",
+    "urls": [
+      "https://github.com/Sharp-API/sports-odds-sample-data",
+      "https://sharpapi.io/datasets"
+    ],
+    "probe_url": "https://api.github.com/repos/Sharp-API/sports-odds-sample-data/contents",
+    "access": "PUBLIC_DOWNLOAD",
+    "independent": true,
+    "license": "CC BY 4.0",
+    "provenance": "Single snapshot 2026-07-13. ISO-Z event_start_time + timestamp. Mostly futures. 4 moneyline match events. No FT.",
+    "local_path": "audit/external/task-035/sharpapi-wc2026.csv",
+    "scores": {
+      "clock": 5,
+      "kickoff": 2,
+      "match": 0,
+      "depth": 0,
+      "coverage": 0,
+      "holdout": 3,
+      "total": 10
+    },
+    "temporal_class": "RESEARCH_TEMPORAL",
+    "why_not_strict": "One snapshot. No settled outcomes. Midnight kickoffs ambiguous. Futures start ≠ football kickoff.",
+    "new_source": true,
+    "can_become_strict": false
+  },
+  {
+    "id": "betfair_historic_login",
+    "title": "historicdata.betfair.com official historic",
+    "axis": "A",
+    "urls": [
+      "https://historicdata.betfair.com/"
+    ],
+    "probe_url": "https://historicdata.betfair.com/",
+    "access": "BLOCKED_LOGIN",
+    "independent": true,
+    "license": "Betfair Historic terms",
+    "provenance": "Official exchange publishTime. Login required. No user credentials. No IA soccer BASIC dump found.",
+    "local_path": "audit/external/task-035/betfair-probe.html",
+    "scores": {
+      "clock": 5,
+      "kickoff": 3,
+      "match": 0,
+      "depth": 3,
+      "coverage": 0,
+      "holdout": 0,
+      "total": 11
+    },
+    "temporal_class": "UNKNOWN",
+    "why_not_strict": "BLOCKED_LOGIN. Public samples are n=1 (petermclagan). Internet Archive soccer BASIC not found.",
+    "new_source": false,
+    "can_become_strict": false
+  },
+  {
+    "id": "football_data_co_uk",
+    "title": "football-data.co.uk CSV (live 503 + IA copy)",
+    "axis": "P",
+    "urls": [
+      "https://www.football-data.co.uk/mmz4281/2526/E0.csv"
+    ],
+    "probe_url": "https://www.football-data.co.uk/mmz4281/2526/E0.csv",
+    "access": "PUBLIC_DOWNLOAD",
+    "independent": true,
+    "license": "football-data.co.uk notes",
+    "provenance": "Live site 503. IA 2019/20 E0 acquired. Odds collected Friday/Tuesday UK afternoon. Not a per-row publish timestamp. Time=kickoff.",
+    "local_path": "audit/external/task-035/ia-e0-1920.csv",
+    "scores": {
+      "clock": 1,
+      "kickoff": 2,
+      "match": 1,
+      "depth": 1,
+      "coverage": 3,
+      "holdout": 3,
+      "total": 11
+    },
+    "temporal_class": "DATE_ONLY",
+    "why_not_strict": "IA copy acquired after live 503. Time is kickoff, not quote publish time. Odds are Friday/Tuesday collection + closing columns. TZ not in file. DATE_ONLY.",
+    "new_source": false,
+    "can_become_strict": false
+  },
+  {
+    "id": "odds_api_historical",
+    "title": "The Odds API /v4/historical",
+    "axis": "G",
+    "urls": [
+      "https://api.the-odds-api.com/v4/sports"
+    ],
+    "probe_url": "https://api.the-odds-api.com/v4/sports?apiKey=none",
+    "access": "BLOCKED_API_KEY",
+    "independent": true,
+    "license": "paid historical",
+    "provenance": "ISO-Z commence_time + last_update in paid historical snapshots. 401 without key. No user key.",
+    "local_path": "audit/external/task-035/odds-api-probe.json",
+    "scores": {
+      "clock": 4,
+      "kickoff": 3,
+      "match": 0,
+      "depth": 2,
+      "coverage": 0,
+      "holdout": 0,
+      "total": 9
+    },
+    "temporal_class": "UNKNOWN",
+    "why_not_strict": "BLOCKED_API_KEY. No public historical dump of the same format found.",
+    "new_source": false,
+    "can_become_strict": false
+  },
+  {
+    "id": "kaggle_obiguy",
+    "title": "Kaggle obiguy/soccer-odds-data odds1x2.csv",
+    "axis": "H",
+    "urls": [
+      "https://www.kaggle.com/datasets/obiguy/soccer-odds-data"
+    ],
+    "probe_url": "https://www.kaggle.com/api/v1/datasets/download/obiguy/soccer-odds-data",
+    "access": "BLOCKED_LOGIN",
+    "independent": true,
+    "license": "CC BY-NC-SA (card)",
+    "provenance": "Pinnacle free-API snapshots. Naive datetime in public preview. No GitHub/HF/DOI/IA mirror found.",
+    "local_path": "audit/external/task-035/kaggle-obiguy-probe.html",
+    "scores": {
+      "clock": 2,
+      "kickoff": 2,
+      "match": 1,
+      "depth": 2,
+      "coverage": 2,
+      "holdout": 3,
+      "total": 12
+    },
+    "temporal_class": "AMBIGUOUS",
+    "why_not_strict": "File not on disk. Login. Naive clock even if acquired. TZ not documented on the card.",
+    "new_source": true,
+    "can_become_strict": false
+  },
+  {
+    "id": "kaggle_wc_timestamp",
+    "title": "Kaggle oliviersportsdata WorldCup_FullTimestamp sample",
+    "axis": "Q",
+    "urls": [
+      "https://www.kaggle.com/datasets/oliviersportsdata/worldcup-fulltimestamp-sample"
+    ],
+    "probe_url": "https://www.kaggle.com/api/v1/datasets/download/oliviersportsdata/worldcup-fulltimestamp-sample",
+    "access": "BLOCKED_LOGIN",
+    "independent": true,
+    "license": "Kaggle; full archive commercial",
+    "provenance": "Snapshot_TS YYYY-MM-DD HH:MM naive. Match_Date date-only kickoff. TZ 'as published by each book'.",
+    "local_path": "audit/external/task-035/kaggle-wc-probe.html",
+    "scores": {
+      "clock": 2,
+      "kickoff": 1,
+      "match": 1,
+      "depth": 3,
+      "coverage": 1,
+      "holdout": 2,
+      "total": 10
+    },
+    "temporal_class": "AMBIGUOUS",
+    "why_not_strict": "Gated sample. Kickoff is a date. Snapshot naive. No HF/GitHub/DOI copy.",
+    "new_source": true,
+    "can_become_strict": false
+  },
+  {
+    "id": "oddspapi",
+    "title": "OddsPapi historical-odds",
+    "axis": "G",
+    "urls": [
+      "https://oddspapi.io/en/docs/get-historical-odds"
+    ],
+    "probe_url": null,
+    "access": "BLOCKED_API_KEY",
+    "independent": true,
+    "license": "commercial API",
+    "provenance": "createdAt ISO-Z snapshots. History since 2026 per docs. No public dump.",
+    "local_path": null,
+    "scores": {
+      "clock": 4,
+      "kickoff": 0,
+      "match": 0,
+      "depth": 3,
+      "coverage": 0,
+      "holdout": 1,
+      "total": 8
+    },
+    "temporal_class": "UNKNOWN",
+    "why_not_strict": "API key. No redistributable archive found.",
+    "new_source": false,
+    "can_become_strict": false
+  },
+  {
+    "id": "pinnapi_live",
+    "title": "pinnapi.com live replacement API",
+    "axis": "G",
+    "urls": [
+      "https://pypi.org/project/pinnapi/"
+    ],
+    "probe_url": null,
+    "access": "BLOCKED_API_KEY",
+    "independent": true,
+    "license": "commercial",
+    "provenance": "Live/prematch feed after Pinnacle public API closed 2025-07-23. Not a historical archive.",
+    "local_path": null,
+    "scores": {
+      "clock": 0,
+      "kickoff": 0,
+      "match": 0,
+      "depth": 0,
+      "coverage": 0,
+      "holdout": 0,
+      "total": 0
+    },
+    "temporal_class": "UNKNOWN",
+    "why_not_strict": "Live API, not a settled multi-year dump.",
+    "new_source": false,
+    "can_become_strict": false
+  },
+  {
+    "id": "opticodds",
+    "title": "OpticOdds fixtures/odds/historical",
+    "axis": "G",
+    "urls": [
+      "https://developer.opticodds.com/reference/get_fixtures-odds-historical"
+    ],
+    "probe_url": null,
+    "access": "BLOCKED_PAYWALL",
+    "independent": true,
+    "license": "commercial",
+    "provenance": "Rolling ~2 months. Not a public CSV.",
+    "local_path": null,
+    "scores": {
+      "clock": 4,
+      "kickoff": 3,
+      "match": 0,
+      "depth": 3,
+      "coverage": 0,
+      "holdout": 1,
+      "total": 11
+    },
+    "temporal_class": "UNKNOWN",
+    "why_not_strict": "Paid. No public equivalent dump.",
+    "new_source": false,
+    "can_become_strict": false
+  },
+  {
+    "id": "figshare_news",
+    "title": "Figshare sports news 16884688",
+    "axis": "K",
+    "urls": [
+      "https://figshare.com/articles/dataset/Sports_news_dataset/16884688"
+    ],
+    "probe_url": "https://api.figshare.com/v2/articles/16884688",
+    "access": "PUBLIC_DOWNLOAD",
+    "independent": true,
+    "license": "Figshare record",
+    "provenance": "News text. No odds clock.",
+    "local_path": null,
+    "scores": {
+      "clock": 0,
+      "kickoff": 0,
+      "match": 0,
+      "depth": 0,
+      "coverage": 0,
+      "holdout": 0,
+      "total": 0
+    },
+    "temporal_class": "UNKNOWN",
+    "why_not_strict": "Not betting quotes.",
+    "new_source": true,
+    "can_become_strict": false
+  },
+  {
+    "id": "ia_betfair_soccer",
+    "title": "Internet Archive Betfair soccer BASIC dumps",
+    "axis": "A",
+    "urls": [
+      "https://archive.org/search.php?query=betfair%20historical%20soccer%20BASIC"
+    ],
+    "probe_url": "https://archive.org/advancedsearch.php?q=betfair+soccer+BASIC+historical&fl[]=identifier&output=json&rows=5",
+    "access": "NOT_FOUND",
+    "independent": false,
+    "license": "n/a",
+    "provenance": "Search returned no redistributable soccer BASIC price files.",
+    "local_path": null,
+    "scores": {
+      "clock": 0,
+      "kickoff": 0,
+      "match": 0,
+      "depth": 0,
+      "coverage": 0,
+      "holdout": 0,
+      "total": 0
+    },
+    "temporal_class": "UNKNOWN",
+    "why_not_strict": "No public IA copy of official Betfair soccer streams.",
+    "new_source": true,
+    "can_become_strict": false
+  },
+  {
+    "id": "eddieglush_movement",
+    "title": "eddieglush / line-movement aggregates",
+    "axis": "R",
+    "urls": [
+      "https://huggingface.co/datasets?search=line-movement"
+    ],
+    "probe_url": null,
+    "access": "SAMPLE_ONLY",
+    "independent": true,
+    "license": "dataset card",
+    "provenance": "Aggregates of snapshots, not event-level quote+kickoff+outcome.",
+    "local_path": null,
+    "scores": {
+      "clock": 2,
+      "kickoff": 0,
+      "match": 0,
+      "depth": 2,
+      "coverage": 0,
+      "holdout": 1,
+      "total": 5
+    },
+    "temporal_class": "UNKNOWN",
+    "why_not_strict": "Not event-level STRICT units.",
+    "new_source": true,
+    "can_become_strict": false
+  },
+  {
+    "id": "github_betfair_parsers",
+    "title": "GitHub Betfair parsers (mberk, kito129, liampauling)",
+    "axis": "N",
+    "urls": [
+      "https://github.com/mberk/betfairutil",
+      "https://github.com/liampauling/betfair"
+    ],
+    "probe_url": "https://api.github.com/repos/mberk/betfairutil",
+    "access": "PUBLIC_DOWNLOAD",
+    "independent": false,
+    "license": "OSS parsers",
+    "provenance": "Code to read official bz2. Not a football archive.",
+    "local_path": null,
+    "scores": {
+      "clock": 5,
+      "kickoff": 3,
+      "match": 0,
+      "depth": 3,
+      "coverage": 0,
+      "holdout": 0,
+      "total": 11
+    },
+    "temporal_class": "UNKNOWN",
+    "why_not_strict": "Parser without data. Official files remain login-gated.",
+    "new_source": false,
+    "can_become_strict": false
+  },
+  {
+    "id": "theoddsgap_live",
+    "title": "theoddsgap live CSV export",
+    "axis": "P",
+    "urls": [
+      "https://theoddsgap.com/api/odds-export.csv?sport=soccer_epl"
+    ],
+    "probe_url": "https://theoddsgap.com/api/odds-export.csv?sport=soccer_epl",
+    "access": "PUBLIC_DOWNLOAD",
+    "independent": true,
+    "license": "site terms",
+    "provenance": "Current slate export. Not a settled historical corpus.",
+    "local_path": null,
+    "scores": {
+      "clock": 2,
+      "kickoff": 2,
+      "match": 0,
+      "depth": 0,
+      "coverage": 0,
+      "holdout": 1,
+      "total": 5
+    },
+    "temporal_class": "UNKNOWN",
+    "why_not_strict": "Live snapshot. No historical outcomes.",
+    "new_source": true,
+    "can_become_strict": false
+  },
+  {
+    "id": "clubelo",
+    "title": "ClubElo",
+    "axis": "L",
+    "urls": [
+      "http://api.clubelo.com/"
+    ],
+    "probe_url": null,
+    "access": "BLOCKED_PAYWALL",
+    "independent": true,
+    "license": "ClubElo",
+    "provenance": "Ratings, not bookmaker publish clocks. Previously blocked.",
+    "local_path": null,
+    "scores": {
+      "clock": 1,
+      "kickoff": 1,
+      "match": 0,
+      "depth": 0,
+      "coverage": 3,
+      "holdout": 3,
+      "total": 8
+    },
+    "temporal_class": "DATE_ONLY",
+    "why_not_strict": "Not quote+timestamp odds.",
+    "new_source": false,
+    "can_become_strict": false
+  },
+  {
+    "id": "five_dollar_api",
+    "title": "5DollarFootballAPI (paid live)",
+    "axis": "G",
+    "urls": [
+      "https://5dollarfootballapi.com/"
+    ],
+    "probe_url": null,
+    "access": "BLOCKED_PAYWALL",
+    "independent": true,
+    "license": "commercial",
+    "provenance": "Paid API. Public HF study is in-play (hf_5dollar_inplay).",
+    "local_path": null,
+    "scores": {
+      "clock": 0,
+      "kickoff": 0,
+      "match": 0,
+      "depth": 0,
+      "coverage": 0,
+      "holdout": 0,
+      "total": 0
+    },
+    "temporal_class": "UNKNOWN",
+    "why_not_strict": "No user credentials. Public sample is POSTMATCH.",
+    "new_source": false,
+    "can_become_strict": false
+  },
+  {
+    "id": "football_charts",
+    "title": "Football Charts",
+    "axis": "G",
+    "urls": [],
+    "probe_url": null,
+    "access": "BLOCKED_PAYWALL",
+    "independent": true,
+    "license": "commercial",
+    "provenance": "Previously blocked in TASK 033.",
+    "local_path": null,
+    "scores": {
+      "clock": 0,
+      "kickoff": 0,
+      "match": 0,
+      "depth": 0,
+      "coverage": 0,
+      "holdout": 0,
+      "total": 0
+    },
+    "temporal_class": "UNKNOWN",
+    "why_not_strict": "Paid. No public dump.",
+    "new_source": false,
+    "can_become_strict": false
+  },
+  {
+    "id": "pinnacle_public_api",
+    "title": "Pinnacle public API (closed 2025-07-23)",
+    "axis": "G",
+    "urls": [],
+    "probe_url": null,
+    "access": "UNREACHABLE",
+    "independent": true,
+    "license": "closed",
+    "provenance": "No longer public. Historical snapshots only via third parties.",
+    "local_path": null,
+    "scores": {
+      "clock": 0,
+      "kickoff": 0,
+      "match": 0,
+      "depth": 0,
+      "coverage": 0,
+      "holdout": 0,
+      "total": 0
+    },
+    "temporal_class": "UNKNOWN",
+    "why_not_strict": "API closed. obiguy dump is the would-be archive and is Kaggle-gated.",
+    "new_source": false,
+    "can_become_strict": false
+  }
+]

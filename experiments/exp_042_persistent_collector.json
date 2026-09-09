@@ -1,0 +1,20 @@
+{
+  "experiment_id": "exp_042_persistent_collector",
+  "immutable": true,
+  "created_at": "2026-09-08T00:00:00.000Z",
+  "task": "042",
+  "source_store": "audit/external/task-039",
+  "legacy_dataset_sha256": "6d78ca34da9df180b643976c3b4a52b93cf589984bae54e056c5e3a53b44174b",
+  "baseline": "MARKET_DEVIG",
+  "settled_target": 100,
+  "winner": null,
+  "auto_promotion": false,
+  "real_money": false,
+  "capital_gate": false,
+  "historical_hunt": false,
+  "open_task_043": false,
+  "modify_frozen_031": false,
+  "refit_market_devig": false,
+  "optimize_on_test": false,
+  "notes": "Persistent collector + credit governor + monitor. No scientific protocol changes. No TASK 043."
+}

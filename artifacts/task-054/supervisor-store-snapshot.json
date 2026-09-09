@@ -1,0 +1,11 @@
+{
+  "events_raw": 445,
+  "events_unique": 385,
+  "decisions": 4968,
+  "locks": 131,
+  "settlements": 2,
+  "autopsies": 2,
+  "learning": 0,
+  "quotes": 172213,
+  "lab_a_mutation": false
+}

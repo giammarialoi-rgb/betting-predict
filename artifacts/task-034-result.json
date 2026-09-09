@@ -1,0 +1,1775 @@
+{
+  "experiment_id": "exp_034_market_inefficiency",
+  "task": "034",
+  "fixture_mode": false,
+  "observed_sha256": "6d78ca34da9df180b643976c3b4a52b93cf589984bae54e056c5e3a53b44174b",
+  "strict_events": 10499,
+  "market_snapshots": 58146,
+  "hypotheses": 10,
+  "significant_signals": 0,
+  "best_signal": "MARKET_DEVIG",
+  "verdict": "NO_DEMONSTRATED_INEFFICIENCY",
+  "market_efficiency": "MARKET_EFFICIENCY_SUPPORTED",
+  "HOLDOUT_STATUS": "EMPTY",
+  "holdout_2020_plus": 0,
+  "winner": null,
+  "auto_promotion": false,
+  "real_money": false,
+  "qualified": false,
+  "BET_COUNT": 0,
+  "CAPITAL_QUALIFIED": false,
+  "COST_ROBUST": "N/A",
+  "CLV": null,
+  "CLV_STATUS": "NOT_COMPUTABLE_LAST_QUOTE_IS_AS_OF",
+  "EXECUTION_COST": "UNKNOWN",
+  "test_used_for_selection": false,
+  "HOLDOUT_TOUCHED": false,
+  "coverage": {
+    "T-72h": {
+      "php_possible": false,
+      "observed": 0,
+      "coverage": 0
+    },
+    "T-48h": {
+      "php_possible": true,
+      "observed": 0,
+      "coverage": 0
+    },
+    "T-24h": {
+      "php_possible": true,
+      "observed": 8883,
+      "coverage": 0.8460805791027717
+    },
+    "T-12h": {
+      "php_possible": true,
+      "observed": 0,
+      "coverage": 0
+    },
+    "T-6h": {
+      "php_possible": true,
+      "observed": 0,
+      "coverage": 0
+    },
+    "T-3h": {
+      "php_possible": true,
+      "observed": 0,
+      "coverage": 0
+    },
+    "T-1h": {
+      "php_possible": true,
+      "observed": 10499,
+      "coverage": 1
+    },
+    "T-30m": {
+      "php_possible": false,
+      "observed": 0,
+      "coverage": 0
+    },
+    "T-15m": {
+      "php_possible": false,
+      "observed": 0,
+      "coverage": 0
+    },
+    "T-5m": {
+      "php_possible": false,
+      "observed": 0,
+      "coverage": 0
+    },
+    "T-1m": {
+      "php_possible": false,
+      "observed": 0,
+      "coverage": 0
+    }
+  },
+  "scores": {
+    "market": {
+      "VALIDATION": {
+        "n": 2295,
+        "brier": 0.1950350781006399,
+        "logloss": 0.9824072298270807,
+        "ece": 0.015526457696034049,
+        "delta_brier": 0,
+        "delta_logloss": 0
+      },
+      "TEST": {
+        "n": 1756,
+        "brier": 0.19877751909290076,
+        "logloss": 0.9963548182157216,
+        "ece": 0.01273314555740637,
+        "delta_brier": 0,
+        "delta_logloss": 0
+      }
+    },
+    "shin": {
+      "VALIDATION": {
+        "n": 2295,
+        "brier": 0.19490842868656794,
+        "logloss": 0.9819915512117076,
+        "ece": 0.01013084503977871,
+        "delta_brier": -0.0001266494140719776,
+        "delta_logloss": -0.00041567861537317174
+      },
+      "TEST": {
+        "n": 1756,
+        "brier": 0.19894619017690018,
+        "logloss": 0.9967162958627969,
+        "ece": 0.019226841845384722,
+        "delta_brier": 0.00016867108399942765,
+        "delta_logloss": 0.0003614776470752812
+      }
+    },
+    "power": {
+      "VALIDATION": {
+        "n": 2295,
+        "brier": 0.19490300198270266,
+        "logloss": 0.9818044210223076,
+        "ece": 0.010713423331383013,
+        "delta_brier": -0.00013207611793725205,
+        "delta_logloss": -0.0006028088047731472
+      },
+      "TEST": {
+        "n": 1756,
+        "brier": 0.19887915945897752,
+        "logloss": 0.9964337502050346,
+        "ece": 0.018959649653608017,
+        "delta_brier": 0.00010164036607676619,
+        "delta_logloss": 0.00007893198931296919
+      }
+    },
+    "additive": {
+      "VALIDATION": {
+        "n": 2295,
+        "brier": 0.1949126147245894,
+        "logloss": 0.9819363065515612,
+        "ece": 0.011043058104828554,
+        "delta_brier": -0.00012246337605051338,
+        "delta_logloss": -0.0004709232755195636
+      },
+      "TEST": {
+        "n": 1756,
+        "brier": 0.19883322151434654,
+        "logloss": 0.996288414290705,
+        "ece": 0.016978230270093445,
+        "delta_brier": 0.000055702421445785744,
+        "delta_logloss": -0.00006640392501655601
+      }
+    },
+    "best_price": {
+      "VALIDATION": {
+        "n": 2295,
+        "brier": 0.19498532987958958,
+        "logloss": 0.9819424312272553,
+        "ece": 0.016929968691451493,
+        "delta_brier": -0.00004974822105033305,
+        "delta_logloss": -0.00046479859982540006
+      },
+      "TEST": {
+        "n": 1756,
+        "brier": 0.19876456159827016,
+        "logloss": 0.9958810277905076,
+        "ece": 0.0077087493081659,
+        "delta_brier": -0.000012957494630594368,
+        "delta_logloss": -0.0004737904252140046
+      }
+    },
+    "median_consensus": {
+      "VALIDATION": {
+        "n": 2295,
+        "brier": 0.19530734328033264,
+        "logloss": 0.9835109771250155,
+        "ece": 0.02204147627288103,
+        "delta_brier": 0.0002722651796927267,
+        "delta_logloss": 0.0011037472979347207
+      },
+      "TEST": {
+        "n": 1756,
+        "brier": 0.19901859939552352,
+        "logloss": 0.9974698672722997,
+        "ece": 0.012185844091519543,
+        "delta_brier": 0.0002410803026227648,
+        "delta_logloss": 0.0011150490565781102
+      }
+    },
+    "follow_steam": {
+      "VALIDATION": {
+        "n": 2295,
+        "brier": 0.19529748210041284,
+        "logloss": 0.983639468869197,
+        "ece": 0.018588532389857065,
+        "delta_brier": 0.0002624039997729255,
+        "delta_logloss": 0.0012322390421162233
+      },
+      "TEST": {
+        "n": 1756,
+        "brier": 0.1990453057709284,
+        "logloss": 0.9976748382541083,
+        "ece": 0.016923309760682827,
+        "delta_brier": 0.0002677866780276539,
+        "delta_logloss": 0.0013200200383867156
+      }
+    }
+  },
+  "classes": {
+    "market": "BASELINE",
+    "shin": "NON_INFERIOR",
+    "power": "NON_INFERIOR",
+    "additive": "NON_INFERIOR",
+    "best_price": "NON_INFERIOR",
+    "median_consensus": "NON_INFERIOR",
+    "follow_steam": "NON_INFERIOR"
+  },
+  "holm": {
+    "ids": [
+      "shin",
+      "power",
+      "additive",
+      "best_price",
+      "median_consensus",
+      "follow_steam"
+    ],
+    "raw_p": [
+      0.7932067932067932,
+      0.7592407592407593,
+      0.6893106893106893,
+      0.46553446553446554,
+      0.8841158841158842,
+      0.906093906093906
+    ],
+    "adjusted_p": [
+      1,
+      1,
+      1,
+      1,
+      1,
+      1
+    ],
+    "rejected": [
+      false,
+      false,
+      false,
+      false,
+      false,
+      false
+    ]
+  },
+  "ci95": {
+    "shin": {
+      "low": -0.0003113283177502074,
+      "high": 0.0006775837379376847
+    },
+    "power": {
+      "low": -0.00025962724348047614,
+      "high": 0.00048309632306704016
+    },
+    "additive": {
+      "low": -0.00025317038233903775,
+      "high": 0.00038076535003199073
+    },
+    "best_price": {
+      "low": -0.00031029184885110505,
+      "high": 0.00031242545716152084
+    },
+    "median_consensus": {
+      "low": -0.00011837258591333957,
+      "high": 0.0005749555908565854
+    },
+    "follow_steam": {
+      "low": -0.00014954964323611944,
+      "high": 0.0006595047260280517
+    }
+  },
+  "selected_on_val": "power",
+  "flb": [
+    {
+      "bin": 0,
+      "n": 125,
+      "mean_implied": 0.07536657529356786,
+      "observed": 0.088,
+      "residual": 0.01263342470643214
+    },
+    {
+      "bin": 1,
+      "n": 631,
+      "mean_implied": 0.1577508357238699,
+      "observed": 0.12044374009508717,
+      "residual": -0.03730709562878272
+    },
+    {
+      "bin": 2,
+      "n": 1991,
+      "mean_implied": 0.25829859477177863,
+      "observed": 0.27122049221496736,
+      "residual": 0.012921897443188723
+    },
+    {
+      "bin": 3,
+      "n": 1122,
+      "mean_implied": 0.33843045236862135,
+      "observed": 0.3404634581105169,
+      "residual": 0.002033005741895577
+    },
+    {
+      "bin": 4,
+      "n": 654,
+      "mean_implied": 0.4481425140471397,
+      "observed": 0.4327217125382263,
+      "residual": -0.015420801508913395
+    },
+    {
+      "bin": 5,
+      "n": 371,
+      "mean_implied": 0.5468878616106635,
+      "observed": 0.5444743935309974,
+      "residual": -0.0024134680796661367
+    },
+    {
+      "bin": 6,
+      "n": 248,
+      "mean_implied": 0.6472052849644576,
+      "observed": 0.6491935483870968,
+      "residual": 0.001988263422639136
+    },
+    {
+      "bin": 7,
+      "n": 101,
+      "mean_implied": 0.7461879339610885,
+      "observed": 0.7524752475247525,
+      "residual": 0.006287313563663965
+    },
+    {
+      "bin": 8,
+      "n": 23,
+      "mean_implied": 0.8415506016872507,
+      "observed": 1,
+      "residual": 0.1584493983127493
+    },
+    {
+      "bin": 9,
+      "n": 2,
+      "mean_implied": 0.9193871569447658,
+      "observed": 1,
+      "residual": 0.0806128430552342
+    }
+  ],
+  "overround_summary": {
+    "mean": 0.035754030683861945,
+    "median": 0.02544746233842199,
+    "p10": 0.019737756996388977,
+    "p25": 0.021895091917061515,
+    "p75": 0.0314644082164407,
+    "p90": 0.09256738270418152,
+    "max": 0.15608465608465605
+  },
+  "bands": [
+    {
+      "band": "1.50–1.80",
+      "n": 333,
+      "brier": 0.17972950136998303
+    },
+    {
+      "band": "2.20–3.00",
+      "n": 621,
+      "brier": 0.21955403289482112
+    },
+    {
+      "band": "<1.50",
+      "n": 275,
+      "brier": 0.14268372300467583
+    },
+    {
+      "band": "1.80–2.20",
+      "n": 527,
+      "brier": 0.21560212773616588
+    }
+  ],
+  "movement": [
+    {
+      "pattern": "steam",
+      "n": 424,
+      "brier": 0.19955776600014344,
+      "note": "T-24→T-1h only"
+    },
+    {
+      "pattern": "reverse_steam",
+      "n": 290,
+      "brier": 0.21032040199975297,
+      "note": "T-24→T-1h only"
+    },
+    {
+      "pattern": "drift",
+      "n": 418,
+      "brier": 0.19890218954084898,
+      "note": "T-24→T-1h only"
+    },
+    {
+      "pattern": "stability",
+      "n": 287,
+      "brier": 0.192962538645453,
+      "note": "T-24→T-1h only"
+    },
+    {
+      "pattern": "no_second_snapshot",
+      "n": 337,
+      "brier": 0.19266038677692676,
+      "note": "T-24 overlay missing"
+    },
+    {
+      "pattern": "late_reversal",
+      "n": 0,
+      "brier": null,
+      "note": "window coverage 0 — not interpolated"
+    },
+    {
+      "pattern": "t1_to_kickoff",
+      "n": 0,
+      "brier": null,
+      "note": "window coverage 0 — not interpolated"
+    }
+  ],
+  "cross_book": {
+    "n_events_multi": 10391,
+    "mean_cv_home": 0.036203440186757335,
+    "mean_range_home": 0.5082051775575017,
+    "mean_entropy_home": 4.312285514923148
+  },
+  "quartile_overround": [
+    {
+      "q": "Q1",
+      "n": 163,
+      "brier": 0.21003283263176736
+    },
+    {
+      "q": "Q2",
+      "n": 264,
+      "brier": 0.1967143867496343
+    },
+    {
+      "q": "Q3",
+      "n": 411,
+      "brier": 0.2012782397702926
+    },
+    {
+      "q": "Q4",
+      "n": 918,
+      "brier": 0.19625274200507803
+    }
+  ],
+  "quartile_dispersion": [
+    {
+      "q": "Q1",
+      "n": 615,
+      "brier": 0.1769578829078961
+    },
+    {
+      "q": "Q2",
+      "n": 398,
+      "brier": 0.20929853320448027
+    },
+    {
+      "q": "Q3",
+      "n": 374,
+      "brier": 0.21902511932818775
+    },
+    {
+      "q": "Q4",
+      "n": 348,
+      "brier": 0.2051738580650246
+    }
+  ],
+  "hl_home": {
+    "n": 1756,
+    "bins": 10,
+    "chi2": 16.38410725299877,
+    "df": 8
+  },
+  "brier_decomp_home": {
+    "n": 1756,
+    "brier": 0.2234480803081207,
+    "reliability": 0.0015446918261996449,
+    "resolution": 0.02518929418609914,
+    "uncertainty": 0.24812682582593493
+  },
+  "conditional": [
+    {
+      "group": "weekday",
+      "level": "Fri",
+      "n": 143,
+      "brier": 0.20798382744344318
+    },
+    {
+      "group": "weekday",
+      "level": "Mon",
+      "n": 71,
+      "brier": 0.2165004371136898
+    },
+    {
+      "group": "weekday",
+      "level": "Sat",
+      "n": 529,
+      "brier": 0.1975793245701839
+    },
+    {
+      "group": "weekday",
+      "level": "Sun",
+      "n": 560,
+      "brier": 0.1991718761945868
+    },
+    {
+      "group": "weekday",
+      "level": "Thu",
+      "n": 171,
+      "brier": 0.19513070420259584
+    },
+    {
+      "group": "weekday",
+      "level": "Tue",
+      "n": 130,
+      "brier": 0.19329934429681286
+    },
+    {
+      "group": "weekday",
+      "level": "Wed",
+      "n": 152,
+      "brier": 0.1933429383146291
+    },
+    {
+      "group": "season",
+      "level": "2016",
+      "n": 1756,
+      "brier": 0.19877751909290076
+    },
+    {
+      "group": "favorite_side",
+      "level": "AWAY",
+      "n": 468,
+      "brier": 0.208826582337941
+    },
+    {
+      "group": "favorite_side",
+      "level": "DRAW",
+      "n": 4,
+      "brier": 0.21528397262981216
+    },
+    {
+      "group": "favorite_side",
+      "level": "HOME",
+      "n": 1284,
+      "brier": 0.19506335444116646
+    },
+    {
+      "group": "movement_direction",
+      "level": "drift",
+      "n": 418,
+      "brier": 0.19890218954084898
+    },
+    {
+      "group": "movement_direction",
+      "level": "no_second_snapshot",
+      "n": 337,
+      "brier": 0.19266038677692676
+    },
+    {
+      "group": "movement_direction",
+      "level": "reverse_steam",
+      "n": 290,
+      "brier": 0.21032040199975297
+    },
+    {
+      "group": "movement_direction",
+      "level": "stability",
+      "n": 287,
+      "brier": 0.192962538645453
+    },
+    {
+      "group": "movement_direction",
+      "level": "steam",
+      "n": 424,
+      "brier": 0.19955776600014344
+    },
+    {
+      "group": "league",
+      "level": "Algeria: Division 1",
+      "n": 3,
+      "brier": 0.16350555639884834
+    },
+    {
+      "group": "league",
+      "level": "Argentina: Copa Argentina",
+      "n": 12,
+      "brier": 0.14581170829103704
+    },
+    {
+      "group": "league",
+      "level": "Argentina: Primera B Metropolitana",
+      "n": 6,
+      "brier": 0.21390857293598628
+    },
+    {
+      "group": "league",
+      "level": "Argentina: Primera B Nacional",
+      "n": 5,
+      "brier": 0.25711366723676105
+    },
+    {
+      "group": "league",
+      "level": "Argentina: Primera Division",
+      "n": 9,
+      "brier": 0.1901332150338283
+    },
+    {
+      "group": "league",
+      "level": "Armenia: Premier League",
+      "n": 3,
+      "brier": 0.2282281904966346
+    },
+    {
+      "group": "league",
+      "level": "Australia: Brisbane Premier League",
+      "n": 16,
+      "brier": 0.12786120232353412
+    },
+    {
+      "group": "league",
+      "level": "Australia: Capital Territory",
+      "n": 6,
+      "brier": 0.17487550272382815
+    },
+    {
+      "group": "league",
+      "level": "Australia: Northern NSW",
+      "n": 5,
+      "brier": 0.23053730539510514
+    },
+    {
+      "group": "league",
+      "level": "Austria: Erste Liga",
+      "n": 3,
+      "brier": 0.23364848555651777
+    },
+    {
+      "group": "league",
+      "level": "Austria: Tipico Bundesliga",
+      "n": 7,
+      "brier": 0.18884060192925503
+    },
+    {
+      "group": "league",
+      "level": "Bangladesh: Premier League",
+      "n": 4,
+      "brier": 0.11997732462614037
+    },
+    {
+      "group": "league",
+      "level": "Belarus: Vysshaya Liga",
+      "n": 6,
+      "brier": 0.20855482389527877
+    },
+    {
+      "group": "league",
+      "level": "Belgium: Jupiler League",
+      "n": 15,
+      "brier": 0.18511025609502652
+    },
+    {
+      "group": "league",
+      "level": "Belgium: Proximus League",
+      "n": 2,
+      "brier": 0.2620860796638989
+    },
+    {
+      "group": "league",
+      "level": "Bosnia and Herzegovina: Premier League",
+      "n": 6,
+      "brier": 0.23683220590079535
+    },
+    {
+      "group": "league",
+      "level": "Brazil: Copa do Brasil",
+      "n": 8,
+      "brier": 0.24046600589911588
+    },
+    {
+      "group": "league",
+      "level": "Brazil: S�rie B",
+      "n": 51,
+      "brier": 0.21176230021374345
+    },
+    {
+      "group": "league",
+      "level": "Brazil: S�rie C",
+      "n": 31,
+      "brier": 0.21566970951236783
+    },
+    {
+      "group": "league",
+      "level": "Bulgaria: Vtora liga",
+      "n": 4,
+      "brier": 0.15426997974843892
+    },
+    {
+      "group": "league",
+      "level": "Cameroon: Elite One",
+      "n": 25,
+      "brier": 0.19689741246105466
+    },
+    {
+      "group": "league",
+      "level": "China: Super League",
+      "n": 3,
+      "brier": 0.21439215913956153
+    },
+    {
+      "group": "league",
+      "level": "Colombia: Liga Aguila",
+      "n": 16,
+      "brier": 0.21044251136470798
+    },
+    {
+      "group": "league",
+      "level": "Colombia: Torneo Aguila",
+      "n": 18,
+      "brier": 0.25300437955360616
+    },
+    {
+      "group": "league",
+      "level": "Croatia: 2. HNL",
+      "n": 7,
+      "brier": 0.20637398177146185
+    },
+    {
+      "group": "league",
+      "level": "Denmark: 1st Division",
+      "n": 12,
+      "brier": 0.2296480022978706
+    },
+    {
+      "group": "league",
+      "level": "Denmark: Superliga",
+      "n": 42,
+      "brier": 0.19853187567939648
+    },
+    {
+      "group": "league",
+      "level": "Ecuador: Serie A",
+      "n": 3,
+      "brier": 0.15435319434359027
+    },
+    {
+      "group": "league",
+      "level": "Egypt: Premier League",
+      "n": 7,
+      "brier": 0.21058519676664492
+    },
+    {
+      "group": "league",
+      "level": "El Salvador: Primera Division",
+      "n": 6,
+      "brier": 0.2302272942095459
+    },
+    {
+      "group": "league",
+      "level": "England: Championship",
+      "n": 45,
+      "brier": 0.20605530465326966
+    },
+    {
+      "group": "league",
+      "level": "England: EFL Cup",
+      "n": 41,
+      "brier": 0.16291242613206294
+    },
+    {
+      "group": "league",
+      "level": "England: League One",
+      "n": 38,
+      "brier": 0.21424533388188338
+    },
+    {
+      "group": "league",
+      "level": "England: League Two",
+      "n": 45,
+      "brier": 0.22690959300868851
+    },
+    {
+      "group": "league",
+      "level": "England: Premier League",
+      "n": 20,
+      "brier": 0.20161942011592449
+    },
+    {
+      "group": "league",
+      "level": "Estonia: Esiliiga",
+      "n": 9,
+      "brier": 0.2466700727757557
+    },
+    {
+      "group": "league",
+      "level": "Ethiopia: Premier League",
+      "n": 3,
+      "brier": 0.14976308398915322
+    },
+    {
+      "group": "league",
+      "level": "Europe: Champions League",
+      "n": 34,
+      "brier": 0.1857648090400442
+    },
+    {
+      "group": "league",
+      "level": "Europe: Euro",
+      "n": 44,
+      "brier": 0.20919131983687597
+    },
+    {
+      "group": "league",
+      "level": "Europe: Europa League",
+      "n": 92,
+      "brier": 0.20035679683413982
+    },
+    {
+      "group": "league",
+      "level": "Europe: UEFA Super Cup",
+      "n": 1,
+      "brier": 0.13531671632321426
+    },
+    {
+      "group": "league",
+      "level": "Finland: Kakkonen Group A",
+      "n": 37,
+      "brier": 0.20226926569217135
+    },
+    {
+      "group": "league",
+      "level": "Finland: Suomen Cup",
+      "n": 5,
+      "brier": 0.15288615407948095
+    },
+    {
+      "group": "league",
+      "level": "Finland: Veikkausliiga",
+      "n": 44,
+      "brier": 0.20275719711375537
+    },
+    {
+      "group": "league",
+      "level": "Finland: Ykkonen",
+      "n": 15,
+      "brier": 0.19514983426079635
+    },
+    {
+      "group": "league",
+      "level": "France: Ligue 1",
+      "n": 30,
+      "brier": 0.19872162205235763
+    },
+    {
+      "group": "league",
+      "level": "France: Ligue 2",
+      "n": 31,
+      "brier": 0.22917202864121686
+    },
+    {
+      "group": "league",
+      "level": "France: National",
+      "n": 25,
+      "brier": 0.23278304526719296
+    },
+    {
+      "group": "league",
+      "level": "France: Super Cup",
+      "n": 1,
+      "brier": 0.10654698372389536
+    },
+    {
+      "group": "league",
+      "level": "Georgia: Umaglesi Liga",
+      "n": 2,
+      "brier": 0.3150403498249774
+    },
+    {
+      "group": "league",
+      "level": "Germany: 2. Bundesliga",
+      "n": 8,
+      "brier": 0.21265611452370842
+    },
+    {
+      "group": "league",
+      "level": "Germany: 3. Liga",
+      "n": 7,
+      "brier": 0.2370565124073433
+    },
+    {
+      "group": "league",
+      "level": "Germany: Bundesliga",
+      "n": 3,
+      "brier": 0.1612293564039804
+    },
+    {
+      "group": "league",
+      "level": "Germany: DFB Pokal",
+      "n": 3,
+      "brier": 0.040073244385931815
+    },
+    {
+      "group": "league",
+      "level": "Germany: Super Cup",
+      "n": 1,
+      "brier": 0.14742118964801407
+    },
+    {
+      "group": "league",
+      "level": "Ghana: Premier League",
+      "n": 32,
+      "brier": 0.1825476885669505
+    },
+    {
+      "group": "league",
+      "level": "Guatemala: Liga Nacional",
+      "n": 6,
+      "brier": 0.1986031828304485
+    },
+    {
+      "group": "league",
+      "level": "Honduras: Liga Nacional",
+      "n": 3,
+      "brier": 0.2345396664135134
+    },
+    {
+      "group": "league",
+      "level": "Hong Kong: Premier League",
+      "n": 1,
+      "brier": 0.06786981987933237
+    },
+    {
+      "group": "league",
+      "level": "Hungary: Merkantil Bank Liga",
+      "n": 12,
+      "brier": 0.22905068994826502
+    },
+    {
+      "group": "league",
+      "level": "Hungary: OTP Bank Liga",
+      "n": 9,
+      "brier": 0.24061270319058364
+    },
+    {
+      "group": "league",
+      "level": "Iceland: Division 2",
+      "n": 20,
+      "brier": 0.2010185078898429
+    },
+    {
+      "group": "league",
+      "level": "Iceland: Inkasso-deildin",
+      "n": 46,
+      "brier": 0.2009605194606036
+    },
+    {
+      "group": "league",
+      "level": "Iran: Division 1",
+      "n": 2,
+      "brier": 0.19855754852648783
+    },
+    {
+      "group": "league",
+      "level": "Iran: Persian Gulf Pro League",
+      "n": 8,
+      "brier": 0.23125273112004655
+    },
+    {
+      "group": "league",
+      "level": "Israel: Ligat ha'Al",
+      "n": 3,
+      "brier": 0.15239935644568273
+    },
+    {
+      "group": "league",
+      "level": "Italy: Coppa Italia",
+      "n": 30,
+      "brier": 0.1348163337818536
+    },
+    {
+      "group": "league",
+      "level": "Italy: Serie A",
+      "n": 16,
+      "brier": 0.1793174831601653
+    },
+    {
+      "group": "league",
+      "level": "Italy: Serie B",
+      "n": 8,
+      "brier": 0.23581093392971636
+    },
+    {
+      "group": "league",
+      "level": "Japan: J-League",
+      "n": 15,
+      "brier": 0.18896578388703197
+    },
+    {
+      "group": "league",
+      "level": "Japan: J-League Division 2",
+      "n": 7,
+      "brier": 0.23675433363505985
+    },
+    {
+      "group": "league",
+      "level": "Japan: Nabisco Cup",
+      "n": 2,
+      "brier": 0.3031575903304814
+    },
+    {
+      "group": "league",
+      "level": "Kazakhstan: Premier League",
+      "n": 14,
+      "brier": 0.17754999944255473
+    },
+    {
+      "group": "league",
+      "level": "Kenya: Premier League",
+      "n": 9,
+      "brier": 0.2529608234632153
+    },
+    {
+      "group": "league",
+      "level": "Latvia: SynotTip Virsl?ga",
+      "n": 12,
+      "brier": 0.20522851877495332
+    },
+    {
+      "group": "league",
+      "level": "Lithuania: A Lyga",
+      "n": 5,
+      "brier": 0.12309602111151026
+    },
+    {
+      "group": "league",
+      "level": "Malaysia: Super League",
+      "n": 14,
+      "brier": 0.21129030248229747
+    },
+    {
+      "group": "league",
+      "level": "Mali: Premiere Division",
+      "n": 3,
+      "brier": 0.2761332962825331
+    },
+    {
+      "group": "league",
+      "level": "Malta: Premier League",
+      "n": 2,
+      "brier": 0.03017232510288065
+    },
+    {
+      "group": "league",
+      "level": "Mexico: Primera Division",
+      "n": 28,
+      "brier": 0.21211827378350118
+    },
+    {
+      "group": "league",
+      "level": "Moldova: Divizia Nationala",
+      "n": 8,
+      "brier": 0.1860426740828794
+    },
+    {
+      "group": "league",
+      "level": "Morocco: Botola Pro",
+      "n": 3,
+      "brier": 0.17297833076940503
+    },
+    {
+      "group": "league",
+      "level": "Myanmar: National League",
+      "n": 33,
+      "brier": 0.17440205877563322
+    },
+    {
+      "group": "league",
+      "level": "Netherlands: Eerste Divisie",
+      "n": 10,
+      "brier": 0.19552536598153308
+    },
+    {
+      "group": "league",
+      "level": "Netherlands: Eredivisie",
+      "n": 21,
+      "brier": 0.19961139675057815
+    },
+    {
+      "group": "league",
+      "level": "Nicaragua: Primera Division",
+      "n": 2,
+      "brier": 0.1207947166837208
+    },
+    {
+      "group": "league",
+      "level": "Nigeria: Premier League",
+      "n": 8,
+      "brier": 0.20815822410628576
+    },
+    {
+      "group": "league",
+      "level": "Norway: OBOS-ligaen",
+      "n": 79,
+      "brier": 0.18420977325469304
+    },
+    {
+      "group": "league",
+      "level": "Peru: Primera Division",
+      "n": 35,
+      "brier": 0.22885814639142218
+    },
+    {
+      "group": "league",
+      "level": "Peru: Segunda Division",
+      "n": 14,
+      "brier": 0.16790063576993755
+    },
+    {
+      "group": "league",
+      "level": "Portugal: Primeira Liga",
+      "n": 13,
+      "brier": 0.2012087402686798
+    },
+    {
+      "group": "league",
+      "level": "Portugal: Segunda Liga",
+      "n": 36,
+      "brier": 0.20093141180619936
+    },
+    {
+      "group": "league",
+      "level": "Romania: Liga 1",
+      "n": 6,
+      "brier": 0.21626871779952153
+    },
+    {
+      "group": "league",
+      "level": "Romania: Liga 2",
+      "n": 1,
+      "brier": 0.16005040957781977
+    },
+    {
+      "group": "league",
+      "level": "Russia: Division 1",
+      "n": 30,
+      "brier": 0.2077441468749954
+    },
+    {
+      "group": "league",
+      "level": "Russia: Premier League",
+      "n": 15,
+      "brier": 0.2015546546903708
+    },
+    {
+      "group": "league",
+      "level": "Saudi Arabia: Saudi Professional League",
+      "n": 2,
+      "brier": 0.2336308535796245
+    },
+    {
+      "group": "league",
+      "level": "Scotland: Championship",
+      "n": 10,
+      "brier": 0.15125202337273103
+    },
+    {
+      "group": "league",
+      "level": "Scotland: Premiership",
+      "n": 12,
+      "brier": 0.15466720159596806
+    },
+    {
+      "group": "league",
+      "level": "Serbia: Prva Liga",
+      "n": 1,
+      "brier": 0.10772793852855539
+    },
+    {
+      "group": "league",
+      "level": "Serbia: Super Liga",
+      "n": 16,
+      "brier": 0.18268353656313965
+    },
+    {
+      "group": "league",
+      "level": "Singapore: S.League",
+      "n": 2,
+      "brier": 0.09606212441386842
+    },
+    {
+      "group": "league",
+      "level": "Slovakia: 2. Liga - East",
+      "n": 3,
+      "brier": 0.08657436429412961
+    },
+    {
+      "group": "league",
+      "level": "South Africa: Premier League",
+      "n": 3,
+      "brier": 0.1917318049675528
+    },
+    {
+      "group": "league",
+      "level": "South America: Copa Am�rica",
+      "n": 17,
+      "brier": 0.17834912202841102
+    },
+    {
+      "group": "league",
+      "level": "South Korea: K-League Classic",
+      "n": 1,
+      "brier": 0.3152848659041492
+    },
+    {
+      "group": "league",
+      "level": "Spain: LaLiga",
+      "n": 6,
+      "brier": 0.2014690601631959
+    },
+    {
+      "group": "league",
+      "level": "Spain: LaLiga2",
+      "n": 14,
+      "brier": 0.2149957817477099
+    },
+    {
+      "group": "league",
+      "level": "Sudan: Premier League",
+      "n": 4,
+      "brier": 0.05773625607465629
+    },
+    {
+      "group": "league",
+      "level": "Sweden: Allsvenskan",
+      "n": 24,
+      "brier": 0.20694202917991975
+    },
+    {
+      "group": "league",
+      "level": "Sweden: Division 1 - Norra",
+      "n": 8,
+      "brier": 0.11516114868555916
+    },
+    {
+      "group": "league",
+      "level": "Sweden: Superettan",
+      "n": 13,
+      "brier": 0.2275439248936905
+    },
+    {
+      "group": "league",
+      "level": "Switzerland: Challenge League",
+      "n": 1,
+      "brier": 0.061515325422557166
+    },
+    {
+      "group": "league",
+      "level": "Switzerland: Super League",
+      "n": 19,
+      "brier": 0.16348224799651562
+    },
+    {
+      "group": "league",
+      "level": "Thailand: Thai Premier League",
+      "n": 12,
+      "brier": 0.21483884258111682
+    },
+    {
+      "group": "league",
+      "level": "Tunisia: Ligue Professionnelle 1",
+      "n": 1,
+      "brier": 0.27357988826913376
+    },
+    {
+      "group": "league",
+      "level": "Turkey: Super Cup",
+      "n": 1,
+      "brier": 0.232285049709234
+    },
+    {
+      "group": "league",
+      "level": "Turkey: Super Lig",
+      "n": 10,
+      "brier": 0.22459080027678452
+    },
+    {
+      "group": "league",
+      "level": "Turkey: TFF 1. Lig",
+      "n": 2,
+      "brier": 0.2057145493148106
+    },
+    {
+      "group": "league",
+      "level": "Uganda: Premier League",
+      "n": 2,
+      "brier": 0.1870612045581064
+    },
+    {
+      "group": "league",
+      "level": "Ukraine: Pari-Match League",
+      "n": 5,
+      "brier": 0.20079885137019748
+    },
+    {
+      "group": "league",
+      "level": "Uruguay: Primera Division",
+      "n": 3,
+      "brier": 0.21644051522335464
+    },
+    {
+      "group": "league",
+      "level": "USA: USL",
+      "n": 11,
+      "brier": 0.21879061902650498
+    },
+    {
+      "group": "league",
+      "level": "Wales: Premier League",
+      "n": 1,
+      "brier": 0.29308601524998457
+    },
+    {
+      "group": "league",
+      "level": "Zambia: Super League",
+      "n": 6,
+      "brier": 0.1918765284928576
+    },
+    {
+      "group": "time_to_kickoff",
+      "level": "T-1h",
+      "n": 1756,
+      "brier": 0.19877751909290076
+    }
+  ],
+  "inventory": {
+    "events": 10499,
+    "t1h_snapshots": 10499,
+    "t24_snapshots": 8883,
+    "windows_zero": [
+      "T-72h",
+      "T-48h",
+      "T-12h",
+      "T-6h",
+      "T-3h",
+      "T-30m",
+      "T-15m",
+      "T-5m",
+      "T-1m"
+    ]
+  },
+  "hypothesis_registry": [
+    {
+      "id": "H001",
+      "definition": "Shin de-vig Brier is lower than proportional MARKET_DEVIG",
+      "feature": "shin_devig",
+      "dataset": "TASK_031_BASE",
+      "split": "TRAIN_VAL_select_TEST_eval",
+      "direction": "delta_brier < 0",
+      "metric": "brier",
+      "created_before_test": true,
+      "inferential": true,
+      "status": "NON_INFERIOR"
+    },
+    {
+      "id": "H002",
+      "definition": "Power de-vig Brier is lower than proportional MARKET_DEVIG",
+      "feature": "power_devig",
+      "dataset": "TASK_031_BASE",
+      "split": "TRAIN_VAL_select_TEST_eval",
+      "direction": "delta_brier < 0",
+      "metric": "brier",
+      "created_before_test": true,
+      "inferential": true,
+      "status": "NON_INFERIOR"
+    },
+    {
+      "id": "H003",
+      "definition": "Additive-margin de-vig Brier is lower than proportional MARKET_DEVIG",
+      "feature": "additive_devig",
+      "dataset": "TASK_031_BASE",
+      "split": "TRAIN_VAL_select_TEST_eval",
+      "direction": "delta_brier < 0",
+      "metric": "brier",
+      "created_before_test": true,
+      "inferential": true,
+      "status": "NON_INFERIOR"
+    },
+    {
+      "id": "H004",
+      "definition": "Best-price (max odds per selection, then proportional de-vig) beats primary-book MARKET_DEVIG",
+      "feature": "best_price",
+      "dataset": "TASK_031_BASE + books-t1h overlay",
+      "split": "TRAIN_VAL_select_TEST_eval",
+      "direction": "delta_brier < 0",
+      "metric": "brier",
+      "created_before_test": true,
+      "inferential": true,
+      "status": "NON_INFERIOR"
+    },
+    {
+      "id": "H005",
+      "definition": "Median cross-book odds then proportional de-vig beats primary-book MARKET_DEVIG",
+      "feature": "median_consensus",
+      "dataset": "TASK_031_BASE + books-t1h overlay",
+      "split": "TRAIN_VAL_select_TEST_eval",
+      "direction": "delta_brier < 0",
+      "metric": "brier",
+      "created_before_test": true,
+      "inferential": true,
+      "status": "NON_INFERIOR"
+    },
+    {
+      "id": "H006",
+      "definition": "Follow steam: mix T-1h toward T-24→T-1 Δp with frozen mix=0.5 when T-24 exists, else market",
+      "feature": "follow_steam",
+      "dataset": "TASK_031_BASE + movement-t24 overlay",
+      "split": "TRAIN_VAL_select_TEST_eval",
+      "direction": "delta_brier < 0",
+      "metric": "brier",
+      "created_before_test": true,
+      "inferential": true,
+      "status": "NON_INFERIOR"
+    },
+    {
+      "id": "H007",
+      "definition": "Favorite-longshot: mean residual (observed-implied) in p<0.10 differs from p>=0.90 (diagnostic)",
+      "feature": "flb_bins",
+      "dataset": "TASK_031_BASE",
+      "split": "TEST_diagnostic",
+      "direction": "two-sided residual",
+      "metric": "calibration_residual",
+      "created_before_test": true,
+      "inferential": false,
+      "status": "DIAGNOSTIC"
+    },
+    {
+      "id": "H008",
+      "definition": "Overround Q4 vs Q1: market Brier differs (conditional efficiency diagnostic)",
+      "feature": "overround_quartile",
+      "dataset": "TASK_031_BASE",
+      "split": "TEST_diagnostic",
+      "direction": "Q4 brier != Q1",
+      "metric": "brier",
+      "created_before_test": true,
+      "inferential": false,
+      "status": "DIAGNOSTIC"
+    },
+    {
+      "id": "H009",
+      "definition": "Dispersion Q4 vs Q1: market Brier differs when n_books>=2",
+      "feature": "dispersion_quartile",
+      "dataset": "TASK_031_BASE + books-t1h",
+      "split": "TEST_diagnostic",
+      "direction": "Q4 brier != Q1",
+      "metric": "brier",
+      "created_before_test": true,
+      "inferential": false,
+      "status": "DIAGNOSTIC"
+    },
+    {
+      "id": "H010",
+      "definition": "CLV T-24→T-1h is computed only after LOCK; CLOSE is not a decision feature",
+      "feature": "clv_t24_t1",
+      "dataset": "movement-t24 overlay",
+      "split": "TEST_diagnostic_after_lock",
+      "direction": "n/a",
+      "metric": "clv",
+      "created_before_test": true,
+      "inferential": false,
+      "status": "DIAGNOSTIC"
+    }
+  ],
+  "annual": [
+    {
+      "year_label": "2001–2014",
+      "signal": "none",
+      "n": 0,
+      "bets": 0,
+      "start": 1000,
+      "end": null,
+      "pnl": null,
+      "roi": null,
+      "max_dd": null,
+      "status": "INSUFFICIENT_DATA"
+    },
+    {
+      "year_label": "2015",
+      "signal": "MARKET_DEVIG",
+      "n": 2381,
+      "bets": 0,
+      "start": 1000,
+      "end": null,
+      "pnl": null,
+      "roi": null,
+      "max_dd": null,
+      "status": "NO_INEFFICIENCY"
+    },
+    {
+      "year_label": "2016",
+      "signal": "MARKET_DEVIG",
+      "n": 8118,
+      "bets": 0,
+      "start": 1000,
+      "end": null,
+      "pnl": null,
+      "roi": null,
+      "max_dd": null,
+      "status": "NO_INEFFICIENCY"
+    },
+    {
+      "year_label": "2017",
+      "signal": "none",
+      "n": 0,
+      "bets": 0,
+      "start": 1000,
+      "end": null,
+      "pnl": null,
+      "roi": null,
+      "max_dd": null,
+      "status": "INSUFFICIENT_DATA"
+    },
+    {
+      "year_label": "2018",
+      "signal": "none",
+      "n": 0,
+      "bets": 0,
+      "start": 1000,
+      "end": null,
+      "pnl": null,
+      "roi": null,
+      "max_dd": null,
+      "status": "INSUFFICIENT_DATA"
+    },
+    {
+      "year_label": "2019",
+      "signal": "none",
+      "n": 0,
+      "bets": 0,
+      "start": 1000,
+      "end": null,
+      "pnl": null,
+      "roi": null,
+      "max_dd": null,
+      "status": "INSUFFICIENT_DATA"
+    },
+    {
+      "year_label": "2020",
+      "signal": "none",
+      "n": 0,
+      "bets": 0,
+      "start": 1000,
+      "end": null,
+      "pnl": null,
+      "roi": null,
+      "max_dd": null,
+      "status": "INSUFFICIENT_DATA"
+    },
+    {
+      "year_label": "2021",
+      "signal": "none",
+      "n": 0,
+      "bets": 0,
+      "start": 1000,
+      "end": null,
+      "pnl": null,
+      "roi": null,
+      "max_dd": null,
+      "status": "INSUFFICIENT_DATA"
+    },
+    {
+      "year_label": "2022",
+      "signal": "none",
+      "n": 0,
+      "bets": 0,
+      "start": 1000,
+      "end": null,
+      "pnl": null,
+      "roi": null,
+      "max_dd": null,
+      "status": "INSUFFICIENT_DATA"
+    },
+    {
+      "year_label": "2023",
+      "signal": "none",
+      "n": 0,
+      "bets": 0,
+      "start": 1000,
+      "end": null,
+      "pnl": null,
+      "roi": null,
+      "max_dd": null,
+      "status": "INSUFFICIENT_DATA"
+    },
+    {
+      "year_label": "2024",
+      "signal": "none",
+      "n": 0,
+      "bets": 0,
+      "start": 1000,
+      "end": null,
+      "pnl": null,
+      "roi": null,
+      "max_dd": null,
+      "status": "INSUFFICIENT_DATA"
+    },
+    {
+      "year_label": "2025",
+      "signal": "none",
+      "n": 0,
+      "bets": 0,
+      "start": 1000,
+      "end": null,
+      "pnl": null,
+      "roi": null,
+      "max_dd": null,
+      "status": "INSUFFICIENT_DATA"
+    },
+    {
+      "year_label": "2026 YTD",
+      "signal": "none",
+      "n": 0,
+      "bets": 0,
+      "start": 1000,
+      "end": null,
+      "pnl": null,
+      "roi": null,
+      "max_dd": null,
+      "status": "INCOMPLETE_YEAR"
+    }
+  ],
+  "leakage": [
+    {
+      "id": "future_odds",
+      "throws": true
+    },
+    {
+      "id": "close_leakage",
+      "throws": true
+    },
+    {
+      "id": "close_bin",
+      "throws": true
+    },
+    {
+      "id": "FT",
+      "throws": true
+    },
+    {
+      "id": "HT",
+      "throws": true
+    },
+    {
+      "id": "outcome",
+      "throws": true
+    },
+    {
+      "id": "post_match_ts",
+      "throws": true
+    },
+    {
+      "id": "future_book",
+      "throws": true
+    },
+    {
+      "id": "future_movement",
+      "throws": true
+    },
+    {
+      "id": "future_consensus",
+      "throws": true
+    },
+    {
+      "id": "future_lineup",
+      "throws": true
+    },
+    {
+      "id": "future_news",
+      "throws": true
+    },
+    {
+      "id": "ambiguous",
+      "throws": true
+    },
+    {
+      "id": "duplicate",
+      "throws": true
+    },
+    {
+      "id": "cross_season",
+      "throws": true
+    },
+    {
+      "id": "date_only",
+      "throws": true
+    },
+    {
+      "id": "invented_ts",
+      "throws": true
+    },
+    {
+      "id": "test_lock",
+      "throws": true
+    },
+    {
+      "id": "holdout_lock",
+      "throws": true
+    },
+    {
+      "id": "feature_test",
+      "throws": true
+    },
+    {
+      "id": "holdout_train",
+      "throws": true
+    },
+    {
+      "id": "lock",
+      "throws": true
+    },
+    {
+      "id": "auto_promote",
+      "throws": true
+    },
+    {
+      "id": "task_035",
+      "throws": true
+    },
+    {
+      "id": "elo",
+      "throws": true
+    },
+    {
+      "id": "frozen_flags",
+      "throws": true
+    }
+  ],
+  "friction": [
+    {
+      "cost": 0,
+      "note": "Not executed — capital gate closed. EXECUTION_COST_UNKNOWN."
+    },
+    {
+      "cost": 0.005,
+      "note": "Not executed — capital gate closed. EXECUTION_COST_UNKNOWN."
+    },
+    {
+      "cost": 0.01,
+      "note": "Not executed — capital gate closed. EXECUTION_COST_UNKNOWN."
+    },
+    {
+      "cost": 0.02,
+      "note": "Not executed — capital gate closed. EXECUTION_COST_UNKNOWN."
+    },
+    {
+      "cost": 0.03,
+      "note": "Not executed — capital gate closed. EXECUTION_COST_UNKNOWN."
+    }
+  ],
+  "experiment_sha256": "0a1ba9a4433162a4caf60791055308786dcd123519c61467e067f0658f836359",
+  "hypothesis_registry_hash": "164c42db6d54b0a1b6191947b6d53807418aa35e59436d4649a7c7e81b0dbd00",
+  "reproducibility": "PASS",
+  "fingerprint": "0f04323ba8374bf2e0e30ad6a55aff67743b6746a2c172a00d85a7fa52335543",
+  "quote_windows_n": 10499
+}

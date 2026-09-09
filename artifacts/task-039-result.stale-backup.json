@@ -1,0 +1,123 @@
+{
+  "experiment_id": "exp_039_prospective_live",
+  "task": "039",
+  "COLLECTION_STATUS": "BLOCKED",
+  "SOURCE_STATUS": "BLOCKED",
+  "API_KEY_CONFIGURED": false,
+  "EVENTS_DISCOVERED": 0,
+  "QUOTE_OBSERVATIONS": 0,
+  "STRICT_EVENTS": 0,
+  "STRICT_QUOTES": 0,
+  "MATCH_EXACT": 0,
+  "T72_COVERAGE": 0,
+  "T24_COVERAGE": 0,
+  "T1H_COVERAGE": 0,
+  "T5M_COVERAGE": 0,
+  "LOCKED_DECISIONS": 0,
+  "SETTLED_EVENTS": 0,
+  "UNSETTLED_EVENTS": 0,
+  "TEST_EVENTS": 0,
+  "HOLDOUT_EVENTS": 0,
+  "MODEL_READY": false,
+  "QUALIFIED_FOR_DIAGNOSTIC": false,
+  "MARKET_BRIER": null,
+  "BEST_MODEL": null,
+  "DELTA_BRIER": null,
+  "CI_95": null,
+  "HOLM": null,
+  "SIGNIFICANT": false,
+  "BETS": 0,
+  "BANKROLL": "—",
+  "winner": null,
+  "auto_promotion": false,
+  "real_money": false,
+  "EXECUTION_COST": "UNKNOWN",
+  "CLV": "CLV_UNAVAILABLE",
+  "reproducibility": "PASS",
+  "leakage_status": "PASS",
+  "FINAL_VERDICT": "LIVE_NOT_CONFIGURED",
+  "residual_blocker": "THE_ODDS_API_KEY=<user must provide>",
+  "open_task_040": false,
+  "health": {
+    "source_status": "BLOCKED",
+    "api_configured": false,
+    "last_poll": null,
+    "events_discovered": 0,
+    "quotes_received": 0,
+    "strict_events": 0,
+    "t1h_coverage": 0,
+    "settled_events": 0,
+    "errors": [],
+    "collector_status": "BLOCKED"
+  },
+  "manifest": {
+    "dataset_sha256": "e922195d4a6982f635b119454cfb609e81f87662f4dfd2fd9e1ff09fcc067400",
+    "source": "THE_ODDS_API",
+    "collection_start": null,
+    "collection_end": null,
+    "events_discovered": 0,
+    "events_with_kickoff": 0,
+    "events_with_quotes": 0,
+    "strict_events": 0,
+    "strict_quotes": 0,
+    "t72_coverage": 0,
+    "t24_coverage": 0,
+    "t1h_coverage": 0,
+    "t5m_coverage": 0,
+    "settled_events": 0,
+    "unsettled_events": 0
+  },
+  "leakage": [
+    {
+      "id": "post_kickoff",
+      "throws": true
+    },
+    {
+      "id": "date_only",
+      "throws": true
+    },
+    {
+      "id": "invented_ts",
+      "throws": true
+    },
+    {
+      "id": "close_t1h",
+      "throws": true
+    },
+    {
+      "id": "ft_in_decision",
+      "throws": true
+    },
+    {
+      "id": "lock_immutability",
+      "throws": true
+    },
+    {
+      "id": "naive_ts",
+      "throws": true
+    },
+    {
+      "id": "collector_as_available",
+      "throws": true
+    },
+    {
+      "id": "asof_future",
+      "throws": true
+    },
+    {
+      "id": "reveal_before_lock",
+      "throws": true
+    },
+    {
+      "id": "task_040",
+      "throws": true
+    },
+    {
+      "id": "historical_hunt",
+      "throws": true
+    }
+  ],
+  "experiment_sha256": "58b53c72253ba05ec4cf054fe5413314302a73bb922b4d6d3ac1891e3efc2d20",
+  "dataset_fingerprint": "e922195d4a6982f635b119454cfb609e81f87662f4dfd2fd9e1ff09fcc067400",
+  "fingerprint": "9ed518688cb1cc835e84741b2c9c306f1d56cf5966a6dc25921047ea20aa9c3c"
+}

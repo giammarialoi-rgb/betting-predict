@@ -1,0 +1,12 @@
+{
+  "configured": false,
+  "source": "THE_ODDS_API",
+  "lastSuccessfulPoll": null,
+  "eventsDiscovered": 0,
+  "quotesObserved": 0,
+  "strictEligible": 0,
+  "errors": [],
+  "collectionStatus": "NOT_CONFIGURED",
+  "liveAdapter": "READY",
+  "apiKey": "missing"
+}

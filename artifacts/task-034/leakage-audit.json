@@ -1,0 +1,106 @@
+[
+  {
+    "id": "future_odds",
+    "throws": true
+  },
+  {
+    "id": "close_leakage",
+    "throws": true
+  },
+  {
+    "id": "close_bin",
+    "throws": true
+  },
+  {
+    "id": "FT",
+    "throws": true
+  },
+  {
+    "id": "HT",
+    "throws": true
+  },
+  {
+    "id": "outcome",
+    "throws": true
+  },
+  {
+    "id": "post_match_ts",
+    "throws": true
+  },
+  {
+    "id": "future_book",
+    "throws": true
+  },
+  {
+    "id": "future_movement",
+    "throws": true
+  },
+  {
+    "id": "future_consensus",
+    "throws": true
+  },
+  {
+    "id": "future_lineup",
+    "throws": true
+  },
+  {
+    "id": "future_news",
+    "throws": true
+  },
+  {
+    "id": "ambiguous",
+    "throws": true
+  },
+  {
+    "id": "duplicate",
+    "throws": true
+  },
+  {
+    "id": "cross_season",
+    "throws": true
+  },
+  {
+    "id": "date_only",
+    "throws": true
+  },
+  {
+    "id": "invented_ts",
+    "throws": true
+  },
+  {
+    "id": "test_lock",
+    "throws": true
+  },
+  {
+    "id": "holdout_lock",
+    "throws": true
+  },
+  {
+    "id": "feature_test",
+    "throws": true
+  },
+  {
+    "id": "holdout_train",
+    "throws": true
+  },
+  {
+    "id": "lock",
+    "throws": true
+  },
+  {
+    "id": "auto_promote",
+    "throws": true
+  },
+  {
+    "id": "task_035",
+    "throws": true
+  },
+  {
+    "id": "elo",
+    "throws": true
+  },
+  {
+    "id": "frozen_flags",
+    "throws": true
+  }
+]

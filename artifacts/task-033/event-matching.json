@@ -1,0 +1,389 @@
+{
+  "basic": [
+    {
+      "id": "28202626",
+      "market": "OVER_UNDER_85_CORNR",
+      "family": "OU"
+    },
+    {
+      "id": "28202626",
+      "market": "SHOWN_A_CARD",
+      "family": "Cards"
+    },
+    {
+      "id": "28202626",
+      "market": "TO_SCORE_2_OR_MORE",
+      "family": "Exchange"
+    },
+    {
+      "id": "28202626",
+      "market": "OVER_UNDER_25",
+      "family": "OU"
+    },
+    {
+      "id": "28202626",
+      "market": "OVER_UNDER_45",
+      "family": "OU"
+    },
+    {
+      "id": "28202626",
+      "market": "HALF_TIME_SCORE",
+      "family": "Exchange"
+    },
+    {
+      "id": "28202626",
+      "market": "HALF_TIME_FULL_TIME",
+      "family": "Exchange"
+    },
+    {
+      "id": "28202626",
+      "market": "OVER_UNDER_15",
+      "family": "OU"
+    },
+    {
+      "id": "28202626",
+      "market": "WIN_BOTH_HALVES",
+      "family": "Exchange"
+    },
+    {
+      "id": "28202626",
+      "market": "CLEAN_SHEET",
+      "family": "Exchange"
+    },
+    {
+      "id": "28202626",
+      "market": "WIN_BOTH_HALVES",
+      "family": "Exchange"
+    },
+    {
+      "id": "28202626",
+      "market": "CLEAN_SHEET",
+      "family": "Exchange"
+    },
+    {
+      "id": "28202626",
+      "market": "PENALTY_TAKEN",
+      "family": "Exchange"
+    },
+    {
+      "id": "28202626",
+      "market": "CORRECT_SCORE2",
+      "family": "Correct Score"
+    },
+    {
+      "id": "28202626",
+      "market": "HAT_TRICKED_SCORED",
+      "family": "Player"
+    },
+    {
+      "id": "28202626",
+      "market": "TEAM_TOTAL_GOALS",
+      "family": "OU"
+    },
+    {
+      "id": "28202626",
+      "market": "TO_SCORE_BOTH_HALVES",
+      "family": "Exchange"
+    },
+    {
+      "id": "28202626",
+      "market": "CORRECT_SCORE2",
+      "family": "Correct Score"
+    },
+    {
+      "id": "28202626",
+      "market": "FIRST_GOAL_SCORER",
+      "family": "Player"
+    },
+    {
+      "id": "28202626",
+      "market": "TO_SCORE_BOTH_HALVES",
+      "family": "Exchange"
+    },
+    {
+      "id": "28202626",
+      "market": "OVER_UNDER_105_CORNR",
+      "family": "OU"
+    },
+    {
+      "id": "28202626",
+      "market": "TO_SCORE",
+      "family": "Exchange"
+    },
+    {
+      "id": "28202626",
+      "market": "TO_SCORE_HATTRICK",
+      "family": "Exchange"
+    },
+    {
+      "id": "28202626",
+      "market": "WINNING_MARGIN",
+      "family": "Exchange"
+    },
+    {
+      "id": "28202626",
+      "market": "BOOKING_ODDS",
+      "family": "Cards"
+    },
+    {
+      "id": "28202626",
+      "market": "SENDING_OFF",
+      "family": "Exchange"
+    },
+    {
+      "id": "28202626",
+      "market": "TEAM_TOTAL_GOALS",
+      "family": "OU"
+    },
+    {
+      "id": "28202626",
+      "market": "OVER_UNDER_35",
+      "family": "OU"
+    },
+    {
+      "id": "28202626",
+      "market": "ASIAN_HANDICAP",
+      "family": "AH"
+    },
+    {
+      "id": "28202626",
+      "market": "DRAW_NO_BET",
+      "family": "DNB"
+    },
+    {
+      "id": "28202626",
+      "market": "TEAM_A_2",
+      "family": "Exchange"
+    },
+    {
+      "id": "28202626",
+      "market": "TEAM_B_1",
+      "family": "Exchange"
+    },
+    {
+      "id": "28202626",
+      "market": "CORNER_ODDS",
+      "family": "Corners"
+    },
+    {
+      "id": "28202626",
+      "market": "TEAM_A_3",
+      "family": "Exchange"
+    },
+    {
+      "id": "28202626",
+      "market": "TEAM_B_2",
+      "family": "Exchange"
+    },
+    {
+      "id": "28202626",
+      "market": "TEAM_B_3",
+      "family": "Exchange"
+    },
+    {
+      "id": "28202626",
+      "market": "TEAM_A_WIN_TO_NIL",
+      "family": "Exchange"
+    },
+    {
+      "id": "28202626",
+      "market": "TEAM_B_WIN_TO_NIL",
+      "family": "Exchange"
+    },
+    {
+      "id": "28202626",
+      "market": "OVER_UNDER_75",
+      "family": "OU"
+    },
+    {
+      "id": "28202626",
+      "market": "OVER_UNDER_85",
+      "family": "OU"
+    },
+    {
+      "id": "28202626",
+      "market": "FIRST_HALF_GOALS_25",
+      "family": "Exchange"
+    },
+    {
+      "id": "28202626",
+      "market": "BOTH_TEAMS_TO_SCORE",
+      "family": "BTTS"
+    },
+    {
+      "id": "28202626",
+      "market": "FIRST_GOAL_ODDS",
+      "family": "Exchange"
+    },
+    {
+      "id": "28202626",
+      "market": "MATCH_ODDS",
+      "family": "1X2"
+    },
+    {
+      "id": "28202626",
+      "market": "TOTAL_GOALS",
+      "family": "OU"
+    },
+    {
+      "id": "28202626",
+      "market": "ODD_OR_EVEN",
+      "family": "Exchange"
+    },
+    {
+      "id": "28202626",
+      "market": "DOUBLE_CHANCE",
+      "family": "DC"
+    },
+    {
+      "id": "28202626",
+      "market": "TEAM_A_1",
+      "family": "Exchange"
+    },
+    {
+      "id": "28202626",
+      "market": "FIRST_HALF_GOALS_05",
+      "family": "Exchange"
+    },
+    {
+      "id": "28202626",
+      "market": "OVER_UNDER_05",
+      "family": "OU"
+    },
+    {
+      "id": "28202626",
+      "market": "FIRST_HALF_GOALS_15",
+      "family": "Exchange"
+    },
+    {
+      "id": "28202626",
+      "market": "OVER_UNDER_65",
+      "family": "OU"
+    },
+    {
+      "id": "28202626",
+      "market": "HALF_TIME",
+      "family": "Exchange"
+    },
+    {
+      "id": "28202626",
+      "market": "OVER_UNDER_55",
+      "family": "OU"
+    },
+    {
+      "id": "28202626",
+      "market": "CORRECT_SCORE",
+      "family": "Correct Score"
+    },
+    {
+      "id": "28202626",
+      "market": "WINCAST",
+      "family": "Exchange"
+    },
+    {
+      "id": "28202626",
+      "market": "HALF_WITH_MOST_GOALS",
+      "family": "Exchange"
+    },
+    {
+      "id": "28202626",
+      "market": "SCORE_CAST",
+      "family": "Exchange"
+    },
+    {
+      "id": "28202626",
+      "market": "OVER_UNDER_45_CARDS",
+      "family": "Cards"
+    },
+    {
+      "id": "28202626",
+      "market": "CORNER_MATCH_BET",
+      "family": "Corners"
+    },
+    {
+      "id": "28202626",
+      "market": "OVER_UNDER_135_CORNR",
+      "family": "OU"
+    },
+    {
+      "id": "28202626",
+      "market": "MATCH_ODDS_AND_OU_25",
+      "family": "Exchange"
+    },
+    {
+      "id": "28202626",
+      "market": "MATCH_ODDS_AND_BTTS",
+      "family": "Exchange"
+    },
+    {
+      "id": "28202626",
+      "market": "CORRECT_SCORE",
+      "family": "Correct Score"
+    },
+    {
+      "id": "28202626",
+      "market": "HALF_TIME_SCORE",
+      "family": "Exchange"
+    },
+    {
+      "id": "28202626",
+      "market": "HALF_TIME",
+      "family": "Exchange"
+    },
+    {
+      "id": "28202626",
+      "market": "MATCH_ODDS",
+      "family": "1X2"
+    },
+    {
+      "id": "28202626",
+      "market": "OVER_UNDER_15",
+      "family": "OU"
+    },
+    {
+      "id": "28202626",
+      "market": "OVER_UNDER_25",
+      "family": "OU"
+    },
+    {
+      "id": "28202626",
+      "market": "OVER_UNDER_35",
+      "family": "OU"
+    },
+    {
+      "id": "28202626",
+      "market": "OVER_UNDER_45",
+      "family": "OU"
+    },
+    {
+      "id": "28202626",
+      "market": "OVER_UNDER_55",
+      "family": "OU"
+    },
+    {
+      "id": "28202626",
+      "market": "OVER_UNDER_65",
+      "family": "OU"
+    },
+    {
+      "id": "28202626",
+      "market": "ANYTIME_SCORE",
+      "family": "Exchange"
+    },
+    {
+      "id": "28202626",
+      "market": "UNKNOWN",
+      "family": "Exchange"
+    },
+    {
+      "id": "28202626",
+      "market": "UNKNOWN",
+      "family": "Exchange"
+    },
+    {
+      "id": "28202626",
+      "market": "OVER_UNDER_05",
+      "family": "OU"
+    }
+  ]
+}

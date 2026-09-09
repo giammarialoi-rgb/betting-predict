@@ -1,0 +1,143 @@
+{
+  "clusters": [
+    {
+      "id": "football-data-co-uk",
+      "repos": [
+        "AnishKhetani/premier-league-data"
+      ],
+      "role_mix": [
+        "MIRROR"
+      ],
+      "events_est": 12704,
+      "classification": "DATE_ONLY"
+    },
+    {
+      "id": "open-close-averages",
+      "repos": [
+        "nm2890/football-data"
+      ],
+      "role_mix": [
+        "RAW"
+      ],
+      "events_est": 5782,
+      "classification": "DATE_ONLY"
+    },
+    {
+      "id": "scraped-odds-date-time",
+      "repos": [
+        "akareen/Football-Data-Analysis"
+      ],
+      "role_mix": [
+        "RAW"
+      ],
+      "events_est": 7531,
+      "classification": "DATE_ONLY"
+    },
+    {
+      "id": "average-odds-no-date",
+      "repos": [
+        "iredchuk/soccer-bookmaker-odds"
+      ],
+      "role_mix": [
+        "RAW"
+      ],
+      "events_est": 5320,
+      "classification": "DATE_ONLY"
+    },
+    {
+      "id": "derived-features",
+      "repos": [
+        "ivanzou29/football_fair"
+      ],
+      "role_mix": [
+        "DERIVATIVE"
+      ],
+      "events_est": 20,
+      "classification": "DATE_ONLY"
+    },
+    {
+      "id": "betfair-historic",
+      "repos": [
+        "petermclagan/betfair-historical",
+        "petermclagan/betfair_historical",
+        "tarb/betfair_data",
+        "hblauth/betfair_historic_data",
+        "betfair/historicdata",
+        "betfair/historic-data-workbook",
+        "mberk/betfairutil",
+        "liampauling/betfair"
+      ],
+      "role_mix": [
+        "MIRROR",
+        "REPOSITORY",
+        "PARSER"
+      ],
+      "events_est": 1,
+      "classification": "RESEARCH_TEMPORAL"
+    },
+    {
+      "id": "beatthebookie",
+      "repos": [
+        "Lisandro79/BeatTheBookie"
+      ],
+      "role_mix": [
+        "REPOSITORY"
+      ],
+      "events_est": 0,
+      "classification": "DATASET_NOT_PRESENT"
+    },
+    {
+      "id": "soccer-dataset",
+      "repos": [
+        "v-eatpizzanot/soccer-dataset"
+      ],
+      "role_mix": [
+        "RAW"
+      ],
+      "events_est": 1000,
+      "classification": "DATE_ONLY"
+    },
+    {
+      "id": "oddsportal-scraper",
+      "repos": [
+        "jordantete/OddsHarvester"
+      ],
+      "role_mix": [
+        "PARSER"
+      ],
+      "events_est": 4,
+      "classification": "RESEARCH_TEMPORAL"
+    },
+    {
+      "id": "models-no-archive",
+      "repos": [
+        "odafeigho/SportyOddsHack"
+      ],
+      "role_mix": [
+        "REPOSITORY"
+      ],
+      "events_est": 0,
+      "classification": "DATASET_NOT_PRESENT"
+    },
+    {
+      "id": "task-031-base",
+      "repos": [
+        "audit/external/task-027/strict-candidates.csv"
+      ],
+      "role_mix": [
+        "RAW"
+      ],
+      "events_est": 10499,
+      "classification": "STRICT (FROZEN LEGACY — not counted as 037 new STRICT)"
+    }
+  ],
+  "datasets": 16,
+  "repositories_ok": 16,
+  "repositories_missing": 1,
+  "strict_events": 0,
+  "research_events": 5,
+  "date_only_events": 32357,
+  "reference_events": 10499,
+  "parser_only": 5,
+  "dataset_not_present": 4
+}

@@ -1,0 +1,2805 @@
+{
+  "sample_assessment": null,
+  "decisions": [
+    {
+      "eventId": "fb|e0|2001-01-01|charlton|arsenal",
+      "year": 2001,
+      "market": "1X2",
+      "decision": "NO_BET",
+      "reason": "NO_BET_TEMPORAL",
+      "probability": null,
+      "odds": null,
+      "edge": null,
+      "supporting": 0,
+      "contradicting": 0,
+      "contextual": 1,
+      "sourceId": "anishkhetani-epl-archive",
+      "locked": true,
+      "outcome_in_decision": false,
+      "evidence": [
+        {
+          "source": "football-data-co-uk-cluster",
+          "title": "5 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-01-01T00:00:00.000Z",
+          "claim": "5 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "polarity": "CONTEXT_ONLY"
+        }
+      ]
+    },
+    {
+      "eventId": "fb|e0|2001-01-01|chelsea|aston-villa",
+      "year": 2001,
+      "market": "1X2",
+      "decision": "NO_BET",
+      "reason": "NO_BET_TEMPORAL",
+      "probability": null,
+      "odds": null,
+      "edge": null,
+      "supporting": 0,
+      "contradicting": 0,
+      "contextual": 1,
+      "sourceId": "anishkhetani-epl-archive",
+      "locked": true,
+      "outcome_in_decision": false,
+      "evidence": [
+        {
+          "source": "football-data-co-uk-cluster",
+          "title": "5 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-01-01T00:00:00.000Z",
+          "claim": "5 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "polarity": "CONTEXT_ONLY"
+        }
+      ]
+    },
+    {
+      "eventId": "fb|e0|2001-01-01|coventry|manchester-city",
+      "year": 2001,
+      "market": "1X2",
+      "decision": "NO_BET",
+      "reason": "NO_BET_TEMPORAL",
+      "probability": null,
+      "odds": null,
+      "edge": null,
+      "supporting": 0,
+      "contradicting": 0,
+      "contextual": 1,
+      "sourceId": "anishkhetani-epl-archive",
+      "locked": true,
+      "outcome_in_decision": false,
+      "evidence": [
+        {
+          "source": "football-data-co-uk-cluster",
+          "title": "5 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-01-01T00:00:00.000Z",
+          "claim": "5 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "polarity": "CONTEXT_ONLY"
+        }
+      ]
+    },
+    {
+      "eventId": "fb|e0|2001-01-01|derby|everton",
+      "year": 2001,
+      "market": "1X2",
+      "decision": "NO_BET",
+      "reason": "NO_BET_TEMPORAL",
+      "probability": null,
+      "odds": null,
+      "edge": null,
+      "supporting": 0,
+      "contradicting": 0,
+      "contextual": 1,
+      "sourceId": "anishkhetani-epl-archive",
+      "locked": true,
+      "outcome_in_decision": false,
+      "evidence": [
+        {
+          "source": "football-data-co-uk-cluster",
+          "title": "5 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-01-01T00:00:00.000Z",
+          "claim": "5 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "polarity": "CONTEXT_ONLY"
+        }
+      ]
+    },
+    {
+      "eventId": "fb|e0|2001-01-01|leeds|middlesbrough",
+      "year": 2001,
+      "market": "1X2",
+      "decision": "NO_BET",
+      "reason": "NO_BET_TEMPORAL",
+      "probability": null,
+      "odds": null,
+      "edge": null,
+      "supporting": 0,
+      "contradicting": 0,
+      "contextual": 1,
+      "sourceId": "anishkhetani-epl-archive",
+      "locked": true,
+      "outcome_in_decision": false,
+      "evidence": [
+        {
+          "source": "football-data-co-uk-cluster",
+          "title": "5 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-01-01T00:00:00.000Z",
+          "claim": "5 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "polarity": "CONTEXT_ONLY"
+        }
+      ]
+    },
+    {
+      "eventId": "fb|e0|2001-01-01|leicester|bradford",
+      "year": 2001,
+      "market": "1X2",
+      "decision": "NO_BET",
+      "reason": "NO_BET_TEMPORAL",
+      "probability": null,
+      "odds": null,
+      "edge": null,
+      "supporting": 0,
+      "contradicting": 0,
+      "contextual": 1,
+      "sourceId": "anishkhetani-epl-archive",
+      "locked": true,
+      "outcome_in_decision": false,
+      "evidence": [
+        {
+          "source": "football-data-co-uk-cluster",
+          "title": "5 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-01-01T00:00:00.000Z",
+          "claim": "5 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "polarity": "CONTEXT_ONLY"
+        }
+      ]
+    },
+    {
+      "eventId": "fb|e0|2001-01-01|liverpool|southampton",
+      "year": 2001,
+      "market": "1X2",
+      "decision": "NO_BET",
+      "reason": "NO_BET_TEMPORAL",
+      "probability": null,
+      "odds": null,
+      "edge": null,
+      "supporting": 0,
+      "contradicting": 0,
+      "contextual": 1,
+      "sourceId": "anishkhetani-epl-archive",
+      "locked": true,
+      "outcome_in_decision": false,
+      "evidence": [
+        {
+          "source": "football-data-co-uk-cluster",
+          "title": "5 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-01-01T00:00:00.000Z",
+          "claim": "5 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "polarity": "CONTEXT_ONLY"
+        }
+      ]
+    },
+    {
+      "eventId": "fb|e0|2001-01-01|manchester-united|west-ham",
+      "year": 2001,
+      "market": "1X2",
+      "decision": "NO_BET",
+      "reason": "NO_BET_TEMPORAL",
+      "probability": null,
+      "odds": null,
+      "edge": null,
+      "supporting": 0,
+      "contradicting": 0,
+      "contextual": 1,
+      "sourceId": "anishkhetani-epl-archive",
+      "locked": true,
+      "outcome_in_decision": false,
+      "evidence": [
+        {
+          "source": "football-data-co-uk-cluster",
+          "title": "5 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-01-01T00:00:00.000Z",
+          "claim": "5 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "polarity": "CONTEXT_ONLY"
+        }
+      ]
+    },
+    {
+      "eventId": "fb|e0|2001-01-01|sunderland|ipswich",
+      "year": 2001,
+      "market": "1X2",
+      "decision": "NO_BET",
+      "reason": "NO_BET_TEMPORAL",
+      "probability": null,
+      "odds": null,
+      "edge": null,
+      "supporting": 0,
+      "contradicting": 0,
+      "contextual": 1,
+      "sourceId": "anishkhetani-epl-archive",
+      "locked": true,
+      "outcome_in_decision": false,
+      "evidence": [
+        {
+          "source": "football-data-co-uk-cluster",
+          "title": "5 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-01-01T00:00:00.000Z",
+          "claim": "5 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "polarity": "CONTEXT_ONLY"
+        }
+      ]
+    },
+    {
+      "eventId": "fb|e0|2001-01-02|tottenham|newcastle",
+      "year": 2001,
+      "market": "1X2",
+      "decision": "NO_BET",
+      "reason": "NO_BET_TEMPORAL",
+      "probability": null,
+      "odds": null,
+      "edge": null,
+      "supporting": 0,
+      "contradicting": 0,
+      "contextual": 1,
+      "sourceId": "anishkhetani-epl-archive",
+      "locked": true,
+      "outcome_in_decision": false,
+      "evidence": [
+        {
+          "source": "football-data-co-uk-cluster",
+          "title": "5 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-01-02T00:00:00.000Z",
+          "claim": "5 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "polarity": "CONTEXT_ONLY"
+        }
+      ]
+    },
+    {
+      "eventId": "fb|e0|2001-01-13|arsenal|chelsea",
+      "year": 2001,
+      "market": "1X2",
+      "decision": "NO_BET",
+      "reason": "NO_BET_TEMPORAL",
+      "probability": null,
+      "odds": null,
+      "edge": null,
+      "supporting": 0,
+      "contradicting": 0,
+      "contextual": 2,
+      "sourceId": "anishkhetani-epl-archive",
+      "locked": true,
+      "outcome_in_decision": false,
+      "evidence": [
+        {
+          "source": "reconstructed-form",
+          "title": "Lagged form before asOf: home 0 vs away 3 (n=1)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-01-13T00:00:00.000Z",
+          "claim": "Lagged form before asOf: home 0 vs away 3 (n=1)",
+          "polarity": "CONTEXT_ONLY"
+        },
+        {
+          "source": "football-data-co-uk-cluster",
+          "title": "5 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-01-13T00:00:00.000Z",
+          "claim": "5 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "polarity": "CONTEXT_ONLY"
+        }
+      ]
+    },
+    {
+      "eventId": "fb|e0|2001-01-13|aston-villa|liverpool",
+      "year": 2001,
+      "market": "1X2",
+      "decision": "NO_BET",
+      "reason": "NO_BET_TEMPORAL",
+      "probability": null,
+      "odds": null,
+      "edge": null,
+      "supporting": 0,
+      "contradicting": 0,
+      "contextual": 2,
+      "sourceId": "anishkhetani-epl-archive",
+      "locked": true,
+      "outcome_in_decision": false,
+      "evidence": [
+        {
+          "source": "reconstructed-form",
+          "title": "Lagged form before asOf: home 0 vs away 3 (n=1)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-01-13T00:00:00.000Z",
+          "claim": "Lagged form before asOf: home 0 vs away 3 (n=1)",
+          "polarity": "CONTEXT_ONLY"
+        },
+        {
+          "source": "football-data-co-uk-cluster",
+          "title": "5 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-01-13T00:00:00.000Z",
+          "claim": "5 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "polarity": "CONTEXT_ONLY"
+        }
+      ]
+    },
+    {
+      "eventId": "fb|e0|2001-01-13|bradford|manchester-united",
+      "year": 2001,
+      "market": "1X2",
+      "decision": "NO_BET",
+      "reason": "NO_BET_TEMPORAL",
+      "probability": null,
+      "odds": null,
+      "edge": null,
+      "supporting": 0,
+      "contradicting": 0,
+      "contextual": 2,
+      "sourceId": "anishkhetani-epl-archive",
+      "locked": true,
+      "outcome_in_decision": false,
+      "evidence": [
+        {
+          "source": "reconstructed-form",
+          "title": "Lagged form before asOf: home 3 vs away 3 (n=1)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-01-13T00:00:00.000Z",
+          "claim": "Lagged form before asOf: home 3 vs away 3 (n=1)",
+          "polarity": "CONTEXT_ONLY"
+        },
+        {
+          "source": "football-data-co-uk-cluster",
+          "title": "5 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-01-13T00:00:00.000Z",
+          "claim": "5 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "polarity": "CONTEXT_ONLY"
+        }
+      ]
+    },
+    {
+      "eventId": "fb|e0|2001-01-13|everton|tottenham",
+      "year": 2001,
+      "market": "1X2",
+      "decision": "NO_BET",
+      "reason": "NO_BET_TEMPORAL",
+      "probability": null,
+      "odds": null,
+      "edge": null,
+      "supporting": 0,
+      "contradicting": 0,
+      "contextual": 2,
+      "sourceId": "anishkhetani-epl-archive",
+      "locked": true,
+      "outcome_in_decision": false,
+      "evidence": [
+        {
+          "source": "reconstructed-form",
+          "title": "Lagged form before asOf: home 0 vs away 3 (n=1)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-01-13T00:00:00.000Z",
+          "claim": "Lagged form before asOf: home 0 vs away 3 (n=1)",
+          "polarity": "CONTEXT_ONLY"
+        },
+        {
+          "source": "football-data-co-uk-cluster",
+          "title": "5 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-01-13T00:00:00.000Z",
+          "claim": "5 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "polarity": "CONTEXT_ONLY"
+        }
+      ]
+    },
+    {
+      "eventId": "fb|e0|2001-01-13|manchester-city|leeds",
+      "year": 2001,
+      "market": "1X2",
+      "decision": "NO_BET",
+      "reason": "NO_BET_TEMPORAL",
+      "probability": null,
+      "odds": null,
+      "edge": null,
+      "supporting": 0,
+      "contradicting": 0,
+      "contextual": 2,
+      "sourceId": "anishkhetani-epl-archive",
+      "locked": true,
+      "outcome_in_decision": false,
+      "evidence": [
+        {
+          "source": "reconstructed-form",
+          "title": "Lagged form before asOf: home 1 vs away 1 (n=1)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-01-13T00:00:00.000Z",
+          "claim": "Lagged form before asOf: home 1 vs away 1 (n=1)",
+          "polarity": "CONTEXT_ONLY"
+        },
+        {
+          "source": "football-data-co-uk-cluster",
+          "title": "5 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-01-13T00:00:00.000Z",
+          "claim": "5 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "polarity": "CONTEXT_ONLY"
+        }
+      ]
+    },
+    {
+      "eventId": "fb|e0|2001-01-13|middlesbrough|derby",
+      "year": 2001,
+      "market": "1X2",
+      "decision": "NO_BET",
+      "reason": "NO_BET_TEMPORAL",
+      "probability": null,
+      "odds": null,
+      "edge": null,
+      "supporting": 0,
+      "contradicting": 0,
+      "contextual": 2,
+      "sourceId": "anishkhetani-epl-archive",
+      "locked": true,
+      "outcome_in_decision": false,
+      "evidence": [
+        {
+          "source": "reconstructed-form",
+          "title": "Lagged form before asOf: home 1 vs away 3 (n=1)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-01-13T00:00:00.000Z",
+          "claim": "Lagged form before asOf: home 1 vs away 3 (n=1)",
+          "polarity": "CONTEXT_ONLY"
+        },
+        {
+          "source": "football-data-co-uk-cluster",
+          "title": "5 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-01-13T00:00:00.000Z",
+          "claim": "5 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "polarity": "CONTEXT_ONLY"
+        }
+      ]
+    },
+    {
+      "eventId": "fb|e0|2001-01-13|newcastle|coventry",
+      "year": 2001,
+      "market": "1X2",
+      "decision": "NO_BET",
+      "reason": "NO_BET_TEMPORAL",
+      "probability": null,
+      "odds": null,
+      "edge": null,
+      "supporting": 0,
+      "contradicting": 0,
+      "contextual": 2,
+      "sourceId": "anishkhetani-epl-archive",
+      "locked": true,
+      "outcome_in_decision": false,
+      "evidence": [
+        {
+          "source": "reconstructed-form",
+          "title": "Lagged form before asOf: home 0 vs away 1 (n=1)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-01-13T00:00:00.000Z",
+          "claim": "Lagged form before asOf: home 0 vs away 1 (n=1)",
+          "polarity": "CONTEXT_ONLY"
+        },
+        {
+          "source": "football-data-co-uk-cluster",
+          "title": "5 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-01-13T00:00:00.000Z",
+          "claim": "5 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "polarity": "CONTEXT_ONLY"
+        }
+      ]
+    },
+    {
+      "eventId": "fb|e0|2001-01-13|southampton|charlton",
+      "year": 2001,
+      "market": "1X2",
+      "decision": "NO_BET",
+      "reason": "NO_BET_TEMPORAL",
+      "probability": null,
+      "odds": null,
+      "edge": null,
+      "supporting": 0,
+      "contradicting": 0,
+      "contextual": 2,
+      "sourceId": "anishkhetani-epl-archive",
+      "locked": true,
+      "outcome_in_decision": false,
+      "evidence": [
+        {
+          "source": "reconstructed-form",
+          "title": "Lagged form before asOf: home 0 vs away 3 (n=1)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-01-13T00:00:00.000Z",
+          "claim": "Lagged form before asOf: home 0 vs away 3 (n=1)",
+          "polarity": "CONTEXT_ONLY"
+        },
+        {
+          "source": "football-data-co-uk-cluster",
+          "title": "5 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-01-13T00:00:00.000Z",
+          "claim": "5 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "polarity": "CONTEXT_ONLY"
+        }
+      ]
+    },
+    {
+      "eventId": "fb|e0|2001-01-13|west-ham|sunderland",
+      "year": 2001,
+      "market": "1X2",
+      "decision": "NO_BET",
+      "reason": "NO_BET_TEMPORAL",
+      "probability": null,
+      "odds": null,
+      "edge": null,
+      "supporting": 0,
+      "contradicting": 0,
+      "contextual": 2,
+      "sourceId": "anishkhetani-epl-archive",
+      "locked": true,
+      "outcome_in_decision": false,
+      "evidence": [
+        {
+          "source": "reconstructed-form",
+          "title": "Lagged form before asOf: home 0 vs away 3 (n=1)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-01-13T00:00:00.000Z",
+          "claim": "Lagged form before asOf: home 0 vs away 3 (n=1)",
+          "polarity": "CONTEXT_ONLY"
+        },
+        {
+          "source": "football-data-co-uk-cluster",
+          "title": "5 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-01-13T00:00:00.000Z",
+          "claim": "5 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "polarity": "CONTEXT_ONLY"
+        }
+      ]
+    },
+    {
+      "eventId": "fb|e0|2001-01-14|ipswich|leicester",
+      "year": 2001,
+      "market": "1X2",
+      "decision": "NO_BET",
+      "reason": "NO_BET_TEMPORAL",
+      "probability": null,
+      "odds": null,
+      "edge": null,
+      "supporting": 0,
+      "contradicting": 0,
+      "contextual": 2,
+      "sourceId": "anishkhetani-epl-archive",
+      "locked": true,
+      "outcome_in_decision": false,
+      "evidence": [
+        {
+          "source": "reconstructed-form",
+          "title": "Lagged form before asOf: home 0 vs away 0 (n=1)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-01-14T00:00:00.000Z",
+          "claim": "Lagged form before asOf: home 0 vs away 0 (n=1)",
+          "polarity": "CONTEXT_ONLY"
+        },
+        {
+          "source": "football-data-co-uk-cluster",
+          "title": "5 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-01-14T00:00:00.000Z",
+          "claim": "5 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "polarity": "CONTEXT_ONLY"
+        }
+      ]
+    },
+    {
+      "eventId": "fb|e0|2001-01-20|chelsea|ipswich",
+      "year": 2001,
+      "market": "1X2",
+      "decision": "NO_BET",
+      "reason": "NO_BET_TEMPORAL",
+      "probability": null,
+      "odds": null,
+      "edge": null,
+      "supporting": 0,
+      "contradicting": 0,
+      "contextual": 2,
+      "sourceId": "anishkhetani-epl-archive",
+      "locked": true,
+      "outcome_in_decision": false,
+      "evidence": [
+        {
+          "source": "reconstructed-form",
+          "title": "Lagged form before asOf: home 4 vs away 3 (n=2)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-01-20T00:00:00.000Z",
+          "claim": "Lagged form before asOf: home 4 vs away 3 (n=2)",
+          "polarity": "CONTEXT_ONLY"
+        },
+        {
+          "source": "football-data-co-uk-cluster",
+          "title": "5 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-01-20T00:00:00.000Z",
+          "claim": "5 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "polarity": "CONTEXT_ONLY"
+        }
+      ]
+    },
+    {
+      "eventId": "fb|e0|2001-01-20|coventry|everton",
+      "year": 2001,
+      "market": "1X2",
+      "decision": "NO_BET",
+      "reason": "NO_BET_TEMPORAL",
+      "probability": null,
+      "odds": null,
+      "edge": null,
+      "supporting": 0,
+      "contradicting": 0,
+      "contextual": 2,
+      "sourceId": "anishkhetani-epl-archive",
+      "locked": true,
+      "outcome_in_decision": false,
+      "evidence": [
+        {
+          "source": "reconstructed-form",
+          "title": "Lagged form before asOf: home 1 vs away 1 (n=2)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-01-20T00:00:00.000Z",
+          "claim": "Lagged form before asOf: home 1 vs away 1 (n=2)",
+          "polarity": "CONTEXT_ONLY"
+        },
+        {
+          "source": "football-data-co-uk-cluster",
+          "title": "5 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-01-20T00:00:00.000Z",
+          "claim": "5 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "polarity": "CONTEXT_ONLY"
+        }
+      ]
+    },
+    {
+      "eventId": "fb|e0|2001-01-20|derby|manchester-city",
+      "year": 2001,
+      "market": "1X2",
+      "decision": "NO_BET",
+      "reason": "NO_BET_TEMPORAL",
+      "probability": null,
+      "odds": null,
+      "edge": null,
+      "supporting": 0,
+      "contradicting": 0,
+      "contextual": 2,
+      "sourceId": "anishkhetani-epl-archive",
+      "locked": true,
+      "outcome_in_decision": false,
+      "evidence": [
+        {
+          "source": "reconstructed-form",
+          "title": "Lagged form before asOf: home 3 vs away 1 (n=2)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-01-20T00:00:00.000Z",
+          "claim": "Lagged form before asOf: home 3 vs away 1 (n=2)",
+          "polarity": "CONTEXT_ONLY"
+        },
+        {
+          "source": "football-data-co-uk-cluster",
+          "title": "5 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-01-20T00:00:00.000Z",
+          "claim": "5 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "polarity": "CONTEXT_ONLY"
+        }
+      ]
+    },
+    {
+      "eventId": "fb|e0|2001-01-20|leeds|newcastle",
+      "year": 2001,
+      "market": "1X2",
+      "decision": "NO_BET",
+      "reason": "NO_BET_TEMPORAL",
+      "probability": null,
+      "odds": null,
+      "edge": null,
+      "supporting": 0,
+      "contradicting": 0,
+      "contextual": 2,
+      "sourceId": "anishkhetani-epl-archive",
+      "locked": true,
+      "outcome_in_decision": false,
+      "evidence": [
+        {
+          "source": "reconstructed-form",
+          "title": "Lagged form before asOf: home 4 vs away 3 (n=2)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-01-20T00:00:00.000Z",
+          "claim": "Lagged form before asOf: home 4 vs away 3 (n=2)",
+          "polarity": "CONTEXT_ONLY"
+        },
+        {
+          "source": "football-data-co-uk-cluster",
+          "title": "5 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-01-20T00:00:00.000Z",
+          "claim": "5 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "polarity": "CONTEXT_ONLY"
+        }
+      ]
+    },
+    {
+      "eventId": "fb|e0|2001-01-20|leicester|arsenal",
+      "year": 2001,
+      "market": "1X2",
+      "decision": "NO_BET",
+      "reason": "NO_BET_TEMPORAL",
+      "probability": null,
+      "odds": null,
+      "edge": null,
+      "supporting": 0,
+      "contradicting": 0,
+      "contextual": 2,
+      "sourceId": "anishkhetani-epl-archive",
+      "locked": true,
+      "outcome_in_decision": false,
+      "evidence": [
+        {
+          "source": "reconstructed-form",
+          "title": "Lagged form before asOf: home 0 vs away 1 (n=2)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-01-20T00:00:00.000Z",
+          "claim": "Lagged form before asOf: home 0 vs away 1 (n=2)",
+          "polarity": "CONTEXT_ONLY"
+        },
+        {
+          "source": "football-data-co-uk-cluster",
+          "title": "5 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-01-20T00:00:00.000Z",
+          "claim": "5 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "polarity": "CONTEXT_ONLY"
+        }
+      ]
+    },
+    {
+      "eventId": "fb|e0|2001-01-20|liverpool|middlesbrough",
+      "year": 2001,
+      "market": "1X2",
+      "decision": "NO_BET",
+      "reason": "NO_BET_TEMPORAL",
+      "probability": null,
+      "odds": null,
+      "edge": null,
+      "supporting": 0,
+      "contradicting": 0,
+      "contextual": 2,
+      "sourceId": "anishkhetani-epl-archive",
+      "locked": true,
+      "outcome_in_decision": false,
+      "evidence": [
+        {
+          "source": "reconstructed-form",
+          "title": "Lagged form before asOf: home 6 vs away 4 (n=2)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-01-20T00:00:00.000Z",
+          "claim": "Lagged form before asOf: home 6 vs away 4 (n=2)",
+          "polarity": "CONTEXT_ONLY"
+        },
+        {
+          "source": "football-data-co-uk-cluster",
+          "title": "5 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-01-20T00:00:00.000Z",
+          "claim": "5 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "polarity": "CONTEXT_ONLY"
+        }
+      ]
+    },
+    {
+      "eventId": "fb|e0|2001-01-20|manchester-united|aston-villa",
+      "year": 2001,
+      "market": "1X2",
+      "decision": "NO_BET",
+      "reason": "NO_BET_TEMPORAL",
+      "probability": null,
+      "odds": null,
+      "edge": null,
+      "supporting": 0,
+      "contradicting": 0,
+      "contextual": 2,
+      "sourceId": "anishkhetani-epl-archive",
+      "locked": true,
+      "outcome_in_decision": false,
+      "evidence": [
+        {
+          "source": "reconstructed-form",
+          "title": "Lagged form before asOf: home 6 vs away 0 (n=2)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-01-20T00:00:00.000Z",
+          "claim": "Lagged form before asOf: home 6 vs away 0 (n=2)",
+          "polarity": "CONTEXT_ONLY"
+        },
+        {
+          "source": "football-data-co-uk-cluster",
+          "title": "5 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-01-20T00:00:00.000Z",
+          "claim": "5 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "polarity": "CONTEXT_ONLY"
+        }
+      ]
+    },
+    {
+      "eventId": "fb|e0|2001-01-20|tottenham|southampton",
+      "year": 2001,
+      "market": "1X2",
+      "decision": "NO_BET",
+      "reason": "NO_BET_TEMPORAL",
+      "probability": null,
+      "odds": null,
+      "edge": null,
+      "supporting": 0,
+      "contradicting": 0,
+      "contextual": 2,
+      "sourceId": "anishkhetani-epl-archive",
+      "locked": true,
+      "outcome_in_decision": false,
+      "evidence": [
+        {
+          "source": "reconstructed-form",
+          "title": "Lagged form before asOf: home 4 vs away 1 (n=2)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-01-20T00:00:00.000Z",
+          "claim": "Lagged form before asOf: home 4 vs away 1 (n=2)",
+          "polarity": "CONTEXT_ONLY"
+        },
+        {
+          "source": "football-data-co-uk-cluster",
+          "title": "5 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-01-20T00:00:00.000Z",
+          "claim": "5 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "polarity": "CONTEXT_ONLY"
+        }
+      ]
+    },
+    {
+      "eventId": "fb|e0|2001-01-21|sunderland|bradford",
+      "year": 2001,
+      "market": "1X2",
+      "decision": "NO_BET",
+      "reason": "NO_BET_TEMPORAL",
+      "probability": null,
+      "odds": null,
+      "edge": null,
+      "supporting": 0,
+      "contradicting": 0,
+      "contextual": 2,
+      "sourceId": "anishkhetani-epl-archive",
+      "locked": true,
+      "outcome_in_decision": false,
+      "evidence": [
+        {
+          "source": "reconstructed-form",
+          "title": "Lagged form before asOf: home 6 vs away 3 (n=2)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-01-21T00:00:00.000Z",
+          "claim": "Lagged form before asOf: home 6 vs away 3 (n=2)",
+          "polarity": "CONTEXT_ONLY"
+        },
+        {
+          "source": "football-data-co-uk-cluster",
+          "title": "5 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-01-21T00:00:00.000Z",
+          "claim": "5 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "polarity": "CONTEXT_ONLY"
+        }
+      ]
+    },
+    {
+      "eventId": "fb|e0|2001-01-22|charlton|west-ham",
+      "year": 2001,
+      "market": "1X2",
+      "decision": "NO_BET",
+      "reason": "NO_BET_TEMPORAL",
+      "probability": null,
+      "odds": null,
+      "edge": null,
+      "supporting": 0,
+      "contradicting": 0,
+      "contextual": 2,
+      "sourceId": "anishkhetani-epl-archive",
+      "locked": true,
+      "outcome_in_decision": false,
+      "evidence": [
+        {
+          "source": "reconstructed-form",
+          "title": "Lagged form before asOf: home 4 vs away 0 (n=2)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-01-22T00:00:00.000Z",
+          "claim": "Lagged form before asOf: home 4 vs away 0 (n=2)",
+          "polarity": "CONTEXT_ONLY"
+        },
+        {
+          "source": "football-data-co-uk-cluster",
+          "title": "5 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-01-22T00:00:00.000Z",
+          "claim": "5 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "polarity": "CONTEXT_ONLY"
+        }
+      ]
+    },
+    {
+      "eventId": "fb|e0|2001-01-24|aston-villa|leeds",
+      "year": 2001,
+      "market": "1X2",
+      "decision": "NO_BET",
+      "reason": "NO_BET_TEMPORAL",
+      "probability": null,
+      "odds": null,
+      "edge": null,
+      "supporting": 0,
+      "contradicting": 0,
+      "contextual": 2,
+      "sourceId": "anishkhetani-epl-archive",
+      "locked": true,
+      "outcome_in_decision": false,
+      "evidence": [
+        {
+          "source": "reconstructed-form",
+          "title": "Lagged form before asOf: home 0 vs away 4 (n=3)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-01-24T00:00:00.000Z",
+          "claim": "Lagged form before asOf: home 0 vs away 4 (n=3)",
+          "polarity": "CONTEXT_ONLY"
+        },
+        {
+          "source": "football-data-co-uk-cluster",
+          "title": "5 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-01-24T00:00:00.000Z",
+          "claim": "5 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "polarity": "CONTEXT_ONLY"
+        }
+      ]
+    },
+    {
+      "eventId": "fb|e0|2001-01-30|arsenal|bradford",
+      "year": 2001,
+      "market": "1X2",
+      "decision": "NO_BET",
+      "reason": "NO_BET_TEMPORAL",
+      "probability": null,
+      "odds": null,
+      "edge": null,
+      "supporting": 0,
+      "contradicting": 0,
+      "contextual": 2,
+      "sourceId": "anishkhetani-epl-archive",
+      "locked": true,
+      "outcome_in_decision": false,
+      "evidence": [
+        {
+          "source": "reconstructed-form",
+          "title": "Lagged form before asOf: home 2 vs away 4 (n=3)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-01-30T00:00:00.000Z",
+          "claim": "Lagged form before asOf: home 2 vs away 4 (n=3)",
+          "polarity": "CONTEXT_ONLY"
+        },
+        {
+          "source": "football-data-co-uk-cluster",
+          "title": "5 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-01-30T00:00:00.000Z",
+          "claim": "5 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "polarity": "CONTEXT_ONLY"
+        }
+      ]
+    },
+    {
+      "eventId": "fb|e0|2001-01-30|charlton|derby",
+      "year": 2001,
+      "market": "1X2",
+      "decision": "NO_BET",
+      "reason": "NO_BET_TEMPORAL",
+      "probability": null,
+      "odds": null,
+      "edge": null,
+      "supporting": 0,
+      "contradicting": 0,
+      "contextual": 2,
+      "sourceId": "anishkhetani-epl-archive",
+      "locked": true,
+      "outcome_in_decision": false,
+      "evidence": [
+        {
+          "source": "reconstructed-form",
+          "title": "Lagged form before asOf: home 5 vs away 4 (n=3)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-01-30T00:00:00.000Z",
+          "claim": "Lagged form before asOf: home 5 vs away 4 (n=3)",
+          "polarity": "CONTEXT_ONLY"
+        },
+        {
+          "source": "football-data-co-uk-cluster",
+          "title": "5 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-01-30T00:00:00.000Z",
+          "claim": "5 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "polarity": "CONTEXT_ONLY"
+        }
+      ]
+    },
+    {
+      "eventId": "fb|e0|2001-01-31|chelsea|newcastle",
+      "year": 2001,
+      "market": "1X2",
+      "decision": "NO_BET",
+      "reason": "NO_BET_TEMPORAL",
+      "probability": null,
+      "odds": null,
+      "edge": null,
+      "supporting": 0,
+      "contradicting": 0,
+      "contextual": 2,
+      "sourceId": "anishkhetani-epl-archive",
+      "locked": true,
+      "outcome_in_decision": false,
+      "evidence": [
+        {
+          "source": "reconstructed-form",
+          "title": "Lagged form before asOf: home 7 vs away 6 (n=3)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-01-31T00:00:00.000Z",
+          "claim": "Lagged form before asOf: home 7 vs away 6 (n=3)",
+          "polarity": "CONTEXT_ONLY"
+        },
+        {
+          "source": "football-data-co-uk-cluster",
+          "title": "5 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-01-31T00:00:00.000Z",
+          "claim": "5 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "polarity": "CONTEXT_ONLY"
+        }
+      ]
+    },
+    {
+      "eventId": "fb|e0|2001-01-31|everton|middlesbrough",
+      "year": 2001,
+      "market": "1X2",
+      "decision": "NO_BET",
+      "reason": "NO_BET_TEMPORAL",
+      "probability": null,
+      "odds": null,
+      "edge": null,
+      "supporting": 0,
+      "contradicting": 0,
+      "contextual": 2,
+      "sourceId": "anishkhetani-epl-archive",
+      "locked": true,
+      "outcome_in_decision": false,
+      "evidence": [
+        {
+          "source": "reconstructed-form",
+          "title": "Lagged form before asOf: home 4 vs away 5 (n=3)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-01-31T00:00:00.000Z",
+          "claim": "Lagged form before asOf: home 4 vs away 5 (n=3)",
+          "polarity": "CONTEXT_ONLY"
+        },
+        {
+          "source": "football-data-co-uk-cluster",
+          "title": "5 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-01-31T00:00:00.000Z",
+          "claim": "5 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "polarity": "CONTEXT_ONLY"
+        }
+      ]
+    },
+    {
+      "eventId": "fb|e0|2001-01-31|leeds|coventry",
+      "year": 2001,
+      "market": "1X2",
+      "decision": "NO_BET",
+      "reason": "NO_BET_TEMPORAL",
+      "probability": null,
+      "odds": null,
+      "edge": null,
+      "supporting": 0,
+      "contradicting": 0,
+      "contextual": 2,
+      "sourceId": "anishkhetani-epl-archive",
+      "locked": true,
+      "outcome_in_decision": false,
+      "evidence": [
+        {
+          "source": "reconstructed-form",
+          "title": "Lagged form before asOf: home 7 vs away 1 (n=3)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-01-31T00:00:00.000Z",
+          "claim": "Lagged form before asOf: home 7 vs away 1 (n=3)",
+          "polarity": "CONTEXT_ONLY"
+        },
+        {
+          "source": "football-data-co-uk-cluster",
+          "title": "5 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-01-31T00:00:00.000Z",
+          "claim": "5 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "polarity": "CONTEXT_ONLY"
+        }
+      ]
+    },
+    {
+      "eventId": "fb|e0|2001-01-31|manchester-city|liverpool",
+      "year": 2001,
+      "market": "1X2",
+      "decision": "NO_BET",
+      "reason": "NO_BET_TEMPORAL",
+      "probability": null,
+      "odds": null,
+      "edge": null,
+      "supporting": 0,
+      "contradicting": 0,
+      "contextual": 2,
+      "sourceId": "anishkhetani-epl-archive",
+      "locked": true,
+      "outcome_in_decision": false,
+      "evidence": [
+        {
+          "source": "reconstructed-form",
+          "title": "Lagged form before asOf: home 2 vs away 7 (n=3)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-01-31T00:00:00.000Z",
+          "claim": "Lagged form before asOf: home 2 vs away 7 (n=3)",
+          "polarity": "CONTEXT_ONLY"
+        },
+        {
+          "source": "football-data-co-uk-cluster",
+          "title": "5 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-01-31T00:00:00.000Z",
+          "claim": "5 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "polarity": "CONTEXT_ONLY"
+        }
+      ]
+    },
+    {
+      "eventId": "fb|e0|2001-01-31|southampton|leicester",
+      "year": 2001,
+      "market": "1X2",
+      "decision": "NO_BET",
+      "reason": "NO_BET_TEMPORAL",
+      "probability": null,
+      "odds": null,
+      "edge": null,
+      "supporting": 0,
+      "contradicting": 0,
+      "contextual": 2,
+      "sourceId": "anishkhetani-epl-archive",
+      "locked": true,
+      "outcome_in_decision": false,
+      "evidence": [
+        {
+          "source": "reconstructed-form",
+          "title": "Lagged form before asOf: home 2 vs away 1 (n=3)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-01-31T00:00:00.000Z",
+          "claim": "Lagged form before asOf: home 2 vs away 1 (n=3)",
+          "polarity": "CONTEXT_ONLY"
+        },
+        {
+          "source": "football-data-co-uk-cluster",
+          "title": "5 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-01-31T00:00:00.000Z",
+          "claim": "5 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "polarity": "CONTEXT_ONLY"
+        }
+      ]
+    },
+    {
+      "eventId": "fb|e0|2001-01-31|sunderland|manchester-united",
+      "year": 2001,
+      "market": "1X2",
+      "decision": "NO_BET",
+      "reason": "NO_BET_TEMPORAL",
+      "probability": null,
+      "odds": null,
+      "edge": null,
+      "supporting": 0,
+      "contradicting": 0,
+      "contextual": 2,
+      "sourceId": "anishkhetani-epl-archive",
+      "locked": true,
+      "outcome_in_decision": false,
+      "evidence": [
+        {
+          "source": "reconstructed-form",
+          "title": "Lagged form before asOf: home 7 vs away 9 (n=3)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-01-31T00:00:00.000Z",
+          "claim": "Lagged form before asOf: home 7 vs away 9 (n=3)",
+          "polarity": "CONTEXT_ONLY"
+        },
+        {
+          "source": "football-data-co-uk-cluster",
+          "title": "5 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-01-31T00:00:00.000Z",
+          "claim": "5 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "polarity": "CONTEXT_ONLY"
+        }
+      ]
+    },
+    {
+      "eventId": "fb|e0|2001-01-31|west-ham|tottenham",
+      "year": 2001,
+      "market": "1X2",
+      "decision": "NO_BET",
+      "reason": "NO_BET_TEMPORAL",
+      "probability": null,
+      "odds": null,
+      "edge": null,
+      "supporting": 0,
+      "contradicting": 0,
+      "contextual": 2,
+      "sourceId": "anishkhetani-epl-archive",
+      "locked": true,
+      "outcome_in_decision": false,
+      "evidence": [
+        {
+          "source": "reconstructed-form",
+          "title": "Lagged form before asOf: home 1 vs away 5 (n=3)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-01-31T00:00:00.000Z",
+          "claim": "Lagged form before asOf: home 1 vs away 5 (n=3)",
+          "polarity": "CONTEXT_ONLY"
+        },
+        {
+          "source": "football-data-co-uk-cluster",
+          "title": "5 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-01-31T00:00:00.000Z",
+          "claim": "5 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "polarity": "CONTEXT_ONLY"
+        }
+      ]
+    },
+    {
+      "eventId": "fb|e0|2001-02-03|bradford|aston-villa",
+      "year": 2001,
+      "market": "1X2",
+      "decision": "NO_BET",
+      "reason": "NO_BET_TEMPORAL",
+      "probability": null,
+      "odds": null,
+      "edge": null,
+      "supporting": 0,
+      "contradicting": 0,
+      "contextual": 2,
+      "sourceId": "anishkhetani-epl-archive",
+      "locked": true,
+      "outcome_in_decision": false,
+      "evidence": [
+        {
+          "source": "reconstructed-form",
+          "title": "Lagged form before asOf: home 4 vs away 0 (n=4)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-02-03T00:00:00.000Z",
+          "claim": "Lagged form before asOf: home 4 vs away 0 (n=4)",
+          "polarity": "CONTEXT_ONLY"
+        },
+        {
+          "source": "football-data-co-uk-cluster",
+          "title": "5 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-02-03T00:00:00.000Z",
+          "claim": "5 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "polarity": "CONTEXT_ONLY"
+        }
+      ]
+    },
+    {
+      "eventId": "fb|e0|2001-02-03|coventry|arsenal",
+      "year": 2001,
+      "market": "1X2",
+      "decision": "NO_BET",
+      "reason": "NO_BET_TEMPORAL",
+      "probability": null,
+      "odds": null,
+      "edge": null,
+      "supporting": 0,
+      "contradicting": 0,
+      "contextual": 2,
+      "sourceId": "anishkhetani-epl-archive",
+      "locked": true,
+      "outcome_in_decision": false,
+      "evidence": [
+        {
+          "source": "reconstructed-form",
+          "title": "Lagged form before asOf: home 1 vs away 5 (n=4)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-02-03T00:00:00.000Z",
+          "claim": "Lagged form before asOf: home 1 vs away 5 (n=4)",
+          "polarity": "CONTEXT_ONLY"
+        },
+        {
+          "source": "football-data-co-uk-cluster",
+          "title": "5 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-02-03T00:00:00.000Z",
+          "claim": "5 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "polarity": "CONTEXT_ONLY"
+        }
+      ]
+    },
+    {
+      "eventId": "fb|e0|2001-02-03|derby|sunderland",
+      "year": 2001,
+      "market": "1X2",
+      "decision": "NO_BET",
+      "reason": "NO_BET_TEMPORAL",
+      "probability": null,
+      "odds": null,
+      "edge": null,
+      "supporting": 0,
+      "contradicting": 0,
+      "contextual": 2,
+      "sourceId": "anishkhetani-epl-archive",
+      "locked": true,
+      "outcome_in_decision": false,
+      "evidence": [
+        {
+          "source": "reconstructed-form",
+          "title": "Lagged form before asOf: home 4 vs away 7 (n=4)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-02-03T00:00:00.000Z",
+          "claim": "Lagged form before asOf: home 4 vs away 7 (n=4)",
+          "polarity": "CONTEXT_ONLY"
+        },
+        {
+          "source": "football-data-co-uk-cluster",
+          "title": "5 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-02-03T00:00:00.000Z",
+          "claim": "5 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "polarity": "CONTEXT_ONLY"
+        }
+      ]
+    },
+    {
+      "eventId": "fb|e0|2001-02-03|ipswich|leeds",
+      "year": 2001,
+      "market": "1X2",
+      "decision": "NO_BET",
+      "reason": "NO_BET_TEMPORAL",
+      "probability": null,
+      "odds": null,
+      "edge": null,
+      "supporting": 0,
+      "contradicting": 0,
+      "contextual": 2,
+      "sourceId": "anishkhetani-epl-archive",
+      "locked": true,
+      "outcome_in_decision": false,
+      "evidence": [
+        {
+          "source": "reconstructed-form",
+          "title": "Lagged form before asOf: home 3 vs away 10 (n=3)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-02-03T00:00:00.000Z",
+          "claim": "Lagged form before asOf: home 3 vs away 10 (n=3)",
+          "polarity": "CONTEXT_ONLY"
+        },
+        {
+          "source": "football-data-co-uk-cluster",
+          "title": "5 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-02-03T00:00:00.000Z",
+          "claim": "5 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "polarity": "CONTEXT_ONLY"
+        }
+      ]
+    },
+    {
+      "eventId": "fb|e0|2001-02-03|leicester|chelsea",
+      "year": 2001,
+      "market": "1X2",
+      "decision": "NO_BET",
+      "reason": "NO_BET_TEMPORAL",
+      "probability": null,
+      "odds": null,
+      "edge": null,
+      "supporting": 0,
+      "contradicting": 0,
+      "contextual": 2,
+      "sourceId": "anishkhetani-epl-archive",
+      "locked": true,
+      "outcome_in_decision": false,
+      "evidence": [
+        {
+          "source": "reconstructed-form",
+          "title": "Lagged form before asOf: home 1 vs away 10 (n=4)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-02-03T00:00:00.000Z",
+          "claim": "Lagged form before asOf: home 1 vs away 10 (n=4)",
+          "polarity": "CONTEXT_ONLY"
+        },
+        {
+          "source": "football-data-co-uk-cluster",
+          "title": "5 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-02-03T00:00:00.000Z",
+          "claim": "5 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "polarity": "CONTEXT_ONLY"
+        }
+      ]
+    },
+    {
+      "eventId": "fb|e0|2001-02-03|liverpool|west-ham",
+      "year": 2001,
+      "market": "1X2",
+      "decision": "NO_BET",
+      "reason": "NO_BET_TEMPORAL",
+      "probability": null,
+      "odds": null,
+      "edge": null,
+      "supporting": 0,
+      "contradicting": 0,
+      "contextual": 2,
+      "sourceId": "anishkhetani-epl-archive",
+      "locked": true,
+      "outcome_in_decision": false,
+      "evidence": [
+        {
+          "source": "reconstructed-form",
+          "title": "Lagged form before asOf: home 8 vs away 2 (n=4)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-02-03T00:00:00.000Z",
+          "claim": "Lagged form before asOf: home 8 vs away 2 (n=4)",
+          "polarity": "CONTEXT_ONLY"
+        },
+        {
+          "source": "football-data-co-uk-cluster",
+          "title": "5 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-02-03T00:00:00.000Z",
+          "claim": "5 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "polarity": "CONTEXT_ONLY"
+        }
+      ]
+    },
+    {
+      "eventId": "fb|e0|2001-02-03|manchester-united|everton",
+      "year": 2001,
+      "market": "1X2",
+      "decision": "NO_BET",
+      "reason": "NO_BET_TEMPORAL",
+      "probability": null,
+      "odds": null,
+      "edge": null,
+      "supporting": 0,
+      "contradicting": 0,
+      "contextual": 2,
+      "sourceId": "anishkhetani-epl-archive",
+      "locked": true,
+      "outcome_in_decision": false,
+      "evidence": [
+        {
+          "source": "reconstructed-form",
+          "title": "Lagged form before asOf: home 12 vs away 5 (n=4)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-02-03T00:00:00.000Z",
+          "claim": "Lagged form before asOf: home 12 vs away 5 (n=4)",
+          "polarity": "CONTEXT_ONLY"
+        },
+        {
+          "source": "football-data-co-uk-cluster",
+          "title": "5 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-02-03T00:00:00.000Z",
+          "claim": "5 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "polarity": "CONTEXT_ONLY"
+        }
+      ]
+    },
+    {
+      "eventId": "fb|e0|2001-02-03|middlesbrough|manchester-city",
+      "year": 2001,
+      "market": "1X2",
+      "decision": "NO_BET",
+      "reason": "NO_BET_TEMPORAL",
+      "probability": null,
+      "odds": null,
+      "edge": null,
+      "supporting": 0,
+      "contradicting": 0,
+      "contextual": 2,
+      "sourceId": "anishkhetani-epl-archive",
+      "locked": true,
+      "outcome_in_decision": false,
+      "evidence": [
+        {
+          "source": "reconstructed-form",
+          "title": "Lagged form before asOf: home 6 vs away 3 (n=4)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-02-03T00:00:00.000Z",
+          "claim": "Lagged form before asOf: home 6 vs away 3 (n=4)",
+          "polarity": "CONTEXT_ONLY"
+        },
+        {
+          "source": "football-data-co-uk-cluster",
+          "title": "5 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-02-03T00:00:00.000Z",
+          "claim": "5 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "polarity": "CONTEXT_ONLY"
+        }
+      ]
+    },
+    {
+      "eventId": "fb|e0|2001-02-03|tottenham|charlton",
+      "year": 2001,
+      "market": "1X2",
+      "decision": "NO_BET",
+      "reason": "NO_BET_TEMPORAL",
+      "probability": null,
+      "odds": null,
+      "edge": null,
+      "supporting": 0,
+      "contradicting": 0,
+      "contextual": 2,
+      "sourceId": "anishkhetani-epl-archive",
+      "locked": true,
+      "outcome_in_decision": false,
+      "evidence": [
+        {
+          "source": "reconstructed-form",
+          "title": "Lagged form before asOf: home 6 vs away 8 (n=4)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-02-03T00:00:00.000Z",
+          "claim": "Lagged form before asOf: home 6 vs away 8 (n=4)",
+          "polarity": "CONTEXT_ONLY"
+        },
+        {
+          "source": "football-data-co-uk-cluster",
+          "title": "5 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-02-03T00:00:00.000Z",
+          "claim": "5 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "polarity": "CONTEXT_ONLY"
+        }
+      ]
+    },
+    {
+      "eventId": "fb|e0|2001-02-07|everton|leeds",
+      "year": 2001,
+      "market": "1X2",
+      "decision": "NO_BET",
+      "reason": "NO_BET_TEMPORAL",
+      "probability": null,
+      "odds": null,
+      "edge": null,
+      "supporting": 0,
+      "contradicting": 0,
+      "contextual": 2,
+      "sourceId": "anishkhetani-epl-archive",
+      "locked": true,
+      "outcome_in_decision": false,
+      "evidence": [
+        {
+          "source": "reconstructed-form",
+          "title": "Lagged form before asOf: home 5 vs away 12 (n=5)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-02-07T00:00:00.000Z",
+          "claim": "Lagged form before asOf: home 5 vs away 12 (n=5)",
+          "polarity": "CONTEXT_ONLY"
+        },
+        {
+          "source": "football-data-co-uk-cluster",
+          "title": "5 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-02-07T00:00:00.000Z",
+          "claim": "5 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "polarity": "CONTEXT_ONLY"
+        }
+      ]
+    },
+    {
+      "eventId": "fb|e0|2001-02-10|arsenal|ipswich",
+      "year": 2001,
+      "market": "1X2",
+      "decision": "NO_BET",
+      "reason": "NO_BET_TEMPORAL",
+      "probability": null,
+      "odds": null,
+      "edge": null,
+      "supporting": 0,
+      "contradicting": 0,
+      "contextual": 2,
+      "sourceId": "anishkhetani-epl-archive",
+      "locked": true,
+      "outcome_in_decision": false,
+      "evidence": [
+        {
+          "source": "reconstructed-form",
+          "title": "Lagged form before asOf: home 8 vs away 3 (n=4)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-02-10T00:00:00.000Z",
+          "claim": "Lagged form before asOf: home 8 vs away 3 (n=4)",
+          "polarity": "CONTEXT_ONLY"
+        },
+        {
+          "source": "football-data-co-uk-cluster",
+          "title": "5 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-02-10T00:00:00.000Z",
+          "claim": "5 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "polarity": "CONTEXT_ONLY"
+        }
+      ]
+    },
+    {
+      "eventId": "fb|e0|2001-02-10|aston-villa|middlesbrough",
+      "year": 2001,
+      "market": "1X2",
+      "decision": "NO_BET",
+      "reason": "NO_BET_TEMPORAL",
+      "probability": null,
+      "odds": null,
+      "edge": null,
+      "supporting": 0,
+      "contradicting": 0,
+      "contextual": 2,
+      "sourceId": "anishkhetani-epl-archive",
+      "locked": true,
+      "outcome_in_decision": false,
+      "evidence": [
+        {
+          "source": "reconstructed-form",
+          "title": "Lagged form before asOf: home 3 vs away 7 (n=5)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-02-10T00:00:00.000Z",
+          "claim": "Lagged form before asOf: home 3 vs away 7 (n=5)",
+          "polarity": "CONTEXT_ONLY"
+        },
+        {
+          "source": "football-data-co-uk-cluster",
+          "title": "5 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-02-10T00:00:00.000Z",
+          "claim": "5 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "polarity": "CONTEXT_ONLY"
+        }
+      ]
+    },
+    {
+      "eventId": "fb|e0|2001-02-10|chelsea|manchester-united",
+      "year": 2001,
+      "market": "1X2",
+      "decision": "NO_BET",
+      "reason": "NO_BET_TEMPORAL",
+      "probability": null,
+      "odds": null,
+      "edge": null,
+      "supporting": 0,
+      "contradicting": 0,
+      "contextual": 2,
+      "sourceId": "anishkhetani-epl-archive",
+      "locked": true,
+      "outcome_in_decision": false,
+      "evidence": [
+        {
+          "source": "reconstructed-form",
+          "title": "Lagged form before asOf: home 10 vs away 15 (n=5)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-02-10T00:00:00.000Z",
+          "claim": "Lagged form before asOf: home 10 vs away 15 (n=5)",
+          "polarity": "CONTEXT_ONLY"
+        },
+        {
+          "source": "football-data-co-uk-cluster",
+          "title": "5 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-02-10T00:00:00.000Z",
+          "claim": "5 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "polarity": "CONTEXT_ONLY"
+        }
+      ]
+    },
+    {
+      "eventId": "fb|e0|2001-02-10|everton|leicester",
+      "year": 2001,
+      "market": "1X2",
+      "decision": "NO_BET",
+      "reason": "NO_BET_TEMPORAL",
+      "probability": null,
+      "odds": null,
+      "edge": null,
+      "supporting": 0,
+      "contradicting": 0,
+      "contextual": 2,
+      "sourceId": "anishkhetani-epl-archive",
+      "locked": true,
+      "outcome_in_decision": false,
+      "evidence": [
+        {
+          "source": "reconstructed-form",
+          "title": "Lagged form before asOf: home 6 vs away 4 (n=5)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-02-10T00:00:00.000Z",
+          "claim": "Lagged form before asOf: home 6 vs away 4 (n=5)",
+          "polarity": "CONTEXT_ONLY"
+        },
+        {
+          "source": "football-data-co-uk-cluster",
+          "title": "5 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-02-10T00:00:00.000Z",
+          "claim": "5 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "polarity": "CONTEXT_ONLY"
+        }
+      ]
+    },
+    {
+      "eventId": "fb|e0|2001-02-10|leeds|derby",
+      "year": 2001,
+      "market": "1X2",
+      "decision": "NO_BET",
+      "reason": "NO_BET_TEMPORAL",
+      "probability": null,
+      "odds": null,
+      "edge": null,
+      "supporting": 0,
+      "contradicting": 0,
+      "contextual": 2,
+      "sourceId": "anishkhetani-epl-archive",
+      "locked": true,
+      "outcome_in_decision": false,
+      "evidence": [
+        {
+          "source": "reconstructed-form",
+          "title": "Lagged form before asOf: home 10 vs away 7 (n=5)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-02-10T00:00:00.000Z",
+          "claim": "Lagged form before asOf: home 10 vs away 7 (n=5)",
+          "polarity": "CONTEXT_ONLY"
+        },
+        {
+          "source": "football-data-co-uk-cluster",
+          "title": "5 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-02-10T00:00:00.000Z",
+          "claim": "5 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "polarity": "CONTEXT_ONLY"
+        }
+      ]
+    },
+    {
+      "eventId": "fb|e0|2001-02-10|manchester-city|tottenham",
+      "year": 2001,
+      "market": "1X2",
+      "decision": "NO_BET",
+      "reason": "NO_BET_TEMPORAL",
+      "probability": null,
+      "odds": null,
+      "edge": null,
+      "supporting": 0,
+      "contradicting": 0,
+      "contextual": 2,
+      "sourceId": "anishkhetani-epl-archive",
+      "locked": true,
+      "outcome_in_decision": false,
+      "evidence": [
+        {
+          "source": "reconstructed-form",
+          "title": "Lagged form before asOf: home 4 vs away 7 (n=5)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-02-10T00:00:00.000Z",
+          "claim": "Lagged form before asOf: home 4 vs away 7 (n=5)",
+          "polarity": "CONTEXT_ONLY"
+        },
+        {
+          "source": "football-data-co-uk-cluster",
+          "title": "5 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-02-10T00:00:00.000Z",
+          "claim": "5 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "polarity": "CONTEXT_ONLY"
+        }
+      ]
+    },
+    {
+      "eventId": "fb|e0|2001-02-10|southampton|bradford",
+      "year": 2001,
+      "market": "1X2",
+      "decision": "NO_BET",
+      "reason": "NO_BET_TEMPORAL",
+      "probability": null,
+      "odds": null,
+      "edge": null,
+      "supporting": 0,
+      "contradicting": 0,
+      "contextual": 2,
+      "sourceId": "anishkhetani-epl-archive",
+      "locked": true,
+      "outcome_in_decision": false,
+      "evidence": [
+        {
+          "source": "reconstructed-form",
+          "title": "Lagged form before asOf: home 5 vs away 4 (n=4)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-02-10T00:00:00.000Z",
+          "claim": "Lagged form before asOf: home 5 vs away 4 (n=4)",
+          "polarity": "CONTEXT_ONLY"
+        },
+        {
+          "source": "football-data-co-uk-cluster",
+          "title": "5 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-02-10T00:00:00.000Z",
+          "claim": "5 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "polarity": "CONTEXT_ONLY"
+        }
+      ]
+    },
+    {
+      "eventId": "fb|e0|2001-02-10|sunderland|liverpool",
+      "year": 2001,
+      "market": "1X2",
+      "decision": "NO_BET",
+      "reason": "NO_BET_TEMPORAL",
+      "probability": null,
+      "odds": null,
+      "edge": null,
+      "supporting": 0,
+      "contradicting": 0,
+      "contextual": 2,
+      "sourceId": "anishkhetani-epl-archive",
+      "locked": true,
+      "outcome_in_decision": false,
+      "evidence": [
+        {
+          "source": "reconstructed-form",
+          "title": "Lagged form before asOf: home 7 vs away 11 (n=5)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-02-10T00:00:00.000Z",
+          "claim": "Lagged form before asOf: home 7 vs away 11 (n=5)",
+          "polarity": "CONTEXT_ONLY"
+        },
+        {
+          "source": "football-data-co-uk-cluster",
+          "title": "5 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-02-10T00:00:00.000Z",
+          "claim": "5 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "polarity": "CONTEXT_ONLY"
+        }
+      ]
+    },
+    {
+      "eventId": "fb|e0|2001-02-11|charlton|newcastle",
+      "year": 2001,
+      "market": "1X2",
+      "decision": "NO_BET",
+      "reason": "NO_BET_TEMPORAL",
+      "probability": null,
+      "odds": null,
+      "edge": null,
+      "supporting": 0,
+      "contradicting": 0,
+      "contextual": 2,
+      "sourceId": "anishkhetani-epl-archive",
+      "locked": true,
+      "outcome_in_decision": false,
+      "evidence": [
+        {
+          "source": "reconstructed-form",
+          "title": "Lagged form before asOf: home 9 vs away 6 (n=4)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-02-11T00:00:00.000Z",
+          "claim": "Lagged form before asOf: home 9 vs away 6 (n=4)",
+          "polarity": "CONTEXT_ONLY"
+        },
+        {
+          "source": "football-data-co-uk-cluster",
+          "title": "5 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-02-11T00:00:00.000Z",
+          "claim": "5 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "polarity": "CONTEXT_ONLY"
+        }
+      ]
+    },
+    {
+      "eventId": "fb|e0|2001-02-12|west-ham|coventry",
+      "year": 2001,
+      "market": "1X2",
+      "decision": "NO_BET",
+      "reason": "NO_BET_TEMPORAL",
+      "probability": null,
+      "odds": null,
+      "edge": null,
+      "supporting": 0,
+      "contradicting": 0,
+      "contextual": 2,
+      "sourceId": "anishkhetani-epl-archive",
+      "locked": true,
+      "outcome_in_decision": false,
+      "evidence": [
+        {
+          "source": "reconstructed-form",
+          "title": "Lagged form before asOf: home 2 vs away 1 (n=5)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-02-12T00:00:00.000Z",
+          "claim": "Lagged form before asOf: home 2 vs away 1 (n=5)",
+          "polarity": "CONTEXT_ONLY"
+        },
+        {
+          "source": "football-data-co-uk-cluster",
+          "title": "5 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-02-12T00:00:00.000Z",
+          "claim": "5 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "polarity": "CONTEXT_ONLY"
+        }
+      ]
+    },
+    {
+      "eventId": "fb|e0|2001-02-24|bradford|west-ham",
+      "year": 2001,
+      "market": "1X2",
+      "decision": "NO_BET",
+      "reason": "NO_BET_TEMPORAL",
+      "probability": null,
+      "odds": null,
+      "edge": null,
+      "supporting": 0,
+      "contradicting": 0,
+      "contextual": 2,
+      "sourceId": "anishkhetani-epl-archive",
+      "locked": true,
+      "outcome_in_decision": false,
+      "evidence": [
+        {
+          "source": "reconstructed-form",
+          "title": "Lagged form before asOf: home 1 vs away 3 (n=5)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-02-24T00:00:00.000Z",
+          "claim": "Lagged form before asOf: home 1 vs away 3 (n=5)",
+          "polarity": "CONTEXT_ONLY"
+        },
+        {
+          "source": "football-data-co-uk-cluster",
+          "title": "4 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-02-24T00:00:00.000Z",
+          "claim": "4 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "polarity": "CONTEXT_ONLY"
+        }
+      ]
+    },
+    {
+      "eventId": "fb|e0|2001-02-24|coventry|charlton",
+      "year": 2001,
+      "market": "1X2",
+      "decision": "NO_BET",
+      "reason": "NO_BET_TEMPORAL",
+      "probability": null,
+      "odds": null,
+      "edge": null,
+      "supporting": 0,
+      "contradicting": 0,
+      "contextual": 2,
+      "sourceId": "anishkhetani-epl-archive",
+      "locked": true,
+      "outcome_in_decision": false,
+      "evidence": [
+        {
+          "source": "reconstructed-form",
+          "title": "Lagged form before asOf: home 1 vs away 9 (n=5)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-02-24T00:00:00.000Z",
+          "claim": "Lagged form before asOf: home 1 vs away 9 (n=5)",
+          "polarity": "CONTEXT_ONLY"
+        },
+        {
+          "source": "football-data-co-uk-cluster",
+          "title": "4 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-02-24T00:00:00.000Z",
+          "claim": "4 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "polarity": "CONTEXT_ONLY"
+        }
+      ]
+    },
+    {
+      "eventId": "fb|e0|2001-02-24|derby|aston-villa",
+      "year": 2001,
+      "market": "1X2",
+      "decision": "NO_BET",
+      "reason": "NO_BET_TEMPORAL",
+      "probability": null,
+      "odds": null,
+      "edge": null,
+      "supporting": 0,
+      "contradicting": 0,
+      "contextual": 2,
+      "sourceId": "anishkhetani-epl-archive",
+      "locked": true,
+      "outcome_in_decision": false,
+      "evidence": [
+        {
+          "source": "reconstructed-form",
+          "title": "Lagged form before asOf: home 5 vs away 4 (n=5)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-02-24T00:00:00.000Z",
+          "claim": "Lagged form before asOf: home 5 vs away 4 (n=5)",
+          "polarity": "CONTEXT_ONLY"
+        },
+        {
+          "source": "football-data-co-uk-cluster",
+          "title": "4 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-02-24T00:00:00.000Z",
+          "claim": "4 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "polarity": "CONTEXT_ONLY"
+        }
+      ]
+    },
+    {
+      "eventId": "fb|e0|2001-02-24|ipswich|everton",
+      "year": 2001,
+      "market": "1X2",
+      "decision": "NO_BET",
+      "reason": "NO_BET_TEMPORAL",
+      "probability": null,
+      "odds": null,
+      "edge": null,
+      "supporting": 0,
+      "contradicting": 0,
+      "contextual": 2,
+      "sourceId": "anishkhetani-epl-archive",
+      "locked": true,
+      "outcome_in_decision": false,
+      "evidence": [
+        {
+          "source": "reconstructed-form",
+          "title": "Lagged form before asOf: home 3 vs away 8 (n=5)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-02-24T00:00:00.000Z",
+          "claim": "Lagged form before asOf: home 3 vs away 8 (n=5)",
+          "polarity": "CONTEXT_ONLY"
+        },
+        {
+          "source": "football-data-co-uk-cluster",
+          "title": "4 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-02-24T00:00:00.000Z",
+          "claim": "4 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "polarity": "CONTEXT_ONLY"
+        }
+      ]
+    },
+    {
+      "eventId": "fb|e0|2001-02-24|leicester|sunderland",
+      "year": 2001,
+      "market": "1X2",
+      "decision": "NO_BET",
+      "reason": "NO_BET_TEMPORAL",
+      "probability": null,
+      "odds": null,
+      "edge": null,
+      "supporting": 0,
+      "contradicting": 0,
+      "contextual": 2,
+      "sourceId": "anishkhetani-epl-archive",
+      "locked": true,
+      "outcome_in_decision": false,
+      "evidence": [
+        {
+          "source": "reconstructed-form",
+          "title": "Lagged form before asOf: home 4 vs away 5 (n=5)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-02-24T00:00:00.000Z",
+          "claim": "Lagged form before asOf: home 4 vs away 5 (n=5)",
+          "polarity": "CONTEXT_ONLY"
+        },
+        {
+          "source": "football-data-co-uk-cluster",
+          "title": "4 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-02-24T00:00:00.000Z",
+          "claim": "4 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "polarity": "CONTEXT_ONLY"
+        }
+      ]
+    },
+    {
+      "eventId": "fb|e0|2001-02-24|middlesbrough|southampton",
+      "year": 2001,
+      "market": "1X2",
+      "decision": "NO_BET",
+      "reason": "NO_BET_TEMPORAL",
+      "probability": null,
+      "odds": null,
+      "edge": null,
+      "supporting": 0,
+      "contradicting": 0,
+      "contextual": 2,
+      "sourceId": "anishkhetani-epl-archive",
+      "locked": true,
+      "outcome_in_decision": false,
+      "evidence": [
+        {
+          "source": "reconstructed-form",
+          "title": "Lagged form before asOf: home 7 vs away 8 (n=5)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-02-24T00:00:00.000Z",
+          "claim": "Lagged form before asOf: home 7 vs away 8 (n=5)",
+          "polarity": "CONTEXT_ONLY"
+        },
+        {
+          "source": "football-data-co-uk-cluster",
+          "title": "4 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-02-24T00:00:00.000Z",
+          "claim": "4 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "polarity": "CONTEXT_ONLY"
+        }
+      ]
+    },
+    {
+      "eventId": "fb|e0|2001-02-24|newcastle|manchester-city",
+      "year": 2001,
+      "market": "1X2",
+      "decision": "NO_BET",
+      "reason": "NO_BET_TEMPORAL",
+      "probability": null,
+      "odds": null,
+      "edge": null,
+      "supporting": 0,
+      "contradicting": 0,
+      "contextual": 2,
+      "sourceId": "anishkhetani-epl-archive",
+      "locked": true,
+      "outcome_in_decision": false,
+      "evidence": [
+        {
+          "source": "reconstructed-form",
+          "title": "Lagged form before asOf: home 6 vs away 3 (n=5)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-02-24T00:00:00.000Z",
+          "claim": "Lagged form before asOf: home 6 vs away 3 (n=5)",
+          "polarity": "CONTEXT_ONLY"
+        },
+        {
+          "source": "football-data-co-uk-cluster",
+          "title": "4 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-02-24T00:00:00.000Z",
+          "claim": "4 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "polarity": "CONTEXT_ONLY"
+        }
+      ]
+    },
+    {
+      "eventId": "fb|e0|2001-02-24|tottenham|leeds",
+      "year": 2001,
+      "market": "1X2",
+      "decision": "NO_BET",
+      "reason": "NO_BET_TEMPORAL",
+      "probability": null,
+      "odds": null,
+      "edge": null,
+      "supporting": 0,
+      "contradicting": 0,
+      "contextual": 2,
+      "sourceId": "anishkhetani-epl-archive",
+      "locked": true,
+      "outcome_in_decision": false,
+      "evidence": [
+        {
+          "source": "reconstructed-form",
+          "title": "Lagged form before asOf: home 7 vs away 11 (n=5)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-02-24T00:00:00.000Z",
+          "claim": "Lagged form before asOf: home 7 vs away 11 (n=5)",
+          "polarity": "CONTEXT_ONLY"
+        },
+        {
+          "source": "football-data-co-uk-cluster",
+          "title": "4 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-02-24T00:00:00.000Z",
+          "claim": "4 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "polarity": "CONTEXT_ONLY"
+        }
+      ]
+    },
+    {
+      "eventId": "fb|e0|2001-02-25|manchester-united|arsenal",
+      "year": 2001,
+      "market": "1X2",
+      "decision": "NO_BET",
+      "reason": "NO_BET_TEMPORAL",
+      "probability": null,
+      "odds": null,
+      "edge": null,
+      "supporting": 0,
+      "contradicting": 0,
+      "contextual": 2,
+      "sourceId": "anishkhetani-epl-archive",
+      "locked": true,
+      "outcome_in_decision": false,
+      "evidence": [
+        {
+          "source": "reconstructed-form",
+          "title": "Lagged form before asOf: home 13 vs away 11 (n=5)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-02-25T00:00:00.000Z",
+          "claim": "Lagged form before asOf: home 13 vs away 11 (n=5)",
+          "polarity": "CONTEXT_ONLY"
+        },
+        {
+          "source": "football-data-co-uk-cluster",
+          "title": "4 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-02-25T00:00:00.000Z",
+          "claim": "4 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "polarity": "CONTEXT_ONLY"
+        }
+      ]
+    },
+    {
+      "eventId": "fb|e0|2001-03-03|arsenal|west-ham",
+      "year": 2001,
+      "market": "1X2",
+      "decision": "NO_BET",
+      "reason": "NO_BET_TEMPORAL",
+      "probability": null,
+      "odds": null,
+      "edge": null,
+      "supporting": 0,
+      "contradicting": 0,
+      "contextual": 2,
+      "sourceId": "anishkhetani-epl-archive",
+      "locked": true,
+      "outcome_in_decision": false,
+      "evidence": [
+        {
+          "source": "reconstructed-form",
+          "title": "Lagged form before asOf: home 10 vs away 6 (n=5)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-03-03T00:00:00.000Z",
+          "claim": "Lagged form before asOf: home 10 vs away 6 (n=5)",
+          "polarity": "CONTEXT_ONLY"
+        },
+        {
+          "source": "football-data-co-uk-cluster",
+          "title": "4 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-03-03T00:00:00.000Z",
+          "claim": "4 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "polarity": "CONTEXT_ONLY"
+        }
+      ]
+    },
+    {
+      "eventId": "fb|e0|2001-03-03|coventry|chelsea",
+      "year": 2001,
+      "market": "1X2",
+      "decision": "NO_BET",
+      "reason": "NO_BET_TEMPORAL",
+      "probability": null,
+      "odds": null,
+      "edge": null,
+      "supporting": 0,
+      "contradicting": 0,
+      "contextual": 2,
+      "sourceId": "anishkhetani-epl-archive",
+      "locked": true,
+      "outcome_in_decision": false,
+      "evidence": [
+        {
+          "source": "reconstructed-form",
+          "title": "Lagged form before asOf: home 2 vs away 8 (n=5)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-03-03T00:00:00.000Z",
+          "claim": "Lagged form before asOf: home 2 vs away 8 (n=5)",
+          "polarity": "CONTEXT_ONLY"
+        },
+        {
+          "source": "football-data-co-uk-cluster",
+          "title": "4 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-03-03T00:00:00.000Z",
+          "claim": "4 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "polarity": "CONTEXT_ONLY"
+        }
+      ]
+    },
+    {
+      "eventId": "fb|e0|2001-03-03|derby|tottenham",
+      "year": 2001,
+      "market": "1X2",
+      "decision": "NO_BET",
+      "reason": "NO_BET_TEMPORAL",
+      "probability": null,
+      "odds": null,
+      "edge": null,
+      "supporting": 0,
+      "contradicting": 0,
+      "contextual": 2,
+      "sourceId": "anishkhetani-epl-archive",
+      "locked": true,
+      "outcome_in_decision": false,
+      "evidence": [
+        {
+          "source": "reconstructed-form",
+          "title": "Lagged form before asOf: home 8 vs away 6 (n=5)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-03-03T00:00:00.000Z",
+          "claim": "Lagged form before asOf: home 8 vs away 6 (n=5)",
+          "polarity": "CONTEXT_ONLY"
+        },
+        {
+          "source": "football-data-co-uk-cluster",
+          "title": "4 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-03-03T00:00:00.000Z",
+          "claim": "4 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "polarity": "CONTEXT_ONLY"
+        }
+      ]
+    },
+    {
+      "eventId": "fb|e0|2001-03-03|everton|newcastle",
+      "year": 2001,
+      "market": "1X2",
+      "decision": "NO_BET",
+      "reason": "NO_BET_TEMPORAL",
+      "probability": null,
+      "odds": null,
+      "edge": null,
+      "supporting": 0,
+      "contradicting": 0,
+      "contextual": 2,
+      "sourceId": "anishkhetani-epl-archive",
+      "locked": true,
+      "outcome_in_decision": false,
+      "evidence": [
+        {
+          "source": "reconstructed-form",
+          "title": "Lagged form before asOf: home 5 vs away 6 (n=5)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-03-03T00:00:00.000Z",
+          "claim": "Lagged form before asOf: home 5 vs away 6 (n=5)",
+          "polarity": "CONTEXT_ONLY"
+        },
+        {
+          "source": "football-data-co-uk-cluster",
+          "title": "4 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-03-03T00:00:00.000Z",
+          "claim": "4 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "polarity": "CONTEXT_ONLY"
+        }
+      ]
+    },
+    {
+      "eventId": "fb|e0|2001-03-03|leeds|manchester-united",
+      "year": 2001,
+      "market": "1X2",
+      "decision": "NO_BET",
+      "reason": "NO_BET_TEMPORAL",
+      "probability": null,
+      "odds": null,
+      "edge": null,
+      "supporting": 0,
+      "contradicting": 0,
+      "contextual": 2,
+      "sourceId": "anishkhetani-epl-archive",
+      "locked": true,
+      "outcome_in_decision": false,
+      "evidence": [
+        {
+          "source": "reconstructed-form",
+          "title": "Lagged form before asOf: home 11 vs away 13 (n=5)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-03-03T00:00:00.000Z",
+          "claim": "Lagged form before asOf: home 11 vs away 13 (n=5)",
+          "polarity": "CONTEXT_ONLY"
+        },
+        {
+          "source": "football-data-co-uk-cluster",
+          "title": "4 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-03-03T00:00:00.000Z",
+          "claim": "4 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "polarity": "CONTEXT_ONLY"
+        }
+      ]
+    },
+    {
+      "eventId": "fb|e0|2001-03-03|leicester|liverpool",
+      "year": 2001,
+      "market": "1X2",
+      "decision": "NO_BET",
+      "reason": "NO_BET_TEMPORAL",
+      "probability": null,
+      "odds": null,
+      "edge": null,
+      "supporting": 0,
+      "contradicting": 0,
+      "contextual": 2,
+      "sourceId": "anishkhetani-epl-archive",
+      "locked": true,
+      "outcome_in_decision": false,
+      "evidence": [
+        {
+          "source": "reconstructed-form",
+          "title": "Lagged form before asOf: home 7 vs away 9 (n=5)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-03-03T00:00:00.000Z",
+          "claim": "Lagged form before asOf: home 7 vs away 9 (n=5)",
+          "polarity": "CONTEXT_ONLY"
+        },
+        {
+          "source": "football-data-co-uk-cluster",
+          "title": "4 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-03-03T00:00:00.000Z",
+          "claim": "4 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "polarity": "CONTEXT_ONLY"
+        }
+      ]
+    },
+    {
+      "eventId": "fb|e0|2001-03-03|manchester-city|southampton",
+      "year": 2001,
+      "market": "1X2",
+      "decision": "NO_BET",
+      "reason": "NO_BET_TEMPORAL",
+      "probability": null,
+      "odds": null,
+      "edge": null,
+      "supporting": 0,
+      "contradicting": 0,
+      "contextual": 2,
+      "sourceId": "anishkhetani-epl-archive",
+      "locked": true,
+      "outcome_in_decision": false,
+      "evidence": [
+        {
+          "source": "reconstructed-form",
+          "title": "Lagged form before asOf: home 6 vs away 11 (n=5)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-03-03T00:00:00.000Z",
+          "claim": "Lagged form before asOf: home 6 vs away 11 (n=5)",
+          "polarity": "CONTEXT_ONLY"
+        },
+        {
+          "source": "football-data-co-uk-cluster",
+          "title": "4 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-03-03T00:00:00.000Z",
+          "claim": "4 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "polarity": "CONTEXT_ONLY"
+        }
+      ]
+    },
+    {
+      "eventId": "fb|e0|2001-03-03|middlesbrough|charlton",
+      "year": 2001,
+      "market": "1X2",
+      "decision": "NO_BET",
+      "reason": "NO_BET_TEMPORAL",
+      "probability": null,
+      "odds": null,
+      "edge": null,
+      "supporting": 0,
+      "contradicting": 0,
+      "contextual": 2,
+      "sourceId": "anishkhetani-epl-archive",
+      "locked": true,
+      "outcome_in_decision": false,
+      "evidence": [
+        {
+          "source": "reconstructed-form",
+          "title": "Lagged form before asOf: home 4 vs away 9 (n=5)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-03-03T00:00:00.000Z",
+          "claim": "Lagged form before asOf: home 4 vs away 9 (n=5)",
+          "polarity": "CONTEXT_ONLY"
+        },
+        {
+          "source": "football-data-co-uk-cluster",
+          "title": "4 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-03-03T00:00:00.000Z",
+          "claim": "4 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "polarity": "CONTEXT_ONLY"
+        }
+      ]
+    },
+    {
+      "eventId": "fb|e0|2001-03-04|ipswich|bradford",
+      "year": 2001,
+      "market": "1X2",
+      "decision": "NO_BET",
+      "reason": "NO_BET_TEMPORAL",
+      "probability": null,
+      "odds": null,
+      "edge": null,
+      "supporting": 0,
+      "contradicting": 0,
+      "contextual": 2,
+      "sourceId": "anishkhetani-epl-archive",
+      "locked": true,
+      "outcome_in_decision": false,
+      "evidence": [
+        {
+          "source": "reconstructed-form",
+          "title": "Lagged form before asOf: home 6 vs away 1 (n=5)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-03-04T00:00:00.000Z",
+          "claim": "Lagged form before asOf: home 6 vs away 1 (n=5)",
+          "polarity": "CONTEXT_ONLY"
+        },
+        {
+          "source": "football-data-co-uk-cluster",
+          "title": "4 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-03-04T00:00:00.000Z",
+          "claim": "4 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "polarity": "CONTEXT_ONLY"
+        }
+      ]
+    },
+    {
+      "eventId": "fb|e0|2001-03-05|sunderland|aston-villa",
+      "year": 2001,
+      "market": "1X2",
+      "decision": "NO_BET",
+      "reason": "NO_BET_TEMPORAL",
+      "probability": null,
+      "odds": null,
+      "edge": null,
+      "supporting": 0,
+      "contradicting": 0,
+      "contextual": 2,
+      "sourceId": "anishkhetani-epl-archive",
+      "locked": true,
+      "outcome_in_decision": false,
+      "evidence": [
+        {
+          "source": "reconstructed-form",
+          "title": "Lagged form before asOf: home 2 vs away 4 (n=5)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-03-05T00:00:00.000Z",
+          "claim": "Lagged form before asOf: home 2 vs away 4 (n=5)",
+          "polarity": "CONTEXT_ONLY"
+        },
+        {
+          "source": "football-data-co-uk-cluster",
+          "title": "5 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-03-05T00:00:00.000Z",
+          "claim": "5 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "polarity": "CONTEXT_ONLY"
+        }
+      ]
+    },
+    {
+      "eventId": "fb|e0|2001-03-07|west-ham|chelsea",
+      "year": 2001,
+      "market": "1X2",
+      "decision": "NO_BET",
+      "reason": "NO_BET_TEMPORAL",
+      "probability": null,
+      "odds": null,
+      "edge": null,
+      "supporting": 0,
+      "contradicting": 0,
+      "contextual": 2,
+      "sourceId": "anishkhetani-epl-archive",
+      "locked": true,
+      "outcome_in_decision": false,
+      "evidence": [
+        {
+          "source": "reconstructed-form",
+          "title": "Lagged form before asOf: home 5 vs away 8 (n=5)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-03-07T00:00:00.000Z",
+          "claim": "Lagged form before asOf: home 5 vs away 8 (n=5)",
+          "polarity": "CONTEXT_ONLY"
+        },
+        {
+          "source": "football-data-co-uk-cluster",
+          "title": "5 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "url": null,
+          "published_at": null,
+          "available_at": "2001-03-07T00:00:00.000Z",
+          "claim": "5 DATE_ONLY OPEN quotes (research; not STRICT capital)",
+          "polarity": "CONTEXT_ONLY"
+        }
+      ]
+    }
+  ],
+  "error_freq": {
+    "MODEL_ERROR": 0,
+    "DATA_ERROR": 0,
+    "TEMPORAL_ERROR": 10218,
+    "MARKET_ERROR": 0,
+    "CALIBRATION_ERROR": 0,
+    "CORRELATION_ERROR": 0,
+    "SOURCE_CONFLICT": 0,
+    "INSUFFICIENT_INFORMATION": 10218
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "at": "2026-09-08T20:46:01.364Z",
+  "day_utc": "2026-09-08",
+  "limit_day": 100,
+  "limit_minute": 10,
+  "used_day": 22,
+  "remaining_day": 78,
+  "used_minute": 1,
+  "last_request_at": "2026-09-08T20:46:01.364Z",
+  "plan": null,
+  "source": "API_SPORTS",
+  "real_money": false,
+  "open_task_058": false,
+  "_minute": {
+    "minute": "2026-09-08T20:46",
+    "count": 1
+  }
+}

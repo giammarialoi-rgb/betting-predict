@@ -1,0 +1,279 @@
+{
+  "at": "2026-09-08T20:46:01.366Z",
+  "source": "API_SPORTS",
+  "key_configured": true,
+  "requests_this_run": 5,
+  "budget": {
+    "at": "2026-09-08T20:46:01.364Z",
+    "day_utc": "2026-09-08",
+    "limit_day": 100,
+    "limit_minute": 10,
+    "used_day": 22,
+    "remaining_day": 78,
+    "used_minute": 1,
+    "last_request_at": "2026-09-08T20:46:01.364Z",
+    "plan": null,
+    "source": "API_SPORTS",
+    "real_money": false,
+    "open_task_058": false,
+    "_minute": {
+      "minute": "2026-09-08T20:46",
+      "count": 1
+    }
+  },
+  "capabilities": [
+    {
+      "endpoint": "status",
+      "path": "/status",
+      "sport": "football",
+      "status": "AVAILABLE",
+      "tested_at": "2026-09-08T20:45:35.091Z",
+      "http_status": 200,
+      "requests_used": 0,
+      "error": null,
+      "fields_available": [
+        "get",
+        "parameters",
+        "errors",
+        "results",
+        "paging",
+        "response",
+        "response.account",
+        "response.subscription",
+        "response.requests"
+      ]
+    },
+    {
+      "endpoint": "leagues",
+      "path": "/leagues?current=true",
+      "sport": "football",
+      "status": "AVAILABLE",
+      "tested_at": "2026-09-08T20:45:35.104Z",
+      "http_status": 200,
+      "requests_used": 0,
+      "error": null,
+      "fields_available": [
+        "get",
+        "parameters",
+        "errors",
+        "results",
+        "paging",
+        "response",
+        "response[].league",
+        "response[].country",
+        "response[].seasons"
+      ]
+    },
+    {
+      "endpoint": "fixtures",
+      "path": "/fixtures?league=39&season=2024",
+      "sport": "football",
+      "status": "AVAILABLE",
+      "tested_at": "2026-09-08T20:45:35.113Z",
+      "http_status": 200,
+      "requests_used": 0,
+      "error": null,
+      "fields_available": [
+        "get",
+        "parameters",
+        "errors",
+        "results",
+        "paging",
+        "response",
+        "response[].fixture",
+        "response[].league",
+        "response[].teams",
+        "response[].goals",
+        "response[].score"
+      ],
+      "sample_ids": {
+        "fixture_id": "1208021",
+        "home_id": 33,
+        "away_id": 36,
+        "league_id": 39,
+        "season": 2024
+      }
+    },
+    {
+      "endpoint": "teams",
+      "path": "/teams?id=33",
+      "sport": "football",
+      "status": "AVAILABLE",
+      "tested_at": "2026-09-08T20:45:35.119Z",
+      "http_status": 200,
+      "requests_used": 0,
+      "error": null,
+      "fields_available": [
+        "get",
+        "parameters",
+        "errors",
+        "results",
+        "paging",
+        "response",
+        "response[].team",
+        "response[].venue"
+      ]
+    },
+    {
+      "endpoint": "standings",
+      "path": "/standings?league=39&season=2024",
+      "sport": "football",
+      "status": "AVAILABLE",
+      "tested_at": "2026-09-08T20:45:35.122Z",
+      "http_status": 200,
+      "requests_used": 0,
+      "error": null,
+      "fields_available": [
+        "get",
+        "parameters",
+        "errors",
+        "results",
+        "paging",
+        "response",
+        "response[].league"
+      ]
+    },
+    {
+      "endpoint": "teams_statistics",
+      "path": "/teams/statistics?league=39&season=2024&team=33",
+      "sport": "football",
+      "status": "AVAILABLE",
+      "tested_at": "2026-09-08T20:45:35.598Z",
+      "http_status": 200,
+      "requests_used": 1,
+      "error": null,
+      "fields_available": [
+        "get",
+        "parameters",
+        "errors",
+        "results",
+        "paging",
+        "response",
+        "response.league",
+        "response.team",
+        "response.form",
+        "response.fixtures",
+        "response.goals",
+        "response.biggest",
+        "response.clean_sheet",
+        "response.failed_to_score",
+        "response.penalty",
+        "response.lineups",
+        "response.cards"
+      ]
+    },
+    {
+      "endpoint": "headtohead",
+      "path": "/fixtures/headtohead?h2h=33-36",
+      "sport": "football",
+      "status": "AVAILABLE",
+      "tested_at": "2026-09-08T20:45:41.843Z",
+      "http_status": 200,
+      "requests_used": 1,
+      "error": null,
+      "fields_available": [
+        "get",
+        "parameters",
+        "errors",
+        "results",
+        "paging",
+        "response",
+        "response[].fixture",
+        "response[].league",
+        "response[].teams",
+        "response[].goals",
+        "response[].score"
+      ]
+    },
+    {
+      "endpoint": "players_statistics",
+      "path": "/players?team=33&season=2024",
+      "sport": "football",
+      "status": "AVAILABLE",
+      "tested_at": "2026-09-08T20:45:48.399Z",
+      "http_status": 200,
+      "requests_used": 1,
+      "error": null,
+      "fields_available": [
+        "get",
+        "parameters",
+        "errors",
+        "results",
+        "paging",
+        "response",
+        "response[].player",
+        "response[].statistics"
+      ]
+    },
+    {
+      "endpoint": "injuries",
+      "path": "/injuries?league=39&season=2024",
+      "sport": "football",
+      "status": "AVAILABLE",
+      "tested_at": "2026-09-08T20:45:48.418Z",
+      "http_status": 200,
+      "requests_used": 0,
+      "error": null,
+      "fields_available": [
+        "get",
+        "parameters",
+        "errors",
+        "results",
+        "paging",
+        "response",
+        "response[].player",
+        "response[].team",
+        "response[].fixture",
+        "response[].league"
+      ]
+    },
+    {
+      "endpoint": "odds",
+      "path": "/odds?fixture=1208021",
+      "sport": "football",
+      "status": "AVAILABLE",
+      "tested_at": "2026-09-08T20:45:54.840Z",
+      "http_status": 200,
+      "requests_used": 1,
+      "error": null,
+      "fields_available": [
+        "get",
+        "parameters",
+        "errors",
+        "results",
+        "paging",
+        "response"
+      ]
+    },
+    {
+      "endpoint": "fixtures_events",
+      "path": "/fixtures/events?fixture=1208021",
+      "sport": "football",
+      "status": "AVAILABLE",
+      "tested_at": "2026-09-08T20:46:01.366Z",
+      "http_status": 200,
+      "requests_used": 1,
+      "error": null,
+      "fields_available": [
+        "get",
+        "parameters",
+        "errors",
+        "results",
+        "paging",
+        "response",
+        "response[].time",
+        "response[].team",
+        "response[].player",
+        "response[].assist",
+        "response[].type",
+        "response[].detail",
+        "response[].comments"
+      ]
+    }
+  ],
+  "normalized_events": 5,
+  "sample_fixture_id": "1208021",
+  "free_season_used": 2024,
+  "open_task_058": false,
+  "real_money": false
+}

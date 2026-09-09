@@ -1,0 +1,54 @@
+{
+  "daemon": {
+    "display": "RUNNING",
+    "raw_status": "RUNNING",
+    "pid": 42864,
+    "pid_alive": true,
+    "started_at": "2026-09-08T08:19:27.272Z",
+    "last_cycle_at": "2026-09-08T08:49:34.848Z",
+    "last_discovery_at": "2026-09-08T08:45:34.196Z",
+    "last_settlement_at": null,
+    "last_error": null,
+    "last_activity_at": "2026-09-08T08:49:34.849Z",
+    "last_activity_ago_ms": 412455,
+    "last_activity_human": "6m ago",
+    "degraded_reason": null,
+    "store_last_write_at": "2026-09-08T08:49:34.849Z",
+    "mode": "DISCOVERY"
+  },
+  "counters": {
+    "TOTAL_EVENTS": 233,
+    "SEED_EVENTS": 114,
+    "DISCOVERED_LIVE": 119,
+    "SOCCER": 233,
+    "TENNIS": 0,
+    "OTHER": 0,
+    "PREDICTIONS": 689,
+    "LOCKS": 114,
+    "SETTLEMENTS": 0,
+    "AUTOPSIES": 0,
+    "LEARNING_CASES": 0,
+    "TODAY": {
+      "DISCOVERED": 119,
+      "ANALYZED": 233,
+      "PREDICTED": 689,
+      "LOCKED": 0,
+      "SETTLED": 0,
+      "AUTOPSIED": 0,
+      "LEARNING_CASES": 0
+    }
+  },
+  "budget": {
+    "credits_remaining": 258,
+    "credits_used": 242,
+    "monthly_limit": 500,
+    "safe_reserve": 100,
+    "api_calls_today": 39,
+    "last_api_call": "2026-09-08T08:45:34.196Z",
+    "last_discovery_at": "2026-09-08T08:45:34.196Z",
+    "budget_used_pct": 48,
+    "source_of_truth": "provider_headers"
+  },
+  "api_calls_ui": 0,
+  "events_sample": 233
+}

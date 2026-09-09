@@ -1,0 +1,7 @@
+strategy,role,bets,pnl,selected_from_pnl
+flat,challenger_unused,0,,false
+fractional_kelly,challenger_unused,0,,false
+risk_capped_kelly,challenger_unused,0,,false
+actuarial_v1,challenger_unused,0,,false
+masaniello_challenger,challenger_unused,0,,false
+no_bet,operative,0,,false

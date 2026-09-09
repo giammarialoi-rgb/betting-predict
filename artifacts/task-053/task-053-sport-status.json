@@ -1,0 +1,8 @@
+{
+  "SOCCER": "ACTIVE_DATA events=385 keys=48/18 (BUDGET_STOP — remaining keys deferred)",
+  "TENNIS": "ACTIVE_EMPTY events=0 keys=2/0 (BUDGET_STOP — remaining keys deferred)",
+  "BASKETBALL": "ACTIVE_EMPTY events=0 keys=3/0 (BUDGET_STOP — remaining keys deferred)",
+  "VOLLEYBALL": "UNAVAILABLE events=0 keys=0/0 (VOLLEYBALL_PROVIDER_UNAVAILABLE)",
+  "HOCKEY": "ACTIVE_EMPTY events=0 keys=3/0 (BUDGET_STOP — remaining keys deferred)",
+  "OTHER": "UNKNOWN events=0 keys=0/0"
+}

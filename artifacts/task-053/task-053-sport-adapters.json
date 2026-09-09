@@ -1,0 +1,139 @@
+[
+  {
+    "sport": "SOCCER",
+    "provider": "OddsApiAdapter",
+    "availability": "AVAILABLE",
+    "status": "AVAILABLE",
+    "supportedMarkets": [
+      "h2h",
+      "spreads",
+      "totals"
+    ],
+    "costEstimate": "MEDIUM",
+    "rateLimit": "budget_governor_049"
+  },
+  {
+    "sport": "TENNIS",
+    "provider": "OddsApiAdapter",
+    "availability": "EMPTY_WINDOW",
+    "status": "EMPTY_WINDOW",
+    "supportedMarkets": [
+      "h2h",
+      "spreads",
+      "totals"
+    ],
+    "costEstimate": "LOW",
+    "rateLimit": "budget_governor_049"
+  },
+  {
+    "sport": "BASKETBALL",
+    "provider": "OddsApiAdapter",
+    "availability": "EMPTY_WINDOW",
+    "status": "EMPTY_WINDOW",
+    "supportedMarkets": [
+      "h2h",
+      "spreads",
+      "totals"
+    ],
+    "costEstimate": "LOW",
+    "rateLimit": "budget_governor_049"
+  },
+  {
+    "sport": "VOLLEYBALL",
+    "provider": "OddsApiAdapter",
+    "availability": "PROVIDER_UNAVAILABLE",
+    "status": "PROVIDER_UNAVAILABLE",
+    "supportedMarkets": [
+      "h2h",
+      "spreads",
+      "totals"
+    ],
+    "costEstimate": "LOW",
+    "rateLimit": "budget_governor_049"
+  },
+  {
+    "sport": "HOCKEY",
+    "provider": "OddsApiAdapter",
+    "availability": "EMPTY_WINDOW",
+    "status": "EMPTY_WINDOW",
+    "supportedMarkets": [
+      "h2h",
+      "spreads",
+      "totals"
+    ],
+    "costEstimate": "LOW",
+    "rateLimit": "budget_governor_049"
+  },
+  {
+    "sport": "BASEBALL",
+    "provider": "OddsApiAdapter",
+    "availability": "PROVIDER_UNAVAILABLE",
+    "status": "PROVIDER_UNAVAILABLE",
+    "supportedMarkets": [
+      "h2h",
+      "spreads",
+      "totals"
+    ],
+    "costEstimate": "LOW",
+    "rateLimit": "budget_governor_049"
+  },
+  {
+    "sport": "AMERICAN_FOOTBALL",
+    "provider": "OddsApiAdapter",
+    "availability": "PROVIDER_UNAVAILABLE",
+    "status": "PROVIDER_UNAVAILABLE",
+    "supportedMarkets": [
+      "h2h",
+      "spreads",
+      "totals"
+    ],
+    "costEstimate": "LOW",
+    "rateLimit": "budget_governor_049"
+  },
+  {
+    "sport": "RUGBY",
+    "provider": "OddsApiAdapter",
+    "availability": "PROVIDER_UNAVAILABLE",
+    "status": "PROVIDER_UNAVAILABLE",
+    "supportedMarkets": [
+      "h2h",
+      "totals"
+    ],
+    "costEstimate": "LOW",
+    "rateLimit": "budget_governor_049"
+  },
+  {
+    "sport": "HANDBALL",
+    "provider": "OddsApiAdapter",
+    "availability": "PROVIDER_UNAVAILABLE",
+    "status": "PROVIDER_UNAVAILABLE",
+    "supportedMarkets": [
+      "h2h",
+      "totals"
+    ],
+    "costEstimate": "LOW",
+    "rateLimit": "budget_governor_049"
+  },
+  {
+    "sport": "TABLE_TENNIS",
+    "provider": "OddsApiAdapter",
+    "availability": "PROVIDER_UNAVAILABLE",
+    "status": "PROVIDER_UNAVAILABLE",
+    "supportedMarkets": [
+      "h2h"
+    ],
+    "costEstimate": "LOW",
+    "rateLimit": "budget_governor_049"
+  },
+  {
+    "sport": "MMA",
+    "provider": "OddsApiAdapter",
+    "availability": "PROVIDER_UNAVAILABLE",
+    "status": "PROVIDER_UNAVAILABLE",
+    "supportedMarkets": [
+      "h2h"
+    ],
+    "costEstimate": "LOW",
+    "rateLimit": "budget_governor_049"
+  }
+]

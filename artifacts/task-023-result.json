@@ -1,0 +1,1179 @@
+{
+  "experiment_id": "exp_023_temporal_odds_breakthrough_v1",
+  "task": "023",
+  "dataset_id": "betfair_historic_basic_v1",
+  "parser_version": "task-023-parser-v1",
+  "as_of_policy": "STRICT_AS_OF",
+  "declared_edge": false,
+  "winner": null,
+  "auto_promote": false,
+  "real_money": false,
+  "HOLDOUT_TOUCHED": false,
+  "frozen_model": "market_only",
+  "verdict": "PARTIAL_STRICT",
+  "inspected": true,
+  "official_bulk_acquired": false,
+  "source_class_primary": "MIRROR",
+  "probes": [
+    {
+      "channel": "local-cache-football-basic-json",
+      "url": "https://raw.githubusercontent.com/petermclagan/betfair-historical/master/tests/sample_data/football-basic-sample.bz2",
+      "http_status": 200,
+      "content_type": "application/x-ndjson",
+      "bytes": 1472599,
+      "acquired": true,
+      "source_class": "MIRROR",
+      "note": "petermclagan tests/sample_data football BASIC decompressed; not official licensed bulk"
+    },
+    {
+      "channel": "local-cache-football-basic-bz2",
+      "url": "https://raw.githubusercontent.com/petermclagan/betfair-historical/master/tests/sample_data/football-basic-sample.bz2",
+      "http_status": 200,
+      "content_type": "application/octet-stream",
+      "bytes": 57643,
+      "acquired": true,
+      "source_class": "MIRROR",
+      "note": "original bz2 sample from GitHub tooling tests"
+    },
+    {
+      "channel": "local-cache-tennis-basic-json",
+      "url": "https://github.com/kito129/betfairHitoricalRawDataConversion",
+      "http_status": 200,
+      "content_type": "application/x-ndjson",
+      "bytes": 97076,
+      "acquired": true,
+      "source_class": "MIRROR",
+      "note": "tennis MATCH_ODDS BASIC format confirmation — not EPL soccer"
+    },
+    {
+      "channel": "official-portal",
+      "url": "https://historicdata.betfair.com/",
+      "http_status": 200,
+      "content_type": "text/html",
+      "bytes": 1769,
+      "acquired": false,
+      "source_class": "OFFICIAL",
+      "note": "200 text/html <!doctype html><html lang=\"en\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width,initial-sca"
+    },
+    {
+      "channel": "official-pdf-spec",
+      "url": "https://historicdata.betfair.com/Betfair-Historical-Data-Feed-Specification.pdf",
+      "http_status": 200,
+      "content_type": "text/html",
+      "bytes": 1769,
+      "acquired": false,
+      "source_class": "OFFICIAL",
+      "note": "200 text/html <!doctype html><html lang=\"en\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width,initial-sca"
+    },
+    {
+      "channel": "official-api-unauthenticated",
+      "url": "https://historicdata.betfair.com/api/",
+      "http_status": 404,
+      "content_type": "application/json",
+      "bytes": 134,
+      "acquired": false,
+      "source_class": "OFFICIAL",
+      "note": "404 application/json {\"timestamp\":\"2026-09-07T08:29:29.355009032\",\"status\":404,\"message\":\"Not Found\",\"exception\":\"NoResourceFoundException\",\""
+    },
+    {
+      "channel": "github-football-basic-bz2",
+      "url": "https://raw.githubusercontent.com/petermclagan/betfair-historical/master/tests/sample_data/football-basic-sample.bz2",
+      "http_status": 200,
+      "content_type": "application/octet-stream",
+      "bytes": 57643,
+      "acquired": false,
+      "source_class": "MIRROR",
+      "note": "200 application/octet-stream"
+    },
+    {
+      "channel": "betfair-automation-hub",
+      "url": "https://betfair-datascientists.github.io/data/usingHistoricDataSite/",
+      "http_status": 200,
+      "content_type": "text/html; charset=utf-8",
+      "bytes": 75317,
+      "acquired": false,
+      "source_class": "OFFICIAL",
+      "note": "200 text/html; charset=utf-8  <!doctype html> <html lang=\"en\" class=\"no-js\"> <head> <meta charset=\"utf-8\"> <meta name=\"viewport\" content=\"width=devic"
+    },
+    {
+      "channel": "official-pricing-table",
+      "url": "https://support.developer.betfair.com/hc/en-us/articles/360019984158-Are-bulk-purchase-discounts-available",
+      "http_status": 200,
+      "content_type": "text/html; charset=utf-8",
+      "bytes": 25537,
+      "acquired": false,
+      "source_class": "OFFICIAL",
+      "note": "200 text/html; charset=utf-8 <!DOCTYPE html> <html dir=\"ltr\" lang=\"en-US\"> <head> <meta charset=\"utf-8\" /> <!-- v27896 --> <title>Are bulk purchase d"
+    }
+  ],
+  "fixture": {
+    "path": "C:\\Users\\giamm\\Desktop\\app previsioni sportive\\betting predict\\src\\domain\\eval\\temporal-023\\fixtures\\epl-2017-04-30-middlesbrough-mancity-match-odds.ndjson",
+    "lines": 35,
+    "bytes": 14050,
+    "sha256": "f30b7d7b38bae59c5cff4f2a149b9a5ed3a5ef2ba9070c8a2c2ad09bc07b7f6f",
+    "sha256_expected": "f30b7d7b38bae59c5cff4f2a149b9a5ed3a5ef2ba9070c8a2c2ad09bc07b7f6f"
+  },
+  "full_sample": {
+    "acquired": true,
+    "path": "C:\\Users\\giamm\\Desktop\\app previsioni sportive\\betting predict\\audit\\external\\task-023\\football-basic-sample.json",
+    "bytes": 1472599,
+    "sha256": "9a41d7ebf6884fa6ad6d2dbdd943e92bd24502b9a4ce00b2fe168c30e61fcdae",
+    "sha256_expected": "9a41d7ebf6884fa6ad6d2dbdd943e92bd24502b9a4ce00b2fe168c30e61fcdae",
+    "lines": 1096,
+    "markets": 77,
+    "events": 1,
+    "ltp_ticks": 5628,
+    "batb": 0,
+    "atb": 0,
+    "atl": 0
+  },
+  "match_odds": {
+    "marketId": "1.131162837",
+    "eventId": "28202626",
+    "eventName": "Middlesbrough v Man City",
+    "kickoff": "2017-04-30T13:05:00.000Z",
+    "timezone_field": "Europe/London",
+    "prematch": 10,
+    "inplay": 14,
+    "postmatch": 0,
+    "unknown": 0,
+    "timestamp_observations": 5628
+  },
+  "coverage": [
+    {
+      "window": "72h",
+      "requested": 3,
+      "available": 0,
+      "coverage": 0
+    },
+    {
+      "window": "48h",
+      "requested": 3,
+      "available": 1,
+      "coverage": 0.3333333333333333
+    },
+    {
+      "window": "24h",
+      "requested": 3,
+      "available": 1,
+      "coverage": 0.3333333333333333
+    },
+    {
+      "window": "12h",
+      "requested": 3,
+      "available": 1,
+      "coverage": 0.3333333333333333
+    },
+    {
+      "window": "6h",
+      "requested": 3,
+      "available": 1,
+      "coverage": 0.3333333333333333
+    },
+    {
+      "window": "3h",
+      "requested": 3,
+      "available": 2,
+      "coverage": 0.6666666666666666
+    },
+    {
+      "window": "1h",
+      "requested": 3,
+      "available": 3,
+      "coverage": 1
+    },
+    {
+      "window": "30m",
+      "requested": 3,
+      "available": 3,
+      "coverage": 1
+    },
+    {
+      "window": "15m",
+      "requested": 3,
+      "available": 3,
+      "coverage": 1
+    },
+    {
+      "window": "5m",
+      "requested": 3,
+      "available": 3,
+      "coverage": 1
+    },
+    {
+      "window": "1m",
+      "requested": 3,
+      "available": 3,
+      "coverage": 1
+    }
+  ],
+  "first_available": {
+    "eventId": "28202626",
+    "marketId": "1.131162837",
+    "first_observation_timestamp": "2017-04-28T11:31:51.802Z",
+    "last_prematch_timestamp": "2017-04-30T13:02:53.487Z",
+    "prematch_observation_count": 10,
+    "median_observation_interval": 946.072,
+    "p95_observation_interval": 100922.91259999994,
+    "minimum_observation_interval": 60.008,
+    "maximum_observation_interval": 163816.467
+  },
+  "windows": [
+    {
+      "window": "72h",
+      "requestedSec": 259200,
+      "snapshot_exists": false,
+      "actual_timestamp": null,
+      "seconds_before_kickoff": null,
+      "delta_sec": null,
+      "price_available": false,
+      "bookmaker": "betfair-exchange",
+      "market_depth": null,
+      "asOf": "2017-04-27T13:05:00.000Z"
+    },
+    {
+      "window": "48h",
+      "requestedSec": 172800,
+      "snapshot_exists": false,
+      "actual_timestamp": null,
+      "seconds_before_kickoff": null,
+      "delta_sec": null,
+      "price_available": false,
+      "bookmaker": "betfair-exchange",
+      "market_depth": null,
+      "asOf": "2017-04-28T13:05:00.000Z"
+    },
+    {
+      "window": "24h",
+      "requestedSec": 86400,
+      "snapshot_exists": false,
+      "actual_timestamp": null,
+      "seconds_before_kickoff": null,
+      "delta_sec": null,
+      "price_available": false,
+      "bookmaker": "betfair-exchange",
+      "market_depth": null,
+      "asOf": "2017-04-29T13:05:00.000Z"
+    },
+    {
+      "window": "12h",
+      "requestedSec": 43200,
+      "snapshot_exists": false,
+      "actual_timestamp": null,
+      "seconds_before_kickoff": null,
+      "delta_sec": null,
+      "price_available": false,
+      "bookmaker": "betfair-exchange",
+      "market_depth": null,
+      "asOf": "2017-04-30T01:05:00.000Z"
+    },
+    {
+      "window": "6h",
+      "requestedSec": 21600,
+      "snapshot_exists": false,
+      "actual_timestamp": null,
+      "seconds_before_kickoff": null,
+      "delta_sec": null,
+      "price_available": false,
+      "bookmaker": "betfair-exchange",
+      "market_depth": null,
+      "asOf": "2017-04-30T07:05:00.000Z"
+    },
+    {
+      "window": "3h",
+      "requestedSec": 10800,
+      "snapshot_exists": true,
+      "actual_timestamp": "2017-04-30T09:02:08.269Z",
+      "seconds_before_kickoff": 14571.731,
+      "delta_sec": 3771.7309999999998,
+      "price_available": true,
+      "bookmaker": "betfair-exchange",
+      "market_depth": null,
+      "asOf": "2017-04-30T10:05:00.000Z"
+    },
+    {
+      "window": "1h",
+      "requestedSec": 3600,
+      "snapshot_exists": true,
+      "actual_timestamp": "2017-04-30T11:10:52.099Z",
+      "seconds_before_kickoff": 6847.901,
+      "delta_sec": 3247.901,
+      "price_available": true,
+      "bookmaker": "betfair-exchange",
+      "market_depth": null,
+      "asOf": "2017-04-30T12:05:00.000Z"
+    },
+    {
+      "window": "30m",
+      "requestedSec": 1800,
+      "snapshot_exists": true,
+      "actual_timestamp": "2017-04-30T12:12:52.809Z",
+      "seconds_before_kickoff": 3127.191,
+      "delta_sec": 1327.1909999999998,
+      "price_available": true,
+      "bookmaker": "betfair-exchange",
+      "market_depth": null,
+      "asOf": "2017-04-30T12:35:00.000Z"
+    },
+    {
+      "window": "15m",
+      "requestedSec": 900,
+      "snapshot_exists": true,
+      "actual_timestamp": "2017-04-30T12:12:52.809Z",
+      "seconds_before_kickoff": 3127.191,
+      "delta_sec": 2227.191,
+      "price_available": true,
+      "bookmaker": "betfair-exchange",
+      "market_depth": null,
+      "asOf": "2017-04-30T12:50:00.000Z"
+    },
+    {
+      "window": "5m",
+      "requestedSec": 300,
+      "snapshot_exists": true,
+      "actual_timestamp": "2017-04-30T12:59:53.411Z",
+      "seconds_before_kickoff": 306.589,
+      "delta_sec": 6.588999999999999,
+      "price_available": true,
+      "bookmaker": "betfair-exchange",
+      "market_depth": null,
+      "asOf": "2017-04-30T13:00:00.000Z"
+    },
+    {
+      "window": "1m",
+      "requestedSec": 60,
+      "snapshot_exists": true,
+      "actual_timestamp": "2017-04-30T13:02:53.487Z",
+      "seconds_before_kickoff": 126.513,
+      "delta_sec": 66.513,
+      "price_available": true,
+      "bookmaker": "betfair-exchange",
+      "market_depth": null,
+      "asOf": "2017-04-30T13:04:00.000Z"
+    }
+  ],
+  "blind": {
+    "eventId": "28202626",
+    "eventName": "Middlesbrough v Man City",
+    "kickoff": "2017-04-30T13:05:00.000Z",
+    "marketId": "1.131162837",
+    "asOf": "2017-04-30T12:05:00.000Z",
+    "decision": "NO_BET",
+    "reason": "NO_BET_MODEL: declared_edge=false",
+    "stake": 0,
+    "locked": true,
+    "revealed": true,
+    "entry": {
+      "HOME": {
+        "eventId": "28202626",
+        "kickoff": "2017-04-30T13:05:00.000Z",
+        "asOf": "2017-04-30T12:05:00.000Z",
+        "market": "MATCH_ODDS",
+        "selection": "HOME",
+        "price": 14.5,
+        "timestamp": "2017-04-30T11:10:52.099Z",
+        "secondsToKickoff": 6847.901,
+        "source": "betfair-historic-basic-mirror",
+        "temporalPrecision": "exact",
+        "status": "OK"
+      },
+      "DRAW": {
+        "eventId": "28202626",
+        "kickoff": "2017-04-30T13:05:00.000Z",
+        "asOf": "2017-04-30T12:05:00.000Z",
+        "market": "MATCH_ODDS",
+        "selection": "DRAW",
+        "price": 6.4,
+        "timestamp": "2017-04-28T11:31:51.802Z",
+        "secondsToKickoff": 178388.198,
+        "source": "betfair-historic-basic-mirror",
+        "temporalPrecision": "exact",
+        "status": "OK"
+      },
+      "AWAY": {
+        "eventId": "28202626",
+        "kickoff": "2017-04-30T13:05:00.000Z",
+        "asOf": "2017-04-30T12:05:00.000Z",
+        "market": "MATCH_ODDS",
+        "selection": "AWAY",
+        "price": 1.31,
+        "timestamp": "2017-04-30T10:51:50.850Z",
+        "secondsToKickoff": 7989.15,
+        "source": "betfair-historic-basic-mirror",
+        "temporalPrecision": "exact",
+        "status": "OK"
+      }
+    },
+    "triple_complete": true,
+    "settlement_winner": "DRAW",
+    "clv": {
+      "selection": "HOME",
+      "entry_price": 14.5,
+      "closing_price": 14,
+      "implied_delta": 0.0024630541871921152,
+      "computed_after_lock": true,
+      "used_in_decision": false
+    },
+    "assessment": "HOME — Probability: n/a — Evidence strength: INSUFFICIENT\nContext: Betfair Exchange MATCH_ODDS last traded at asOf (H 14.5 / D 6.4 / A 1.31); BASIC has no ladder/volume; 10 PREMATCH LTP ticks with publishTime < marketStartTime",
+    "information": [
+      {
+        "key": "market",
+        "available": true,
+        "availableAt": "2017-04-30T12:05:00.000Z",
+        "sourceId": "betfair-historic-basic-mirror",
+        "sourceUrl": "https://historicdata.betfair.com/",
+        "temporalPrecision": "exact",
+        "note": "MATCH_ODDS LTP ≤ asOf"
+      },
+      {
+        "key": "team_historical_form",
+        "available": false,
+        "availableAt": null,
+        "sourceId": null,
+        "sourceUrl": null,
+        "temporalPrecision": "unknown",
+        "note": "not in BASIC file"
+      },
+      {
+        "key": "elo",
+        "available": false,
+        "availableAt": null,
+        "sourceId": null,
+        "sourceUrl": null,
+        "temporalPrecision": "unknown",
+        "note": "not in BASIC stream"
+      },
+      {
+        "key": "rest",
+        "available": false,
+        "availableAt": null,
+        "sourceId": null,
+        "sourceUrl": null,
+        "temporalPrecision": "unknown",
+        "note": "not in BASIC stream"
+      },
+      {
+        "key": "schedule",
+        "available": true,
+        "availableAt": "2017-04-30T13:05:00.000Z",
+        "sourceId": "betfair-historic-basic-mirror",
+        "sourceUrl": null,
+        "temporalPrecision": "exact",
+        "note": "marketTime kickoff only"
+      },
+      {
+        "key": "injury",
+        "available": false,
+        "availableAt": null,
+        "sourceId": null,
+        "sourceUrl": null,
+        "temporalPrecision": "unknown",
+        "note": "not in BASIC stream"
+      },
+      {
+        "key": "lineup",
+        "available": false,
+        "availableAt": null,
+        "sourceId": null,
+        "sourceUrl": null,
+        "temporalPrecision": "unknown",
+        "note": "not in BASIC stream"
+      },
+      {
+        "key": "weather",
+        "available": false,
+        "availableAt": null,
+        "sourceId": null,
+        "sourceUrl": null,
+        "temporalPrecision": "unknown",
+        "note": "not in BASIC stream"
+      },
+      {
+        "key": "news",
+        "available": false,
+        "availableAt": null,
+        "sourceId": null,
+        "sourceUrl": null,
+        "temporalPrecision": "unknown",
+        "note": "CONTEXT_ONLY if present; none in stream"
+      },
+      {
+        "key": "market_movement_to_asof",
+        "available": true,
+        "availableAt": "2017-04-30T12:05:00.000Z",
+        "sourceId": "betfair-historic-basic-mirror",
+        "sourceUrl": null,
+        "temporalPrecision": "exact",
+        "note": "PREMATCH ticks ≤ asOf only"
+      }
+    ],
+    "windows_home": [
+      {
+        "window": "72h",
+        "requestedSec": 259200,
+        "snapshot_exists": false,
+        "actual_timestamp": null,
+        "seconds_before_kickoff": null,
+        "delta_sec": null,
+        "price_available": false,
+        "bookmaker": "betfair-exchange",
+        "market_depth": null,
+        "asOf": "2017-04-27T13:05:00.000Z"
+      },
+      {
+        "window": "48h",
+        "requestedSec": 172800,
+        "snapshot_exists": false,
+        "actual_timestamp": null,
+        "seconds_before_kickoff": null,
+        "delta_sec": null,
+        "price_available": false,
+        "bookmaker": "betfair-exchange",
+        "market_depth": null,
+        "asOf": "2017-04-28T13:05:00.000Z"
+      },
+      {
+        "window": "24h",
+        "requestedSec": 86400,
+        "snapshot_exists": false,
+        "actual_timestamp": null,
+        "seconds_before_kickoff": null,
+        "delta_sec": null,
+        "price_available": false,
+        "bookmaker": "betfair-exchange",
+        "market_depth": null,
+        "asOf": "2017-04-29T13:05:00.000Z"
+      },
+      {
+        "window": "12h",
+        "requestedSec": 43200,
+        "snapshot_exists": false,
+        "actual_timestamp": null,
+        "seconds_before_kickoff": null,
+        "delta_sec": null,
+        "price_available": false,
+        "bookmaker": "betfair-exchange",
+        "market_depth": null,
+        "asOf": "2017-04-30T01:05:00.000Z"
+      },
+      {
+        "window": "6h",
+        "requestedSec": 21600,
+        "snapshot_exists": false,
+        "actual_timestamp": null,
+        "seconds_before_kickoff": null,
+        "delta_sec": null,
+        "price_available": false,
+        "bookmaker": "betfair-exchange",
+        "market_depth": null,
+        "asOf": "2017-04-30T07:05:00.000Z"
+      },
+      {
+        "window": "3h",
+        "requestedSec": 10800,
+        "snapshot_exists": true,
+        "actual_timestamp": "2017-04-30T09:02:08.269Z",
+        "seconds_before_kickoff": 14571.731,
+        "delta_sec": 3771.7309999999998,
+        "price_available": true,
+        "bookmaker": "betfair-exchange",
+        "market_depth": null,
+        "asOf": "2017-04-30T10:05:00.000Z"
+      },
+      {
+        "window": "1h",
+        "requestedSec": 3600,
+        "snapshot_exists": true,
+        "actual_timestamp": "2017-04-30T11:10:52.099Z",
+        "seconds_before_kickoff": 6847.901,
+        "delta_sec": 3247.901,
+        "price_available": true,
+        "bookmaker": "betfair-exchange",
+        "market_depth": null,
+        "asOf": "2017-04-30T12:05:00.000Z"
+      },
+      {
+        "window": "30m",
+        "requestedSec": 1800,
+        "snapshot_exists": true,
+        "actual_timestamp": "2017-04-30T12:12:52.809Z",
+        "seconds_before_kickoff": 3127.191,
+        "delta_sec": 1327.1909999999998,
+        "price_available": true,
+        "bookmaker": "betfair-exchange",
+        "market_depth": null,
+        "asOf": "2017-04-30T12:35:00.000Z"
+      },
+      {
+        "window": "15m",
+        "requestedSec": 900,
+        "snapshot_exists": true,
+        "actual_timestamp": "2017-04-30T12:12:52.809Z",
+        "seconds_before_kickoff": 3127.191,
+        "delta_sec": 2227.191,
+        "price_available": true,
+        "bookmaker": "betfair-exchange",
+        "market_depth": null,
+        "asOf": "2017-04-30T12:50:00.000Z"
+      },
+      {
+        "window": "5m",
+        "requestedSec": 300,
+        "snapshot_exists": true,
+        "actual_timestamp": "2017-04-30T12:59:53.411Z",
+        "seconds_before_kickoff": 306.589,
+        "delta_sec": 6.588999999999999,
+        "price_available": true,
+        "bookmaker": "betfair-exchange",
+        "market_depth": null,
+        "asOf": "2017-04-30T13:00:00.000Z"
+      },
+      {
+        "window": "1m",
+        "requestedSec": 60,
+        "snapshot_exists": true,
+        "actual_timestamp": "2017-04-30T13:02:53.487Z",
+        "seconds_before_kickoff": 126.513,
+        "delta_sec": 66.513,
+        "price_available": true,
+        "bookmaker": "betfair-exchange",
+        "market_depth": null,
+        "asOf": "2017-04-30T13:04:00.000Z"
+      }
+    ],
+    "coverage": [
+      {
+        "window": "72h",
+        "requested": 3,
+        "available": 0,
+        "coverage": 0
+      },
+      {
+        "window": "48h",
+        "requested": 3,
+        "available": 1,
+        "coverage": 0.3333333333333333
+      },
+      {
+        "window": "24h",
+        "requested": 3,
+        "available": 1,
+        "coverage": 0.3333333333333333
+      },
+      {
+        "window": "12h",
+        "requested": 3,
+        "available": 1,
+        "coverage": 0.3333333333333333
+      },
+      {
+        "window": "6h",
+        "requested": 3,
+        "available": 1,
+        "coverage": 0.3333333333333333
+      },
+      {
+        "window": "3h",
+        "requested": 3,
+        "available": 2,
+        "coverage": 0.6666666666666666
+      },
+      {
+        "window": "1h",
+        "requested": 3,
+        "available": 3,
+        "coverage": 1
+      },
+      {
+        "window": "30m",
+        "requested": 3,
+        "available": 3,
+        "coverage": 1
+      },
+      {
+        "window": "15m",
+        "requested": 3,
+        "available": 3,
+        "coverage": 1
+      },
+      {
+        "window": "5m",
+        "requested": 3,
+        "available": 3,
+        "coverage": 1
+      },
+      {
+        "window": "1m",
+        "requested": 3,
+        "available": 3,
+        "coverage": 1
+      }
+    ],
+    "first_available": {
+      "eventId": "28202626",
+      "marketId": "1.131162837",
+      "first_observation_timestamp": "2017-04-28T11:31:51.802Z",
+      "last_prematch_timestamp": "2017-04-30T13:02:53.487Z",
+      "prematch_observation_count": 10,
+      "median_observation_interval": 946.072,
+      "p95_observation_interval": 100922.91259999994,
+      "minimum_observation_interval": 60.008,
+      "maximum_observation_interval": 163816.467
+    },
+    "prematch_ticks": 10,
+    "inplay_ticks": 14,
+    "postmatch_ticks": 0,
+    "unknown_ticks": 0,
+    "models": [
+      {
+        "model": "MODEL_0_MARKET_ONLY",
+        "n": 1,
+        "brier": 0.4366669837360098,
+        "logloss": 1.8448065113795193,
+        "calibration": "n=1 insufficient",
+        "roi_diagnostic": null,
+        "clv": 0.0024630541871921152,
+        "max_dd": null,
+        "used_for_capital": false,
+        "significant": false,
+        "note": "de-vig last traded MATCH_ODDS (BASIC LTP)"
+      },
+      {
+        "model": "MODEL_1_ELO",
+        "n": 0,
+        "brier": null,
+        "logloss": null,
+        "calibration": "n=1 insufficient",
+        "roi_diagnostic": null,
+        "clv": null,
+        "max_dd": null,
+        "used_for_capital": false,
+        "significant": false,
+        "note": "ELO not in BASIC stream — INSUFFICIENT"
+      },
+      {
+        "model": "MODEL_2_FORM",
+        "n": 0,
+        "brier": null,
+        "logloss": null,
+        "calibration": "n=1 insufficient",
+        "roi_diagnostic": null,
+        "clv": null,
+        "max_dd": null,
+        "used_for_capital": false,
+        "significant": false,
+        "note": "FORM not in BASIC stream — INSUFFICIENT"
+      },
+      {
+        "model": "MODEL_3_ELO_FORM",
+        "n": 0,
+        "brier": null,
+        "logloss": null,
+        "calibration": "n=1 insufficient",
+        "roi_diagnostic": null,
+        "clv": null,
+        "max_dd": null,
+        "used_for_capital": false,
+        "significant": false,
+        "note": "ELO+FORM not in BASIC stream — INSUFFICIENT"
+      },
+      {
+        "model": "MODEL_4_MARKET_ELO",
+        "n": 0,
+        "brier": null,
+        "logloss": null,
+        "calibration": "n=1 insufficient",
+        "roi_diagnostic": null,
+        "clv": null,
+        "max_dd": null,
+        "used_for_capital": false,
+        "significant": false,
+        "note": "MARKET+ELO blocked: ELO missing (do not silently drop ELO)"
+      },
+      {
+        "model": "MODEL_5_MARKET_ELO_FORM",
+        "n": 0,
+        "brier": null,
+        "logloss": null,
+        "calibration": "n=1 insufficient",
+        "roi_diagnostic": null,
+        "clv": null,
+        "max_dd": null,
+        "used_for_capital": false,
+        "significant": false,
+        "note": "MARKET+ELO+FORM blocked: ELO/FORM missing"
+      },
+      {
+        "model": "MODEL_6_POISSON",
+        "n": 0,
+        "brier": null,
+        "logloss": null,
+        "calibration": "n=1 insufficient",
+        "roi_diagnostic": null,
+        "clv": null,
+        "max_dd": null,
+        "used_for_capital": false,
+        "significant": false,
+        "note": "Poisson goals model not identifiable from LTP-only BASIC"
+      }
+    ]
+  },
+  "leakage": [
+    {
+      "id": "A",
+      "throws": true
+    },
+    {
+      "id": "B",
+      "throws": true
+    },
+    {
+      "id": "C",
+      "throws": true
+    },
+    {
+      "id": "D",
+      "throws": true
+    },
+    {
+      "id": "E",
+      "throws": true
+    },
+    {
+      "id": "F",
+      "throws": true
+    },
+    {
+      "id": "G",
+      "throws": true
+    },
+    {
+      "id": "H",
+      "throws": true
+    }
+  ],
+  "annual": [
+    {
+      "year": 2017,
+      "events": 1,
+      "strict_events": 1,
+      "decisions": 1,
+      "bets": 0,
+      "no_bet": 1,
+      "start": 1000,
+      "end": null,
+      "pnl": null,
+      "roi": null,
+      "max_dd": null,
+      "total_exposure": null,
+      "clv": null,
+      "brier": null,
+      "logloss": null,
+      "policy": "no_bet",
+      "status": "INSUFFICIENT_DATA"
+    },
+    {
+      "year": 2018,
+      "events": 0,
+      "strict_events": 0,
+      "decisions": 0,
+      "bets": 0,
+      "no_bet": 0,
+      "start": 1000,
+      "end": null,
+      "pnl": null,
+      "roi": null,
+      "max_dd": null,
+      "total_exposure": null,
+      "clv": null,
+      "brier": null,
+      "logloss": null,
+      "policy": "no_bet",
+      "status": "NOT_ACQUIRED"
+    },
+    {
+      "year": 2019,
+      "events": 0,
+      "strict_events": 0,
+      "decisions": 0,
+      "bets": 0,
+      "no_bet": 0,
+      "start": 1000,
+      "end": null,
+      "pnl": null,
+      "roi": null,
+      "max_dd": null,
+      "total_exposure": null,
+      "clv": null,
+      "brier": null,
+      "logloss": null,
+      "policy": "no_bet",
+      "status": "NOT_ACQUIRED"
+    },
+    {
+      "year": 2020,
+      "events": 0,
+      "strict_events": 0,
+      "decisions": 0,
+      "bets": 0,
+      "no_bet": 0,
+      "start": 1000,
+      "end": null,
+      "pnl": null,
+      "roi": null,
+      "max_dd": null,
+      "total_exposure": null,
+      "clv": null,
+      "brier": null,
+      "logloss": null,
+      "policy": "no_bet",
+      "status": "NOT_ACQUIRED"
+    }
+  ],
+  "market_row": {
+    "market": "MATCH_ODDS",
+    "lifecycle": "TEMPORALLY_VALID",
+    "model_ready": false
+  },
+  "models": [
+    {
+      "model": "MODEL_0_MARKET_ONLY",
+      "n": 1,
+      "brier": 0.4366669837360098,
+      "logloss": 1.8448065113795193,
+      "calibration": "n=1 insufficient",
+      "roi_diagnostic": null,
+      "clv": 0.0024630541871921152,
+      "max_dd": null,
+      "used_for_capital": false,
+      "significant": false,
+      "note": "de-vig last traded MATCH_ODDS (BASIC LTP)"
+    },
+    {
+      "model": "MODEL_1_ELO",
+      "n": 0,
+      "brier": null,
+      "logloss": null,
+      "calibration": "n=1 insufficient",
+      "roi_diagnostic": null,
+      "clv": null,
+      "max_dd": null,
+      "used_for_capital": false,
+      "significant": false,
+      "note": "ELO not in BASIC stream — INSUFFICIENT"
+    },
+    {
+      "model": "MODEL_2_FORM",
+      "n": 0,
+      "brier": null,
+      "logloss": null,
+      "calibration": "n=1 insufficient",
+      "roi_diagnostic": null,
+      "clv": null,
+      "max_dd": null,
+      "used_for_capital": false,
+      "significant": false,
+      "note": "FORM not in BASIC stream — INSUFFICIENT"
+    },
+    {
+      "model": "MODEL_3_ELO_FORM",
+      "n": 0,
+      "brier": null,
+      "logloss": null,
+      "calibration": "n=1 insufficient",
+      "roi_diagnostic": null,
+      "clv": null,
+      "max_dd": null,
+      "used_for_capital": false,
+      "significant": false,
+      "note": "ELO+FORM not in BASIC stream — INSUFFICIENT"
+    },
+    {
+      "model": "MODEL_4_MARKET_ELO",
+      "n": 0,
+      "brier": null,
+      "logloss": null,
+      "calibration": "n=1 insufficient",
+      "roi_diagnostic": null,
+      "clv": null,
+      "max_dd": null,
+      "used_for_capital": false,
+      "significant": false,
+      "note": "MARKET+ELO blocked: ELO missing (do not silently drop ELO)"
+    },
+    {
+      "model": "MODEL_5_MARKET_ELO_FORM",
+      "n": 0,
+      "brier": null,
+      "logloss": null,
+      "calibration": "n=1 insufficient",
+      "roi_diagnostic": null,
+      "clv": null,
+      "max_dd": null,
+      "used_for_capital": false,
+      "significant": false,
+      "note": "MARKET+ELO+FORM blocked: ELO/FORM missing"
+    },
+    {
+      "model": "MODEL_6_POISSON",
+      "n": 0,
+      "brier": null,
+      "logloss": null,
+      "calibration": "n=1 insufficient",
+      "roi_diagnostic": null,
+      "clv": null,
+      "max_dd": null,
+      "used_for_capital": false,
+      "significant": false,
+      "note": "Poisson goals model not identifiable from LTP-only BASIC"
+    }
+  ],
+  "cost": [
+    {
+      "events": 100,
+      "basic_gbp": 0,
+      "advanced_soccer_gbp": 69,
+      "pro_soccer_gbp": 230,
+      "cost_per_event_basic": 0,
+      "note": "BASIC £0 + Betfair login (not used). Advanced/Pro billed per soccer-month, not per event."
+    },
+    {
+      "events": 500,
+      "basic_gbp": 0,
+      "advanced_soccer_gbp": 69,
+      "pro_soccer_gbp": 230,
+      "cost_per_event_basic": 0,
+      "note": "Pilot 500 EPL MATCH_ODDS fits inside one BASIC month if login were available."
+    },
+    {
+      "events": 1000,
+      "basic_gbp": 0,
+      "advanced_soccer_gbp": 69,
+      "pro_soccer_gbp": 230,
+      "cost_per_event_basic": 0,
+      "note": "Still BASIC if only MATCH_ODDS timestamps are required."
+    },
+    {
+      "events": 10000,
+      "basic_gbp": 0,
+      "advanced_soccer_gbp": 69,
+      "pro_soccer_gbp": 230,
+      "cost_per_event_basic": 0,
+      "note": "All-soccer MATCH_ODDS in a busy month may exceed 10k; still £0 BASIC or £69 Advanced month."
+    },
+    {
+      "events": 100000,
+      "basic_gbp": 0,
+      "advanced_soccer_gbp": 699,
+      "pro_soccer_gbp": 2299,
+      "cost_per_event_basic": 0,
+      "note": "100k events likely needs many months of all-soccer BASIC (still £0) or paid plans. Not purchased."
+    }
+  ],
+  "expected_information_gain": {
+    "vs_date_only": "EXACT publishTime (pt) + marketStartTime — the missing STRICT clock",
+    "basic_vs_advanced": "Advanced adds 1s ladder + volume; not required to prove TIMESTAMP→AS_OF→LOCK",
+    "basic_sufficient_for_pilot": true,
+    "login_still_required": true,
+    "purchased_this_run": false
+  },
+  "quality": {
+    "source": "GitHub MIRROR of Betfair Historic BASIC (petermclagan sample) + official portal probed unauthenticated",
+    "events": 1,
+    "markets": 59,
+    "timestamps": 5628,
+    "prematch_timestamps": 2877,
+    "inplay_timestamps": 2751,
+    "postmatch_timestamps": 0,
+    "exact_timestamp": 5628,
+    "unknown_timestamp": 0,
+    "median_interval": 946.072,
+    "coverage_note": "Window coverage = share of MATCH_ODDS selections with a PREMATCH tick ≤ asOf; no interpolation",
+    "strict_events": 1,
+    "license": "Betfair Historic ToS for official bulk (not acquired). GitHub test sample = MIRROR, not an independent source.",
+    "cost": "BASIC £0 + login (blocked this run). Advanced soccer £69/month or £699/year. Not purchased.",
+    "data_quality": "Documented BASIC ≈1 min LTP, no ladder. Measured MATCH_ODDS unique-pt median interval is sparser than 1 min; batb/atb/atl=0; kickoff=marketTime UTC"
+  },
+  "sources_table": [
+    {
+      "source": "historicdata.betfair.com BASIC (OFFICIAL)",
+      "period": "from ~2015/2016 documented",
+      "events": 0,
+      "markets": 0,
+      "timestamp": "EXACT pt (not acquired)",
+      "strict": 0,
+      "cost": "£0 + login",
+      "status": "ACQUISITION_BLOCKED"
+    },
+    {
+      "source": "petermclagan football-basic-sample (MIRROR)",
+      "period": "2017-04-30 EPL Middlesbrough v Man City",
+      "events": 1,
+      "markets": 59,
+      "timestamp": "EXACT pt vs marketTime",
+      "strict": 1,
+      "cost": "£0 (GitHub test fixture)",
+      "status": "PARTIAL_STRICT"
+    },
+    {
+      "source": "kito129 tennis BASIC json (MIRROR)",
+      "period": "tennis MATCH_ODDS sample",
+      "events": 0,
+      "markets": 1,
+      "timestamp": "EXACT pt (format only; not soccer capital)",
+      "strict": 0,
+      "cost": "£0",
+      "status": "FORMAT_ONLY"
+    }
+  ],
+  "counts": {
+    "decisions": 1,
+    "bets": 0,
+    "no_bet": 1,
+    "strict_events": 1
+  },
+  "scientific": {
+    "data_available": "mirror_events=1; official_bulk=false; full_sample_ltp=5628; match_odds_ltp=24; BASIC ladder=0",
+    "strict_events": 1,
+    "official_strict_events": 0,
+    "timestamp_observations": 5628,
+    "acceptance_100_events": false,
+    "model_ready_markets": [],
+    "years_testable": [],
+    "years_insufficient": [
+      2017,
+      2018,
+      2019,
+      2020
+    ],
+    "total_blind_decisions": 1,
+    "total_bets": 0,
+    "best_model": null,
+    "best_risk_policy": null,
+    "statistical_significance": "none (n=1; Bonferroni 7 models; no edge claim)",
+    "holdout_status": "SACRED",
+    "clv_home_implied_delta": 0.0024630541871921152,
+    "verdict": "PARTIAL_STRICT"
+  },
+  "multiple_testing": {
+    "alpha": 0.05,
+    "tests": 7,
+    "bonferroni": 0.0071428571428571435,
+    "any_significant": false
+  },
+  "walk_forward": {
+    "train": [
+      2017
+    ],
+    "validation": [
+      2018
+    ],
+    "test": [
+      2019
+    ],
+    "holdout": [
+      2020
+    ],
+    "holdout_used_for_selection": false
+  }
+}

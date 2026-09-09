@@ -1,0 +1,48 @@
+{
+  "experiment_id": "exp_017_blind_actuarial_replay_v1",
+  "immutable": true,
+  "created_at": "2026-09-06T22:00:00.000Z",
+  "dataset_version": "real_truth_lab_v1_e0_2019_2024",
+  "secondary_dataset": {
+    "id": "club-football-match-data",
+    "role": "SECONDARY_BENCHMARK_RESEARCH",
+    "status": "EXTERNAL_CLONE_MISSING_OR_NOT_USED_IN_STRICT",
+    "audit_summary": "audit/club-football-match-data/summary.json",
+    "commit_sha_from_audit": "25882a58a736daf7ece3781940eac17ae1117a66",
+    "forbidden_in_strict": ["C_*", "Form*", "Max*/Avg* as bookmaker", "provisional Elo", "undocumented odds clocks"]
+  },
+  "feature_version": "feature_engine_v2_research",
+  "model_versions": [
+    "frequency_baseline_v1",
+    "home_advantage_v1",
+    "market_implied_v1",
+    "market_devig_v1",
+    "elo_proxy_v1"
+  ],
+  "champion_for_bankroll": "market_devig_v1",
+  "declared_edge": false,
+  "risk_engine_version": "actuarial_risk_v1",
+  "evidence_version": "evidence_attribution_v1",
+  "as_of_policy": "RESEARCH",
+  "as_of_policy_note": "STRICT exact clocks unavailable on dataset_open; RESEARCH still blocks future facts. Unknown precision labeled, never MODEL_READY.",
+  "blind_replay": true,
+  "annual_initial_bankroll": 1000,
+  "currency": "credits",
+  "holdout_sacred": true,
+  "holdout_years": [2024],
+  "partitions": {
+    "DEVELOPMENT": [2019, 2020, 2021],
+    "VALIDATION": [2022],
+    "TEST": [2023],
+    "FINAL_HOLDOUT": [2024]
+  },
+  "HOLDOUT_TOUCHED": false,
+  "real_money": false,
+  "auto_promotion": false,
+  "winner": null,
+  "masaniello_champion": false,
+  "solar_years_requested": [2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025, 2026],
+  "markets_admitted_for_bankroll": ["result"],
+  "markets_blocked": ["total_goals", "team_goals", "both_teams_to_score", "asian_handicap", "corners", "cards", "player_goals", "ht_ft", "correct_score", "double_chance", "draw_no_bet"],
+  "notes": "TASK 017 — measure algorithm reality. Prefer ALGORITHM_STATUS E or A over fabricated advantage. No look-ahead. No fabricated data."
+}

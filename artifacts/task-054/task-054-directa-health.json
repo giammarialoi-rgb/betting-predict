@@ -1,0 +1,18 @@
+{
+  "source": "DIRECTA",
+  "policy_status": "DISABLED_BY_POLICY",
+  "status": "DISABLED_BY_POLICY",
+  "enabled": false,
+  "scraping_enabled": false,
+  "last_success_at": null,
+  "last_request_at": null,
+  "last_error": null,
+  "reason": "DIRECTA_ENABLED=false (default)",
+  "events_discovered": 0,
+  "rate_limit": {
+    "min_interval_ms": 2500,
+    "max_concurrency": 1,
+    "max_retries": 2,
+    "timeout_ms": 15000
+  }
+}

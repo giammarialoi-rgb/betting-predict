@@ -1,0 +1,11 @@
+{
+  "dataset_id": "TASK_033_STRICT_MARKETS",
+  "immutable_1x2_ref": {
+    "dataset": "TASK_031_BASE",
+    "sha256": "6d78ca34da9df180b643976c3b4a52b93cf589984bae54e056c5e3a53b44174b",
+    "copied": false
+  },
+  "carry_032_fingerprint": "fd252d57021317754e2a056b3b59fc11e9df108ac7aaa00e95481caa5a383239",
+  "fingerprint": "ba1a74139bed1f8a4c369e2438eb89031df71270f36143a591b008cd96f7c88a",
+  "verdict": "NO_DEMONSTRATED_EDGE"
+}

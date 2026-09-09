@@ -1,0 +1,45 @@
+{
+  "partition": "QUARANTINE",
+  "sources": [
+    {
+      "id": "petermclagan_underscore",
+      "why": "Repository does not exist."
+    },
+    {
+      "id": "tarb",
+      "why": "No soccer archive. Demo is horse racing."
+    },
+    {
+      "id": "hblauth",
+      "why": "DATASET_NOT_PRESENT. Official Betfair Soccer dumps login-gated."
+    },
+    {
+      "id": "betfair_historicdata",
+      "why": "PARSER_NO_DATA."
+    },
+    {
+      "id": "betfair_workbook",
+      "why": "Documentation only."
+    },
+    {
+      "id": "beatthebookie",
+      "why": "DATASET_NOT_PRESENT in git. Frozen TASK_031_BASE is the local derived LEVEL_B file and is not counted as new 038 STRICT."
+    },
+    {
+      "id": "oddsharvester",
+      "why": "scraped_date is client retrieval. Forbidden as quote clock."
+    },
+    {
+      "id": "sportyhack",
+      "why": "DATASET_NOT_PRESENT."
+    },
+    {
+      "id": "betfairutil",
+      "why": "PARSER_NO_DATA."
+    },
+    {
+      "id": "liampauling",
+      "why": "PARSER_NO_DATA."
+    }
+  ]
+}

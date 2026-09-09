@@ -1,0 +1,19 @@
+{
+  "experiment_id": "exp_052_duplicate_keys_ui",
+  "immutable": true,
+  "created_at": "2026-09-08T00:00:00.000Z",
+  "task": "052",
+  "lab_a": "audit/external/task-039",
+  "lab_b": "audit/external/task-044",
+  "winner": null,
+  "auto_promotion": false,
+  "real_money": false,
+  "capital_gate": false,
+  "open_task_053": false,
+  "modify_lab_a": false,
+  "modify_frozen_031": false,
+  "synthetic_data": false,
+  "modify_predictor": false,
+  "modify_collector": false,
+  "notes": "UI/data-shape robustness only. Deduplicate next_events for accidental duplicate event_id rows. React keys unique. Lab A READ_ONLY. Capital closed. No TASK 053."
+}

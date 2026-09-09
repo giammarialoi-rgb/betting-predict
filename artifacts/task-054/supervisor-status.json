@@ -1,0 +1,32 @@
+{
+  "status": "HEALTHY",
+  "worker_pid": 12808,
+  "worker_alive": true,
+  "supervisor_pid": 42980,
+  "supervisor_alive": true,
+  "official_status": "WORKING",
+  "heartbeat_at": "2026-09-08T18:57:18.300Z",
+  "heartbeat_age_ms": 38036,
+  "last_cycle_at": "2026-09-08T18:57:18.158Z",
+  "last_successful_cycle_at": "2026-09-08T18:41:07.509Z",
+  "last_priority": "P0",
+  "restart_count": 3,
+  "last_restart_at": "2026-09-08T18:57:18.293Z",
+  "last_restart_reason": "WORKER_DEAD",
+  "consecutive_errors": 0,
+  "uptime_hint": "2026-09-08T18:57:18.147Z",
+  "issues": [
+    {
+      "level": "WARNING",
+      "code": "LAST_ERROR",
+      "message": "WORKER_DEAD"
+    }
+  ],
+  "phase": "supervisor_tick",
+  "sport": null,
+  "event_id": null,
+  "market": null,
+  "budget_state": "OK",
+  "api_state": null,
+  "supervisor_alive_lab": true
+}

@@ -1,0 +1,9 @@
+{
+  "experiment_id": "exp_012_multi_market_acquisition",
+  "dataset_version": "real_truth_lab_v1_e0_2019_2024",
+  "feature_version": "goal_rates_v1 + feature_engine_v3",
+  "model_version": "poisson_baseline_v1 + market_implied",
+  "as_of_policy": "STRICT_AS_OF",
+  "created_at": "2026-04-06T00:00:00.000Z",
+  "notes": "TASK 012 — acquisition + MODEL_READY gates; football-data.co.uk live BLOCKED HTTP_503; MODEL_READY may be 0"
+}

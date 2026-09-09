@@ -1,0 +1,191 @@
+/* BetMind dark premium — iPhone PWA product UI */
+:root {
+  --bm-bg: #0a0a0a;
+  --bm-surface: #1a1a1a;
+  --bm-surface-2: #121212;
+  --bm-surface-3: #222222;
+  --bm-border: rgba(255, 255, 255, 0.08);
+  --bm-accent: #00f675;
+  --bm-accent-dim: #00c85a;
+  --bm-text: #ffffff;
+  --bm-muted: #8a8a8a;
+  --bm-danger: #ff4d4d;
+  --bm-warn: #f5a623;
+  --bm-glow: 0 0 28px rgba(0, 246, 117, 0.14);
+  --bm-radius: 16px;
+  --bm-radius-sm: 12px;
+  --bm-safe-top: env(safe-area-inset-top, 0px);
+  --bm-safe-bottom: env(safe-area-inset-bottom, 0px);
+  --bm-nav-h: 64px;
+}
+
+.bm-root {
+  background:
+    radial-gradient(1200px 600px at 50% -10%, rgba(0, 246, 117, 0.07), transparent 55%),
+    var(--bm-bg);
+  color: var(--bm-text);
+  min-height: 100dvh;
+  font-family: var(--font-sora), system-ui, sans-serif;
+  overflow-x: hidden;
+}
+
+.bm-card {
+  background: var(--bm-surface);
+  border: 1px solid var(--bm-border);
+  border-radius: var(--bm-radius);
+  padding: 1rem;
+}
+
+.bm-card-glow {
+  box-shadow: var(--bm-glow);
+  border-color: rgba(0, 246, 117, 0.22);
+}
+
+.bm-accent {
+  color: var(--bm-accent);
+}
+
+.bm-muted {
+  color: var(--bm-muted);
+}
+
+.bm-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.28rem 0.7rem;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 500;
+  border: 1px solid var(--bm-border);
+  white-space: nowrap;
+}
+
+.bm-pill-accent {
+  background: rgba(0, 246, 117, 0.12);
+  border-color: rgba(0, 246, 117, 0.35);
+  color: var(--bm-accent);
+}
+
+.bm-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 0.65rem 1.1rem;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.bm-btn-primary {
+  background: var(--bm-accent);
+  color: #0a0a0a;
+}
+
+.bm-btn-ghost {
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  color: var(--bm-text);
+  background: transparent;
+}
+
+.bm-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: var(--bm-muted);
+  flex-shrink: 0;
+}
+
+.bm-dot-online {
+  background: var(--bm-accent);
+  box-shadow: 0 0 8px rgba(0, 246, 117, 0.65);
+}
+
+.bm-dot-down {
+  background: var(--bm-danger);
+}
+
+.bm-dot-degraded {
+  background: var(--bm-warn);
+}
+
+.bm-section-label {
+  font-size: 0.68rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--bm-muted);
+  font-weight: 600;
+}
+
+.bm-hero {
+  background: linear-gradient(160deg, rgba(0, 246, 117, 0.12), transparent 55%),
+    var(--bm-surface);
+  border: 1px solid rgba(0, 246, 117, 0.2);
+  border-radius: var(--bm-radius);
+  padding: 1.15rem 1.1rem;
+  box-shadow: var(--bm-glow);
+}
+
+.bm-metric {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  min-width: 0;
+}
+
+.bm-metric-label {
+  font-size: 0.65rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--bm-muted);
+}
+
+.bm-metric-value {
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  overflow-wrap: anywhere;
+}
+
+.bm-flow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--bm-muted);
+}
+
+.bm-flow strong {
+  color: var(--bm-accent);
+  font-weight: 700;
+}
+
+.bm-tabrow {
+  display: flex;
+  gap: 0.4rem;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  padding-bottom: 0.15rem;
+}
+
+.bm-tabrow::-webkit-scrollbar {
+  display: none;
+}
+
+.bm-ev-row {
+  display: grid;
+  grid-template-columns: 52px 1fr auto;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+@media (min-width: 1024px) {
+  .bm-ev-row {
+    grid-template-columns: 64px 1.4fr 1fr auto;
+  }
+}

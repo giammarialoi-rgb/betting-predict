@@ -1,0 +1,8 @@
+source,role,http_status,acquired,events,observations,books,markets,precision,blocker
+football-data-co-uk-live,PRIMARY_BLOCKED,503,false,0,0,0,,n/a,HTTP_503
+offline-pack-e0,FIXTURE_PACK,200,true,61,1220,3,1X2|OU25,date (OPEN) / unknown (CLOSE),
+anishkhetani-epl-archive,LEGITIMATE_PUBLIC_REDISTRIBUTION,200,true,12704,335985,20,1X2|OU25|AH,date (OPEN) / unknown (CLOSE),
+jokecamp-e0-2014-15,LEGITIMATE_PUBLIC_REDISTRIBUTION,200,true,380,8094,8,1X2,date (OPEN) / unknown (CLOSE),
+jokecamp-i1,LEGITIMATE_PUBLIC_REDISTRIBUTION,200,true,380,11361,10,1X2,date (OPEN) / unknown (CLOSE),
+jokecamp-d1,LEGITIMATE_PUBLIC_REDISTRIBUTION,200,true,135,3240,8,1X2,date (OPEN) / unknown (CLOSE),
+club-football-match-data,SECONDARY_INDEX,200,true,238858,0,0,,unknown,Club-Football Odd* has no documented available_at; TEMPORALLY_UNKNOWN; SECONDARY/RESEARCH_ONLY

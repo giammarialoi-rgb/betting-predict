@@ -1,0 +1,53 @@
+TASK 038 — DEFINITIVE DATA-LAKE + LIVE STRICT ACTIVATION
+STATUS: COMPLETED
+DATA_LAKE_STATUS: READY
+SOURCES_INGESTED: 19
+RESEARCH_EVENTS: 32358
+STRICT_EVENTS: 0
+EXACT_KICKOFFS: 0
+T-72h COVERAGE: 0
+T-24h COVERAGE: 0
+T-1h COVERAGE: 0
+MATCH_EXACT: 0
+LIVE_SOURCE_STATUS: NOT_CONFIGURED
+API_KEY: missing
+MODEL_READY: false
+TRAIN / VAL / TEST / HOLDOUT: 0 / 0 / 0 / 0
+MARKET_BRIER: —
+BEST_MODEL: —
+DELTA_BRIER: —
+CI: —
+HOLM: —
+BETS: 0
+BANKROLL: —
+WINNER: null
+REAL_MONEY: false
+AUTO_PROMOTION: false
+REPRODUCIBILITY: PASS
+LEAKAGE: PASS
+FINAL_VERDICT: LIVE_NOT_CONFIGURED
+RESIDUAL_BLOCKER: THE_ODDS_API_KEY=<user must provide>
+
+## Separation of problems
+
+- DATA PROBLEM: No live quote clock yet. Historical public hunt is closed. Research corpus is catalogued but not STRICT-usable.
+- MODEL PROBLEM: No prospective settled TEST set. MARKET_DEVIG frozen. No challenger selection.
+- CAPITAL PROBLEM: CLOSED. BETS=0. BANKROLL=—. Gates DATA_SUFFICIENT/MODEL_READY/TEST/HOLDOUT/significance/cost/leakage not jointly passed.
+
+## Live
+
+LIVE_ADAPTER = READY
+LIVE_SOURCE = THE_ODDS_API
+API_KEY = missing
+HISTORICAL_SEARCH = CLOSED
+DATA_LAKE = READY
+STRICT_PIPELINE = READY
+CAPITAL = CLOSED
+
+THE_ODDS_API_KEY=<user must provide>
+
+acquired != strict usable. TASK 037 GitHub corpus is RESEARCH_ONLY except the live adapter surface.
+TASK 039 is not opened. TASK_031_BASE is not rewritten and is not counted as new STRICT.
+
+- fingerprint: `434465d700c69a7e3bf063a9eb863a885fd72807a007f548566a81b418008476`
+- experiment: `9a0ab8eae2fcf915caf01f3c43f1cc648569ae7d23ea6318dded34c36d415dc7`

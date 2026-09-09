@@ -1,0 +1,43 @@
+{
+  "experiment_id": "exp_047_universal_live_coverage",
+  "task": "047",
+  "STATUS": "RUNNING",
+  "TOTAL_EVENTS": 233,
+  "SEED_EVENTS": 114,
+  "DISCOVERED_LIVE_EVENTS": 119,
+  "CATALOG_CAP": false,
+  "TENNIS_STATUS": "TENNIS_PROVIDER_UNAVAILABLE",
+  "MARKETS_OBSERVED": [
+    "1X2",
+    "AH",
+    "H2H_LAY",
+    "OU"
+  ],
+  "HORIZONS": {
+    "TODAY": 7,
+    "NEXT_24H": 7,
+    "NEXT_72H": 36,
+    "NEXT_7D": 138
+  },
+  "PREDICTIONS": 814,
+  "LOCKED": 114,
+  "SETTLED": 0,
+  "AUTOPSIED": 0,
+  "LEARNING_CASES": 0,
+  "POST_LOCK_MOVEMENTS": 12159,
+  "PATTERNS": 1,
+  "SKIPPED_DISCOVERY": false,
+  "MODEL_EDGE": "UNKNOWN",
+  "CAPITAL": "CLOSED",
+  "REAL_MONEY": false,
+  "AUTO_PROMOTION": false,
+  "LAB_A_MUTATION": false,
+  "LAB_A_EVENTS": 114,
+  "LAB_A_LOCKED": 114,
+  "REPRODUCIBILITY": "PASS",
+  "LEAKAGE": "PASS",
+  "FINAL_VERDICT": "UNIVERSAL_LIVE_COVERAGE_READY",
+  "open_task_048": false,
+  "experiment_sha256": "ced9c052e44aa29dd59c158a5f7937b69b9254793924e181155c1f848c44e6c9",
+  "fingerprint": "d8bebbc1980127bbe8c0d2dbc68aee3aafbf94d2da437b81f8066901e1c295c3"
+}

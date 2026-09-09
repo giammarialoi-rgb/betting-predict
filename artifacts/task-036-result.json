@@ -1,0 +1,180 @@
+{
+  "experiment_id": "exp_036_prospective_collection",
+  "task": "036",
+  "COLLECTION_STATUS": "BLOCKED",
+  "SOURCE": "the-odds-api+football-data-org",
+  "SOURCE_STATUS": "SOURCE_UNAVAILABLE",
+  "COLLECTION_START": "2026-09-07T00:00:00.000Z",
+  "EVENTS_DISCOVERED": 0,
+  "QUOTE_OBSERVATIONS": 0,
+  "STRICT_EVENTS": 0,
+  "STRICT_QUOTES": 0,
+  "EXACT_KICKOFFS": 0,
+  "T72_COVERAGE": 0,
+  "T24_COVERAGE": 0,
+  "T1H_COVERAGE": 0,
+  "T5M_COVERAGE": 0,
+  "LOCKED_DECISIONS": 0,
+  "SETTLED_EVENTS": 0,
+  "MODEL_READY": false,
+  "TEST_EVENTS": 0,
+  "HOLDOUT_EVENTS": 0,
+  "EDGE": false,
+  "BETS": 0,
+  "BANKROLL": "—",
+  "winner": null,
+  "auto_promotion": false,
+  "real_money": false,
+  "markets": [],
+  "bookmakers": [],
+  "MARKET_BRIER": null,
+  "BEST_MODEL_BRIER": null,
+  "DELTA_BRIER": null,
+  "SIGNIFICANCE": null,
+  "CAPITAL_GATE": "CLOSED",
+  "OBSERVATION_ONLY": true,
+  "verdict": "PROSPECTIVE_COLLECTION_BLOCKED",
+  "FINAL_VERDICT": "PROSPECTIVE_COLLECTION_BLOCKED",
+  "blocker": {
+    "source": "the-odds-api",
+    "error": "SOURCE_UNAVAILABLE",
+    "needs": "THE_ODDS_API_KEY (live /odds ISO last_update + commence_time). Optional FOOTBALL_DATA_ORG_TOKEN for kickoff/settlement only.",
+    "why_not_bypassable": "Prospective STRICT requires a real observation clock. football-data.org has utcDate kickoff but no bookmaker publish timestamp on the catalogued free surface. Historical hunt is closed (TASK 035). No synthetic quotes. No user-credential bypass."
+  },
+  "health": [
+    {
+      "source": "the-odds-api",
+      "status": "SOURCE_UNAVAILABLE",
+      "last_success": null,
+      "last_error": "THE_ODDS_API_KEY is not set. Free/paid key required for live odds with last_update + commence_time. Not bypassed.",
+      "events_seen": 0,
+      "quotes_seen": 0,
+      "strict_events": 0,
+      "last_observation": null,
+      "coverage": {
+        "T-72h": 0,
+        "T-48h": 0,
+        "T-24h": 0,
+        "T-12h": 0,
+        "T-6h": 0,
+        "T-3h": 0,
+        "T-1h": 0,
+        "T-30m": 0,
+        "T-15m": 0,
+        "T-5m": 0,
+        "T-1m": 0
+      },
+      "latency_ms": null,
+      "clock_quality": "UNAVAILABLE"
+    },
+    {
+      "source": "football-data-org",
+      "status": "SOURCE_UNAVAILABLE",
+      "last_success": null,
+      "last_error": "FOOTBALL_DATA_ORG_TOKEN is not set. Fixture/kickoff only even when set; no bookmaker quote clock on the free catalog.",
+      "events_seen": 0,
+      "quotes_seen": 0,
+      "strict_events": 0,
+      "last_observation": null,
+      "coverage": {
+        "T-72h": 0,
+        "T-48h": 0,
+        "T-24h": 0,
+        "T-12h": 0,
+        "T-6h": 0,
+        "T-3h": 0,
+        "T-1h": 0,
+        "T-30m": 0,
+        "T-15m": 0,
+        "T-5m": 0,
+        "T-1m": 0
+      },
+      "latency_ms": null,
+      "clock_quality": "UNAVAILABLE"
+    }
+  ],
+  "historical": {
+    "dataset": "TASK_031_BASE",
+    "strict_events": 10499,
+    "holdout_2020": 0
+  },
+  "leakage": [
+    {
+      "id": "timestamp_order",
+      "throws": true
+    },
+    {
+      "id": "quote_after_kickoff",
+      "throws": true
+    },
+    {
+      "id": "future_data",
+      "throws": true
+    },
+    {
+      "id": "lock_immutability",
+      "throws": true
+    },
+    {
+      "id": "outcome_before_lock",
+      "throws": true
+    },
+    {
+      "id": "close_as_decision",
+      "throws": true
+    },
+    {
+      "id": "date_only",
+      "throws": true
+    },
+    {
+      "id": "naive_ts",
+      "throws": true
+    },
+    {
+      "id": "synthetic",
+      "throws": true
+    },
+    {
+      "id": "clock_drift",
+      "throws": true
+    },
+    {
+      "id": "post_match",
+      "throws": true
+    },
+    {
+      "id": "monotonic",
+      "throws": true
+    },
+    {
+      "id": "invented_ts",
+      "throws": true
+    },
+    {
+      "id": "outcome",
+      "throws": true
+    },
+    {
+      "id": "close_t1h",
+      "throws": true
+    },
+    {
+      "id": "date_only_strict",
+      "throws": true
+    },
+    {
+      "id": "task_037",
+      "throws": true
+    },
+    {
+      "id": "frozen_flags",
+      "throws": true
+    }
+  ],
+  "leakage_status": "PASS",
+  "reproducibility": "PASS",
+  "experiment_sha256": "520960032f0de996b9ac850ea807d4b91ebe72ecad87ec07058e0c8df97d6ef6",
+  "dataset_fingerprint": "5ebe75d644ab1a0d7f5ad09812ed61b295e657a3916999db432c16f6d3d66f5a",
+  "fingerprint": "d447846e58290f0c01d4391d9b4af241360c2e27ee393e83554836465b57cc90"
+}

@@ -1,0 +1,10 @@
+{
+  "experiment_id": "exp_043_total_live_lab",
+  "verdict": "LIVE_COLLECTING",
+  "fingerprint": "5f58fd16b6423bb5312b596970d7a58f1babba0408fd8cecceea304dd6adc07d",
+  "model_version": "MODEL_v1",
+  "total_events": 114,
+  "locked": 114,
+  "settled": 0,
+  "credits_remaining": 402
+}

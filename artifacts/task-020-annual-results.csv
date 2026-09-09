@@ -1,0 +1,27 @@
+year,status,valid_data,decisions,bets,start,final,pnl,roi,max_dd,model,reason
+2001,INSUFFICIENT_DATA,373,373,0,1000,,,,,frequency,No STRICT exact available_at quotes; DATE_ONLY OPEN is research-only; club_index_events=6329
+2002,INSUFFICIENT_DATA,391,391,0,1000,,,,,frequency,No STRICT exact available_at quotes; DATE_ONLY OPEN is research-only; club_index_events=6173
+2003,INSUFFICIENT_DATA,359,359,0,1000,,,,,frequency,No STRICT exact available_at quotes; DATE_ONLY OPEN is research-only; club_index_events=3967
+2004,INSUFFICIENT_DATA,392,392,0,1000,,,,,frequency,No STRICT exact available_at quotes; DATE_ONLY OPEN is research-only; club_index_events=5534
+2005,INSUFFICIENT_DATA,374,374,0,1000,,,,,frequency,No STRICT exact available_at quotes; DATE_ONLY OPEN is research-only; club_index_events=6340
+2006,INSUFFICIENT_DATA,394,394,0,1000,,,,,frequency,No STRICT exact available_at quotes; DATE_ONLY OPEN is research-only; club_index_events=6959
+2007,INSUFFICIENT_DATA,371,371,0,1000,,,,,frequency,No STRICT exact available_at quotes; DATE_ONLY OPEN is research-only; club_index_events=6585
+2008,INSUFFICIENT_DATA,379,379,0,1000,,,,,frequency,No STRICT exact available_at quotes; DATE_ONLY OPEN is research-only; club_index_events=7148
+2009,INSUFFICIENT_DATA,378,378,0,1000,,,,,frequency,No STRICT exact available_at quotes; DATE_ONLY OPEN is research-only; club_index_events=7054
+2010,INSUFFICIENT_DATA,374,374,0,1000,,,,,frequency,No STRICT exact available_at quotes; DATE_ONLY OPEN is research-only; club_index_events=6925
+2011,INSUFFICIENT_DATA,377,377,0,1000,,,,,frequency,No STRICT exact available_at quotes; DATE_ONLY OPEN is research-only; club_index_events=7410
+2012,INSUFFICIENT_DATA,571,571,0,1000,,,,,frequency,No STRICT exact available_at quotes; DATE_ONLY OPEN is research-only; club_index_events=10597
+2013,INSUFFICIENT_DATA,707,707,0,1000,,,,,frequency,No STRICT exact available_at quotes; DATE_ONLY OPEN is research-only; club_index_events=11729
+2014,INSUFFICIENT_DATA,380,380,0,1000,,,,,frequency,No STRICT exact available_at quotes; DATE_ONLY OPEN is research-only; club_index_events=11993
+2015,INSUFFICIENT_DATA,380,380,0,1000,,,,,frequency,No STRICT exact available_at quotes; DATE_ONLY OPEN is research-only; club_index_events=12352
+2016,INSUFFICIENT_DATA,378,378,0,1000,,,,,frequency,No STRICT exact available_at quotes; DATE_ONLY OPEN is research-only; club_index_events=12100
+2017,INSUFFICIENT_DATA,401,401,0,1000,,,,,frequency,No STRICT exact available_at quotes; DATE_ONLY OPEN is research-only; club_index_events=12364
+2018,INSUFFICIENT_DATA,371,371,0,1000,,,,,frequency,No STRICT exact available_at quotes; DATE_ONLY OPEN is research-only; club_index_events=12042
+2019,INSUFFICIENT_DATA,385,385,0,1000,,,,,frequency,No STRICT exact available_at quotes; DATE_ONLY OPEN is research-only; club_index_events=12018
+2020,INSUFFICIENT_DATA,342,342,0,1000,,,,,frequency,No STRICT exact available_at quotes; DATE_ONLY OPEN is research-only; club_index_events=9562
+2021,INSUFFICIENT_DATA,411,411,0,1000,,,,,frequency,No STRICT exact available_at quotes; DATE_ONLY OPEN is research-only; club_index_events=13127
+2022,INSUFFICIENT_DATA,366,366,0,1000,,,,,frequency,No STRICT exact available_at quotes; DATE_ONLY OPEN is research-only; club_index_events=12168
+2023,INSUFFICIENT_DATA,418,418,0,1000,,,,,frequency,No STRICT exact available_at quotes; DATE_ONLY OPEN is research-only; club_index_events=12501
+2024,INSUFFICIENT_DATA,374,374,0,1000,,,,,frequency,No STRICT exact available_at quotes; DATE_ONLY OPEN is research-only; club_index_events=11148
+2025,INSUFFICIENT_DATA,378,378,0,1000,,,,,frequency,No STRICT exact available_at quotes; DATE_ONLY OPEN is research-only; club_index_events=7368
+2026,INCOMPLETE,194,194,0,1000,,,,,frequency,No STRICT exact available_at quotes; DATE_ONLY OPEN is research-only; club_index_events=4571

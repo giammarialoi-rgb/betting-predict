@@ -1,0 +1,28 @@
+{
+  "winner": null,
+  "real_money": false,
+  "declared_edge": false,
+  "decisions": [
+    {
+      "eventId": "28202626",
+      "asOf": "2017-04-30T12:05:00.000Z",
+      "decision": "NO_BET",
+      "candidate": false,
+      "reason": "declared_edge=false",
+      "capitalEligible": true,
+      "market": "MATCH_ODDS",
+      "prices": {
+        "home": 14.5,
+        "draw": 6.4,
+        "away": 1.31
+      },
+      "clv_diagnostic": {
+        "used_in_decision": false,
+        "computed_after_lock": true,
+        "implied_delta": 0.0024630541871921152
+      },
+      "match_grade": "MATCH_EXACT",
+      "evidence_graph": true
+    }
+  ]
+}

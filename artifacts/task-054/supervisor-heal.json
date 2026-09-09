@@ -1,0 +1,30 @@
+{
+  "action": "none",
+  "assessment": {
+    "worker_alive": true,
+    "heartbeat_fresh": true,
+    "heartbeat_age_ms": 37799,
+    "needs_restart": false,
+    "reason": null,
+    "official_status": "WORKING",
+    "brain_status": "RUNNING"
+  },
+  "state": {
+    "status": "WORKING",
+    "supervisor_pid": 42980,
+    "worker_pid": 12808,
+    "started_at": "2026-09-08T18:55:10.346Z",
+    "last_restart_at": "2026-09-08T18:57:18.293Z",
+    "last_restart_reason": "WORKER_DEAD",
+    "restart_count": 2,
+    "last_error": null,
+    "last_heal_at": "2026-09-08T18:57:16.734Z",
+    "spawn_cooldown_until": "2026-09-08T18:58:48.293Z",
+    "heartbeat_stale_ms": 600000,
+    "capital": "PAPER_ONLY",
+    "real_money": false,
+    "auto_promotion": false,
+    "open_task_055": false
+  },
+  "new_worker_pid": 12808
+}

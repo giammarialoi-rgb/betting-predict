@@ -1,0 +1,13 @@
+year,dataset,events,strict_events,decisions,qualified_bets,no_bets,start_bankroll,end_bankroll,pnl,roi,max_drawdown,win_rate,avg_odds,total_exposure,risk_policy,temporal_blocks,data_quality,status
+2005,beat_the_bookie_temporal_v1/closing_odds DATE_ONLY,20989,0,0,0,20989,1000,,,,,,,,no_bet,20989,DATE_ONLY aggregates,INSUFFICIENT_DATA
+2006,beat_the_bookie_temporal_v1/closing_odds DATE_ONLY,24209,0,0,0,24209,1000,,,,,,,,no_bet,24209,DATE_ONLY aggregates,INSUFFICIENT_DATA
+2007,beat_the_bookie_temporal_v1/closing_odds DATE_ONLY,25325,0,0,0,25325,1000,,,,,,,,no_bet,25325,DATE_ONLY aggregates,INSUFFICIENT_DATA
+2008,beat_the_bookie_temporal_v1/closing_odds DATE_ONLY,29993,0,0,0,29993,1000,,,,,,,,no_bet,29993,DATE_ONLY aggregates,INSUFFICIENT_DATA
+2009,beat_the_bookie_temporal_v1/closing_odds DATE_ONLY,42902,0,0,0,42902,1000,,,,,,,,no_bet,42902,DATE_ONLY aggregates,INSUFFICIENT_DATA
+2010,beat_the_bookie_temporal_v1/closing_odds DATE_ONLY,43878,0,0,0,43878,1000,,,,,,,,no_bet,43878,DATE_ONLY aggregates,INSUFFICIENT_DATA
+2011,beat_the_bookie_temporal_v1/closing_odds DATE_ONLY,53496,0,0,0,53496,1000,,,,,,,,no_bet,53496,DATE_ONLY aggregates,INSUFFICIENT_DATA
+2012,beat_the_bookie_temporal_v1/closing_odds DATE_ONLY,64753,0,0,0,64753,1000,,,,,,,,no_bet,64753,DATE_ONLY aggregates,INSUFFICIENT_DATA
+2013,beat_the_bookie_temporal_v1/closing_odds DATE_ONLY,69060,0,0,0,69060,1000,,,,,,,,no_bet,69060,DATE_ONLY aggregates,INSUFFICIENT_DATA
+2014,beat_the_bookie_temporal_v1/closing_odds DATE_ONLY,69843,0,0,0,69843,1000,,,,,,,,no_bet,69843,DATE_ONLY aggregates,INSUFFICIENT_DATA
+2015,beat_the_bookie_temporal_v1/closing_odds DATE_ONLY,34992,0,0,0,34992,1000,,,,,,,,no_bet,34992,DATE_ONLY aggregates,INSUFFICIENT_DATA
+2016,odds_series not acquired,0,0,0,0,0,1000,,,,,,,,no_bet,0,MISSING_SERIES,INSUFFICIENT_DATA

@@ -1,0 +1,109 @@
+{
+  "experiment_id": "exp_041_prospective_close",
+  "task": "041",
+  "COLLECTION_STATUS": "COLLECTING",
+  "SOURCE_STATUS": "ok",
+  "API_KEY_CONFIGURED": true,
+  "EVENTS_DISCOVERED": 114,
+  "STRICT_EVENTS": 114,
+  "STRICT_QUOTES": 49098,
+  "EXACT_KICKOFFS": 114,
+  "LOCKED_DECISIONS": 114,
+  "SETTLED_EVENTS": 0,
+  "MISSING_TO_100": 100,
+  "T72_COVERAGE": 0.05263157894736842,
+  "T24_COVERAGE": 0.05263157894736842,
+  "T1H_COVERAGE": 1,
+  "T5M_COVERAGE": 0,
+  "TRAIN_EVENTS": 0,
+  "VAL_EVENTS": 0,
+  "TEST_EVENTS": 0,
+  "HOLDOUT_EVENTS": 0,
+  "HOLDOUT_2020_PLUS": 0,
+  "HOLDOUT_STATUS": "N/A",
+  "MARKET_BRIER": null,
+  "MARKET_LOGLOSS": null,
+  "BEST_MODEL": null,
+  "BEST_MODEL_BRIER": null,
+  "DELTA_BRIER": null,
+  "DELTA_LOGLOSS": null,
+  "CI_95": null,
+  "HOLM": null,
+  "SIGNIFICANT": false,
+  "BETS": 0,
+  "BANKROLL": "—",
+  "ROI": null,
+  "MAX_DD": null,
+  "winner": null,
+  "auto_promotion": false,
+  "REAL_MONEY": false,
+  "real_money": false,
+  "CAPITAL_QUALIFIED": false,
+  "CLV": "NOT_COMPUTABLE",
+  "EXECUTION_COST": "UNKNOWN",
+  "MARKET_ONLY_EVALUATION": true,
+  "MODEL_READY": "PARTIAL",
+  "reproducibility": "PASS",
+  "leakage_status": "PASS",
+  "FINAL_VERDICT": "INSUFFICIENT_DATA_FINAL",
+  "residual_blocker": "SETTLED_EVENTS=0; need 100 more verified settlements (target 100). Earliest kickoffs still future — continue collect:task-040:loop + reveal.",
+  "interpretation": "Dati ancora insufficienti: LOCK AS_OF T−1h è pronto, ma i risultati reali non sono ancora rivelati in numero sufficiente (settled < 100). Non è un fallimento del modello né un edge. Continuare COLLECT → LOCK → REVEAL.",
+  "open_task_042": false,
+  "leakage": [
+    {
+      "id": "post_kickoff",
+      "throws": true
+    },
+    {
+      "id": "date_only",
+      "throws": true
+    },
+    {
+      "id": "invented_ts",
+      "throws": true
+    },
+    {
+      "id": "close_t1h",
+      "throws": true
+    },
+    {
+      "id": "ft_in_decision",
+      "throws": true
+    },
+    {
+      "id": "lock_immutability",
+      "throws": true
+    },
+    {
+      "id": "naive_ts",
+      "throws": true
+    },
+    {
+      "id": "collector_as_available",
+      "throws": true
+    },
+    {
+      "id": "asof_future",
+      "throws": true
+    },
+    {
+      "id": "reveal_before_lock",
+      "throws": true
+    },
+    {
+      "id": "task_040",
+      "throws": true
+    },
+    {
+      "id": "historical_hunt",
+      "throws": true
+    }
+  ],
+  "experiment_sha256": "67b50a26d860e5e2b566bd307dc0fc673e91c239659e2200a5458a0a1397e00d",
+  "dataset_fingerprint": "a119ab5e11dbd9d0c576d04b6d61687b048037a366c6bb428ddd73eb4e6eb05e",
+  "corpus_fingerprint": null,
+  "fingerprint": "98413827966e04de370f5b69d78197f4895c8c0756607ae3835c172ddcabf31f",
+  "adapter_version": "close-041/v1",
+  "source_store": "C:\\Users\\giamm\\Desktop\\app previsioni sportive\\betting predict\\audit\\external\\task-039",
+  "freeze_manifest": null
+}

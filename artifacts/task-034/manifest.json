@@ -1,0 +1,9 @@
+{
+  "experiment_id": "exp_034_market_inefficiency",
+  "verdict": "NO_DEMONSTRATED_INEFFICIENCY",
+  "winner": null,
+  "auto_promotion": false,
+  "real_money": false,
+  "fingerprint": "0f04323ba8374bf2e0e30ad6a55aff67743b6746a2c172a00d85a7fa52335543",
+  "reproducibility": "PASS"
+}

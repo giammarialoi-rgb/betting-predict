@@ -1,0 +1,32 @@
+# TASK 026 — annual bankroll
+
+START = 1000 credits per solar year. No carry. Zero CAPITAL_STRICT bets → END = — (never silent 1000→1000).
+
+| Anno | Eventi | Strict | Decisioni | Bet | Start | End | P/L | ROI | Max DD | Model | Stato |
+|---:|---:|---:|---:|---:|---:|---|---|---|---|---|---|
+| 2001 | 6329 | 0 | 0 | 0 | 1000 | — | — | — | — | — | INSUFFICIENT_DATA |
+| 2002 | 6173 | 0 | 0 | 0 | 1000 | — | — | — | — | — | INSUFFICIENT_DATA |
+| 2003 | 3967 | 0 | 0 | 0 | 1000 | — | — | — | — | — | INSUFFICIENT_DATA |
+| 2004 | 5534 | 0 | 0 | 0 | 1000 | — | — | — | — | — | INSUFFICIENT_DATA |
+| 2005 | 6340 | 0 | 0 | 0 | 1000 | — | — | — | — | — | INSUFFICIENT_DATA |
+| 2006 | 6959 | 0 | 0 | 0 | 1000 | — | — | — | — | — | INSUFFICIENT_DATA |
+| 2007 | 6585 | 0 | 0 | 0 | 1000 | — | — | — | — | — | INSUFFICIENT_DATA |
+| 2008 | 7148 | 0 | 0 | 0 | 1000 | — | — | — | — | — | INSUFFICIENT_DATA |
+| 2009 | 7054 | 0 | 0 | 0 | 1000 | — | — | — | — | — | INSUFFICIENT_DATA |
+| 2010 | 6925 | 0 | 0 | 0 | 1000 | — | — | — | — | — | INSUFFICIENT_DATA |
+| 2011 | 7410 | 0 | 0 | 0 | 1000 | — | — | — | — | — | INSUFFICIENT_DATA |
+| 2012 | 10597 | 0 | 0 | 0 | 1000 | — | — | — | — | — | INSUFFICIENT_DATA |
+| 2013 | 11729 | 0 | 0 | 0 | 1000 | — | — | — | — | — | INSUFFICIENT_DATA |
+| 2014 | 11993 | 0 | 0 | 0 | 1000 | — | — | — | — | — | INSUFFICIENT_DATA |
+| 2015 | 12352 | 0 | 0 | 0 | 1000 | — | — | — | — | — | INSUFFICIENT_DATA |
+| 2016 | 12100 | 0 | 0 | 0 | 1000 | — | — | — | — | — | INSUFFICIENT_DATA |
+| 2017 | 12364 | 0 | 1 | 0 | 1000 | — | — | — | — | — | INSUFFICIENT_DATA |
+| 2018 | 12042 | 0 | 0 | 0 | 1000 | — | — | — | — | — | INSUFFICIENT_DATA |
+| 2019 | 12018 | 0 | 0 | 0 | 1000 | — | — | — | — | — | INSUFFICIENT_DATA |
+| 2020 | 9562 | 0 | 0 | 0 | 1000 | — | — | — | — | — | INSUFFICIENT_DATA |
+| 2021 | 13127 | 0 | 0 | 0 | 1000 | — | — | — | — | — | INSUFFICIENT_DATA |
+| 2022 | 12168 | 0 | 0 | 0 | 1000 | — | — | — | — | — | INSUFFICIENT_DATA |
+| 2023 | 12501 | 0 | 0 | 0 | 1000 | — | — | — | — | — | INSUFFICIENT_DATA |
+| 2024 | 11148 | 0 | 0 | 0 | 1000 | — | — | — | — | — | INSUFFICIENT_DATA |
+| 2025 | 7458 | 0 | 0 | 0 | 1000 | — | — | — | — | — | INSUFFICIENT_DATA |
+| 2026 | 4571 | 0 | 0 | 0 | 1000 | — | — | — | — | — | INCOMPLETE |

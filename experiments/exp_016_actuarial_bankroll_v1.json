@@ -1,0 +1,81 @@
+{
+  "experiment_id": "exp_016_actuarial_bankroll_v1",
+  "immutable": true,
+  "created_at": "2026-09-06T00:00:00.000Z",
+  "policy_version": "risk_policy_v1",
+  "model_version": "champion_market_devig_v1",
+  "feature_version": "feature_engine_v2_research",
+  "dataset_version": "real_truth_lab_v1_e0_2019_2024",
+  "evidence_version": "evidence_attribution_v1",
+  "as_of_policy": "RESEARCH",
+  "as_of_policy_note": "STRICT_AS_OF exact-precision would yield near-zero positions on this pack (dataset_open unknown clocks). RESEARCH still forbids future facts; unknown precision is labeled, never promoted to exact or MODEL_READY.",
+  "initial_bankroll_per_year": 1000,
+  "solar_years_requested": [2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025, 2026],
+  "dataset_years_available": [2019, 2020, 2021, 2022, 2023, 2024],
+  "insufficient_history_years": [2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018],
+  "incomplete_years": [2025, 2026],
+  "holdout_years": [2024],
+  "train_window": "all_history_before_event_asof",
+  "train_window_note": "No retrospective parameter search on 2001–today. Holdout 2024 is not used to tune policy_v1.",
+  "markets_admitted": ["result"],
+  "markets_blocked": ["total_goals", "team_goals", "both_teams_to_score", "asian_handicap", "corners", "cards", "player_goals", "player_shots", "ht_ft", "correct_score"],
+  "markets_blocked_reason": "Not MODEL_READY / insufficient temporally validated observations in current pack for bankroll lab V1.",
+  "selection_rules": {
+    "market": "result",
+    "selection": "highest_devig_probability_among_HDA",
+    "bookmaker_price": "best_available_at_asOf_among_non_aggregate",
+    "min_books": 1,
+    "require_evidence": true,
+    "require_assessment": true,
+    "no_position_if_ruin_risk_high": true
+  },
+  "quality_gates": {
+    "unknown_temporal_precision_allowed_for_diagnostic": true,
+    "model_ready_required": false,
+    "declared_edge": false,
+    "source_reliability": null
+  },
+  "risk_policies": [
+    "flat",
+    "fractional_kelly",
+    "risk_capped_kelly",
+    "actuarial_v1",
+    "masaniello_challenger"
+  ],
+  "primary_candidate": "risk_capped_kelly",
+  "actuarial_note": "Actuarial V1 applies uncertainty/correlation/drawdown penalties; may return NO_POSITION.",
+  "sizing": {
+    "flat_unit": 0.01,
+    "kelly_fractional_factor": 0.25,
+    "max_stake_fraction_event": 0.02,
+    "max_stake_fraction_market": 0.03,
+    "max_exposure_per_match": 0.05,
+    "max_correlated_exposure": 0.05,
+    "max_daily_exposure": 0.08,
+    "bankroll_floor_fraction": 0.05,
+    "drawdown_reduction_start": 0.15,
+    "drawdown_reduction_factor": 0.5,
+    "masaniello_target_hits_per_cycle": 3,
+    "masaniello_cycle_length": 10,
+    "masaniello_safety": 0.5
+  },
+  "correlation": {
+    "guard": "CorrelationExposureGuard_v1",
+    "max_cluster_fraction": 0.05
+  },
+  "missing_event_treatment": "SKIP",
+  "missing_odds_treatment": "NO_POSITION",
+  "unknown_temporal_treatment": "ALLOW_LABELED_RESEARCH_ONLY",
+  "year_open": "01-01T00:00:00.000Z",
+  "year_close": "12-31T23:59:59.999Z",
+  "monte_carlo": {
+    "enabled_as_diagnostic_only": true,
+    "n_paths": 500,
+    "seed": 16,
+    "forbidden_use": "Must not retune historical policy or improve historical PnL."
+  },
+  "auto_promotion": false,
+  "winner": null,
+  "real_money": false,
+  "notes": "TASK 016 — Blind Actuarial Bankroll Lab V1. Solar-year independent bankrolls. No retrospective Kelly/Masaniello optimization. Catalog ≠ observed ≠ MODEL_READY."
+}

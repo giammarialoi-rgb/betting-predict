@@ -1,0 +1,52 @@
+{
+  "title": "VIRTUAL BANKROLL 1000",
+  "initial": 1000,
+  "current_flat": 1000,
+  "profit_flat": 0,
+  "roi_flat": 0,
+  "max_drawdown_flat": 0,
+  "strategies": {
+    "FLAT": {
+      "strategy": "FLAT",
+      "bankroll": 1000,
+      "peak": 1000,
+      "max_drawdown": 0,
+      "bets": 0,
+      "wins": 0,
+      "losses": 0,
+      "pushes": 0,
+      "profit": 0
+    },
+    "PERCENT_BANKROLL": {
+      "strategy": "PERCENT_BANKROLL",
+      "bankroll": 1000,
+      "peak": 1000,
+      "max_drawdown": 0,
+      "bets": 0,
+      "wins": 0,
+      "losses": 0,
+      "pushes": 0,
+      "profit": 0
+    },
+    "KELLY_FRACTIONAL": {
+      "strategy": "KELLY_FRACTIONAL",
+      "bankroll": 1000,
+      "peak": 1000,
+      "max_drawdown": 0,
+      "bets": 0,
+      "wins": 0,
+      "losses": 0,
+      "pushes": 0,
+      "profit": 0
+    }
+  },
+  "capital": "VIRTUAL_ONLY",
+  "real_money": false,
+  "auto_promotion": false,
+  "qualification": "SIMULATION_ONLY_NOT_SCIENTIFICALLY_QUALIFIED",
+  "model_edge": "UNKNOWN",
+  "scientifically_qualified": false,
+  "open_entries": 0,
+  "settle_entries": 0,
+  "updated_at": "2026-09-08T18:41:07.509Z"
+}

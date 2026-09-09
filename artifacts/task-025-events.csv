@@ -1,0 +1,3 @@
+event_id,source,competition,date,home,away,kickoff,data_class,match_grade,capital_eligible
+M001,betfair-historic-basic-mirror,EPL,2017-04-30,Middlesbrough,Man City,2017-04-30T13:05:00.000Z,A_STRICT,MATCH_EXACT,true
+cfm|E0|2017-04-30|Middlesbrough|Man City,club-football-match-data,E0,2017-04-30,Middlesbrough,Man City,,C_RESEARCH_ONLY,MATCH_EXACT,false

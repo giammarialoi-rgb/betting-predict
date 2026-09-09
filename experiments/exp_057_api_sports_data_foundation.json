@@ -1,0 +1,23 @@
+{
+  "experiment_id": "exp_057_api_sports_data_foundation",
+  "immutable": true,
+  "created_at": "2026-09-08T00:00:00.000Z",
+  "task": "057",
+  "lab_a": "audit/external/task-039",
+  "lab_b": "audit/external/task-044",
+  "source": "API_SPORTS",
+  "base_url": "https://v3.football.api-sports.io",
+  "plan_verified": "Free",
+  "limit_day": 100,
+  "limit_minute": 10,
+  "winner": null,
+  "auto_promotion": false,
+  "real_money": false,
+  "open_task_058": false,
+  "modify_lab_a": false,
+  "modify_model_v2": false,
+  "new_supervisor": false,
+  "new_worker": false,
+  "virtual_bankroll_initial": 1000,
+  "notes": "API-Sports data foundation only. Capability discovery + normalize fixtures. No MODEL_v3. No decision engine changes. Budget-aware. No key logging."
+}

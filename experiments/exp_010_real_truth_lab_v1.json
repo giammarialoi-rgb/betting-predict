@@ -1,0 +1,9 @@
+{
+  "experiment_id": "exp_010_real_truth_lab_v1",
+  "dataset_version": "real_truth_lab_v1_e0_2019_2024",
+  "feature_policy_version": "feature_engine_v2_strict",
+  "model_version": "baselines_real_v1",
+  "as_of_policy": "STRICT_AS_OF",
+  "created_at": "2026-04-06T00:00:00.000Z",
+  "notes": "TASK 010 real offline football pack — measurement only, no staking"
+}

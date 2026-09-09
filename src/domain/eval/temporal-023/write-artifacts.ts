@@ -1,0 +1,276 @@
+import { mkdirSync, writeFileSync } from "node:fs";
+import { join } from "node:path";
+import type { Task023Report } from "@/domain/eval/temporal-023/lab";
+
+function csv(v: string | number | boolean | null): string {
+  const s = v == null ? "" : String(v);
+  return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+}
+
+export function writeTask023Artifacts(report: Task023Report): void {
+  const artifacts = join(process.cwd(), "artifacts");
+  const docs = join(process.cwd(), "docs");
+  mkdirSync(artifacts, { recursive: true });
+  mkdirSync(docs, { recursive: true });
+
+  writeFileSync(join(artifacts, "task-023-result.json"), JSON.stringify(report, null, 2));
+
+  writeFileSync(
+    join(docs, "task-023-results.md"),
+    [
+      "# TASK 023 — Temporal odds breakthrough",
+      "",
+      `**Verdict: ${report.verdict}**`,
+      "",
+      "Official Betfair Historic BASIC was probed without login and without purchase. The portal/API remain credential-gated. A GitHub **MIRROR** BASIC football sample (one EPL MATCH_ODDS market, 2017-04-30 Middlesbrough v Man City) was parsed for real `pt` / `marketTime` / PREMATCH proof. That is not an independent source and not a 100-event licensed dump.",
+      "",
+      "```",
+      report.scientific.data_available,
+      `STRICT events (mirror method demo): ${report.scientific.strict_events}`,
+      `Official STRICT events: ${report.scientific.official_strict_events}`,
+      `Timestamp observations: ${report.scientific.timestamp_observations}`,
+      "100-event acceptance: false",
+      "Bets: 0",
+      "winner = null",
+      "```",
+      "",
+      "| Source | Period | Events | Markets | Timestamp | STRICT | Cost | Status |",
+      "|---|---|---:|---:|---|---:|---|---|",
+      ...report.sources_table.map(
+        (r) =>
+          `| ${r.source} | ${r.period} | ${r.events} | ${r.markets} | ${r.timestamp} | ${r.strict} | ${r.cost} | ${r.status} |`,
+      ),
+      "",
+      "## Access (not purchased, no user credentials)",
+      "",
+      "- BASIC: **£0**, still requires a Betfair account to “purchase” the free basket.",
+      "- Advanced Soccer: **£69/month** or **£699/year**.",
+      "- Pro Soccer: **£230/month** or **£2,299/year**.",
+      "- BASIC is last-traded ~1 minute, no volume, no ladder. Measured on the real sample: `batb=atb=atl=0`.",
+      "- BASIC **is** sufficient for the TIMESTAMP → AS_OF → LOCK clock test. It is **not** sufficient for depth/liquidity features.",
+      "",
+      "## Acquisition probes",
+      "",
+      ...report.probes.map(
+        (p) =>
+          `- ${p.channel} [${p.source_class}]: acquired=${p.acquired} status=${p.http_status ?? "n/a"} ${p.note}`,
+      ),
+      "",
+      `Fixture sha256: ${report.fixture.sha256} (expected ${report.fixture.sha256_expected})`,
+      "",
+      report.full_sample.acquired
+        ? `Full football BASIC sample sha256: ${report.full_sample.sha256} (expected ${report.full_sample.sha256_expected}); lines=${report.full_sample.lines}; markets=${report.full_sample.markets}; LTP=${report.full_sample.ltp_ticks}`
+        : "Full football BASIC sample not on disk this run (fixture only).",
+      "",
+      "## MATCH_ODDS (fixture)",
+      "",
+      `- marketId ${report.match_odds.marketId} eventId ${report.match_odds.eventId} ${report.match_odds.eventName}`,
+      `- kickoff ${report.match_odds.kickoff} (ISO Z; MD timezone field ${report.match_odds.timezone_field ?? "null"} — not used to invent a clock)`,
+      `- PREMATCH LTP ${report.match_odds.prematch} INPLAY ${report.match_odds.inplay} POSTMATCH ${report.match_odds.postmatch} UNKNOWN ${report.match_odds.unknown}`,
+      `- first observation ${report.first_available.first_observation_timestamp}`,
+      `- last prematch ${report.first_available.last_prematch_timestamp}`,
+      `- prematch observation count (unique pt) ${report.first_available.prematch_observation_count}`,
+      `- interval sec median=${report.first_available.median_observation_interval} p95=${report.first_available.p95_observation_interval} min=${report.first_available.minimum_observation_interval} max=${report.first_available.maximum_observation_interval}`,
+      "",
+      "## Cost",
+      "",
+      "| Events | BASIC GBP | Advanced soccer GBP | Pro soccer GBP | COST_PER_EVENT BASIC |",
+      "|---:|---:|---:|---:|---:|",
+      ...report.cost.map(
+        (c) =>
+          `| ${c.events} | ${c.basic_gbp} | ${c.advanced_soccer_gbp} | ${c.pro_soccer_gbp} | ${c.cost_per_event_basic} |`,
+      ),
+      "",
+      `- COST_PER_1K_EVENTS BASIC = 0 (login still required; not acquired)`,
+      `- COST_PER_10K_EVENTS BASIC = 0`,
+      `- EXPECTED_INFORMATION_GAIN: ${report.expected_information_gain.vs_date_only}`,
+      `- Purchased this run: **false**`,
+      "",
+      "## Data quality",
+      "",
+      `- source: ${report.quality.source}`,
+      `- events ${report.quality.events}; markets ${report.quality.markets}; timestamps ${report.quality.timestamps}`,
+      `- prematch ${report.quality.prematch_timestamps}; inplay ${report.quality.inplay_timestamps}; postmatch ${report.quality.postmatch_timestamps}`,
+      `- exact ${report.quality.exact_timestamp}; unknown ${report.quality.unknown_timestamp}`,
+      `- median interval ${report.quality.median_interval}`,
+      `- STRICT events ${report.quality.strict_events}`,
+      `- license: ${report.quality.license}`,
+      `- cost: ${report.quality.cost}`,
+      `- quality: ${report.quality.data_quality}`,
+      "",
+      "## SCIENTIFIC VERDICT",
+      "",
+      `- DATA AVAILABLE: ${report.scientific.data_available}`,
+      `- STRICT EVENTS: ${report.scientific.strict_events}`,
+      `- OFFICIAL STRICT EVENTS: ${report.scientific.official_strict_events}`,
+      `- MODEL_READY MARKETS: none`,
+      `- YEARS TESTABLE: none`,
+      `- YEARS INSUFFICIENT: ${report.scientific.years_insufficient.join(", ")}`,
+      `- TOTAL BLIND DECISIONS: ${report.scientific.total_blind_decisions}`,
+      `- TOTAL BETS: 0`,
+      `- BEST MODEL: null`,
+      `- BEST RISK POLICY: null`,
+      `- STATISTICAL SIGNIFICANCE: ${report.scientific.statistical_significance}`,
+      `- HOLDOUT STATUS: SACRED`,
+      `- AUTO-PROMOTION: FALSE`,
+      `- REAL MONEY: FALSE`,
+      `- ${report.verdict}`,
+      "",
+    ].join("\n"),
+  );
+
+  writeFileSync(
+    join(docs, "task-023-temporal-coverage.md"),
+    [
+      "# TASK 023 — Temporal coverage (MATCH_ODDS HOME/DRAW/AWAY)",
+      "",
+      "Coverage = fraction of the three MATCH_ODDS selections that have a **PREMATCH** last-traded tick with `publishTime ≤ asOf`. No interpolation. No future tick. `asOf = kickoff − requested`.",
+      "",
+      `Event: ${report.match_odds.eventName} kickoff ${report.match_odds.kickoff}`,
+      "",
+      "| Window | Requested | Available | Coverage |",
+      "|---|---:|---:|---:|",
+      ...report.coverage.map(
+        (c) => `| ${c.window} | ${c.requested} | ${c.available} | ${c.coverage.toFixed(3)} |`,
+      ),
+      "",
+      "## HOME last observation vs requested (no interpolation)",
+      "",
+      "| Window | Requested sec | Exists | Actual timestamp | Seconds before kickoff | Delta sec | Price | Depth |",
+      "|---|---:|---|---|---:|---:|---|---:|",
+      ...report.windows.map(
+        (w) =>
+          `| ${w.window} | ${w.requestedSec} | ${w.snapshot_exists} | ${w.actual_timestamp ?? "—"} | ${w.seconds_before_kickoff ?? "—"} | ${w.delta_sec ?? "—"} | ${w.price_available} | ${w.market_depth ?? "—"} |`,
+      ),
+      "",
+      "Delta = actual_seconds_before_kickoff − requested. Positive means the last usable tick is *earlier* than the window (stale but temporally legal). BASIC has no ladder: depth is —.",
+      "",
+    ].join("\n"),
+  );
+
+  writeFileSync(
+    join(docs, "task-023-blind-results.md"),
+    [
+      "# TASK 023 — Blind LOCK / CLV / capital",
+      "",
+      `**Verdict: ${report.verdict}**`,
+      "",
+      "Pipeline: EVENT → AS_OF (T-1h) → LOAD PREMATCH SNAPSHOT (`timestamp ≤ asOf`) → FEATURES → MARKET DE-VIG → MODEL_0 → EVIDENCE → RISK → LOCK → OUTCOME REVEAL → SETTLEMENT / CLV.",
+      "",
+      "Before LOCK the decision payload has no FT, HT, settlement, WINNER, closing price, in-play ticks, or future snapshots.",
+      "",
+      "```",
+      `event ${report.blind.eventName}`,
+      `asOf ${report.blind.asOf}`,
+      `decision ${report.blind.decision} (${report.blind.reason})`,
+      `stake ${report.blind.stake}`,
+      `locked ${report.blind.locked} revealed ${report.blind.revealed}`,
+      `settlement winner (post-LOCK) ${report.blind.settlement_winner}`,
+      `CLV HOME implied_delta ${report.blind.clv.implied_delta} entry ${report.blind.clv.entry_price} close ${report.blind.clv.closing_price} used_in_decision=${report.blind.clv.used_in_decision}`,
+      "```",
+      "",
+      "## Hostile leakage A–H",
+      "",
+      "| Attack | HARD FAIL |",
+      "|---|---|",
+      ...report.leakage.map((l) => `| ${l.id} | ${l.throws ? "yes" : "NO — TEST BROKEN"} |`),
+      "",
+      "## Evidence (TASK 015)",
+      "",
+      report.blind.assessment,
+      "",
+      "## Information set at asOf",
+      "",
+      "| Key | Available | availableAt | precision |",
+      "|---|---|---|---|",
+      ...report.blind.information.map(
+        (s) => `| ${s.key} | ${s.available} | ${s.availableAt ?? "—"} | ${s.temporalPrecision} |`,
+      ),
+      "",
+      "## Models (diagnostic only; winner = null)",
+      "",
+      "| Model | n | Brier | LogLoss | CLV | ROI | Significant | Capital |",
+      "|---|---:|---:|---:|---:|---:|---|---|",
+      ...report.models.map(
+        (m) =>
+          `| ${m.model} | ${m.n} | ${m.brier ?? "—"} | ${m.logloss ?? "—"} | ${m.clv ?? "—"} | ${m.roi_diagnostic ?? "—"} | false | false |`,
+      ),
+      "",
+      "ROI is not an edge. n=1 cannot calibrate. Models 1–6 are INSUFFICIENT without Elo/form/goals in this file.",
+      "",
+      "## Annual capital (start 1000 / solar year, no carry)",
+      "",
+      "| YEAR | EVENTS | STRICT EVENTS | DECISIONS | BETS | NO BET | START | END | P/L | ROI | MAX DD | TOTAL EXPOSURE | CLV | Brier | LogLoss | POLICY | STATUS |",
+      "|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|---|",
+      ...report.annual.map(
+        (a) =>
+          `| ${a.year} | ${a.events} | ${a.strict_events} | ${a.decisions} | ${a.bets} | ${a.no_bet} | ${a.start} | ${a.end ?? "—"} | ${a.pnl ?? "—"} | ${a.roi ?? "—"} | ${a.max_dd ?? "—"} | ${a.total_exposure ?? "—"} | ${a.clv ?? "—"} | ${a.brier ?? "—"} | ${a.logloss ?? "—"} | ${a.policy} | ${a.status} |`,
+      ),
+      "",
+      "If insufficient: END = **—**, never silent 1000 → 1000. Risk compared (all unused): Flat, Fractional Kelly, Risk-Capped Kelly, Actuarial V1. Masaniello = challenger. **winner = null**.",
+      "",
+      "## Walk-forward",
+      "",
+      `- TRAIN ${report.walk_forward.train.join(", ") || "—"}`,
+      `- VALIDATION ${report.walk_forward.validation.join(", ") || "—"}`,
+      `- TEST ${report.walk_forward.test.join(", ") || "—"}`,
+      `- HOLDOUT ${report.walk_forward.holdout.join(", ")} (sacred, unused for selection)`,
+      "",
+      "## Statistical control",
+      "",
+      `- sample size for capital: 1 event (insufficient)`,
+      `- Bonferroni α ${report.multiple_testing.alpha} / ${report.multiple_testing.tests} tests = ${report.multiple_testing.bonferroni}`,
+      `- any_significant: false`,
+      `- no edge claim`,
+      "",
+    ].join("\n"),
+  );
+
+  writeFileSync(
+    join(artifacts, "task-023-annual-results.csv"),
+    [
+      [
+        "year",
+        "events",
+        "strict_events",
+        "decisions",
+        "bets",
+        "no_bet",
+        "start",
+        "end",
+        "pnl",
+        "roi",
+        "max_dd",
+        "total_exposure",
+        "clv",
+        "brier",
+        "logloss",
+        "policy",
+        "status",
+      ].join(","),
+      ...report.annual.map((a) =>
+        [
+          a.year,
+          a.events,
+          a.strict_events,
+          a.decisions,
+          a.bets,
+          a.no_bet,
+          a.start,
+          a.end ?? "",
+          a.pnl ?? "",
+          a.roi ?? "",
+          a.max_dd ?? "",
+          a.total_exposure ?? "",
+          a.clv ?? "",
+          a.brier ?? "",
+          a.logloss ?? "",
+          a.policy,
+          a.status,
+        ]
+          .map(csv)
+          .join(","),
+      ),
+    ].join("\n") + "\n",
+  );
+}

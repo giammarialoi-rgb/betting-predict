@@ -1,0 +1,1319 @@
+{
+  "dataset_version": "main@shallow",
+  "commit_sha": "25882a58a736daf7ece3781940eac17ae1117a66",
+  "retrieved_at": "2026-09-06T19:35:29.554Z",
+  "repository_url": "https://github.com/xgabora/Club-Football-Match-Data.git",
+  "branch": "main",
+  "license_repo": "MIT",
+  "declared_sources": [
+    "football-data.co.uk",
+    "clubelo.com"
+  ],
+  "files": [
+    {
+      "filename": "Matches.csv",
+      "format": "csv",
+      "size_bytes": 45608878,
+      "encoding": "utf8",
+      "delimiter": ",",
+      "header": [
+        "Division",
+        "MatchDate",
+        "MatchTime",
+        "HomeTeam",
+        "AwayTeam",
+        "HomeElo",
+        "AwayElo",
+        "Form3Home",
+        "Form5Home",
+        "Form3Away",
+        "Form5Away",
+        "FTHome",
+        "FTAway",
+        "FTResult",
+        "HTHome",
+        "HTAway",
+        "HTResult",
+        "HomeShots",
+        "AwayShots",
+        "HomeTarget",
+        "AwayTarget",
+        "HomeFouls",
+        "AwayFouls",
+        "HomeCorners",
+        "AwayCorners",
+        "HomeYellow",
+        "AwayYellow",
+        "HomeRed",
+        "AwayRed",
+        "OddHome",
+        "OddDraw",
+        "OddAway",
+        "MaxHome",
+        "MaxDraw",
+        "MaxAway",
+        "Over25",
+        "Under25",
+        "MaxOver25",
+        "MaxUnder25",
+        "HandiSize",
+        "HandiHome",
+        "HandiAway",
+        "C_LTH",
+        "C_LTA",
+        "C_VHD",
+        "C_VAD",
+        "C_HTB",
+        "C_PHB"
+      ],
+      "row_count": 238858,
+      "column_count": 48,
+      "columns": [
+        {
+          "column_name": "Division",
+          "type": "string",
+          "non_null_count": 238858,
+          "null_count": 0,
+          "null_percentage": 0,
+          "unique_count": 38,
+          "min": "ARG",
+          "max": "USA",
+          "sample_values": [
+            "F1",
+            "F2",
+            "T1",
+            "D1",
+            "D2"
+          ]
+        },
+        {
+          "column_name": "MatchDate",
+          "type": "date",
+          "non_null_count": 238858,
+          "null_count": 0,
+          "null_percentage": 0,
+          "unique_count": 7697,
+          "min": "2000-07-28",
+          "max": "2026-09-03",
+          "sample_values": [
+            "2000-07-28",
+            "2000-07-29",
+            "2000-08-03",
+            "2000-08-04",
+            "2000-08-05"
+          ]
+        },
+        {
+          "column_name": "MatchTime",
+          "type": "time",
+          "non_null_count": 107373,
+          "null_count": 131485,
+          "null_percentage": 55.047,
+          "unique_count": 201,
+          "min": "00:00:00",
+          "max": "23:50:00",
+          "sample_values": [
+            "03:00:00",
+            "04:00:00",
+            "13:00:00",
+            "16:30:00",
+            "17:00:00"
+          ]
+        },
+        {
+          "column_name": "HomeTeam",
+          "type": "string",
+          "non_null_count": 238858,
+          "null_count": 0,
+          "null_percentage": 0,
+          "unique_count": 1219,
+          "min": "A. Klagenfurt",
+          "max": "Zwolle",
+          "sample_values": [
+            "Marseille",
+            "Paris SG",
+            "Wasquehal",
+            "Auxerre",
+            "Bordeaux"
+          ]
+        },
+        {
+          "column_name": "AwayTeam",
+          "type": "string",
+          "non_null_count": 238858,
+          "null_count": 0,
+          "null_percentage": 0,
+          "unique_count": 1221,
+          "min": "A. Klagenfurt",
+          "max": "Zwolle",
+          "sample_values": [
+            "Troyes",
+            "Strasbourg",
+            "Nancy",
+            "Sedan",
+            "Metz"
+          ]
+        },
+        {
+          "column_name": "HomeElo",
+          "type": "number",
+          "non_null_count": 149898,
+          "null_count": 88960,
+          "null_percentage": 37.244,
+          "unique_count": 50000,
+          "min": 1103.13,
+          "max": 2107.48,
+          "sample_values": [
+            "1686.34",
+            "1714.89",
+            "1465.08",
+            "1635.58",
+            "1734.34"
+          ]
+        },
+        {
+          "column_name": "AwayElo",
+          "type": "number",
+          "non_null_count": 149829,
+          "null_count": 89029,
+          "null_percentage": 37.273,
+          "unique_count": 50000,
+          "min": 1103.13,
+          "max": 2107.48,
+          "sample_values": [
+            "1586.57",
+            "1642.51",
+            "1633.8",
+            "1624.22",
+            "1673.11"
+          ]
+        },
+        {
+          "column_name": "Form3Home",
+          "type": "number",
+          "non_null_count": 237334,
+          "null_count": 1524,
+          "null_percentage": 0.638,
+          "unique_count": 9,
+          "min": 0,
+          "max": 9,
+          "sample_values": [
+            "0.0",
+            "9.0",
+            "3.0",
+            "5.0",
+            "2.0"
+          ]
+        },
+        {
+          "column_name": "Form5Home",
+          "type": "number",
+          "non_null_count": 237323,
+          "null_count": 1535,
+          "null_percentage": 0.643,
+          "unique_count": 15,
+          "min": 0,
+          "max": 15,
+          "sample_values": [
+            "0.0",
+            "15.0",
+            "5.0",
+            "8.0",
+            "3.0"
+          ]
+        },
+        {
+          "column_name": "Form3Away",
+          "type": "number",
+          "non_null_count": 237335,
+          "null_count": 1523,
+          "null_percentage": 0.638,
+          "unique_count": 9,
+          "min": 0,
+          "max": 9,
+          "sample_values": [
+            "0.0",
+            "3.0",
+            "9.0",
+            "2.0",
+            "5.0"
+          ]
+        },
+        {
+          "column_name": "Form5Away",
+          "type": "number",
+          "non_null_count": 237324,
+          "null_count": 1534,
+          "null_percentage": 0.642,
+          "unique_count": 15,
+          "min": 0,
+          "max": 15,
+          "sample_values": [
+            "0.0",
+            "5.0",
+            "15.0",
+            "3.0",
+            "8.0"
+          ]
+        },
+        {
+          "column_name": "FTHome",
+          "type": "number",
+          "non_null_count": 238854,
+          "null_count": 4,
+          "null_percentage": 0.002,
+          "unique_count": 11,
+          "min": 0,
+          "max": 10,
+          "sample_values": [
+            "3.0",
+            "0.0",
+            "1.0",
+            "2.0",
+            "6.0"
+          ]
+        },
+        {
+          "column_name": "FTAway",
+          "type": "number",
+          "non_null_count": 238854,
+          "null_count": 4,
+          "null_percentage": 0.002,
+          "unique_count": 11,
+          "min": 0,
+          "max": 13,
+          "sample_values": [
+            "1.0",
+            "2.0",
+            "0.0",
+            "3.0",
+            "5.0"
+          ]
+        },
+        {
+          "column_name": "FTResult",
+          "type": "string",
+          "non_null_count": 238854,
+          "null_count": 4,
+          "null_percentage": 0.002,
+          "unique_count": 3,
+          "min": "A",
+          "max": "H",
+          "sample_values": [
+            "H",
+            "A",
+            "D"
+          ]
+        },
+        {
+          "column_name": "HTHome",
+          "type": "number",
+          "non_null_count": 184278,
+          "null_count": 54580,
+          "null_percentage": 22.85,
+          "unique_count": 8,
+          "min": 0,
+          "max": 7,
+          "sample_values": [
+            "2.0",
+            "1.0",
+            "0.0",
+            "3.0",
+            "4.0"
+          ]
+        },
+        {
+          "column_name": "HTAway",
+          "type": "number",
+          "non_null_count": 184278,
+          "null_count": 54580,
+          "null_percentage": 22.85,
+          "unique_count": 8,
+          "min": 0,
+          "max": 7,
+          "sample_values": [
+            "1.0",
+            "0.0",
+            "2.0",
+            "4.0",
+            "3.0"
+          ]
+        },
+        {
+          "column_name": "HTResult",
+          "type": "string",
+          "non_null_count": 184278,
+          "null_count": 54580,
+          "null_percentage": 22.85,
+          "unique_count": 3,
+          "min": "A",
+          "max": "H",
+          "sample_values": [
+            "H",
+            "D",
+            "A"
+          ]
+        },
+        {
+          "column_name": "HomeShots",
+          "type": "number",
+          "non_null_count": 122483,
+          "null_count": 116375,
+          "null_percentage": 48.721,
+          "unique_count": 46,
+          "min": 0,
+          "max": 46,
+          "sample_values": [
+            "17.0",
+            "14.0",
+            "15.0",
+            "18.0",
+            "11.0"
+          ]
+        },
+        {
+          "column_name": "AwayShots",
+          "type": "number",
+          "non_null_count": 122486,
+          "null_count": 116372,
+          "null_percentage": 48.72,
+          "unique_count": 40,
+          "min": 0,
+          "max": 45,
+          "sample_values": [
+            "5.0",
+            "11.0",
+            "18.0",
+            "9.0",
+            "3.0"
+          ]
+        },
+        {
+          "column_name": "HomeTarget",
+          "type": "number",
+          "non_null_count": 121677,
+          "null_count": 117181,
+          "null_percentage": 49.059,
+          "unique_count": 27,
+          "min": 0,
+          "max": 31,
+          "sample_values": [
+            "7.0",
+            "6.0",
+            "5.0",
+            "2.0",
+            "4.0"
+          ]
+        },
+        {
+          "column_name": "AwayTarget",
+          "type": "number",
+          "non_null_count": 121680,
+          "null_count": 117178,
+          "null_percentage": 49.058,
+          "unique_count": 23,
+          "min": 0,
+          "max": 23,
+          "sample_values": [
+            "2.0",
+            "5.0",
+            "7.0",
+            "3.0",
+            "8.0"
+          ]
+        },
+        {
+          "column_name": "HomeFouls",
+          "type": "number",
+          "non_null_count": 121721,
+          "null_count": 117137,
+          "null_percentage": 49.04,
+          "unique_count": 42,
+          "min": 0,
+          "max": 145,
+          "sample_values": [
+            "25.0",
+            "13.0",
+            "22.0",
+            "0.0",
+            "9.0"
+          ]
+        },
+        {
+          "column_name": "AwayFouls",
+          "type": "number",
+          "non_null_count": 121721,
+          "null_count": 117137,
+          "null_percentage": 49.04,
+          "unique_count": 41,
+          "min": 0,
+          "max": 77,
+          "sample_values": [
+            "19.0",
+            "12.0",
+            "17.0",
+            "0.0",
+            "8.0"
+          ]
+        },
+        {
+          "column_name": "HomeCorners",
+          "type": "number",
+          "non_null_count": 122111,
+          "null_count": 116747,
+          "null_percentage": 48.877,
+          "unique_count": 26,
+          "min": 0,
+          "max": 26,
+          "sample_values": [
+            "7.0",
+            "4.0",
+            "5.0",
+            "6.0",
+            "3.0"
+          ]
+        },
+        {
+          "column_name": "AwayCorners",
+          "type": "number",
+          "non_null_count": 122111,
+          "null_count": 116747,
+          "null_percentage": 48.877,
+          "unique_count": 23,
+          "min": 0,
+          "max": 23,
+          "sample_values": [
+            "3.0",
+            "9.0",
+            "7.0",
+            "5.0",
+            "4.0"
+          ]
+        },
+        {
+          "column_name": "HomeYellow",
+          "type": "number",
+          "non_null_count": 127598,
+          "null_count": 111260,
+          "null_percentage": 46.58,
+          "unique_count": 12,
+          "min": 0,
+          "max": 11,
+          "sample_values": [
+            "1.0",
+            "2.0",
+            "0.0",
+            "3.0",
+            "4.0"
+          ]
+        },
+        {
+          "column_name": "AwayYellow",
+          "type": "number",
+          "non_null_count": 127599,
+          "null_count": 111259,
+          "null_percentage": 46.58,
+          "unique_count": 11,
+          "min": 0,
+          "max": 10,
+          "sample_values": [
+            "5.0",
+            "1.0",
+            "0.0",
+            "2.0",
+            "3.0"
+          ]
+        },
+        {
+          "column_name": "HomeRed",
+          "type": "number",
+          "non_null_count": 127599,
+          "null_count": 111259,
+          "null_percentage": 46.58,
+          "unique_count": 4,
+          "min": 0,
+          "max": 3,
+          "sample_values": [
+            "0.0",
+            "1.0",
+            "2.0",
+            "3.0"
+          ]
+        },
+        {
+          "column_name": "AwayRed",
+          "type": "number",
+          "non_null_count": 127597,
+          "null_count": 111261,
+          "null_percentage": 46.58,
+          "unique_count": 6,
+          "min": 0,
+          "max": 9,
+          "sample_values": [
+            "0.0",
+            "1.0",
+            "2.0",
+            "3.0",
+            "4.0"
+          ]
+        },
+        {
+          "column_name": "OddHome",
+          "type": "number",
+          "non_null_count": 235816,
+          "null_count": 3042,
+          "null_percentage": 1.274,
+          "unique_count": 1267,
+          "min": 0,
+          "max": 53.18,
+          "sample_values": [
+            "1.65",
+            "1.6",
+            "1.7",
+            "2.25",
+            "2.75"
+          ]
+        },
+        {
+          "column_name": "OddDraw",
+          "type": "number",
+          "non_null_count": 235816,
+          "null_count": 3042,
+          "null_percentage": 1.274,
+          "unique_count": 955,
+          "min": 1.29,
+          "max": 22.55,
+          "sample_values": [
+            "3.3",
+            "3.4",
+            "3.0",
+            "3.1",
+            "4.0"
+          ]
+        },
+        {
+          "column_name": "OddAway",
+          "type": "number",
+          "non_null_count": 235816,
+          "null_count": 3042,
+          "null_percentage": 1.274,
+          "unique_count": 2012,
+          "min": 1.01,
+          "max": 71.71,
+          "sample_values": [
+            "4.3",
+            "4.6",
+            "3.9",
+            "2.75",
+            "2.25"
+          ]
+        },
+        {
+          "column_name": "MaxHome",
+          "type": "number",
+          "non_null_count": 211211,
+          "null_count": 27647,
+          "null_percentage": 11.575,
+          "unique_count": 1199,
+          "min": 1.02,
+          "max": 126,
+          "sample_values": [
+            "1.6",
+            "2.2",
+            "2.1",
+            "2.6",
+            "2.05"
+          ]
+        },
+        {
+          "column_name": "MaxDraw",
+          "type": "number",
+          "non_null_count": 211211,
+          "null_count": 27647,
+          "null_percentage": 11.575,
+          "unique_count": 1041,
+          "min": 1.2,
+          "max": 47,
+          "sample_values": [
+            "3.85",
+            "2.85",
+            "3.1",
+            "2.9",
+            "3.2"
+          ]
+        },
+        {
+          "column_name": "MaxAway",
+          "type": "number",
+          "non_null_count": 211211,
+          "null_count": 27647,
+          "null_percentage": 11.575,
+          "unique_count": 1939,
+          "min": 0,
+          "max": 301,
+          "sample_values": [
+            "9.0",
+            "4.3",
+            "4.65",
+            "3.1",
+            "4.4"
+          ]
+        },
+        {
+          "column_name": "Over25",
+          "type": "number",
+          "non_null_count": 156687,
+          "null_count": 82171,
+          "null_percentage": 34.402,
+          "unique_count": 232,
+          "min": 1.09,
+          "max": 3.95,
+          "sample_values": [
+            "2.11",
+            "2.26",
+            "2.29",
+            "2.3",
+            "2.36"
+          ]
+        },
+        {
+          "column_name": "Under25",
+          "type": "number",
+          "non_null_count": 156686,
+          "null_count": 82172,
+          "null_percentage": 34.402,
+          "unique_count": 392,
+          "min": 1.2,
+          "max": 6.75,
+          "sample_values": [
+            "1.62",
+            "1.5",
+            "1.48",
+            "1.45",
+            "1.49"
+          ]
+        },
+        {
+          "column_name": "MaxOver25",
+          "type": "number",
+          "non_null_count": 156687,
+          "null_count": 82171,
+          "null_percentage": 34.402,
+          "unique_count": 240,
+          "min": 1.11,
+          "max": 172,
+          "sample_values": [
+            "2.25",
+            "2.35",
+            "2.45",
+            "2.15",
+            "2.3"
+          ]
+        },
+        {
+          "column_name": "MaxUnder25",
+          "type": "number",
+          "non_null_count": 156686,
+          "null_count": 82172,
+          "null_percentage": 34.402,
+          "unique_count": 337,
+          "min": 1.26,
+          "max": 238,
+          "sample_values": [
+            "1.75",
+            "1.7",
+            "1.55",
+            "1.6",
+            "1.45"
+          ]
+        },
+        {
+          "column_name": "HandiSize",
+          "type": "number",
+          "non_null_count": 165012,
+          "null_count": 73846,
+          "null_percentage": 30.916,
+          "unique_count": 47,
+          "min": -99.9,
+          "max": 12.5,
+          "sample_values": [
+            "0.3",
+            "-0.8",
+            "-2.0",
+            "-0.5",
+            "-0.3"
+          ]
+        },
+        {
+          "column_name": "HandiHome",
+          "type": "number",
+          "non_null_count": 164751,
+          "null_count": 74107,
+          "null_percentage": 31.026,
+          "unique_count": 434,
+          "min": 0,
+          "max": 177,
+          "sample_values": [
+            "1.85",
+            "1.9",
+            "2.0",
+            "1.75",
+            "1.8"
+          ]
+        },
+        {
+          "column_name": "HandiAway",
+          "type": "number",
+          "non_null_count": 164727,
+          "null_count": 74131,
+          "null_percentage": 31.036,
+          "unique_count": 646,
+          "min": -0.5,
+          "max": 15.14,
+          "sample_values": [
+            "1.95",
+            "1.7",
+            "1.8",
+            "2.1",
+            "2.0"
+          ]
+        },
+        {
+          "column_name": "C_LTH",
+          "type": "number",
+          "non_null_count": 112602,
+          "null_count": 126256,
+          "null_percentage": 52.858,
+          "unique_count": 9109,
+          "min": 0.0097,
+          "max": 0.9437,
+          "sample_values": [
+            "0.1345",
+            "0.0734",
+            "0.0441",
+            "0.091",
+            "0.0146"
+          ]
+        },
+        {
+          "column_name": "C_LTA",
+          "type": "number",
+          "non_null_count": 112602,
+          "null_count": 126256,
+          "null_percentage": 52.858,
+          "unique_count": 9122,
+          "min": 0.0097,
+          "max": 0.9449,
+          "sample_values": [
+            "0.1059",
+            "0.0188",
+            "0.4549",
+            "0.7583",
+            "0.433"
+          ]
+        },
+        {
+          "column_name": "C_VHD",
+          "type": "number",
+          "non_null_count": 112602,
+          "null_count": 126256,
+          "null_percentage": 52.858,
+          "unique_count": 8939,
+          "min": 0.0098,
+          "max": 0.9512,
+          "sample_values": [
+            "0.5177",
+            "0.0156",
+            "0.1732",
+            "0.0875",
+            "0.0701"
+          ]
+        },
+        {
+          "column_name": "C_VAD",
+          "type": "number",
+          "non_null_count": 112602,
+          "null_count": 126256,
+          "null_percentage": 52.858,
+          "unique_count": 8693,
+          "min": 0.0097,
+          "max": 0.9511,
+          "sample_values": [
+            "0.01",
+            "0.0646",
+            "0.0624",
+            "0.0146",
+            "0.0104"
+          ]
+        },
+        {
+          "column_name": "C_HTB",
+          "type": "number",
+          "non_null_count": 112602,
+          "null_count": 126256,
+          "null_percentage": 52.858,
+          "unique_count": 8826,
+          "min": 0.0098,
+          "max": 0.9465,
+          "sample_values": [
+            "0.1689",
+            "0.2805",
+            "0.2555",
+            "0.0324",
+            "0.052"
+          ]
+        },
+        {
+          "column_name": "C_PHB",
+          "type": "number",
+          "non_null_count": 112602,
+          "null_count": 126256,
+          "null_percentage": 52.858,
+          "unique_count": 8658,
+          "min": 0.0097,
+          "max": 0.9415,
+          "sample_values": [
+            "0.0631",
+            "0.547",
+            "0.01",
+            "0.0163",
+            "0.4199"
+          ]
+        }
+      ]
+    },
+    {
+      "filename": "EloRatings.csv",
+      "format": "csv",
+      "size_bytes": 11331209,
+      "encoding": "utf8",
+      "delimiter": ",",
+      "header": [
+        "date",
+        "club",
+        "country",
+        "elo"
+      ],
+      "row_count": 273972,
+      "column_count": 4,
+      "columns": [
+        {
+          "column_name": "date",
+          "type": "date",
+          "non_null_count": 273972,
+          "null_count": 0,
+          "null_percentage": 0,
+          "unique_count": 629,
+          "min": "2000-07-01",
+          "max": "2026-09-01",
+          "sample_values": [
+            "2000-07-01",
+            "2000-07-15",
+            "2000-08-01",
+            "2000-08-15",
+            "2000-09-01"
+          ]
+        },
+        {
+          "column_name": "club",
+          "type": "string",
+          "non_null_count": 273972,
+          "null_count": 0,
+          "null_percentage": 0,
+          "unique_count": 984,
+          "min": "A. Sebatspor",
+          "max": "Zwolle",
+          "sample_values": [
+            "Aachen",
+            "Aalborg",
+            "Aalst",
+            "Aarhus",
+            "Aberdeen"
+          ]
+        },
+        {
+          "column_name": "country",
+          "type": "string",
+          "non_null_count": 273972,
+          "null_count": 0,
+          "null_percentage": 0,
+          "unique_count": 19,
+          "min": "AUT",
+          "max": "TUR",
+          "sample_values": [
+            "GER",
+            "DEN",
+            "BEL",
+            "SCO",
+            "TUR"
+          ]
+        },
+        {
+          "column_name": "elo",
+          "type": "number",
+          "non_null_count": 273972,
+          "null_count": 0,
+          "null_percentage": 0,
+          "unique_count": 50000,
+          "min": 1069.68,
+          "max": 2107.48,
+          "sample_values": [
+            "1453.60",
+            "1482.61",
+            "1337.53",
+            "1381.46",
+            "1360.43"
+          ]
+        }
+      ]
+    }
+  ],
+  "matches_forensics": {
+    "rows": 238858,
+    "dateMin": "2000-07-28",
+    "dateMax": "2026-09-03",
+    "divisions": {
+      "E1": 14206,
+      "E2": 13819,
+      "E3": 13377,
+      "SP2": 10992,
+      "I2": 10321,
+      "E0": 9810,
+      "SP1": 9419,
+      "I1": 9412,
+      "F1": 9081,
+      "F2": 9019,
+      "D1": 7837,
+      "T1": 7791,
+      "EC": 7746,
+      "N1": 7627,
+      "D2": 7494,
+      "P1": 6965,
+      "B1": 6906,
+      "SC0": 5377,
+      "ARG": 5330,
+      "USA": 5233,
+      "BRA": 4850,
+      "G1": 4377,
+      "SC2": 4296,
+      "SC1": 4294,
+      "SC3": 4215,
+      "JAP": 4089,
+      "MEX": 4080,
+      "ROM": 3640,
+      "POL": 3567,
+      "SWE": 3110,
+      "NOR": 3092,
+      "RUS": 3008,
+      "DEN": 2634,
+      "CHN": 2544,
+      "IRL": 2367,
+      "FIN": 2354,
+      "AUT": 2306,
+      "SUI": 2273
+    },
+    "division_count": 38,
+    "team_count": 1222,
+    "seasonsBuckets": {
+      "2000-2005": 24797,
+      "2005-2010": 34086,
+      "2010-2015": 48654,
+      "2015-2020": 60876,
+      "2020-2025": 58506,
+      "2025+": 11939,
+      "invalid_date": 0
+    },
+    "coverageByBucket": {
+      "2000-2005": {
+        "matches": 24797,
+        "odds_b365": 22075,
+        "odds_max": 0,
+        "stats_shots": 10496,
+        "elo": 18851,
+        "form": 24797,
+        "clusters": 9646
+      },
+      "2005-2010": {
+        "matches": 34086,
+        "odds_b365": 34012,
+        "odds_max": 31393,
+        "stats_shots": 17334,
+        "elo": 24927,
+        "form": 34086,
+        "clusters": 16122
+      },
+      "2010-2015": {
+        "matches": 48654,
+        "odds_b365": 48555,
+        "odds_max": 48612,
+        "stats_shots": 20539,
+        "elo": 27953,
+        "form": 48654,
+        "clusters": 20499
+      },
+      "2015-2020": {
+        "matches": 60876,
+        "odds_b365": 60795,
+        "odds_max": 60827,
+        "stats_shots": 28099,
+        "elo": 29575,
+        "form": 59489,
+        "clusters": 28085
+      },
+      "2020-2025": {
+        "matches": 58506,
+        "odds_b365": 58452,
+        "odds_max": 58452,
+        "stats_shots": 34629,
+        "elo": 28398,
+        "form": 58393,
+        "clusters": 34612
+      },
+      "2025+": {
+        "matches": 11939,
+        "odds_b365": 11927,
+        "odds_max": 11927,
+        "stats_shots": 11386,
+        "elo": 11010,
+        "form": 11870,
+        "clusters": 3638
+      },
+      "invalid_date": {
+        "matches": 0,
+        "odds_b365": 0,
+        "odds_max": 0,
+        "stats_shots": 0,
+        "elo": 0,
+        "form": 0,
+        "clusters": 0
+      }
+    },
+    "decadeCoverage": {
+      "2000s": {
+        "matches": 58883,
+        "odds": 56087,
+        "stats": 27830,
+        "elo": 43778,
+        "form": 58883,
+        "clusters": 25768
+      },
+      "2010s": {
+        "matches": 109530,
+        "odds": 109350,
+        "stats": 48638,
+        "elo": 57528,
+        "form": 108143,
+        "clusters": 48584
+      },
+      "2020s": {
+        "matches": 58506,
+        "odds": 58452,
+        "stats": 34629,
+        "elo": 28398,
+        "form": 58393,
+        "clusters": 34612
+      },
+      "current": {
+        "matches": 11939,
+        "odds": 11927,
+        "stats": 11386,
+        "elo": 11010,
+        "form": 11870,
+        "clusters": 3638
+      },
+      "overall": {
+        "matches": 238858,
+        "odds": 235816,
+        "stats": 122483,
+        "elo": 140714,
+        "form": 237289,
+        "clusters": 112602
+      }
+    },
+    "duplicateIdentities": [],
+    "duplicateIdentityKeys": 0,
+    "invalidOdds": 14,
+    "validOdds": 1350285,
+    "eloMissing": 98144,
+    "provisionalEloOnMatch": 0,
+    "formChecked": 5000,
+    "formExact": 4400,
+    "formMismatchSample": 600,
+    "formExactRate": 0.88,
+    "teamNamesTop": [
+      {
+        "name": "Millwall",
+        "count": 1183
+      },
+      {
+        "name": "Preston",
+        "count": 1183
+      },
+      {
+        "name": "Walsall",
+        "count": 1176
+      },
+      {
+        "name": "Sheffield Weds",
+        "count": 1176
+      },
+      {
+        "name": "Gillingham",
+        "count": 1172
+      },
+      {
+        "name": "Rotherham",
+        "count": 1171
+      },
+      {
+        "name": "Bradford",
+        "count": 1169
+      },
+      {
+        "name": "Barnsley",
+        "count": 1163
+      },
+      {
+        "name": "Coventry",
+        "count": 1163
+      },
+      {
+        "name": "Reading",
+        "count": 1162
+      },
+      {
+        "name": "Bristol City",
+        "count": 1162
+      },
+      {
+        "name": "Derby",
+        "count": 1160
+      },
+      {
+        "name": "Notts County",
+        "count": 1159
+      },
+      {
+        "name": "Wycombe",
+        "count": 1158
+      },
+      {
+        "name": "Crewe",
+        "count": 1158
+      },
+      {
+        "name": "Peterboro",
+        "count": 1157
+      },
+      {
+        "name": "Swindon",
+        "count": 1157
+      },
+      {
+        "name": "Colchester",
+        "count": 1157
+      },
+      {
+        "name": "Bristol Rvs",
+        "count": 1155
+      },
+      {
+        "name": "Port Vale",
+        "count": 1155
+      },
+      {
+        "name": "Northampton",
+        "count": 1154
+      },
+      {
+        "name": "Sheffield United",
+        "count": 1154
+      },
+      {
+        "name": "Tranmere",
+        "count": 1153
+      },
+      {
+        "name": "Ipswich",
+        "count": 1146
+      },
+      {
+        "name": "QPR",
+        "count": 1145
+      },
+      {
+        "name": "Huddersfield",
+        "count": 1144
+      },
+      {
+        "name": "Norwich",
+        "count": 1139
+      },
+      {
+        "name": "Charlton",
+        "count": 1136
+      },
+      {
+        "name": "Birmingham",
+        "count": 1135
+      },
+      {
+        "name": "Watford",
+        "count": 1130
+      }
+    ]
+  },
+  "elo_forensics": {
+    "rows": 273972,
+    "dateMin": "2000-07-01",
+    "dateMax": "2026-09-01",
+    "club_count": 984,
+    "country_count": 19,
+    "snapshot_dates": 629,
+    "official_or_pre_provisional_rows": 245033,
+    "provisional_rows": 28939,
+    "clubelo_official_cutoff": "2025-06-01",
+    "provisional_elo_start": "2025-06-15"
+  },
+  "header_matches_expected": true,
+  "bookmakers_present": [
+    "bet365 (Odd*/Over25/Under25/Handi*)"
+  ],
+  "bookmakers_absent_as_columns": [
+    "pinnacle",
+    "william_hill",
+    "betvictor",
+    "interwetten"
+  ],
+  "aggregates_present": [
+    "MaxHome",
+    "MaxDraw",
+    "MaxAway",
+    "MaxOver25",
+    "MaxUnder25"
+  ],
+  "decision_gate": "YELLOW",
+  "recommended_source_role": [
+    "benchmark",
+    "validation_source",
+    "secondary_feature_candidate_after_reconstruction"
+  ],
+  "import_readiness": {
+    "matches": "READY_WITH_TRANSFORMATIONS",
+    "results": "READY_WITH_TRANSFORMATIONS",
+    "stats": "BLOCKED_PENDING_TEMPORAL_VALIDATION",
+    "odds": "BLOCKED_PENDING_TEMPORAL_VALIDATION",
+    "Elo": "BLOCKED_PENDING_PROVENANCE",
+    "form": "BLOCKED_PENDING_TEMPORAL_VALIDATION",
+    "derived_features": "BLOCKED_PENDING_TEMPORAL_VALIDATION"
+  },
+  "critical_question": {
+    "contains_post_decision_info": true,
+    "examples": [
+      "FT*/HT*/shots/fouls/corners/cards",
+      "C_* cluster probabilities",
+      "Odd*/Max* without open/close labels",
+      "HomeElo/AwayElo after ClubElo cutoff (provisional continuation)"
+    ]
+  }
+}

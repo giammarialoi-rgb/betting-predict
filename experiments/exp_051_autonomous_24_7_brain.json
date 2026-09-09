@@ -1,0 +1,22 @@
+{
+  "experiment_id": "exp_051_autonomous_24_7_brain",
+  "immutable": true,
+  "created_at": "2026-09-08T00:00:00.000Z",
+  "task": "051",
+  "lab_a": "audit/external/task-039",
+  "lab_b": "audit/external/task-044",
+  "legacy_dataset_sha256": "6d78ca34da9df180b643976c3b4a52b93cf589984bae54e056c5e3a53b44174b",
+  "baseline": "MARKET_DEVIG",
+  "model_version": "MODEL_v2_DECISION_ENGINE",
+  "winner": null,
+  "auto_promotion": false,
+  "real_money": false,
+  "capital_gate": false,
+  "open_task_052": false,
+  "modify_lab_a": false,
+  "modify_frozen_031": false,
+  "synthetic_data": false,
+  "seed_events_are_not_a_cap": true,
+  "no_artificial_event_cap": true,
+  "notes": "Autonomous 24/7 live brain + local observatory. Lab A READ_ONLY. Capital closed. No auto-promotion. No TASK 052."
+}

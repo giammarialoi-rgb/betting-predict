@@ -1,0 +1,13 @@
+{
+  "attacks": [
+    "FT_in_decision",
+    "future_elo",
+    "raw_form_column",
+    "future_odds",
+    "random_split",
+    "retroactive_optimization",
+    "expanding_window",
+    "stake_uses_outcome"
+  ],
+  "all_throw": true
+}

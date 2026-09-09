@@ -1,0 +1,3 @@
+source,row_id,kickoff,quote_ts,relation,data_class,reason
+betfair-historic-basic-mirror,M001,2017-04-30T13:05:00.000Z,2017-04-30T11:10:52.099Z,QUOTE_BEFORE_KICKOFF,A_STRICT,delta_sec=-6848
+kaggle-zygmunt-betfair-sports,bulk,,,UNVERIFIED_TZ,B_RESEARCH_TEMPORAL,A=0;B=150837;C=0;D=1155911;bulk=true

@@ -1,0 +1,14 @@
+{
+  "status": "HEALTHY",
+  "worker_pid": 3224,
+  "worker_alive": true,
+  "heartbeat_at": "2026-09-08T18:41:47.940Z",
+  "heartbeat_age_ms": 12353,
+  "last_cycle_at": "2026-09-08T18:41:07.509Z",
+  "last_successful_cycle_at": "2026-09-08T18:41:07.509Z",
+  "last_priority": "P0",
+  "restart_count": 1,
+  "consecutive_errors": 0,
+  "uptime_hint": "2026-09-08T10:31:38.264Z",
+  "issues": []
+}

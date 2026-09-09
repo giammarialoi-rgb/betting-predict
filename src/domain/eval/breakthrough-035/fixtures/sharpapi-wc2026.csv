@@ -1,0 +1,4 @@
+id,sportsbook,event_id,sport,league,home_team,away_team,market_type,selection,selection_type,odds_american,odds_decimal,odds_probability,line,event_start_time,is_live,timestamp
+1,pinnacle,fifa_-_world_cup_france_spain_2026-07-14_b3,soccer,fifa_-_world_cup,France,Spain,moneyline,France,home,-120,1.83,0.546,,2026-07-14T00:00:00Z,False,2026-07-13T01:45:33.481436094Z
+2,pinnacle,fifa_-_world_cup_france_spain_2026-07-14_b3,soccer,fifa_-_world_cup,France,Spain,moneyline,Draw,draw,240,3.4,0.294,,2026-07-14T00:00:00Z,False,2026-07-13T01:45:33.481436094Z
+3,pinnacle,fifa_-_world_cup_france_spain_2026-07-14_b3,soccer,fifa_-_world_cup,France,Spain,moneyline,Spain,away,280,3.8,0.263,,2026-07-14T00:00:00Z,False,2026-07-13T01:45:33.481436094Z

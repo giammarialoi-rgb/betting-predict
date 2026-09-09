@@ -1,0 +1,1122 @@
+{
+  "experiment_id": "exp_032_incremental_edge",
+  "task": "032",
+  "dataset_version": "TASK_031_BASE",
+  "dataset_sha256": "6d78ca34da9df180b643976c3b4a52b93cf589984bae54e056c5e3a53b44174b",
+  "observed_sha256": "6d78ca34da9df180b643976c3b4a52b93cf589984bae54e056c5e3a53b44174b",
+  "as_of_policy": "STRICT_AS_OF_T_MINUS_1H",
+  "baseline": "MARKET_DEVIG",
+  "fixture_mode": false,
+  "strict_events": 10499,
+  "feature_fingerprint": "dda05a9ad1c003b37716f8dc7e4b3040fad4f6b429256b05cb5a304b27bc6864",
+  "predictions_fingerprint": "96c9a991c6cdc83fc7b7a4bce7bee1cdb423e9b82844e1cf610ddebb397eb1b6",
+  "HOLDOUT_STATUS": "EMPTY",
+  "holdout_2020_plus": 0,
+  "winner": null,
+  "promoted_model": null,
+  "declared_best": false,
+  "auto_promotion": false,
+  "real_money": false,
+  "HOLDOUT_TOUCHED": false,
+  "test_used_for_selection": false,
+  "qualified": false,
+  "verdict": "NO_DEMONSTRATED_EDGE",
+  "selected_on_val": "market_schedule",
+  "classes": {
+    "market_only": "BASELINE",
+    "market_elo": "NON_INFERIOR",
+    "market_form": "NON_INFERIOR",
+    "market_history": "NON_INFERIOR",
+    "market_schedule": "NON_INFERIOR",
+    "market_movement": "NON_INFERIOR",
+    "market_all": "NON_INFERIOR"
+  },
+  "partitions": {
+    "TRAIN": {
+      "start": "2015-09-01T00:00:00.000Z",
+      "end": "2016-02-29T23:59:59.999Z",
+      "events": 3647
+    },
+    "VALIDATION": {
+      "start": "2016-03-01T00:00:00.000Z",
+      "end": "2016-05-31T23:59:59.999Z",
+      "events": 2295
+    },
+    "TEST": {
+      "start": "2016-06-01T00:00:00.000Z",
+      "end": "2016-08-31T23:59:59.999Z",
+      "events": 1756
+    },
+    "HOLDOUT": {
+      "start": "2016-09-01T00:00:00.000Z",
+      "end": "2016-12-31T23:59:59.999Z",
+      "events": 2801
+    }
+  },
+  "scores": {
+    "market_only": {
+      "VALIDATION": {
+        "n": 2295,
+        "brier": 0.1950350781006399,
+        "logloss": 0.9824072298270807,
+        "ece": 0.015526457696034049,
+        "cal_slope": 1.054212927471308,
+        "cal_intercept": -0.011003656243702031,
+        "delta_brier": 0,
+        "delta_logloss": 0
+      },
+      "TEST": {
+        "n": 1756,
+        "brier": 0.19877751909290076,
+        "logloss": 0.9963548182157216,
+        "ece": 0.01273314555740637,
+        "cal_slope": 1.0053520899441266,
+        "cal_intercept": 0.004500976752911334,
+        "delta_brier": 0,
+        "delta_logloss": 0
+      },
+      "CORPUS_HOLDOUT": {
+        "n": 2801,
+        "brier": 0.1975166941913053,
+        "logloss": 0.9915728355283715,
+        "ece": 0.02767421832256126,
+        "cal_slope": 1.0111119066872272,
+        "cal_intercept": 0.0036146814559246954,
+        "delta_brier": 0,
+        "delta_logloss": 0
+      }
+    },
+    "market_elo": {
+      "VALIDATION": {
+        "n": 2295,
+        "brier": 0.19503722729397643,
+        "logloss": 0.9824124920596541,
+        "ece": 0.016655647347560504,
+        "cal_slope": 1.0539753918605017,
+        "cal_intercept": -0.010937376741740168,
+        "delta_brier": 0.0000021491933365203053,
+        "delta_logloss": 0.000005262232573355341
+      },
+      "TEST": {
+        "n": 1756,
+        "brier": 0.19877365113270212,
+        "logloss": 0.9963340834018792,
+        "ece": 0.013982312532515532,
+        "cal_slope": 1.0050937095931518,
+        "cal_intercept": 0.004596611417175378,
+        "delta_brier": -0.000003867960198633558,
+        "delta_logloss": -0.000020734813842349098
+      },
+      "CORPUS_HOLDOUT": {
+        "n": 2801,
+        "brier": 0.1975219473875503,
+        "logloss": 0.9915954923813793,
+        "ece": 0.028534252156073303,
+        "cal_slope": 1.0108884312793733,
+        "cal_intercept": 0.0036830517904442583,
+        "delta_brier": 0.000005253196245003089,
+        "delta_logloss": 0.000022656853007840816
+      }
+    },
+    "market_form": {
+      "VALIDATION": {
+        "n": 2295,
+        "brier": 0.19506290966548745,
+        "logloss": 0.9825291848738864,
+        "ece": 0.018717496521398185,
+        "cal_slope": 1.057918649561393,
+        "cal_intercept": -0.011520249915636105,
+        "delta_brier": 0.000027831564847535795,
+        "delta_logloss": 0.00012195504680567737
+      },
+      "TEST": {
+        "n": 1756,
+        "brier": 0.19874636895128064,
+        "logloss": 0.9962934306084332,
+        "ece": 0.018111680232107543,
+        "cal_slope": 1.0091315955020201,
+        "cal_intercept": 0.003765909961783276,
+        "delta_brier": -0.00003115014162011209,
+        "delta_logloss": -0.00006138760728835457
+      },
+      "CORPUS_HOLDOUT": {
+        "n": 2801,
+        "brier": 0.19758555719578474,
+        "logloss": 0.991985730311793,
+        "ece": 0.025067948163715964,
+        "cal_slope": 1.0126747021832367,
+        "cal_intercept": 0.0040293709210272866,
+        "delta_brier": 0.00006886300447944693,
+        "delta_logloss": 0.00041289478342154684
+      }
+    },
+    "market_history": {
+      "VALIDATION": {
+        "n": 2295,
+        "brier": 0.19512352319068876,
+        "logloss": 0.9827841793596933,
+        "ece": 0.018025198532112534,
+        "cal_slope": 1.0598526509827448,
+        "cal_intercept": -0.010466487756463583,
+        "delta_brier": 0.00008844509004884982,
+        "delta_logloss": 0.00037694953261258046
+      },
+      "TEST": {
+        "n": 1756,
+        "brier": 0.1986781024482014,
+        "logloss": 0.9959899557202526,
+        "ece": 0.014487135296526964,
+        "cal_slope": 1.0159605761465653,
+        "cal_intercept": 0.001973033138607916,
+        "delta_brier": -0.00009941664469936828,
+        "delta_logloss": -0.000364862495468965
+      },
+      "CORPUS_HOLDOUT": {
+        "n": 2801,
+        "brier": 0.19751693227962092,
+        "logloss": 0.991560446263873,
+        "ece": 0.02329676674621832,
+        "cal_slope": 1.0170517537446802,
+        "cal_intercept": 0.0033348327505386965,
+        "delta_brier": 2.3808831561833443e-7,
+        "delta_logloss": -0.000012389264498535724
+      }
+    },
+    "market_schedule": {
+      "VALIDATION": {
+        "n": 2295,
+        "brier": 0.1950238609840084,
+        "logloss": 0.982357124964541,
+        "ece": 0.014267932241798712,
+        "cal_slope": 1.048246216619831,
+        "cal_intercept": -0.009518620704066005,
+        "delta_brier": -0.00001121711663151781,
+        "delta_logloss": -0.0000501048625397571
+      },
+      "TEST": {
+        "n": 1756,
+        "brier": 0.19881104387880788,
+        "logloss": 0.9965069701497619,
+        "ece": 0.014618024502122424,
+        "cal_slope": 0.9995514198601091,
+        "cal_intercept": 0.005899583307848677,
+        "delta_brier": 0.000033524785907124155,
+        "delta_logloss": 0.00015215193404027882
+      },
+      "CORPUS_HOLDOUT": {
+        "n": 2801,
+        "brier": 0.1975076915147964,
+        "logloss": 0.9915405933909694,
+        "ece": 0.021891843568391786,
+        "cal_slope": 1.0058438368207907,
+        "cal_intercept": 0.0046653901779872275,
+        "delta_brier": -0.000009002676508884644,
+        "delta_logloss": -0.00003224213740204984
+      }
+    },
+    "market_movement": {
+      "VALIDATION": {
+        "n": 2295,
+        "brier": 0.19503526690679662,
+        "logloss": 0.9824071674219605,
+        "ece": 0.015524731067297915,
+        "cal_slope": 1.0541546315663508,
+        "cal_intercept": -0.010989051390969673,
+        "delta_brier": 1.8880615670902046e-7,
+        "delta_logloss": -6.24051201825182e-8
+      },
+      "TEST": {
+        "n": 1756,
+        "brier": 0.1987777580775174,
+        "logloss": 0.9963557524431949,
+        "ece": 0.014783029799453626,
+        "cal_slope": 1.0053005232465337,
+        "cal_intercept": 0.00451729413130747,
+        "delta_brier": 2.389846166517273e-7,
+        "delta_logloss": 9.342274732704325e-7
+      },
+      "CORPUS_HOLDOUT": {
+        "n": 2801,
+        "brier": 0.19751691838582436,
+        "logloss": 0.9915750020424063,
+        "ece": 0.027458646324813662,
+        "cal_slope": 1.0110745478802343,
+        "cal_intercept": 0.003622731933114076,
+        "delta_brier": 2.241945190606387e-7,
+        "delta_logloss": 0.000002166514034840361
+      }
+    },
+    "market_all": {
+      "VALIDATION": {
+        "n": 2295,
+        "brier": 0.1951268867988982,
+        "logloss": 0.9827928915555186,
+        "ece": 0.018424988223194237,
+        "cal_slope": 1.0562926653283407,
+        "cal_intercept": -0.009418758556097584,
+        "delta_brier": 0.0000918086982582833,
+        "delta_logloss": 0.0003856617284379027
+      },
+      "TEST": {
+        "n": 1756,
+        "brier": 0.19867357820827247,
+        "logloss": 0.9960250318647443,
+        "ece": 0.01838696762067533,
+        "cal_slope": 1.0127672269483377,
+        "cal_intercept": 0.002720337344648438,
+        "delta_brier": -0.0001039408846282841,
+        "delta_logloss": -0.00032978635097724585
+      },
+      "CORPUS_HOLDOUT": {
+        "n": 2801,
+        "brier": 0.19755753607145482,
+        "logloss": 0.9918423775498142,
+        "ece": 0.021601393040198136,
+        "cal_slope": 1.012718658372394,
+        "cal_intercept": 0.004609747101882333,
+        "delta_brier": 0.0000408418801495225,
+        "delta_logloss": 0.00026954202144269246
+      }
+    }
+  },
+  "holm": {
+    "n_tests": 6,
+    "ids": [
+      "market_elo",
+      "market_form",
+      "market_history",
+      "market_schedule",
+      "market_movement",
+      "market_all"
+    ],
+    "raw_p": [
+      0.1978021978021978,
+      0.3066933066933067,
+      0.04295704295704296,
+      0.7662337662337663,
+      0.6903096903096904,
+      0.11488511488511488
+    ],
+    "adjusted_p": [
+      0.7912087912087912,
+      0.9200799200799201,
+      0.2577422577422578,
+      1,
+      1,
+      0.5744255744255744
+    ],
+    "rejected": [
+      false,
+      false,
+      false,
+      false,
+      false,
+      false
+    ]
+  },
+  "ci95": {
+    "market_elo": {
+      "low": -0.000011699768649362608,
+      "high": 0.000003416715448063926
+    },
+    "market_form": {
+      "low": -0.00014789387981576586,
+      "high": 0.00010386130802368524
+    },
+    "market_history": {
+      "low": -0.00019846556977152113,
+      "high": 0.000018743001127884034
+    },
+    "market_schedule": {
+      "low": -0.00007316433614235503,
+      "high": 0.00013426667964041856
+    },
+    "market_movement": {
+      "low": -5.627559273112363e-7,
+      "high": 0.000001073926919667888
+    },
+    "market_all": {
+      "low": -0.00022624523994087647,
+      "high": 0.00003044073655269729
+    }
+  },
+  "stress": {
+    "n": 1756,
+    "ci95_delta_brier": {
+      "low": -0.00007316433614235503,
+      "high": 0.00013426667964041856
+    },
+    "ci95_delta_logloss": {
+      "low": -0.00035926514341180885,
+      "high": 0.0006149771264076498
+    },
+    "fragile": false,
+    "fragile_note": "no 1% concentration flip, or no negative ΔBrier to concentrate",
+    "by_year": {
+      "2016": {
+        "n": 1756,
+        "delta_brier": 0.00003352478590737604
+      }
+    },
+    "by_side": {
+      "HOME": {
+        "n": 802,
+        "delta_brier": -0.0006161874543736419
+      },
+      "DRAW": {
+        "n": 488,
+        "delta_brier": 0.0011871551951649901
+      },
+      "AWAY": {
+        "n": 466,
+        "delta_brier": -0.000056394576780046287
+      }
+    },
+    "by_home_prob_bucket": {
+      "0.1-0.2": {
+        "n": 74,
+        "delta_brier": -0.00007733940941199102
+      },
+      "0.3-0.4": {
+        "n": 407,
+        "delta_brier": 0.00007306417764832272
+      },
+      "0.4-0.5": {
+        "n": 459,
+        "delta_brier": 0.000047200665741573735
+      },
+      "0.2-0.3": {
+        "n": 187,
+        "delta_brier": -0.00011763340297484505
+      },
+      "0.5-0.6": {
+        "n": 296,
+        "delta_brier": -0.00007432101833223793
+      },
+      "0.6-0.7": {
+        "n": 209,
+        "delta_brier": 0.00030453501480691805
+      },
+      "0.7-0.8": {
+        "n": 83,
+        "delta_brier": 0.00002112280345293396
+      },
+      "0.8-0.9": {
+        "n": 20,
+        "delta_brier": -0.00048371571081069314
+      },
+      "0-0.1": {
+        "n": 19,
+        "delta_brier": 0.0000716303929354606
+      },
+      "0.9-1": {
+        "n": 2,
+        "delta_brier": 0.000049604111714570505
+      }
+    },
+    "missing_feature_delta_brier": 0,
+    "top_1pct_events": 17
+  },
+  "annual": [
+    {
+      "year": 2001,
+      "strict": 0,
+      "decisions": 0,
+      "bets": 0,
+      "start": 1000,
+      "end": null,
+      "pnl": null,
+      "roi": null,
+      "max_dd": null,
+      "risk_policy": null,
+      "model": null,
+      "confidence": null,
+      "status": "INSUFFICIENT_DATA"
+    },
+    {
+      "year": 2002,
+      "strict": 0,
+      "decisions": 0,
+      "bets": 0,
+      "start": 1000,
+      "end": null,
+      "pnl": null,
+      "roi": null,
+      "max_dd": null,
+      "risk_policy": null,
+      "model": null,
+      "confidence": null,
+      "status": "INSUFFICIENT_DATA"
+    },
+    {
+      "year": 2003,
+      "strict": 0,
+      "decisions": 0,
+      "bets": 0,
+      "start": 1000,
+      "end": null,
+      "pnl": null,
+      "roi": null,
+      "max_dd": null,
+      "risk_policy": null,
+      "model": null,
+      "confidence": null,
+      "status": "INSUFFICIENT_DATA"
+    },
+    {
+      "year": 2004,
+      "strict": 0,
+      "decisions": 0,
+      "bets": 0,
+      "start": 1000,
+      "end": null,
+      "pnl": null,
+      "roi": null,
+      "max_dd": null,
+      "risk_policy": null,
+      "model": null,
+      "confidence": null,
+      "status": "INSUFFICIENT_DATA"
+    },
+    {
+      "year": 2005,
+      "strict": 0,
+      "decisions": 0,
+      "bets": 0,
+      "start": 1000,
+      "end": null,
+      "pnl": null,
+      "roi": null,
+      "max_dd": null,
+      "risk_policy": null,
+      "model": null,
+      "confidence": null,
+      "status": "INSUFFICIENT_DATA"
+    },
+    {
+      "year": 2006,
+      "strict": 0,
+      "decisions": 0,
+      "bets": 0,
+      "start": 1000,
+      "end": null,
+      "pnl": null,
+      "roi": null,
+      "max_dd": null,
+      "risk_policy": null,
+      "model": null,
+      "confidence": null,
+      "status": "INSUFFICIENT_DATA"
+    },
+    {
+      "year": 2007,
+      "strict": 0,
+      "decisions": 0,
+      "bets": 0,
+      "start": 1000,
+      "end": null,
+      "pnl": null,
+      "roi": null,
+      "max_dd": null,
+      "risk_policy": null,
+      "model": null,
+      "confidence": null,
+      "status": "INSUFFICIENT_DATA"
+    },
+    {
+      "year": 2008,
+      "strict": 0,
+      "decisions": 0,
+      "bets": 0,
+      "start": 1000,
+      "end": null,
+      "pnl": null,
+      "roi": null,
+      "max_dd": null,
+      "risk_policy": null,
+      "model": null,
+      "confidence": null,
+      "status": "INSUFFICIENT_DATA"
+    },
+    {
+      "year": 2009,
+      "strict": 0,
+      "decisions": 0,
+      "bets": 0,
+      "start": 1000,
+      "end": null,
+      "pnl": null,
+      "roi": null,
+      "max_dd": null,
+      "risk_policy": null,
+      "model": null,
+      "confidence": null,
+      "status": "INSUFFICIENT_DATA"
+    },
+    {
+      "year": 2010,
+      "strict": 0,
+      "decisions": 0,
+      "bets": 0,
+      "start": 1000,
+      "end": null,
+      "pnl": null,
+      "roi": null,
+      "max_dd": null,
+      "risk_policy": null,
+      "model": null,
+      "confidence": null,
+      "status": "INSUFFICIENT_DATA"
+    },
+    {
+      "year": 2011,
+      "strict": 0,
+      "decisions": 0,
+      "bets": 0,
+      "start": 1000,
+      "end": null,
+      "pnl": null,
+      "roi": null,
+      "max_dd": null,
+      "risk_policy": null,
+      "model": null,
+      "confidence": null,
+      "status": "INSUFFICIENT_DATA"
+    },
+    {
+      "year": 2012,
+      "strict": 0,
+      "decisions": 0,
+      "bets": 0,
+      "start": 1000,
+      "end": null,
+      "pnl": null,
+      "roi": null,
+      "max_dd": null,
+      "risk_policy": null,
+      "model": null,
+      "confidence": null,
+      "status": "INSUFFICIENT_DATA"
+    },
+    {
+      "year": 2013,
+      "strict": 0,
+      "decisions": 0,
+      "bets": 0,
+      "start": 1000,
+      "end": null,
+      "pnl": null,
+      "roi": null,
+      "max_dd": null,
+      "risk_policy": null,
+      "model": null,
+      "confidence": null,
+      "status": "INSUFFICIENT_DATA"
+    },
+    {
+      "year": 2014,
+      "strict": 0,
+      "decisions": 0,
+      "bets": 0,
+      "start": 1000,
+      "end": null,
+      "pnl": null,
+      "roi": null,
+      "max_dd": null,
+      "risk_policy": null,
+      "model": null,
+      "confidence": null,
+      "status": "INSUFFICIENT_DATA"
+    },
+    {
+      "year": 2015,
+      "strict": 2381,
+      "decisions": 0,
+      "bets": 0,
+      "start": 1000,
+      "end": null,
+      "pnl": null,
+      "roi": null,
+      "max_dd": null,
+      "risk_policy": null,
+      "model": "MARKET_DEVIG",
+      "confidence": "gate_failed",
+      "status": "NO_EDGE"
+    },
+    {
+      "year": 2016,
+      "strict": 8118,
+      "decisions": 0,
+      "bets": 0,
+      "start": 1000,
+      "end": null,
+      "pnl": null,
+      "roi": null,
+      "max_dd": null,
+      "risk_policy": null,
+      "model": "MARKET_DEVIG",
+      "confidence": "gate_failed",
+      "status": "NO_EDGE"
+    },
+    {
+      "year": 2017,
+      "strict": 0,
+      "decisions": 0,
+      "bets": 0,
+      "start": 1000,
+      "end": null,
+      "pnl": null,
+      "roi": null,
+      "max_dd": null,
+      "risk_policy": null,
+      "model": null,
+      "confidence": null,
+      "status": "INSUFFICIENT_DATA"
+    },
+    {
+      "year": 2018,
+      "strict": 0,
+      "decisions": 0,
+      "bets": 0,
+      "start": 1000,
+      "end": null,
+      "pnl": null,
+      "roi": null,
+      "max_dd": null,
+      "risk_policy": null,
+      "model": null,
+      "confidence": null,
+      "status": "INSUFFICIENT_DATA"
+    },
+    {
+      "year": 2019,
+      "strict": 0,
+      "decisions": 0,
+      "bets": 0,
+      "start": 1000,
+      "end": null,
+      "pnl": null,
+      "roi": null,
+      "max_dd": null,
+      "risk_policy": null,
+      "model": null,
+      "confidence": null,
+      "status": "INSUFFICIENT_DATA"
+    },
+    {
+      "year": 2020,
+      "strict": 0,
+      "decisions": 0,
+      "bets": 0,
+      "start": 1000,
+      "end": null,
+      "pnl": null,
+      "roi": null,
+      "max_dd": null,
+      "risk_policy": null,
+      "model": null,
+      "confidence": null,
+      "status": "INSUFFICIENT_DATA"
+    },
+    {
+      "year": 2021,
+      "strict": 0,
+      "decisions": 0,
+      "bets": 0,
+      "start": 1000,
+      "end": null,
+      "pnl": null,
+      "roi": null,
+      "max_dd": null,
+      "risk_policy": null,
+      "model": null,
+      "confidence": null,
+      "status": "INSUFFICIENT_DATA"
+    },
+    {
+      "year": 2022,
+      "strict": 0,
+      "decisions": 0,
+      "bets": 0,
+      "start": 1000,
+      "end": null,
+      "pnl": null,
+      "roi": null,
+      "max_dd": null,
+      "risk_policy": null,
+      "model": null,
+      "confidence": null,
+      "status": "INSUFFICIENT_DATA"
+    },
+    {
+      "year": 2023,
+      "strict": 0,
+      "decisions": 0,
+      "bets": 0,
+      "start": 1000,
+      "end": null,
+      "pnl": null,
+      "roi": null,
+      "max_dd": null,
+      "risk_policy": null,
+      "model": null,
+      "confidence": null,
+      "status": "INSUFFICIENT_DATA"
+    },
+    {
+      "year": 2024,
+      "strict": 0,
+      "decisions": 0,
+      "bets": 0,
+      "start": 1000,
+      "end": null,
+      "pnl": null,
+      "roi": null,
+      "max_dd": null,
+      "risk_policy": null,
+      "model": null,
+      "confidence": null,
+      "status": "INSUFFICIENT_DATA"
+    },
+    {
+      "year": 2025,
+      "strict": 0,
+      "decisions": 0,
+      "bets": 0,
+      "start": 1000,
+      "end": null,
+      "pnl": null,
+      "roi": null,
+      "max_dd": null,
+      "risk_policy": null,
+      "model": null,
+      "confidence": null,
+      "status": "INSUFFICIENT_DATA"
+    },
+    {
+      "year": 2026,
+      "strict": 0,
+      "decisions": 0,
+      "bets": 0,
+      "start": 1000,
+      "end": null,
+      "pnl": null,
+      "roi": null,
+      "max_dd": null,
+      "risk_policy": null,
+      "model": null,
+      "confidence": null,
+      "status": "INSUFFICIENT_DATA"
+    }
+  ],
+  "leakage": [
+    {
+      "id": "A_outcome",
+      "throws": true
+    },
+    {
+      "id": "B_ft",
+      "throws": true
+    },
+    {
+      "id": "C_quote_after",
+      "throws": true
+    },
+    {
+      "id": "D_close",
+      "throws": true
+    },
+    {
+      "id": "D_close_bin",
+      "throws": true
+    },
+    {
+      "id": "E_future_feature",
+      "throws": true
+    },
+    {
+      "id": "F_future_h2h",
+      "throws": true
+    },
+    {
+      "id": "G_future_elo",
+      "throws": true
+    },
+    {
+      "id": "H_normalize_test",
+      "throws": true
+    },
+    {
+      "id": "I_impute_test",
+      "throws": true
+    },
+    {
+      "id": "J_feature_test",
+      "throws": true
+    },
+    {
+      "id": "K_tune_test",
+      "throws": true
+    },
+    {
+      "id": "L_holdout",
+      "throws": true
+    },
+    {
+      "id": "test_lock",
+      "throws": true
+    },
+    {
+      "id": "holdout_lock",
+      "throws": true
+    },
+    {
+      "id": "date_only",
+      "throws": true
+    },
+    {
+      "id": "invented_ts",
+      "throws": true
+    },
+    {
+      "id": "lock",
+      "throws": true
+    },
+    {
+      "id": "auto_promote",
+      "throws": true
+    },
+    {
+      "id": "masaniello",
+      "throws": true
+    },
+    {
+      "id": "frozen_flags",
+      "throws": true
+    }
+  ],
+  "features": [
+    {
+      "feature": "MARKET_DEVIG 1X2",
+      "source": "DATASET_031_BASE T-1h odds",
+      "coverage": "10499 STRICT events",
+      "temporal_basis": "EXACT_RELATIVE PHP hours_before=1",
+      "available_at": "kickoff − 1h",
+      "matchability": "MATCH_EXACT (frozen file)",
+      "leakage_risk": "low",
+      "missingness": "complete 1X2 required",
+      "usable_t1h": "YES",
+      "class": "SAFE_PREMATCH",
+      "reason": "Baseline. De-vig of the T-1h book. Not a challenger."
+    },
+    {
+      "feature": "home_advantage_flag",
+      "source": "event identity",
+      "coverage": "10499 (every 1X2 has a home side)",
+      "temporal_basis": "event identity",
+      "available_at": "fixture known before asOf",
+      "matchability": "MATCH_EXACT",
+      "leakage_risk": "none",
+      "missingness": "none",
+      "usable_t1h": "YES",
+      "class": "SAFE_PREMATCH",
+      "reason": "Identity only. Already encoded in HOME vs AWAY legs; not a separate group."
+    },
+    {
+      "feature": "market_overround",
+      "source": "same T-1h 1X2",
+      "coverage": "10499",
+      "temporal_basis": "EXACT_RELATIVE",
+      "available_at": "kickoff − 1h",
+      "matchability": "MATCH_EXACT",
+      "leakage_risk": "low",
+      "missingness": "none on complete books",
+      "usable_t1h": "YES",
+      "class": "SAFE_PREMATCH",
+      "reason": "Derived from the baseline book. Not an independent information source."
+    },
+    {
+      "feature": "G1 reconstructed Elo (expanding, STRICT results after LOCK)",
+      "source": "DATASET_031_BASE FT after reveal",
+      "coverage": "10499 walk-forward",
+      "temporal_basis": "SAFE_AFTER_RECONSTRUCTION; kickoff < asOf",
+      "available_at": "previous match kickoff (result used only after that kickoff)",
+      "matchability": "team slug MATCH_EXACT",
+      "leakage_risk": "low if lagged",
+      "missingness": "Elo starts at 1500",
+      "usable_t1h": "YES",
+      "class": "SAFE_AFTER_RECONSTRUCTION",
+      "reason": "Not ClubElo. Expanding Elo from STRICT outcomes with kickMs < asOf."
+    },
+    {
+      "feature": "G2 reconstructed form + GF/GA (k=5)",
+      "source": "DATASET_031_BASE FT after reveal",
+      "coverage": "10499 walk-forward",
+      "temporal_basis": "lagged points/goals",
+      "available_at": "previous kickoff < asOf",
+      "matchability": "team slug",
+      "leakage_risk": "low if lagged",
+      "missingness": "zero vector if no history",
+      "usable_t1h": "YES",
+      "class": "SAFE_AFTER_RECONSTRUCTION",
+      "reason": "Current match excluded. Registry form_* READY equivalents."
+    },
+    {
+      "feature": "G3 H2H/history",
+      "source": "DATASET_031_BASE prior meetings",
+      "coverage": "24.3% TRAIN n≥1 H2H",
+      "temporal_basis": "prior H2H kickoff < asOf",
+      "available_at": "previous H2H kickoff",
+      "matchability": "unordered team pair",
+      "leakage_risk": "low if lagged",
+      "missingness": "[0,0,0] if n=0",
+      "usable_t1h": "YES",
+      "class": "SAFE_AFTER_RECONSTRUCTION",
+      "reason": "Meetings with kickMs >= asOf are dropped."
+    },
+    {
+      "feature": "G4 schedule/rest/congestion + home/away form",
+      "source": "DATASET_031_BASE kickoffs",
+      "coverage": "10499",
+      "temporal_basis": "previous kickoff < asOf",
+      "available_at": "last completed kickoff",
+      "matchability": "team slug",
+      "leakage_risk": "medium (rest uses kickoff calendar, not travel)",
+      "missingness": "0 rest if first seen match",
+      "usable_t1h": "YES",
+      "class": "SAFE_AFTER_RECONSTRUCTION",
+      "reason": "Rest/congestion from STRICT kickoffs only. Not a travel/injury model."
+    },
+    {
+      "feature": "G5 quote movement T-24h → T-1h",
+      "source": "same BeatTheBookie dump hours_before=24",
+      "coverage": "86.5% TRAIN T-24h",
+      "temporal_basis": "PHP bin 24, same LEVEL_B as T-1h",
+      "available_at": "kickoff − 24h ≤ asOf",
+      "matchability": "match_id + bookmaker",
+      "leakage_risk": "low if bin≥1",
+      "missingness": "flag + zeros if no T-24h book",
+      "usable_t1h": "YES",
+      "class": "SAFE_PREMATCH",
+      "reason": "Not closing. hours_before=0 is rejected. No interpolation."
+    },
+    {
+      "feature": "bookmaker disagreement / consensus (T-1h multi-book)",
+      "source": "audit/external/task-029/books-t1h.csv",
+      "coverage": "overlay on disk (TASK 029)",
+      "temporal_basis": "same PHP T-1h bin",
+      "available_at": "kickoff − 1h",
+      "matchability": "frozen match_id MATCH_EXACT",
+      "leakage_risk": "low",
+      "missingness": "n<2 → no dispersion",
+      "usable_t1h": "YES",
+      "class": "SAFE_PREMATCH",
+      "reason": "Already tested in TASK 029 (NO_INCREMENTAL_INFORMATION). Not a 7th group here."
+    },
+    {
+      "feature": "ClubElo official snapshots",
+      "source": "api.clubelo.com / pack Elo",
+      "coverage": "0 on this STRICT set (HTTP/TLS failed TASK 030; DATE_ONLY)",
+      "temporal_basis": "DATE_ONLY / DATASET_WINDOW",
+      "available_at": "not demonstrated as quote-clock",
+      "matchability": "team names, not used",
+      "leakage_risk": "medium",
+      "missingness": "unavailable",
+      "usable_t1h": "NO",
+      "class": "RESEARCH_ONLY",
+      "reason": "Not promoted. Expanding reconstructed Elo is used instead."
+    },
+    {
+      "feature": "opening/closing movement (registry opening_closing_movement)",
+      "source": "football-data C* / 5dollar opening-closing labels",
+      "coverage": "not in DATASET_031_BASE as a clock",
+      "temporal_basis": "OPEN/CLOSE label",
+      "available_at": "unknown / close after T-1h",
+      "matchability": "n/a",
+      "leakage_risk": "high",
+      "missingness": "n/a",
+      "usable_t1h": "NO",
+      "class": "TEMPORALLY_UNKNOWN",
+      "reason": "CLOSE is forbidden unless available_at ≤ asOf. Opening label is not T-1h."
+    },
+    {
+      "feature": "shots_for_5 / match stats",
+      "source": "registry PARTIAL; not in STRICT CSV",
+      "coverage": "0",
+      "temporal_basis": "post-match stats if present",
+      "available_at": "unknown",
+      "matchability": "n/a",
+      "leakage_risk": "medium",
+      "missingness": "missing stays missing",
+      "usable_t1h": "NO",
+      "class": "POST_MATCH",
+      "reason": "Not in the frozen T-1h file. Do not invent."
+    },
+    {
+      "feature": "news / GDELT",
+      "source": "none MATCH_EXACT on 2015-16 worldwide STRICT",
+      "coverage": "0",
+      "temporal_basis": "CONTEXT_ONLY",
+      "available_at": "not demonstrated pre-kickoff",
+      "matchability": "failed",
+      "leakage_risk": "high if undated",
+      "missingness": "complete absence",
+      "usable_t1h": "NO",
+      "class": "RESEARCH_ONLY",
+      "reason": "News without a pre-kickoff timestamp is CONTEXT_ONLY / BLOCKED."
+    },
+    {
+      "feature": "injury / lineup",
+      "source": "none in DATASET_031_BASE",
+      "coverage": "0",
+      "temporal_basis": "unknown",
+      "available_at": "not present",
+      "matchability": "n/a",
+      "leakage_risk": "high",
+      "missingness": "absent",
+      "usable_t1h": "NO",
+      "class": "RESEARCH_ONLY",
+      "reason": "Not invented. TASK 029 already recorded coverage 0."
+    },
+    {
+      "feature": "weather (Open-Meteo archive)",
+      "source": "lat/lon + timestamp",
+      "coverage": "0 MATCH_EXACT stadium lat/lon for this worldwide file",
+      "temporal_basis": "archive hourly if coordinates exist",
+      "available_at": "would be asOf if coordinates+time existed",
+      "matchability": "failed",
+      "leakage_risk": "low if asOf-capped",
+      "missingness": "no coordinates",
+      "usable_t1h": "NO",
+      "class": "RESEARCH_ONLY",
+      "reason": "Cannot attach weather without MATCH_EXACT venue. Not invented."
+    },
+    {
+      "feature": "FT / HT / outcome",
+      "source": "STRICT CSV settlement columns",
+      "coverage": "10499 (settlement only)",
+      "temporal_basis": "POST_MATCH",
+      "available_at": "after kickoff / reveal",
+      "matchability": "same event",
+      "leakage_risk": "certain if used in DecisionContext",
+      "missingness": "none after reveal",
+      "usable_t1h": "NO",
+      "class": "POST_MATCH",
+      "reason": "LOCK/REVEAL. Forbidden in DecisionContext."
+    },
+    {
+      "feature": "Club-Football C_* clusters / pack Form* / provisional Elo",
+      "source": "Club-Football-Match-Data",
+      "coverage": "excluded",
+      "temporal_basis": "FORBIDDEN / UNKNOWN",
+      "available_at": "n/a",
+      "matchability": "n/a",
+      "leakage_risk": "certain / high",
+      "missingness": "n/a",
+      "usable_t1h": "NO",
+      "class": "FORBIDDEN",
+      "reason": "Registry FORBIDDEN/BLOCKED. Not reconstructed into STRICT."
+    }
+  ],
+  "fingerprint": "fd252d57021317754e2a056b3b59fc11e9df108ac7aaa00e95481caa5a383239"
+}

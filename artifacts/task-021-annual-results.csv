@@ -1,0 +1,27 @@
+year,dataset,events,decisions,bets,start,final,pnl,roi,max_dd,strategy,confidence,status,no_bet_rate
+2001,football-data-co-uk DATE_ONLY (research),373,373,0,1000,,,,,no_bet,insufficient,INSUFFICIENT_DATA,1
+2002,football-data-co-uk DATE_ONLY (research),391,391,0,1000,,,,,no_bet,insufficient,INSUFFICIENT_DATA,1
+2003,football-data-co-uk DATE_ONLY (research),359,359,0,1000,,,,,no_bet,insufficient,INSUFFICIENT_DATA,1
+2004,football-data-co-uk DATE_ONLY (research),392,392,0,1000,,,,,no_bet,insufficient,INSUFFICIENT_DATA,1
+2005,football-data-co-uk DATE_ONLY (research),374,374,0,1000,,,,,no_bet,insufficient,INSUFFICIENT_DATA,1
+2006,football-data-co-uk DATE_ONLY (research),394,394,0,1000,,,,,no_bet,insufficient,INSUFFICIENT_DATA,1
+2007,football-data-co-uk DATE_ONLY (research),371,371,0,1000,,,,,no_bet,insufficient,INSUFFICIENT_DATA,1
+2008,football-data-co-uk DATE_ONLY (research),379,379,0,1000,,,,,no_bet,insufficient,INSUFFICIENT_DATA,1
+2009,football-data-co-uk DATE_ONLY (research),378,378,0,1000,,,,,no_bet,insufficient,INSUFFICIENT_DATA,1
+2010,football-data-co-uk DATE_ONLY (research),374,374,0,1000,,,,,no_bet,insufficient,INSUFFICIENT_DATA,1
+2011,football-data-co-uk DATE_ONLY (research),377,377,0,1000,,,,,no_bet,insufficient,INSUFFICIENT_DATA,1
+2012,football-data-co-uk DATE_ONLY (research),571,571,0,1000,,,,,no_bet,insufficient,INSUFFICIENT_DATA,1
+2013,football-data-co-uk DATE_ONLY (research),707,707,0,1000,,,,,no_bet,insufficient,INSUFFICIENT_DATA,1
+2014,football-data-co-uk DATE_ONLY (research),380,380,0,1000,,,,,no_bet,insufficient,INSUFFICIENT_DATA,1
+2015,football-data-co-uk DATE_ONLY (research),380,380,0,1000,,,,,no_bet,insufficient,INSUFFICIENT_DATA,1
+2016,football-data-co-uk DATE_ONLY (research),378,378,0,1000,,,,,no_bet,insufficient,INSUFFICIENT_DATA,1
+2017,football-data-co-uk DATE_ONLY (research),401,401,0,1000,,,,,no_bet,insufficient,INSUFFICIENT_DATA,1
+2018,football-data-co-uk DATE_ONLY (research),371,371,0,1000,,,,,no_bet,insufficient,INSUFFICIENT_DATA,1
+2019,football-data-co-uk DATE_ONLY (research),385,385,0,1000,,,,,no_bet,insufficient,INSUFFICIENT_DATA,1
+2020,football-data-co-uk DATE_ONLY (research),342,342,0,1000,,,,,no_bet,insufficient,INSUFFICIENT_DATA,1
+2021,football-data-co-uk DATE_ONLY (research),411,411,0,1000,,,,,no_bet,insufficient,INSUFFICIENT_DATA,1
+2022,football-data-co-uk DATE_ONLY (research),366,366,0,1000,,,,,no_bet,insufficient,INSUFFICIENT_DATA,1
+2023,football-data-co-uk DATE_ONLY (research),418,418,0,1000,,,,,no_bet,insufficient,INSUFFICIENT_DATA,1
+2024,football-data-co-uk DATE_ONLY (research),374,374,0,1000,,,,,no_bet,insufficient,INSUFFICIENT_DATA,1
+2025,football-data-co-uk DATE_ONLY (research),378,378,0,1000,,,,,no_bet,insufficient,INSUFFICIENT_DATA,1
+2026,football-data-co-uk DATE_ONLY (research),194,194,0,1000,,,,,no_bet,insufficient,INCOMPLETE,1

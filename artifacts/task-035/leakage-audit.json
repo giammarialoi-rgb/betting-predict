@@ -1,0 +1,86 @@
+[
+  {
+    "id": "future_odds",
+    "throws": true
+  },
+  {
+    "id": "close_leakage",
+    "throws": true
+  },
+  {
+    "id": "outcome",
+    "throws": true
+  },
+  {
+    "id": "date_only",
+    "throws": true
+  },
+  {
+    "id": "open_close",
+    "throws": true
+  },
+  {
+    "id": "invented_ts",
+    "throws": true
+  },
+  {
+    "id": "invented_tz",
+    "throws": true
+  },
+  {
+    "id": "ambiguous",
+    "throws": true
+  },
+  {
+    "id": "mirror",
+    "throws": true
+  },
+  {
+    "id": "synthetic",
+    "throws": true
+  },
+  {
+    "id": "new_model",
+    "throws": true
+  },
+  {
+    "id": "credentials",
+    "throws": true
+  },
+  {
+    "id": "bypass",
+    "throws": true
+  },
+  {
+    "id": "test_lock",
+    "throws": true
+  },
+  {
+    "id": "holdout_lock",
+    "throws": true
+  },
+  {
+    "id": "feature_test",
+    "throws": true
+  },
+  {
+    "id": "holdout_train",
+    "throws": true
+  },
+  {
+    "id": "lock",
+    "throws": true
+  },
+  {
+    "id": "task_036",
+    "throws": true
+  },
+  {
+    "id": "modify_031",
+    "throws": true
+  },
+  {
+    "id": "frozen_flags",
+    "throws": true
+  }
+]

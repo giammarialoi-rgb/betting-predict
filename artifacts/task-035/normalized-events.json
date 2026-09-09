@@ -1,0 +1,9 @@
+{
+  "total_events": 11948,
+  "class_counts": {
+    "AMBIGUOUS": 171,
+    "DATE_ONLY": 2280,
+    "POSTMATCH": 1056,
+    "RESEARCH_TEMPORAL": 6117
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "dataset_sha256": "e922195d4a6982f635b119454cfb609e81f87662f4dfd2fd9e1ff09fcc067400",
+  "source": "THE_ODDS_API",
+  "collection_start": null,
+  "collection_end": null,
+  "events_discovered": 0,
+  "events_with_kickoff": 0,
+  "events_with_quotes": 0,
+  "strict_events": 0,
+  "strict_quotes": 0,
+  "t72_coverage": 0,
+  "t24_coverage": 0,
+  "t1h_coverage": 0,
+  "t5m_coverage": 0,
+  "settled_events": 0,
+  "unsettled_events": 0
+}

@@ -1,0 +1,90 @@
+{
+  "at": "2026-09-08T19:16:37.912Z",
+  "SYSTEM_STATUS": "HEALTHY",
+  "SUPERVISOR_ALIVE": true,
+  "WORKER_ALIVE": true,
+  "HEARTBEAT_FRESH": true,
+  "AUTOSTART_INSTALLED": true,
+  "AUTOSTART_VERIFIED": true,
+  "ACTIVE_MECHANISM": "StartupOnly",
+  "NO_DUPLICATE_WORKERS": true,
+  "LAB_A_MUTATION": false,
+  "REAL_MONEY": false,
+  "AUTO_PROMOTION": false,
+  "CAPITAL": "PAPER_ONLY",
+  "PAPER_INITIAL_CAPITAL": 1000,
+  "PAPER_CAPITAL": 1000,
+  "PAPER_PNL": 0,
+  "PAPER_ROI": 0,
+  "ARTIFICIAL_CAP": false,
+  "API_CALLS_UI": 0,
+  "LEAKAGE": "PASS",
+  "REPRODUCIBILITY": "PASS",
+  "MULTI_SPORT_ADAPTERS": "READY",
+  "MULTI_MARKET_ENGINE": "READY",
+  "SETTLEMENT": "READY",
+  "AUTOPSY": "READY",
+  "LEARNING": "READY",
+  "COUNTERFACTUAL": "READY",
+  "ERROR_PATTERNS": "READY",
+  "CONTROL_CENTER": "READY",
+  "CURRENT_WORK_VISIBLE": true,
+  "EVENT_DETAIL": "READY",
+  "BUDGET_FIREWALL": "PASS",
+  "RECOVERY": "READY",
+  "MODEL_VERSION": "MODEL_v2_DECISION_ENGINE",
+  "CHALLENGERS": 1,
+  "MODEL_EDGE": "UNKNOWN",
+  "SPORT_STATUS": {
+    "SOCCER": {
+      "status": "ACTIVE",
+      "events": 385,
+      "reason": "BUDGET_STOP — remaining keys deferred"
+    },
+    "TENNIS": {
+      "status": "EMPTY_WINDOW",
+      "events": 0,
+      "reason": "EMPTY_WINDOW - provider reachable, no events in window"
+    },
+    "BASKETBALL": {
+      "status": "EMPTY_WINDOW",
+      "events": 0,
+      "reason": "EMPTY_WINDOW - provider reachable, no events in window"
+    },
+    "VOLLEYBALL": {
+      "status": "PROVIDER_UNAVAILABLE",
+      "events": 0,
+      "reason": "PROVIDER_UNAVAILABLE - not silent zero"
+    },
+    "HOCKEY": {
+      "status": "EMPTY_WINDOW",
+      "events": 0,
+      "reason": "EMPTY_WINDOW - provider reachable, no events in window"
+    },
+    "OTHER": {
+      "status": "AVAILABLE",
+      "events": 0,
+      "reason": "AVAILABLE"
+    }
+  },
+  "observability_files": {
+    "current-work.json": true,
+    "health.json": true,
+    "coverage.json": true,
+    "latest.json": true,
+    "budget-state.json": true,
+    "updates.jsonl": true,
+    "daily-rankings.jsonl": true,
+    "model-runs.jsonl": true,
+    "counterfactuals.jsonl": true,
+    "decisions.jsonl": true,
+    "error-patterns.json": true,
+    "market_catalog.json": true,
+    "source-health.json": false,
+    "snapshots.jsonl": true,
+    "settlements.jsonl": true,
+    "autopsies.jsonl": true,
+    "learning-cases.jsonl": true
+  },
+  "open_task_056": false
+}

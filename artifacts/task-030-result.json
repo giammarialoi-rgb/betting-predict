@@ -1,0 +1,772 @@
+{
+  "experiment_id": "exp_030_final_edge_lab",
+  "task": "030",
+  "dataset_version": "task_027_strict_level_b_v1",
+  "model_version": "task-030-residual-v1",
+  "feature_policy_version": "task-030-features-v1",
+  "as_of_policy": "STRICT_AS_OF",
+  "primary_metric": "brier_test",
+  "baseline": "market_devig",
+  "frozen_028_sha256": "6d78ca34da9df180b643976c3b4a52b93cf589984bae54e056c5e3a53b44174b",
+  "observed_sha256": "6d78ca34da9df180b643976c3b4a52b93cf589984bae54e056c5e3a53b44174b",
+  "movement_sha256": "c33642c097183d3bff3757fb09e501c22182826d5d652de12da7bfcf631ef21d",
+  "movement_rows": 199047,
+  "fixture_mode": false,
+  "winner": null,
+  "declared_best": false,
+  "auto_promotion": false,
+  "real_money": false,
+  "HOLDOUT_TOUCHED": false,
+  "promotion": "BLOCKED",
+  "production": "NOT_DEPLOYABLE",
+  "verdict": "NO_DEMONSTRATED_EDGE",
+  "best_model": null,
+  "selected_families": [
+    "schedule",
+    "movement"
+  ],
+  "feature_status": {
+    "elo": "AVAILABLE",
+    "form": "AVAILABLE",
+    "schedule": "AVAILABLE",
+    "history": "AVAILABLE",
+    "movement": "AVAILABLE"
+  },
+  "partitions": {
+    "TRAIN": {
+      "start": "2015-09-01T00:00:00.000Z",
+      "end": "2016-02-29T23:59:59.999Z",
+      "events": 3647
+    },
+    "VALIDATION": {
+      "start": "2016-03-01T00:00:00.000Z",
+      "end": "2016-05-31T23:59:59.999Z",
+      "events": 2295
+    },
+    "TEST": {
+      "start": "2016-06-01T00:00:00.000Z",
+      "end": "2016-08-31T23:59:59.999Z",
+      "events": 1756
+    },
+    "HOLDOUT": {
+      "start": "2016-09-01T00:00:00.000Z",
+      "end": "2016-12-31T23:59:59.999Z",
+      "events": 2801
+    }
+  },
+  "scores": {
+    "market_only": {
+      "VALIDATION": {
+        "n": 2295,
+        "brier": 0.1950350781006399,
+        "logloss": 0.9824072298270807,
+        "ece": 0.015526457696034049,
+        "cal_slope": 1.054212927471308,
+        "cal_intercept": -0.011003656243702031,
+        "delta_brier": 0,
+        "delta_logloss": 0
+      },
+      "TEST": {
+        "n": 1756,
+        "brier": 0.19877751909290076,
+        "logloss": 0.9963548182157216,
+        "ece": 0.01273314555740637,
+        "cal_slope": 1.0053520899441266,
+        "cal_intercept": 0.004500976752911334,
+        "delta_brier": 0,
+        "delta_logloss": 0
+      },
+      "HOLDOUT": {
+        "n": 2801,
+        "brier": 0.1975166941913053,
+        "logloss": 0.9915728355283715,
+        "ece": 0.02767421832256126,
+        "cal_slope": 1.0111119066872272,
+        "cal_intercept": 0.0036146814559246954,
+        "delta_brier": 0,
+        "delta_logloss": 0
+      }
+    },
+    "market_elo": {
+      "VALIDATION": {
+        "n": 2295,
+        "brier": 0.19503621110994224,
+        "logloss": 0.9824099946957578,
+        "ece": 0.017181468768647002,
+        "cal_slope": 1.0541956953364442,
+        "cal_intercept": -0.011013350019375812,
+        "delta_brier": 0.0000011330093023231846,
+        "delta_logloss": 0.0000027648686771186703
+      },
+      "TEST": {
+        "n": 1756,
+        "brier": 0.198775198132041,
+        "logloss": 0.9963434540689494,
+        "ece": 0.01421053345156716,
+        "cal_slope": 1.0053026019067162,
+        "cal_intercept": 0.004514183753212442,
+        "delta_brier": -0.000002320960859752974,
+        "delta_logloss": -0.000011364146772163686
+      },
+      "HOLDOUT": {
+        "n": 2801,
+        "brier": 0.19751937982077103,
+        "logloss": 0.9915845628437506,
+        "ece": 0.028464209868618702,
+        "cal_slope": 1.0110706303790118,
+        "cal_intercept": 0.003619726618756147,
+        "delta_brier": 0.000002685629465731809,
+        "delta_logloss": 0.000011727315379128633
+      }
+    },
+    "market_form": {
+      "VALIDATION": {
+        "n": 2295,
+        "brier": 0.1950605617614477,
+        "logloss": 0.9825215912686064,
+        "ece": 0.01935771608268767,
+        "cal_slope": 1.0569584957243392,
+        "cal_intercept": -0.011051596307522893,
+        "delta_brier": 0.000025483660807790187,
+        "delta_logloss": 0.00011436144152565664
+      },
+      "TEST": {
+        "n": 1756,
+        "brier": 0.19875077436676503,
+        "logloss": 0.9963139090298632,
+        "ece": 0.020923453231578744,
+        "cal_slope": 1.0081882761300733,
+        "cal_intercept": 0.004221702693518237,
+        "delta_brier": -0.00002674472613573009,
+        "delta_logloss": -0.00004090918585841763
+      },
+      "HOLDOUT": {
+        "n": 2801,
+        "brier": 0.19757840331926557,
+        "logloss": 0.991945928641521,
+        "ece": 0.024907753458535506,
+        "cal_slope": 1.012177296119075,
+        "cal_intercept": 0.00428429268248165,
+        "delta_brier": 0.00006170912796027439,
+        "delta_logloss": 0.0003730931131494808
+      }
+    },
+    "market_history": {
+      "VALIDATION": {
+        "n": 2295,
+        "brier": 0.1951025359838843,
+        "logloss": 0.9826917781219403,
+        "ece": 0.017945049148018335,
+        "cal_slope": 1.0594259473447138,
+        "cal_intercept": -0.010955983047387652,
+        "delta_brier": 0.00006745788324438728,
+        "delta_logloss": 0.0002845482948595768
+      },
+      "TEST": {
+        "n": 1756,
+        "brier": 0.19868658965170707,
+        "logloss": 0.9960136857458904,
+        "ece": 0.01599625802585222,
+        "cal_slope": 1.0145959611251194,
+        "cal_intercept": 0.002090692323531984,
+        "delta_brier": -0.00009092944119368229,
+        "delta_logloss": -0.0003411324698311402
+      },
+      "HOLDOUT": {
+        "n": 2801,
+        "brier": 0.19751538589627213,
+        "logloss": 0.9915583586844848,
+        "ece": 0.024250350337118354,
+        "cal_slope": 1.0163449038528165,
+        "cal_intercept": 0.0031393231844636382,
+        "delta_brier": -0.0000013082950331699816,
+        "delta_logloss": -0.000014476843886668256
+      }
+    },
+    "market_schedule": {
+      "VALIDATION": {
+        "n": 2295,
+        "brier": 0.19502991355678423,
+        "logloss": 0.9823865472915858,
+        "ece": 0.01567583672926552,
+        "cal_slope": 1.0481917870318196,
+        "cal_intercept": -0.009472027254128434,
+        "delta_brier": -0.000005164543855684656,
+        "delta_logloss": -0.000020682535494920273
+      },
+      "TEST": {
+        "n": 1756,
+        "brier": 0.198808207888688,
+        "logloss": 0.9964998273003933,
+        "ece": 0.015240036474259115,
+        "cal_slope": 0.9997239723833188,
+        "cal_intercept": 0.005854313905733266,
+        "delta_brier": 0.000030688795787242595,
+        "delta_logloss": 0.00014500908467174334
+      },
+      "HOLDOUT": {
+        "n": 2801,
+        "brier": 0.19750999436206998,
+        "logloss": 0.9915453544469794,
+        "ece": 0.020978948759040286,
+        "cal_slope": 1.005740703863197,
+        "cal_intercept": 0.004727772470711489,
+        "delta_brier": -0.0000066998292353182,
+        "delta_logloss": -0.00002748108139205563
+      }
+    },
+    "market_movement": {
+      "VALIDATION": {
+        "n": 2295,
+        "brier": 0.1950348203960942,
+        "logloss": 0.98240587260629,
+        "ece": 0.016574858571796715,
+        "cal_slope": 1.0542073357991493,
+        "cal_intercept": -0.01100301402771886,
+        "delta_brier": -2.5770454570306356e-7,
+        "delta_logloss": -0.0000013572207907541767
+      },
+      "TEST": {
+        "n": 1756,
+        "brier": 0.19877787129346203,
+        "logloss": 0.9963568763122453,
+        "ece": 0.014215341925020414,
+        "cal_slope": 1.0053377682532882,
+        "cal_intercept": 0.004505843761487327,
+        "delta_brier": 3.5220056127105437e-7,
+        "delta_logloss": 0.000002058096523760433
+      },
+      "HOLDOUT": {
+        "n": 2801,
+        "brier": 0.19751667186579408,
+        "logloss": 0.9915730010540468,
+        "ece": 0.027388612541049163,
+        "cal_slope": 1.0111035880564823,
+        "cal_intercept": 0.0036159265287522002,
+        "delta_brier": -2.232551121750248e-8,
+        "delta_logloss": 1.6552567527750028e-7
+      }
+    },
+    "market_all": {
+      "VALIDATION": {
+        "n": 2295,
+        "brier": 0.19503417534084252,
+        "logloss": 0.9824155885403093,
+        "ece": 0.016095075444549342,
+        "cal_slope": 1.0486134071084778,
+        "cal_intercept": -0.009550465602721159,
+        "delta_brier": -9.027597973887413e-7,
+        "delta_logloss": 0.0000083587132285734
+      },
+      "TEST": {
+        "n": 1756,
+        "brier": 0.1988075834519662,
+        "logloss": 0.9964966848669351,
+        "ece": 0.01384836067420992,
+        "cal_slope": 1.000156656115036,
+        "cal_intercept": 0.005780649120942449,
+        "delta_brier": 0.00003006435906544036,
+        "delta_logloss": 0.00014186665121351805
+      },
+      "HOLDOUT": {
+        "n": 2801,
+        "brier": 0.19751113211947838,
+        "logloss": 0.9915421666726142,
+        "ece": 0.02230038878123318,
+        "cal_slope": 1.0061237186837588,
+        "cal_intercept": 0.004680215450979519,
+        "delta_brier": -0.000005562071826920034,
+        "delta_logloss": -0.00003066885575730982
+      }
+    }
+  },
+  "holm": {
+    "n_tests": 6,
+    "ids": [
+      "market_elo",
+      "market_form",
+      "market_history",
+      "market_schedule",
+      "market_movement",
+      "market_all"
+    ],
+    "raw_p": [
+      0.13186813186813187,
+      0.3036963036963037,
+      0.025974025974025976,
+      0.7282717282717283,
+      0.8331668331668332,
+      0.7442557442557443
+    ],
+    "adjusted_p": [
+      0.6593406593406593,
+      1,
+      0.15584415584415584,
+      1,
+      1,
+      1
+    ],
+    "rejected": [
+      false,
+      false,
+      false,
+      false,
+      false,
+      false
+    ]
+  },
+  "annual": [
+    {
+      "year": 2001,
+      "bets": 0,
+      "start": 1000,
+      "end": null,
+      "pnl": null,
+      "roi": null,
+      "max_dd": null,
+      "status": "INSUFFICIENT_DATA"
+    },
+    {
+      "year": 2002,
+      "bets": 0,
+      "start": 1000,
+      "end": null,
+      "pnl": null,
+      "roi": null,
+      "max_dd": null,
+      "status": "INSUFFICIENT_DATA"
+    },
+    {
+      "year": 2003,
+      "bets": 0,
+      "start": 1000,
+      "end": null,
+      "pnl": null,
+      "roi": null,
+      "max_dd": null,
+      "status": "INSUFFICIENT_DATA"
+    },
+    {
+      "year": 2004,
+      "bets": 0,
+      "start": 1000,
+      "end": null,
+      "pnl": null,
+      "roi": null,
+      "max_dd": null,
+      "status": "INSUFFICIENT_DATA"
+    },
+    {
+      "year": 2005,
+      "bets": 0,
+      "start": 1000,
+      "end": null,
+      "pnl": null,
+      "roi": null,
+      "max_dd": null,
+      "status": "INSUFFICIENT_DATA"
+    },
+    {
+      "year": 2006,
+      "bets": 0,
+      "start": 1000,
+      "end": null,
+      "pnl": null,
+      "roi": null,
+      "max_dd": null,
+      "status": "INSUFFICIENT_DATA"
+    },
+    {
+      "year": 2007,
+      "bets": 0,
+      "start": 1000,
+      "end": null,
+      "pnl": null,
+      "roi": null,
+      "max_dd": null,
+      "status": "INSUFFICIENT_DATA"
+    },
+    {
+      "year": 2008,
+      "bets": 0,
+      "start": 1000,
+      "end": null,
+      "pnl": null,
+      "roi": null,
+      "max_dd": null,
+      "status": "INSUFFICIENT_DATA"
+    },
+    {
+      "year": 2009,
+      "bets": 0,
+      "start": 1000,
+      "end": null,
+      "pnl": null,
+      "roi": null,
+      "max_dd": null,
+      "status": "INSUFFICIENT_DATA"
+    },
+    {
+      "year": 2010,
+      "bets": 0,
+      "start": 1000,
+      "end": null,
+      "pnl": null,
+      "roi": null,
+      "max_dd": null,
+      "status": "INSUFFICIENT_DATA"
+    },
+    {
+      "year": 2011,
+      "bets": 0,
+      "start": 1000,
+      "end": null,
+      "pnl": null,
+      "roi": null,
+      "max_dd": null,
+      "status": "INSUFFICIENT_DATA"
+    },
+    {
+      "year": 2012,
+      "bets": 0,
+      "start": 1000,
+      "end": null,
+      "pnl": null,
+      "roi": null,
+      "max_dd": null,
+      "status": "INSUFFICIENT_DATA"
+    },
+    {
+      "year": 2013,
+      "bets": 0,
+      "start": 1000,
+      "end": null,
+      "pnl": null,
+      "roi": null,
+      "max_dd": null,
+      "status": "INSUFFICIENT_DATA"
+    },
+    {
+      "year": 2014,
+      "bets": 0,
+      "start": 1000,
+      "end": null,
+      "pnl": null,
+      "roi": null,
+      "max_dd": null,
+      "status": "INSUFFICIENT_DATA"
+    },
+    {
+      "year": 2015,
+      "bets": 0,
+      "start": 1000,
+      "end": null,
+      "pnl": null,
+      "roi": null,
+      "max_dd": null,
+      "status": "NO_EDGE"
+    },
+    {
+      "year": 2016,
+      "bets": 0,
+      "start": 1000,
+      "end": null,
+      "pnl": null,
+      "roi": null,
+      "max_dd": null,
+      "status": "NO_EDGE"
+    },
+    {
+      "year": 2017,
+      "bets": 0,
+      "start": 1000,
+      "end": null,
+      "pnl": null,
+      "roi": null,
+      "max_dd": null,
+      "status": "INSUFFICIENT_DATA"
+    },
+    {
+      "year": 2018,
+      "bets": 0,
+      "start": 1000,
+      "end": null,
+      "pnl": null,
+      "roi": null,
+      "max_dd": null,
+      "status": "INSUFFICIENT_DATA"
+    },
+    {
+      "year": 2019,
+      "bets": 0,
+      "start": 1000,
+      "end": null,
+      "pnl": null,
+      "roi": null,
+      "max_dd": null,
+      "status": "INSUFFICIENT_DATA"
+    },
+    {
+      "year": 2020,
+      "bets": 0,
+      "start": 1000,
+      "end": null,
+      "pnl": null,
+      "roi": null,
+      "max_dd": null,
+      "status": "INSUFFICIENT_DATA"
+    },
+    {
+      "year": 2021,
+      "bets": 0,
+      "start": 1000,
+      "end": null,
+      "pnl": null,
+      "roi": null,
+      "max_dd": null,
+      "status": "INSUFFICIENT_DATA"
+    },
+    {
+      "year": 2022,
+      "bets": 0,
+      "start": 1000,
+      "end": null,
+      "pnl": null,
+      "roi": null,
+      "max_dd": null,
+      "status": "INSUFFICIENT_DATA"
+    },
+    {
+      "year": 2023,
+      "bets": 0,
+      "start": 1000,
+      "end": null,
+      "pnl": null,
+      "roi": null,
+      "max_dd": null,
+      "status": "INSUFFICIENT_DATA"
+    },
+    {
+      "year": 2024,
+      "bets": 0,
+      "start": 1000,
+      "end": null,
+      "pnl": null,
+      "roi": null,
+      "max_dd": null,
+      "status": "INSUFFICIENT_DATA"
+    },
+    {
+      "year": 2025,
+      "bets": 0,
+      "start": 1000,
+      "end": null,
+      "pnl": null,
+      "roi": null,
+      "max_dd": null,
+      "status": "INSUFFICIENT_DATA"
+    },
+    {
+      "year": 2026,
+      "bets": 0,
+      "start": 1000,
+      "end": null,
+      "pnl": null,
+      "roi": null,
+      "max_dd": null,
+      "status": "INCOMPLETE"
+    }
+  ],
+  "leakage": [
+    {
+      "id": "outcome",
+      "throws": true
+    },
+    {
+      "id": "future_form",
+      "throws": true
+    },
+    {
+      "id": "future_elo",
+      "throws": true
+    },
+    {
+      "id": "future_h2h",
+      "throws": true
+    },
+    {
+      "id": "future_market",
+      "throws": true
+    },
+    {
+      "id": "close",
+      "throws": true
+    },
+    {
+      "id": "close_t1h",
+      "throws": true
+    },
+    {
+      "id": "date_only_strict",
+      "throws": true
+    },
+    {
+      "id": "post_test",
+      "throws": true
+    },
+    {
+      "id": "feature_test",
+      "throws": true
+    },
+    {
+      "id": "random_split",
+      "throws": true
+    },
+    {
+      "id": "invented_ts",
+      "throws": true
+    },
+    {
+      "id": "reliability",
+      "throws": true
+    },
+    {
+      "id": "auto_promote",
+      "throws": true
+    },
+    {
+      "id": "lock",
+      "throws": true
+    },
+    {
+      "id": "reveal_before_lock",
+      "throws": true
+    },
+    {
+      "id": "frozen_flags",
+      "throws": true
+    }
+  ],
+  "sample_assessment": {
+    "eventId": "btb-kaggle|16401655|t-1h",
+    "asOf": "2016-05-31T23:30:00.000Z",
+    "hypothesis": "MARKET_ONLY",
+    "probability": 0.14370103067302703,
+    "evidenceStrength": "weak",
+    "narrativeSummary": "MARKET_ONLY — Probability: ~14% — Evidence strength: WEAK\nSupporting: LEVEL B 1X2 de-vig P(H,D,A)=14.4/24.6/61.0 from bet365 6.5/3.8/1.53 at T-1h\nContext: LEVEL_B: soccer-dataset date_utc SOURCE (documented UTC, Z appended) + PHP generate_odds_series hourly LOCF bin DERIVED (hours_before). BeatTheBookie naive match_datetime is RESEARCH_ONLY (TZ undocumented).\nBlocked by temporal firewall: 1",
+    "evidenceGraph": {
+      "eventId": "btb-kaggle|16401655|t-1h",
+      "asOf": "2016-05-31T23:30:00.000Z",
+      "hypothesis": "MARKET_ONLY",
+      "supporting": [
+        {
+          "evidenceId": "btb-kaggle|16401655|t-1h|market-devig",
+          "category": "market",
+          "epistemicKind": "QUANTITATIVE_EVIDENCE",
+          "claim": "LEVEL B 1X2 de-vig P(H,D,A)=14.4/24.6/61.0 from bet365 6.5/3.8/1.53 at T-1h",
+          "entityRef": "Oeste vs Vasco",
+          "eventId": "btb-kaggle|16401655|t-1h",
+          "sourceId": "kaggle-austro-beat-the-bookie",
+          "sourceUrl": "https://www.kaggle.com/datasets/austro/beat-the-bookie-worldwide-football-dataset",
+          "publishedAt": "2016-05-31T23:30:00.000Z",
+          "availableAt": "2016-05-31T23:30:00.000Z",
+          "observedAt": "2016-05-31T23:30:00.000Z",
+          "temporalPrecision": "exact",
+          "polarity": "SUPPORTS",
+          "targetHypothesis": "MARKET_ONLY",
+          "magnitude": 0.14370103067302703,
+          "claimConfidence": null,
+          "sourceReliability": null,
+          "confirmations": [],
+          "rebuttals": []
+        }
+      ],
+      "contradicting": [],
+      "contextual": [
+        {
+          "evidenceId": "btb-kaggle|16401655|t-1h|level-b",
+          "category": "historical",
+          "epistemicKind": "FACT",
+          "claim": "LEVEL_B: soccer-dataset date_utc SOURCE (documented UTC, Z appended) + PHP generate_odds_series hourly LOCF bin DERIVED (hours_before). BeatTheBookie naive match_datetime is RESEARCH_ONLY (TZ undocumented).",
+          "entityRef": "16401655",
+          "eventId": "btb-kaggle|16401655|t-1h",
+          "sourceId": "kaggle-austro-beat-the-bookie",
+          "sourceUrl": "https://www.kaggle.com/datasets/austro/beat-the-bookie-worldwide-football-dataset",
+          "publishedAt": "2016-05-31T23:30:00.000Z",
+          "availableAt": "2016-05-31T23:30:00.000Z",
+          "observedAt": "2016-05-31T23:30:00.000Z",
+          "temporalPrecision": "exact",
+          "polarity": "CONTEXT_ONLY",
+          "targetHypothesis": "MARKET_ONLY",
+          "magnitude": null,
+          "claimConfidence": null,
+          "sourceReliability": null,
+          "confirmations": [],
+          "rebuttals": []
+        }
+      ],
+      "insufficient": [
+        "HOLDOUT years have zero STRICT coverage — MODEL_READY stays false",
+        "News/injury/lineup not present as FACT in this corpus (CONTEXT_ONLY if added later)",
+        "BeatTheBookie naive match_datetime timezone is undocumented — not used as UTC"
+      ]
+    },
+    "attributions": [
+      {
+        "evidenceId": "btb-kaggle|16401655|t-1h|market-devig",
+        "kind": "market",
+        "sourceId": "kaggle-austro-beat-the-bookie",
+        "sourceUrl": "https://www.kaggle.com/datasets/austro/beat-the-bookie-worldwide-football-dataset",
+        "publishedAt": "2016-05-31T23:30:00.000Z",
+        "availableAt": "2016-05-31T23:30:00.000Z",
+        "observedAt": "2016-05-31T23:30:00.000Z",
+        "claim": "LEVEL B 1X2 de-vig P(H,D,A)=14.4/24.6/61.0 from bet365 6.5/3.8/1.53 at T-1h",
+        "epistemicKind": "QUANTITATIVE_EVIDENCE",
+        "polarity": "SUPPORTS",
+        "category": "market"
+      },
+      {
+        "evidenceId": "btb-kaggle|16401655|t-1h|level-b",
+        "kind": "dataset",
+        "sourceId": "kaggle-austro-beat-the-bookie",
+        "sourceUrl": "https://www.kaggle.com/datasets/austro/beat-the-bookie-worldwide-football-dataset",
+        "publishedAt": "2016-05-31T23:30:00.000Z",
+        "availableAt": "2016-05-31T23:30:00.000Z",
+        "observedAt": "2016-05-31T23:30:00.000Z",
+        "claim": "LEVEL_B: soccer-dataset date_utc SOURCE (documented UTC, Z appended) + PHP generate_odds_series hourly LOCF bin DERIVED (hours_before). BeatTheBookie naive match_datetime is RESEARCH_ONLY (TZ undocumented).",
+        "epistemicKind": "FACT",
+        "polarity": "CONTEXT_ONLY",
+        "category": "historical"
+      }
+    ],
+    "blockedByTemporal": [
+      {
+        "evidenceId": "btb-kaggle|16401655|t-1h|settlement-blocked",
+        "category": "historical",
+        "epistemicKind": "FACT",
+        "claim": "FT scores are OutcomeContext and are not available at pre-kickoff asOf",
+        "entityRef": "btb-kaggle|16401655|t-1h",
+        "eventId": "btb-kaggle|16401655|t-1h",
+        "sourceId": "kaggle-austro-beat-the-bookie",
+        "sourceUrl": "https://www.kaggle.com/datasets/austro/beat-the-bookie-worldwide-football-dataset",
+        "publishedAt": "2016-06-01T00:30:00.000Z",
+        "availableAt": "2016-06-01T00:30:00.000Z",
+        "observedAt": "2016-05-31T23:30:00.000Z",
+        "temporalPrecision": "exact",
+        "polarity": "CONTEXT_ONLY",
+        "targetHypothesis": "MARKET_ONLY",
+        "magnitude": null,
+        "claimConfidence": null,
+        "sourceReliability": null,
+        "confirmations": [],
+        "rebuttals": []
+      }
+    ]
+  },
+  "predictive_gate": false,
+  "ci95_delta_brier_all": {
+    "low": -0.00014038527418317888,
+    "high": 0.00007916959023236626
+  },
+  "fingerprint": "ac2ccb13090f86c0007fa4a00cf5ed6f7033097c106980568948fad09ef603f0"
+}

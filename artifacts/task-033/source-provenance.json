@@ -1,0 +1,49 @@
+{
+  "probes": [
+    {
+      "id": "hf-olivier-closing-sample",
+      "url": "https://huggingface.co/api/datasets/oliviersportsdata/Sample-Historical-Football-Odds",
+      "cluster": "UNKNOWN",
+      "attempted": true,
+      "acquired": true,
+      "http_status": 200,
+      "sha256": "4c1958cd6c4a3c9571975641a7876aa6503bb95f0c76a9e748f3e5c3f30b1765",
+      "classification": "DATE_ONLY_OR_CLOSING_SAMPLE",
+      "note": "HuggingFace 1% sample advertised as closing odds 1998–2026. Not a quote clock. Paid master set not acquired."
+    },
+    {
+      "id": "hf-olivier-parquet",
+      "url": "https://huggingface.co/api/datasets/oliviersportsdata/Sample-Historical-Football-Odds/parquet/default/train",
+      "cluster": "UNKNOWN",
+      "attempted": true,
+      "acquired": true,
+      "http_status": 200,
+      "sha256": "92c53d9f5778d9db168f253eb24db5a016b9376171c396348f7a8e13992a773f",
+      "classification": "CLOSING_SAMPLE_LISTING",
+      "note": "[\"https://huggingface.co/api/datasets/oliviersportsdata/Sample-Historical-Football-Odds/parquet/default/train/0.parquet\"]"
+    },
+    {
+      "id": "petermclagan-sample-listing",
+      "url": "https://api.github.com/repos/petermclagan/betfair-historical/contents/tests/sample_data",
+      "cluster": "MIRROR",
+      "attempted": true,
+      "acquired": true,
+      "http_status": 200,
+      "sha256": "a7d2a4e0f9ee773593f97d146f4a878c86937821b5441667d9b613a51efb8509",
+      "classification": "MIRROR_SAMPLE_LISTING",
+      "note": "Already on disk as TASK 023 football BASIC. Listing: \"name\":\"football-basic-sample.bz2\""
+    },
+    {
+      "id": "skipped-already-blocked",
+      "url": "ClubElo | football-data.co.uk | OddsPapi | 5DollarFootballAPI | historicdata.betfair.com | Football Charts",
+      "cluster": "UNKNOWN",
+      "attempted": false,
+      "acquired": false,
+      "http_status": null,
+      "sha256": null,
+      "classification": "SKIP_BLOCKED",
+      "note": "Not re-probed: ClubElo, football-data.co.uk 503, OddsPapi, 5Dollar, Betfair Historic login, Football Charts paid."
+    }
+  ],
+  "weekly": "audit/external/task-025/betfair-sports.csv"
+}

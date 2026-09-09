@@ -1,0 +1,124 @@
+{
+  "experiment_id": "exp_040_recover_live",
+  "task": "040",
+  "COLLECTION_STATUS": "COLLECTING",
+  "SOURCE_STATUS": "ok",
+  "API_KEY_CONFIGURED": true,
+  "EVENTS_DISCOVERED": 114,
+  "EVENTS_RECONSTRUCTED": 114,
+  "QUOTE_OBSERVATIONS": 26133,
+  "UNIQUE_QUOTES": 26133,
+  "EXACT_KICKOFFS": 114,
+  "MATCH_EXACT": 114,
+  "T72_COVERAGE": 0.05263157894736842,
+  "T48_COVERAGE": 0.05263157894736842,
+  "T24_COVERAGE": 0.05263157894736842,
+  "T12_COVERAGE": 0,
+  "T6_COVERAGE": 0,
+  "T3_COVERAGE": 0,
+  "T1H_COVERAGE": 1,
+  "T30M_COVERAGE": 0,
+  "T15M_COVERAGE": 0,
+  "T5M_COVERAGE": 0,
+  "T1M_COVERAGE": 0,
+  "STRICT_EVENTS": 114,
+  "STRICT_QUOTES": 26133,
+  "LOCKED_DECISIONS": 114,
+  "SETTLED_EVENTS": 0,
+  "TEST_EVENTS": 17,
+  "HOLDOUT_EVENTS": 18,
+  "HOLDOUT_2020_PLUS": 18,
+  "HOLDOUT_STATUS": "PARTIAL",
+  "MODEL_READY": "PARTIAL",
+  "MARKET_ONLY_EVALUATION": true,
+  "MARKET_BRIER": null,
+  "MARKET_LOGLOSS": null,
+  "BEST_MODEL": "MARKET_DEVIG",
+  "DELTA_BRIER": null,
+  "CI_95": null,
+  "HOLM": null,
+  "SIGNIFICANT": false,
+  "CAPITAL_QUALIFIED": false,
+  "BETS": 0,
+  "BANKROLL": "—",
+  "ROI": null,
+  "MAX_DD": null,
+  "winner": null,
+  "auto_promotion": false,
+  "REAL_MONEY": false,
+  "real_money": false,
+  "reproducibility": "PASS",
+  "leakage_status": "PASS",
+  "FINAL_VERDICT": "INSUFFICIENT_DATA",
+  "residual_blocker": "Live store recovered (26133 quotes, 114 AS_OF locks). Settled 0/100 — wait REVEAL after kickoff.",
+  "open_task_041": false,
+  "recover_table": {
+    "TOTAL_QUOTE_ROWS": 26133,
+    "UNIQUE_QUOTE_ROWS": 26133,
+    "UNIQUE_EVENTS": 114,
+    "EVENTS_WITH_KICKOFF": 114,
+    "EVENTS_WITH_EXACT_KICKOFF": 114,
+    "EVENTS_WITH_PREMATCH_QUOTES": 114,
+    "EVENTS_WITH_T1H_QUOTE": 0,
+    "EVENTS_WITH_T1H_COMPLETE_1X2": 114,
+    "MATCH_EXACT": 114,
+    "STRICT_EVENTS": 114,
+    "LOCKED_DECISIONS": 114,
+    "SETTLED_EVENTS": 0
+  },
+  "leakage": [
+    {
+      "id": "post_kickoff",
+      "throws": true
+    },
+    {
+      "id": "date_only",
+      "throws": true
+    },
+    {
+      "id": "invented_ts",
+      "throws": true
+    },
+    {
+      "id": "close_t1h",
+      "throws": true
+    },
+    {
+      "id": "ft_in_decision",
+      "throws": true
+    },
+    {
+      "id": "lock_immutability",
+      "throws": true
+    },
+    {
+      "id": "naive_ts",
+      "throws": true
+    },
+    {
+      "id": "collector_as_available",
+      "throws": true
+    },
+    {
+      "id": "asof_future",
+      "throws": true
+    },
+    {
+      "id": "reveal_before_lock",
+      "throws": true
+    },
+    {
+      "id": "task_040",
+      "throws": true
+    },
+    {
+      "id": "historical_hunt",
+      "throws": true
+    }
+  ],
+  "experiment_sha256": "02d5f073c76305d75cdadccb8e822858ac8e1717f968201da2c7b5d8a5650202",
+  "dataset_fingerprint": "886ae2d55f04af1ccb994d3deeb0cc9efa54b2cf12df20a69c7e1e0515eaa2ad",
+  "fingerprint": "fcb82409a35111a87d91d8eb85a4234e4005cf565018760c10691a20dd8c3703",
+  "adapter_version": "recover-040/v1",
+  "source_store": "C:\\Users\\giamm\\Desktop\\app previsioni sportive\\betting predict\\audit\\external\\task-039"
+}

@@ -1,0 +1,42 @@
+---
+description: Evidence & Attribution Layer — every assessment must be evidence-backed, attributable, and temporally valid
+alwaysApply: true
+---
+
+# Evidence & Attribution Layer (TASK 015+)
+
+Every assessment must be temporally valid, attributable and evidence-backed.
+
+## Hard rules
+
+- **No naked probability.** An assessment with `probability !== null` must include an evidence graph (supporting / contradicting / contextual) and/or an explicit `insufficient` declaration. Prefer quantitative/model evidence over narrative alone.
+- **No unsupported causal claim.** News and similar signals start as `CONTEXT_ONLY`. They must not auto-become predictions. Only a verified correlation (e.g. lineup/injury FACT) may enter SUPPORTING/CONTRADICTING.
+- **No source reliability invented.** `sourceReliability` stays `null` until measured. Do not conflate claim confidence with source reliability.
+- **Temporal firewall.** Evidence with `available_at > asOf` must never enter the decision/assessment graph. Record it in `blockedByTemporal` only.
+- **Blind replay.** Freeze the evidence graph at LOCK with DecisionContext; never use OutcomeContext or post-asOf information to justify a pre-kickoff assessment.
+
+## Epistemic kinds (keep separate)
+
+- `FACT`
+- `QUANTITATIVE_EVIDENCE`
+- `INFERENCE`
+- `MODEL_JUDGMENT`
+
+## Required graph buckets
+
+- SUPPORTING
+- CONTRADICTING
+- CONTEXTUAL
+- INSUFFICIENT (explicit gaps)
+
+## Do not
+
+- Invent reliability scores
+- Derive probability from news alone
+- Scrape / bypass WAF / paywalled APIs for news in this layer
+- Apply Neon migrations without an approved schema proposal
+- Weaken MODEL_READY or temporal gates to “make tests pass”
+
+## Code home
+
+`src/domain/evidence/` — types, graph builder, attribution, asserts, WhyFactor adapter, InformationEvent bridge.

@@ -1,0 +1,8 @@
+{
+  "partition": "CAPITAL_STRICT",
+  "task_031_base_counted": false,
+  "live_events": 0,
+  "allowlist": [
+    "the-odds-api"
+  ]
+}

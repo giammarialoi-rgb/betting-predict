@@ -1,0 +1,9 @@
+{
+  "experiment_id": "exp_009_lab_v1",
+  "dataset_version": "lab_v1_2019_2024",
+  "feature_policy_version": "feature_policy_v1_strict",
+  "model_version": "baselines_v1",
+  "as_of_policy": "STRICT_AS_OF",
+  "created_at": "2026-04-06T00:00:00.000Z",
+  "notes": "TASK 009 historical evaluation lab — measurement only, no staking"
+}

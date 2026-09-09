@@ -1,0 +1,6 @@
+{
+  "events_research": 32358,
+  "events_reference": 10499,
+  "events_new_strict": 0,
+  "note": "acquired != strict usable. Normalized live quotes stay in the append-only ledger, not here."
+}

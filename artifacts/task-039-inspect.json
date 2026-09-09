@@ -1,0 +1,99 @@
+﻿{
+  "root": "C:\\Users\\giamm\\Desktop\\app previsioni sportive\\betting predict\\audit\\external\\task-039",
+  "events": 114,
+  "quotes": 14031,
+  "uniqueQuotes": 14031,
+  "uniqueEventsFromQuotes": 114,
+  "sports": [
+    "soccer_epl",
+    "soccer_france_ligue_one",
+    "soccer_germany_bundesliga",
+    "soccer_italy_serie_a",
+    "soccer_spain_la_liga",
+    "soccer_uefa_champs_league"
+  ],
+  "bookmakers": 44,
+  "booksSample": [
+    "betano_uk",
+    "betanysports",
+    "betclic_fr",
+    "betfair_ex_eu",
+    "betfair_ex_uk",
+    "betfair_sb_uk",
+    "betfred_uk",
+    "betonlineag",
+    "betsson",
+    "betvictor",
+    "betway",
+    "boylesports"
+  ],
+  "markets": [
+    "1X2"
+  ],
+  "outcomes": [
+    "AWAY",
+    "DRAW",
+    "HOME"
+  ],
+  "classes": {
+    "STRICT": 14031
+  },
+  "match": {
+    "MATCH_EXACT": 14031
+  },
+  "past": 0,
+  "future": 114,
+  "noKick": 0,
+  "nonUtc": 0,
+  "exactKickoffs": 114,
+  "withAvail": 14031,
+  "collectorAsAvail": 0,
+  "windows": {
+    "null": 11940,
+    "T-24h": 729,
+    "T-48h": 702,
+    "T-72h": 660
+  },
+  "cov": {
+    "OUT_OF_WINDOW": 11940,
+    "COVERED": 2091
+  },
+  "eventsPrematch": 114,
+  "eventsWithT1h": 114,
+  "t1hComplete": 114,
+  "decisions": 0,
+  "settlements": 0,
+  "journal": [
+    {
+      "source": "the-odds-api",
+      "requested_at_utc": "2026-09-07T22:03:29.097Z",
+      "received_at_utc": "2026-09-07T22:03:31.473Z",
+      "status": "ok",
+      "error": null,
+      "failure_mode": null,
+      "events": 114,
+      "quotes": 12153
+    },
+    {
+      "source": "the-odds-api",
+      "requested_at_utc": "2026-09-07T22:03:45.421Z",
+      "received_at_utc": "2026-09-07T22:03:48.507Z",
+      "status": "ok",
+      "error": null,
+      "failure_mode": null,
+      "events": 114,
+      "quotes": 12153
+    }
+  ],
+  "sampleLock": {
+    "event": "b54ded61f9dc94423dfcb089",
+    "home_team": "Aston Villa",
+    "away_team": "Nottingham Forest",
+    "kickoff": "2026-09-12T14:00:00Z",
+    "cutoff": "2026-09-12T13:00:00.000Z",
+    "home_price": 2.15,
+    "draw_price": 3.3,
+    "away_price": 3.2,
+    "booksWithTriple": 42
+  }
+}

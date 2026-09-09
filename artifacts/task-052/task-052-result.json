@@ -1,0 +1,23 @@
+{
+  "experiment_id": "exp_052_duplicate_keys_ui",
+  "task": "052",
+  "FINAL_VERDICT": "UI_ROBUSTNESS_READY",
+  "UI_STATUS": "PASS",
+  "DUPLICATE_KEYS": 0,
+  "DUPLICATE_EVENT_IDS_HANDLED": true,
+  "NEXT_EVENTS_RENDER": "PASS",
+  "EVENT_DETAIL_RENDER": "PASS",
+  "CAUSE": "Accidental duplicate event_id lines in Lab B events.jsonl (n_dup_ids=60); same fingerprint re-appended by concurrent writers. Deduped at buildNextEvents046 (last-wins). Append-only store not rewritten.",
+  "STORE_DUP_EVENT_IDS": 60,
+  "NEXT_EVENTS_DUP_EVENT_IDS": 0,
+  "LAB_A_MUTATION": false,
+  "CAPITAL": "CLOSED",
+  "REAL_MONEY": false,
+  "AUTO_PROMOTION": false,
+  "LEAKAGE": "PASS",
+  "REPRODUCIBILITY": "PASS",
+  "OBSERVATORY_API_CALLS_UI": 0,
+  "open_task_053": false,
+  "experiment_sha256": "f2a9eb7f72c241c4309da36387440eb2fe86d1155811a22b9d7c24baa342e1bb",
+  "fingerprint": "af543d533f67a05c8414e3c7737609451c71c438458a497d50a14a87147de36b"
+}

@@ -1,0 +1,206 @@
+[
+  {
+    "id": "task_031_base",
+    "total": 12,
+    "class": "STRICT_B",
+    "access": "LOCAL"
+  },
+  {
+    "id": "books_t1h",
+    "total": 12,
+    "class": "STRICT_B",
+    "access": "LOCAL"
+  },
+  {
+    "id": "movement_t24",
+    "total": 13,
+    "class": "STRICT_B",
+    "access": "LOCAL"
+  },
+  {
+    "id": "beatthebookie_series",
+    "total": 13,
+    "class": "STRICT_B",
+    "access": "LOCAL"
+  },
+  {
+    "id": "closing_odds_date_only",
+    "total": 9,
+    "class": "DATE_ONLY",
+    "access": "LOCAL"
+  },
+  {
+    "id": "club_football",
+    "total": 8,
+    "class": "DATE_ONLY",
+    "access": "LOCAL"
+  },
+  {
+    "id": "zenodo_12673394",
+    "total": 9,
+    "class": "DATE_ONLY",
+    "access": "LOCAL"
+  },
+  {
+    "id": "soccer_dataset_odds_parquet",
+    "total": 13,
+    "class": "DATE_ONLY",
+    "access": "LOCAL"
+  },
+  {
+    "id": "petermclagan_basic",
+    "total": 11,
+    "class": "RESEARCH_TEMPORAL",
+    "access": "MIRROR"
+  },
+  {
+    "id": "kaggle_zygmunt_betfair",
+    "total": 9,
+    "class": "RESEARCH_TEMPORAL",
+    "access": "LOCAL"
+  },
+  {
+    "id": "kaggle_ah_sample",
+    "total": 5,
+    "class": "RESEARCH_TEMPORAL",
+    "access": "SAMPLE_ONLY"
+  },
+  {
+    "id": "anishkhetani_epl",
+    "total": 9,
+    "class": "DATE_ONLY",
+    "access": "MIRROR"
+  },
+  {
+    "id": "hf_soccer_odds",
+    "total": 5,
+    "class": "AMBIGUOUS",
+    "access": "PUBLIC_DOWNLOAD"
+  },
+  {
+    "id": "hf_soccer_stats_sql",
+    "total": 5,
+    "class": "AMBIGUOUS",
+    "access": "PUBLIC_DOWNLOAD"
+  },
+  {
+    "id": "hf_olivier_closing",
+    "total": 3,
+    "class": "DATE_ONLY",
+    "access": "SAMPLE_ONLY"
+  },
+  {
+    "id": "hf_5dollar_inplay",
+    "total": 8,
+    "class": "POSTMATCH",
+    "access": "PUBLIC_DOWNLOAD"
+  },
+  {
+    "id": "sharpapi_wc2026",
+    "total": 10,
+    "class": "RESEARCH_TEMPORAL",
+    "access": "PUBLIC_DOWNLOAD"
+  },
+  {
+    "id": "betfair_historic_login",
+    "total": 11,
+    "class": "UNKNOWN",
+    "access": "BLOCKED_LOGIN"
+  },
+  {
+    "id": "football_data_co_uk",
+    "total": 11,
+    "class": "DATE_ONLY",
+    "access": "PUBLIC_DOWNLOAD"
+  },
+  {
+    "id": "odds_api_historical",
+    "total": 9,
+    "class": "UNKNOWN",
+    "access": "BLOCKED_API_KEY"
+  },
+  {
+    "id": "kaggle_obiguy",
+    "total": 12,
+    "class": "AMBIGUOUS",
+    "access": "BLOCKED_LOGIN"
+  },
+  {
+    "id": "kaggle_wc_timestamp",
+    "total": 10,
+    "class": "AMBIGUOUS",
+    "access": "BLOCKED_LOGIN"
+  },
+  {
+    "id": "oddspapi",
+    "total": 8,
+    "class": "UNKNOWN",
+    "access": "BLOCKED_API_KEY"
+  },
+  {
+    "id": "pinnapi_live",
+    "total": 0,
+    "class": "UNKNOWN",
+    "access": "BLOCKED_API_KEY"
+  },
+  {
+    "id": "opticodds",
+    "total": 11,
+    "class": "UNKNOWN",
+    "access": "BLOCKED_PAYWALL"
+  },
+  {
+    "id": "figshare_news",
+    "total": 0,
+    "class": "UNKNOWN",
+    "access": "PUBLIC_DOWNLOAD"
+  },
+  {
+    "id": "ia_betfair_soccer",
+    "total": 0,
+    "class": "UNKNOWN",
+    "access": "NOT_FOUND"
+  },
+  {
+    "id": "eddieglush_movement",
+    "total": 5,
+    "class": "UNKNOWN",
+    "access": "SAMPLE_ONLY"
+  },
+  {
+    "id": "github_betfair_parsers",
+    "total": 11,
+    "class": "UNKNOWN",
+    "access": "PUBLIC_DOWNLOAD"
+  },
+  {
+    "id": "theoddsgap_live",
+    "total": 5,
+    "class": "UNKNOWN",
+    "access": "PUBLIC_DOWNLOAD"
+  },
+  {
+    "id": "clubelo",
+    "total": 8,
+    "class": "DATE_ONLY",
+    "access": "BLOCKED_PAYWALL"
+  },
+  {
+    "id": "five_dollar_api",
+    "total": 0,
+    "class": "UNKNOWN",
+    "access": "BLOCKED_PAYWALL"
+  },
+  {
+    "id": "football_charts",
+    "total": 0,
+    "class": "UNKNOWN",
+    "access": "BLOCKED_PAYWALL"
+  },
+  {
+    "id": "pinnacle_public_api",
+    "total": 0,
+    "class": "UNKNOWN",
+    "access": "UNREACHABLE"
+  }
+]

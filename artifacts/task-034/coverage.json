@@ -1,0 +1,57 @@
+{
+  "T-72h": {
+    "php_possible": false,
+    "observed": 0,
+    "coverage": 0
+  },
+  "T-48h": {
+    "php_possible": true,
+    "observed": 0,
+    "coverage": 0
+  },
+  "T-24h": {
+    "php_possible": true,
+    "observed": 8883,
+    "coverage": 0.8460805791027717
+  },
+  "T-12h": {
+    "php_possible": true,
+    "observed": 0,
+    "coverage": 0
+  },
+  "T-6h": {
+    "php_possible": true,
+    "observed": 0,
+    "coverage": 0
+  },
+  "T-3h": {
+    "php_possible": true,
+    "observed": 0,
+    "coverage": 0
+  },
+  "T-1h": {
+    "php_possible": true,
+    "observed": 10499,
+    "coverage": 1
+  },
+  "T-30m": {
+    "php_possible": false,
+    "observed": 0,
+    "coverage": 0
+  },
+  "T-15m": {
+    "php_possible": false,
+    "observed": 0,
+    "coverage": 0
+  },
+  "T-5m": {
+    "php_possible": false,
+    "observed": 0,
+    "coverage": 0
+  },
+  "T-1m": {
+    "php_possible": false,
+    "observed": 0,
+    "coverage": 0
+  }
+}

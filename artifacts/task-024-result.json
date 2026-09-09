@@ -1,0 +1,1156 @@
+{
+  "experiment_id": "exp_024_historical_data_attack_v1",
+  "task": "024",
+  "dataset_id": "historical_data_attack_v1",
+  "parser_version": "task-024-parser-v1",
+  "as_of_policy": "STRICT_AS_OF",
+  "declared_edge": false,
+  "winner": null,
+  "auto_promote": false,
+  "real_money": false,
+  "HOLDOUT_TOUCHED": false,
+  "frozen_model": "market_only",
+  "verdict": "PARTIAL_STRICT",
+  "success": "B",
+  "inspected": true,
+  "probes": [
+    {
+      "channel": "betfair-mcm-fixture",
+      "url": "https://github.com/petermclagan/betfair-historical",
+      "http_status": 200,
+      "content_type": null,
+      "bytes": 14050,
+      "acquired": true,
+      "source_class": "MIRROR",
+      "note": "TASK 023 committed MATCH_ODDS ndjson (1 EPL event)"
+    },
+    {
+      "channel": "btb-closing-odds-csv",
+      "url": "https://raw.githubusercontent.com/TilenKopac/beat-the-bookie-kaggle/main/data/closing_odds.csv",
+      "http_status": 200,
+      "content_type": null,
+      "bytes": 69340934,
+      "acquired": true,
+      "source_class": "REDISTRIBUTION",
+      "note": "TASK 022 cache closing_odds.csv (DATE_ONLY)"
+    },
+    {
+      "channel": "soccer-odds.parquet",
+      "url": "https://huggingface.co/datasets/eatpizzanot/soccer-dataset/resolve/main/odds.parquet",
+      "http_status": 200,
+      "content_type": null,
+      "bytes": 2591808,
+      "acquired": true,
+      "source_class": "DERIVED",
+      "note": "Hugging Face parquet cache"
+    },
+    {
+      "channel": "soccer-fixtures.parquet",
+      "url": "https://huggingface.co/datasets/eatpizzanot/soccer-dataset/resolve/main/fixtures.parquet",
+      "http_status": 200,
+      "content_type": null,
+      "bytes": 12938933,
+      "acquired": true,
+      "source_class": "DERIVED",
+      "note": "Hugging Face parquet cache"
+    },
+    {
+      "channel": "soccer-leagues.parquet",
+      "url": "https://huggingface.co/datasets/eatpizzanot/soccer-dataset/resolve/main/leagues.parquet",
+      "http_status": 200,
+      "content_type": null,
+      "bytes": 8240,
+      "acquired": true,
+      "source_class": "DERIVED",
+      "note": "Hugging Face parquet cache"
+    },
+    {
+      "channel": "soccer-teams.parquet",
+      "url": "https://huggingface.co/datasets/eatpizzanot/soccer-dataset/resolve/main/teams.parquet",
+      "http_status": 200,
+      "content_type": null,
+      "bytes": 321028,
+      "acquired": true,
+      "source_class": "DERIVED",
+      "note": "Hugging Face parquet cache"
+    },
+    {
+      "channel": "soccer-match_stats.parquet",
+      "url": "https://huggingface.co/datasets/eatpizzanot/soccer-dataset/resolve/main/match_stats.parquet",
+      "http_status": 200,
+      "content_type": null,
+      "bytes": 7027755,
+      "acquired": true,
+      "source_class": "DERIVED",
+      "note": "Hugging Face parquet cache"
+    },
+    {
+      "channel": "soccer-fixture_lineups.parquet",
+      "url": "https://huggingface.co/datasets/eatpizzanot/soccer-dataset/resolve/main/fixture_lineups.parquet",
+      "http_status": 200,
+      "content_type": null,
+      "bytes": 7042165,
+      "acquired": true,
+      "source_class": "DERIVED",
+      "note": "Hugging Face parquet cache"
+    },
+    {
+      "channel": "btb-readme",
+      "url": "https://raw.githubusercontent.com/Lisandro79/BeatTheBookie/master/README.md",
+      "http_status": 200,
+      "content_type": "text/plain; charset=utf-8",
+      "bytes": 11091,
+      "acquired": false,
+      "source_class": "OFFICIAL",
+      "note": "200 zip=false html=false text/plain; charset=utf-8 ## Beating the bookies with their own numbers. This repository contains the code to reproduce our be"
+    },
+    {
+      "channel": "btb-generate_odds_series_csv.php",
+      "url": "https://raw.githubusercontent.com/Lisandro79/BeatTheBookie/master/src/generate_odds_series_csv.php",
+      "http_status": 200,
+      "content_type": "text/plain; charset=utf-8",
+      "bytes": 7764,
+      "acquired": false,
+      "source_class": "OFFICIAL",
+      "note": "200 zip=false html=false text/plain; charset=utf-8 <?php // for each match outputs a 32 x (72*3) matrix of odds // the rows of the matrix are the diffe"
+    },
+    {
+      "channel": "btb-Figure2B.m",
+      "url": "https://raw.githubusercontent.com/Lisandro79/BeatTheBookie/master/src/Figure2B.m",
+      "http_status": 200,
+      "content_type": "text/plain; charset=utf-8",
+      "bytes": 6120,
+      "acquired": false,
+      "source_class": "OFFICIAL",
+      "note": "200 zip=false html=false text/plain; charset=utf-8 function Figure2B () %% Stragegy implementation with Historical time series odds (from 5 hours %% be"
+    },
+    {
+      "channel": "dropbox-odds_series.zip",
+      "url": "https://www.dropbox.com/s/gqp3m6o5zsd8v63/odds_series.zip?dl=1",
+      "http_status": 200,
+      "content_type": "text/html; charset=utf-8",
+      "bytes": 93416,
+      "acquired": false,
+      "source_class": "OFFICIAL",
+      "note": "200 zip=false html=true text/html; charset=utf-8 <!DOCTYPE html> <html class=\"maestro global-header\" xmlns=\"http://www.w3.org/1999/xhtml\" lang=\"en\">"
+    },
+    {
+      "channel": "dropbox-odds_series_b.zip",
+      "url": "https://www.dropbox.com/s/t26rwzvlwtt6xnb/odds_series_b.zip?dl=1",
+      "http_status": 200,
+      "content_type": "text/html; charset=utf-8",
+      "bytes": 93506,
+      "acquired": false,
+      "source_class": "OFFICIAL",
+      "note": "200 zip=false html=true text/html; charset=utf-8 <!DOCTYPE html> <html class=\"maestro global-header\" xmlns=\"http://www.w3.org/1999/xhtml\" lang=\"en\">"
+    },
+    {
+      "channel": "google-drive-btb-folder",
+      "url": "https://drive.google.com/drive/folders/0B3zgn2ueCERNWnJRSnpIQTBDWEU",
+      "http_status": 200,
+      "content_type": "text/html; charset=utf-8",
+      "bytes": 0,
+      "acquired": false,
+      "source_class": "OFFICIAL",
+      "note": "200 zip=false html=false text/html; charset=utf-8"
+    },
+    {
+      "channel": "tilenkopac-data-listing",
+      "url": "https://api.github.com/repos/TilenKopac/beat-the-bookie-kaggle/contents/data",
+      "http_status": 200,
+      "content_type": "application/json; charset=utf-8",
+      "bytes": 925,
+      "acquired": false,
+      "source_class": "MIRROR",
+      "note": "200 zip=false html=false application/json; charset=utf-8 [{\"name\":\"closing_odds.csv\",\"path\":\"data/closing_odds.csv\",\"sha\":\"fbc1a692226acd6a5d23e3f533a0b4621c"
+    },
+    {
+      "channel": "hf-soccer-odds.parquet",
+      "url": "https://huggingface.co/datasets/eatpizzanot/soccer-dataset/resolve/main/odds.parquet",
+      "http_status": 200,
+      "content_type": "application/octet-stream",
+      "bytes": 2591808,
+      "acquired": false,
+      "source_class": "DERIVED",
+      "note": "200 zip=false html=false application/octet-stream"
+    },
+    {
+      "channel": "hf-soccer-dictionary",
+      "url": "https://huggingface.co/datasets/eatpizzanot/soccer-dataset/raw/main/data_dictionary.md",
+      "http_status": 200,
+      "content_type": "text/plain; charset=utf-8",
+      "bytes": 11020,
+      "acquired": false,
+      "source_class": "DERIVED",
+      "note": "200 zip=false html=false text/plain; charset=utf-8 # Data Dictionary _Regenerated from the curated data. One section per table._ ## `fixtures` (673,966"
+    },
+    {
+      "channel": "betfair-historic-portal",
+      "url": "https://historicdata.betfair.com/",
+      "http_status": 200,
+      "content_type": "text/html",
+      "bytes": 1769,
+      "acquired": false,
+      "source_class": "OFFICIAL",
+      "note": "200 zip=false html=true text/html <!doctype html><html lang=\"en\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=devi"
+    },
+    {
+      "channel": "zenodo-12673394",
+      "url": "https://zenodo.org/api/records/12673394",
+      "http_status": 200,
+      "content_type": "application/json",
+      "bytes": 5404,
+      "acquired": false,
+      "source_class": "REDISTRIBUTION",
+      "note": "200 zip=false html=false application/json {\"created\": \"2024-07-06T15:15:22.006433+00:00\", \"modified\": \"2024-07-06T15:15:22.550619+00:00\", \"id\""
+    }
+  ],
+  "soccer_download": {
+    "downloaded": [],
+    "skipped": [
+      "odds.parquet",
+      "fixtures.parquet",
+      "leagues.parquet",
+      "teams.parquet",
+      "match_stats.parquet",
+      "fixture_lineups.parquet"
+    ],
+    "failed": []
+  },
+  "soccer_files": [
+    {
+      "file": "odds.parquet",
+      "present": true,
+      "bytes": 2591808,
+      "sha256": "33286ac0c288a2dfd149a1cb26db92eba2ddb33fec74b30967607035592d720d",
+      "sha256_expected": "33286ac0c288a2dfd149a1cb26db92eba2ddb33fec74b30967607035592d720d",
+      "match": true
+    },
+    {
+      "file": "fixtures.parquet",
+      "present": true,
+      "bytes": 12938933,
+      "sha256": "7ba90661dbed29eb940daf5ea385c7d76d5751d16be86bd9063293a982abc7b7",
+      "sha256_expected": "7ba90661dbed29eb940daf5ea385c7d76d5751d16be86bd9063293a982abc7b7",
+      "match": true
+    },
+    {
+      "file": "leagues.parquet",
+      "present": true,
+      "bytes": 8240,
+      "sha256": "55c8e198650f5e2864fac85823196f6b5b45caf8342c1308e87e351098242c58",
+      "sha256_expected": "55c8e198650f5e2864fac85823196f6b5b45caf8342c1308e87e351098242c58",
+      "match": true
+    },
+    {
+      "file": "teams.parquet",
+      "present": true,
+      "bytes": 321028,
+      "sha256": "5529282b37ad51437142dd7c6d32fb60bbbdd56953dc432e3b9247dca17a2fa5",
+      "sha256_expected": "5529282b37ad51437142dd7c6d32fb60bbbdd56953dc432e3b9247dca17a2fa5",
+      "match": true
+    },
+    {
+      "file": "match_stats.parquet",
+      "present": true,
+      "bytes": 7027755,
+      "sha256": "2fb85b14b4428e1a36efe6d651de4ca8f7a6169ecfa3edb9cda49cb5e58d97e9",
+      "sha256_expected": "2fb85b14b4428e1a36efe6d651de4ca8f7a6169ecfa3edb9cda49cb5e58d97e9",
+      "match": true
+    },
+    {
+      "file": "fixture_lineups.parquet",
+      "present": true,
+      "bytes": 7042165,
+      "sha256": "dcd9181f54df52193877ffd8a41b5d1097b404eb46b4890069c0e4d1c8c13abd",
+      "sha256_expected": "dcd9181f54df52193877ffd8a41b5d1097b404eb46b4890069c0e4d1c8c13abd",
+      "match": true
+    }
+  ],
+  "soccer": {
+    "odds_rows": 213983,
+    "odds_fixtures": 186813,
+    "known_at_eq_kickoff": 213983,
+    "known_at_before": 0,
+    "known_at_after": 0,
+    "kickoff_midnight": 74763,
+    "kickoff_has_clock": 139220,
+    "bookmakers": {
+      "Pinnacle": 181406,
+      "Bet365": 27762,
+      "Betfair": 1964,
+      "888sport": 826,
+      "1xBet": 368,
+      "William Hill": 352,
+      "Unibet": 339,
+      "Maximum": 263,
+      "Nordic Bet": 89,
+      "Betfair Exchange": 86,
+      "Marathon Bet": 65,
+      "Betclic": 59,
+      "MyBookie.ag": 55,
+      "Unibet (NL)": 53,
+      "Suprabets": 45,
+      "Unibet (SE)": 41,
+      "Unibet (IT)": 35,
+      "Winamax (DE)": 33,
+      "Betsson": 33,
+      "LeoVegas (SE)": 28
+    },
+    "sources": {
+      "API-Football-closing": 175908,
+      "CSV": 24412,
+      "The-Odds-API": 12655,
+      "API-Football": 1008
+    },
+    "year_min": 2012,
+    "year_max": 2026,
+    "files": {
+      "odds.parquet": {
+        "bytes": 2591808,
+        "sha256": "33286ac0c288a2dfd149a1cb26db92eba2ddb33fec74b30967607035592d720d"
+      },
+      "fixtures.parquet": {
+        "bytes": 12938933,
+        "sha256": "7ba90661dbed29eb940daf5ea385c7d76d5751d16be86bd9063293a982abc7b7"
+      },
+      "leagues.parquet": {
+        "bytes": 8240,
+        "sha256": "55c8e198650f5e2864fac85823196f6b5b45caf8342c1308e87e351098242c58"
+      },
+      "teams.parquet": {
+        "bytes": 321028,
+        "sha256": "5529282b37ad51437142dd7c6d32fb60bbbdd56953dc432e3b9247dca17a2fa5"
+      },
+      "match_stats.parquet": {
+        "bytes": 7027755,
+        "sha256": "2fb85b14b4428e1a36efe6d651de4ca8f7a6169ecfa3edb9cda49cb5e58d97e9"
+      },
+      "fixture_lineups.parquet": {
+        "bytes": 7042165,
+        "sha256": "dcd9181f54df52193877ffd8a41b5d1097b404eb46b4890069c0e4d1c8c13abd"
+      }
+    },
+    "match_stats_rows": 283834,
+    "match_stats_known_at_offset_sec": 6300,
+    "lineups_rows": 565370,
+    "teams": 11104,
+    "leagues": 271,
+    "fixtures": 673966,
+    "odds_fixtures_midnight": 74438,
+    "odds_fixtures_clock": 112375,
+    "dictionary_odds_known_at": "Odds known at/around kick-off (closing line)",
+    "dictionary_fixtures_date_utc": "Kick-off time, UTC (tz-naive)",
+    "dictionary_match_stats_known_at": "kickoff + 105 min leakage guard"
+  },
+  "btb_closing_acquired": true,
+  "btb_series_acquired": false,
+  "btb_series_case": {
+    "case": "D",
+    "strict": false,
+    "note": "odds_series / SQL dump NOT_ACQUIRED — semantics from generator only"
+  },
+  "figure2b_bins": [
+    {
+      "php0": 66,
+      "matlab1": 67,
+      "relative_hours": 5
+    },
+    {
+      "php0": 67,
+      "matlab1": 68,
+      "relative_hours": 4
+    },
+    {
+      "php0": 68,
+      "matlab1": 69,
+      "relative_hours": 3
+    },
+    {
+      "php0": 69,
+      "matlab1": 70,
+      "relative_hours": 2
+    },
+    {
+      "php0": 70,
+      "matlab1": 71,
+      "relative_hours": 1
+    }
+  ],
+  "gates": [
+    {
+      "sourceId": "football-data-co-uk",
+      "SOURCE_EXISTS": true,
+      "SOURCE_ACQUIRED": true,
+      "SOURCE_PARSED": true,
+      "SOURCE_HAS_TIMESTAMP": false,
+      "TIMESTAMP_IS_EXACT": false,
+      "KICKOFF_IS_EXACT": false,
+      "TEMPORAL_RELATION_PROVEN": false,
+      "STRICT_USABLE": false,
+      "temporal_class": "DATE_ONLY",
+      "note": "Friday collection date; closing C columns; not quote < kickoff"
+    },
+    {
+      "sourceId": "beatthebookie-closing",
+      "SOURCE_EXISTS": true,
+      "SOURCE_ACQUIRED": true,
+      "SOURCE_PARSED": true,
+      "SOURCE_HAS_TIMESTAMP": false,
+      "TIMESTAMP_IS_EXACT": false,
+      "KICKOFF_IS_EXACT": false,
+      "TEMPORAL_RELATION_PROVEN": false,
+      "STRICT_USABLE": false,
+      "temporal_class": "DATE_ONLY",
+      "note": "closing_odds.csv n=479440; sha256=a2f4083aea15ca7cfcc6abb6db9849108a1974fb0b4145171033e4e51d469fc4"
+    },
+    {
+      "sourceId": "beatthebookie-series",
+      "SOURCE_EXISTS": true,
+      "SOURCE_ACQUIRED": false,
+      "SOURCE_PARSED": false,
+      "SOURCE_HAS_TIMESTAMP": false,
+      "TIMESTAMP_IS_EXACT": false,
+      "KICKOFF_IS_EXACT": false,
+      "TEMPORAL_RELATION_PROVEN": false,
+      "STRICT_USABLE": false,
+      "temporal_class": "NOT_ACQUIRED",
+      "note": "odds_series / SQL dump NOT_ACQUIRED — semantics from generator only"
+    },
+    {
+      "sourceId": "soccer-dataset",
+      "SOURCE_EXISTS": true,
+      "SOURCE_ACQUIRED": true,
+      "SOURCE_PARSED": true,
+      "SOURCE_HAS_TIMESTAMP": true,
+      "TIMESTAMP_IS_EXACT": true,
+      "KICKOFF_IS_EXACT": true,
+      "TEMPORAL_RELATION_PROVEN": true,
+      "STRICT_USABLE": false,
+      "temporal_class": "CLOSING_AT_KICKOFF",
+      "note": "known_at == date_utc on 213983/213983 odds rows; dictionary closing line"
+    },
+    {
+      "sourceId": "betfair-historic-official",
+      "SOURCE_EXISTS": true,
+      "SOURCE_ACQUIRED": false,
+      "SOURCE_PARSED": false,
+      "SOURCE_HAS_TIMESTAMP": true,
+      "TIMESTAMP_IS_EXACT": true,
+      "KICKOFF_IS_EXACT": true,
+      "TEMPORAL_RELATION_PROVEN": false,
+      "STRICT_USABLE": false,
+      "temporal_class": "NOT_ACQUIRED",
+      "note": "BASIC £0 + login; not used"
+    },
+    {
+      "sourceId": "betfair-historic-mirror",
+      "SOURCE_EXISTS": true,
+      "SOURCE_ACQUIRED": true,
+      "SOURCE_PARSED": true,
+      "SOURCE_HAS_TIMESTAMP": true,
+      "TIMESTAMP_IS_EXACT": true,
+      "KICKOFF_IS_EXACT": true,
+      "TEMPORAL_RELATION_PROVEN": true,
+      "STRICT_USABLE": true,
+      "temporal_class": "STRICT_PREMATCH",
+      "note": "petermclagan football BASIC sample; 1 EPL MATCH_ODDS event"
+    },
+    {
+      "sourceId": "zenodo-tale-of-two-markets",
+      "SOURCE_EXISTS": true,
+      "SOURCE_ACQUIRED": false,
+      "SOURCE_PARSED": true,
+      "SOURCE_HAS_TIMESTAMP": false,
+      "TIMESTAMP_IS_EXACT": false,
+      "KICKOFF_IS_EXACT": false,
+      "TEMPORAL_RELATION_PROVEN": false,
+      "STRICT_USABLE": false,
+      "temporal_class": "DATE_ONLY",
+      "note": "README: football-data.co.uk redistribution collected 2022-05-22 — same FD cluster"
+    }
+  ],
+  "inventory": [
+    {
+      "source": "football-data.co.uk",
+      "events": 13247,
+      "odds": 341637,
+      "exact_timestamp": false,
+      "exact_kickoff": false,
+      "temporal_relation_proven": false,
+      "strict": 0,
+      "independence": "upstream (lineageRoot football-data.co.uk)",
+      "status": "DATE_ONLY"
+    },
+    {
+      "source": "BeatTheBookie closing_odds.csv",
+      "events": 479440,
+      "odds": 479440,
+      "exact_timestamp": false,
+      "exact_kickoff": false,
+      "temporal_relation_proven": false,
+      "strict": 0,
+      "independence": "REDISTRIBUTION of Lisandro79/BeatTheBookie",
+      "status": "DATE_ONLY"
+    },
+    {
+      "source": "BeatTheBookie odds_series / odds_series_b / SQL",
+      "events": 0,
+      "odds": 0,
+      "exact_timestamp": false,
+      "exact_kickoff": false,
+      "temporal_relation_proven": false,
+      "strict": 0,
+      "independence": "same BeatTheBookie root",
+      "status": "NOT_ACQUIRED"
+    },
+    {
+      "source": "eatpizzanot/soccer-dataset",
+      "events": 186813,
+      "odds": 213983,
+      "exact_timestamp": true,
+      "exact_kickoff": "mixed",
+      "temporal_relation_proven": "equals_kickoff",
+      "strict": 0,
+      "independence": "DERIVED (API-Football + football-data.co.uk + The-Odds-API)",
+      "status": "CLOSING_AT_KICKOFF"
+    },
+    {
+      "source": "Betfair Historic official BASIC",
+      "events": 0,
+      "odds": 0,
+      "exact_timestamp": true,
+      "exact_kickoff": true,
+      "temporal_relation_proven": false,
+      "strict": 0,
+      "independence": "OFFICIAL historicdata.betfair.com",
+      "status": "ACQUISITION_BLOCKED"
+    },
+    {
+      "source": "Betfair Historic GitHub MIRROR",
+      "events": 1,
+      "odds": 3,
+      "exact_timestamp": true,
+      "exact_kickoff": true,
+      "temporal_relation_proven": true,
+      "strict": 1,
+      "independence": "MIRROR of historicdata.betfair.com",
+      "status": "PARTIAL_STRICT"
+    },
+    {
+      "source": "Zenodo 10.5281/zenodo.12673394",
+      "events": 0,
+      "odds": 0,
+      "exact_timestamp": false,
+      "exact_kickoff": false,
+      "temporal_relation_proven": false,
+      "strict": 0,
+      "independence": "REDISTRIBUTION of football-data.co.uk",
+      "status": "NOT_ACQUIRED (semantics proven; FD cluster)"
+    }
+  ],
+  "temporal_audit_sample": [
+    {
+      "fixture_id": "255663",
+      "kickoff": "2020-12-13T00:00:00",
+      "odds_known_at": "2020-12-13T00:00:00",
+      "bookmaker": "Pinnacle",
+      "source": "API-Football-closing",
+      "delta_seconds": 0,
+      "temporal_class": "MIDNIGHT_PLACEHOLDER"
+    },
+    {
+      "fixture_id": "217882",
+      "kickoff": "2020-12-13T20:00:00",
+      "odds_known_at": "2020-12-13T20:00:00",
+      "bookmaker": "Pinnacle",
+      "source": "API-Football-closing",
+      "delta_seconds": 0,
+      "temporal_class": "CLOSING_AT_KICKOFF"
+    },
+    {
+      "fixture_id": "21023",
+      "kickoff": "2021-02-05T00:00:00",
+      "odds_known_at": "2021-02-05T00:00:00",
+      "bookmaker": "Bet365",
+      "source": "CSV",
+      "delta_seconds": 0,
+      "temporal_class": "MIDNIGHT_PLACEHOLDER"
+    },
+    {
+      "fixture_id": "209707",
+      "kickoff": "2020-12-13T19:45:00",
+      "odds_known_at": "2020-12-13T19:45:00",
+      "bookmaker": "Bet365",
+      "source": "CSV",
+      "delta_seconds": 0,
+      "temporal_class": "CLOSING_AT_KICKOFF"
+    },
+    {
+      "fixture_id": "93502",
+      "kickoff": "2024-11-12T00:00:00",
+      "odds_known_at": "2024-11-12T00:00:00",
+      "bookmaker": "Pinnacle",
+      "source": "The-Odds-API",
+      "delta_seconds": 0,
+      "temporal_class": "MIDNIGHT_PLACEHOLDER"
+    },
+    {
+      "fixture_id": "150008",
+      "kickoff": "2022-11-03T17:45:00",
+      "odds_known_at": "2022-11-03T17:45:00",
+      "bookmaker": "Pinnacle",
+      "source": "The-Odds-API",
+      "delta_seconds": 0,
+      "temporal_class": "CLOSING_AT_KICKOFF"
+    },
+    {
+      "fixture_id": "378153",
+      "kickoff": "2026-03-08T00:00:00",
+      "odds_known_at": "2026-03-08T00:00:00",
+      "bookmaker": "Bet365",
+      "source": "API-Football",
+      "delta_seconds": 0,
+      "temporal_class": "MIDNIGHT_PLACEHOLDER"
+    },
+    {
+      "fixture_id": "375504",
+      "kickoff": "2026-02-22T17:30:00",
+      "odds_known_at": "2026-02-22T17:30:00",
+      "bookmaker": "Bet365",
+      "source": "API-Football",
+      "delta_seconds": 0,
+      "temporal_class": "CLOSING_AT_KICKOFF"
+    },
+    {
+      "fixture_id": "285055",
+      "kickoff": "2017-11-04T07:00:00",
+      "odds_known_at": "2017-11-04T07:00:00",
+      "bookmaker": "Maximum",
+      "source": "API-Football-closing",
+      "delta_seconds": 0,
+      "temporal_class": "CLOSING_AT_KICKOFF"
+    },
+    {
+      "fixture_id": "291859",
+      "kickoff": "2025-11-09T13:00:00",
+      "odds_known_at": "2025-11-09T13:00:00",
+      "bookmaker": "Betfair Exchange",
+      "source": "API-Football-closing",
+      "delta_seconds": 0,
+      "temporal_class": "CLOSING_AT_KICKOFF"
+    }
+  ],
+  "strict_ledger": [
+    {
+      "event": "M001",
+      "competition": "EPL",
+      "kickoff_utc": "2017-04-30T13:05:00.000Z",
+      "market": "MATCH_ODDS",
+      "bookmaker_or_exchange": "Betfair Exchange",
+      "quote_timestamp": "2017-04-30T11:10:52.099Z",
+      "delta_kickoff_sec": -6848,
+      "outcome": "DRAW",
+      "strict": "YES",
+      "lineage_root": "historicdata.betfair.com",
+      "independence": "MIRROR"
+    }
+  ],
+  "rejects": [
+    {
+      "reason": "soccer-dataset known_at = date_utc (closing/around kickoff) — not quote < kickoff",
+      "events": 112375,
+      "odds_rows": 213983
+    },
+    {
+      "reason": "soccer-dataset kickoff midnight placeholder (00:00:00) plus known_at copied",
+      "events": 74438,
+      "odds_rows": 0
+    },
+    {
+      "reason": "BeatTheBookie closing_odds.csv DATE_ONLY match_date",
+      "events": 479440,
+      "odds_rows": 479440
+    },
+    {
+      "reason": "BeatTheBookie odds_series / odds_series_b / SQL dump NOT_ACQUIRED",
+      "events": 0,
+      "odds_rows": 0
+    },
+    {
+      "reason": "Betfair Historic official bulk login-gated (BASIC £0 not used)",
+      "events": 0,
+      "odds_rows": 0
+    }
+  ],
+  "next_blockers": [
+    {
+      "rank": 1,
+      "id": "betfair-historic-basic-login",
+      "action": "Log into historicdata.betfair.com with a dedicated research account (not this run). Free BASIC Soccer, MATCH_ODDS, Premier League, start 2019–20, 100 then 500 events. Do not buy Advanced until BASIC is STRICT.",
+      "expected_information_gain": "high",
+      "acquisition_cost": "£0 + login (credentials not used here)",
+      "notes": "STRICT now 1 < 100. BASIC pt vs marketTime is the proven clock (TASK 023)."
+    },
+    {
+      "rank": 2,
+      "id": "beatthebookie-sql-odds-datetime",
+      "action": "If Dropbox/Drive ever serves the SQL dump without login tricks, parse odds_history_series.odds_datetime. Still refuse STRICT until timezone is documented.",
+      "expected_information_gain": "medium",
+      "acquisition_cost": "free if the zip is public; currently HTML interstitial / NOT_ACQUIRED",
+      "notes": "TXT hourly series destroy absolute odds_datetime even if acquired."
+    },
+    {
+      "rank": 3,
+      "id": "beatthebookie-odds-series-txt",
+      "action": "Do not prioritize odds_series TXT for STRICT. Relative 60 min LOCF, TZ unknown.",
+      "expected_information_gain": "low",
+      "acquisition_cost": "Dropbox/Drive blocked; would not unlock UTC STRICT anyway",
+      "notes": "Figure2B 5→1h is CASE B relative on the dataset clock only."
+    }
+  ],
+  "lineage_clusters": 4,
+  "lineage": [
+    {
+      "sourceId": "football-data-co-uk",
+      "lineageRoot": "football-data.co.uk",
+      "upstreamSources": [
+        "football-data.co.uk"
+      ],
+      "distributionChannel": "publisher CSV (mmz4281)",
+      "independenceClass": "OFFICIAL"
+    },
+    {
+      "sourceId": "beatthebookie-closing",
+      "lineageRoot": "Lisandro79/BeatTheBookie",
+      "upstreamSources": [
+        "Lisandro79/BeatTheBookie"
+      ],
+      "distributionChannel": "Kaggle austro / TilenKopac GitHub CSV",
+      "independenceClass": "REDISTRIBUTION"
+    },
+    {
+      "sourceId": "beatthebookie-series",
+      "lineageRoot": "Lisandro79/BeatTheBookie",
+      "upstreamSources": [
+        "Lisandro79/BeatTheBookie"
+      ],
+      "distributionChannel": "Dropbox odds_series.zip (NOT_ACQUIRED)",
+      "independenceClass": "OFFICIAL"
+    },
+    {
+      "sourceId": "beatthebookie-kaggle",
+      "lineageRoot": "Lisandro79/BeatTheBookie",
+      "upstreamSources": [
+        "Lisandro79/BeatTheBookie"
+      ],
+      "distributionChannel": "Kaggle austro dataset v2",
+      "independenceClass": "MIRROR"
+    },
+    {
+      "sourceId": "soccer-dataset-hf",
+      "lineageRoot": "eatpizzanot/soccer-dataset",
+      "upstreamSources": [
+        "API-Football",
+        "football-data.co.uk",
+        "The-Odds-API"
+      ],
+      "distributionChannel": "Hugging Face parquet (CC BY 4.0)",
+      "independenceClass": "DERIVED"
+    },
+    {
+      "sourceId": "soccer-dataset-github",
+      "lineageRoot": "eatpizzanot/soccer-dataset",
+      "upstreamSources": [
+        "API-Football",
+        "football-data.co.uk",
+        "The-Odds-API"
+      ],
+      "distributionChannel": "GitHub eatpizzanot/soccer-dataset",
+      "independenceClass": "MIRROR"
+    },
+    {
+      "sourceId": "zenodo-tale-of-two-markets",
+      "lineageRoot": "football-data.co.uk",
+      "upstreamSources": [
+        "football-data.co.uk"
+      ],
+      "distributionChannel": "Zenodo 10.5281/zenodo.12673394 (collected 2022-05-22)",
+      "independenceClass": "REDISTRIBUTION"
+    },
+    {
+      "sourceId": "betfair-historic-official",
+      "lineageRoot": "historicdata.betfair.com",
+      "upstreamSources": [
+        "historicdata.betfair.com"
+      ],
+      "distributionChannel": "Betfair Historic portal (login-gated BASIC £0)",
+      "independenceClass": "OFFICIAL"
+    },
+    {
+      "sourceId": "betfair-historic-petermclagan",
+      "lineageRoot": "historicdata.betfair.com",
+      "upstreamSources": [
+        "historicdata.betfair.com"
+      ],
+      "distributionChannel": "GitHub petermclagan/betfair-historical tests/sample_data",
+      "independenceClass": "MIRROR"
+    }
+  ],
+  "leakage": [
+    {
+      "id": "A",
+      "throws": true
+    },
+    {
+      "id": "B",
+      "throws": true
+    },
+    {
+      "id": "C",
+      "throws": true
+    },
+    {
+      "id": "D",
+      "throws": true
+    },
+    {
+      "id": "E",
+      "throws": true
+    },
+    {
+      "id": "F",
+      "throws": true
+    },
+    {
+      "id": "G",
+      "throws": true
+    },
+    {
+      "id": "H",
+      "throws": true
+    }
+  ],
+  "annual": [
+    {
+      "year": 2015,
+      "start_bankroll": 1000,
+      "bets": 0,
+      "turnover": null,
+      "gross_profit": null,
+      "net_profit": null,
+      "end_bankroll": null,
+      "roi": null,
+      "max_drawdown": null,
+      "number_of_bets": 0,
+      "no_bet_count": 0,
+      "events": 0,
+      "strict_events": 0,
+      "status": "INSUFFICIENT_DATA"
+    },
+    {
+      "year": 2016,
+      "start_bankroll": 1000,
+      "bets": 0,
+      "turnover": null,
+      "gross_profit": null,
+      "net_profit": null,
+      "end_bankroll": null,
+      "roi": null,
+      "max_drawdown": null,
+      "number_of_bets": 0,
+      "no_bet_count": 0,
+      "events": 0,
+      "strict_events": 0,
+      "status": "INSUFFICIENT_DATA"
+    },
+    {
+      "year": 2017,
+      "start_bankroll": 1000,
+      "bets": 0,
+      "turnover": null,
+      "gross_profit": null,
+      "net_profit": null,
+      "end_bankroll": null,
+      "roi": null,
+      "max_drawdown": null,
+      "number_of_bets": 0,
+      "no_bet_count": 0,
+      "events": 0,
+      "strict_events": 0,
+      "status": "INSUFFICIENT_DATA"
+    },
+    {
+      "year": 2018,
+      "start_bankroll": 1000,
+      "bets": 0,
+      "turnover": null,
+      "gross_profit": null,
+      "net_profit": null,
+      "end_bankroll": null,
+      "roi": null,
+      "max_drawdown": null,
+      "number_of_bets": 0,
+      "no_bet_count": 0,
+      "events": 0,
+      "strict_events": 0,
+      "status": "INSUFFICIENT_DATA"
+    },
+    {
+      "year": 2019,
+      "start_bankroll": 1000,
+      "bets": 0,
+      "turnover": null,
+      "gross_profit": null,
+      "net_profit": null,
+      "end_bankroll": null,
+      "roi": null,
+      "max_drawdown": null,
+      "number_of_bets": 0,
+      "no_bet_count": 0,
+      "events": 0,
+      "strict_events": 0,
+      "status": "INSUFFICIENT_DATA"
+    },
+    {
+      "year": 2020,
+      "start_bankroll": 1000,
+      "bets": 0,
+      "turnover": null,
+      "gross_profit": null,
+      "net_profit": null,
+      "end_bankroll": null,
+      "roi": null,
+      "max_drawdown": null,
+      "number_of_bets": 0,
+      "no_bet_count": 0,
+      "events": 0,
+      "strict_events": 0,
+      "status": "INSUFFICIENT_DATA"
+    },
+    {
+      "year": 2021,
+      "start_bankroll": 1000,
+      "bets": 0,
+      "turnover": null,
+      "gross_profit": null,
+      "net_profit": null,
+      "end_bankroll": null,
+      "roi": null,
+      "max_drawdown": null,
+      "number_of_bets": 0,
+      "no_bet_count": 0,
+      "events": 0,
+      "strict_events": 0,
+      "status": "INSUFFICIENT_DATA"
+    },
+    {
+      "year": 2022,
+      "start_bankroll": 1000,
+      "bets": 0,
+      "turnover": null,
+      "gross_profit": null,
+      "net_profit": null,
+      "end_bankroll": null,
+      "roi": null,
+      "max_drawdown": null,
+      "number_of_bets": 0,
+      "no_bet_count": 0,
+      "events": 0,
+      "strict_events": 0,
+      "status": "INSUFFICIENT_DATA"
+    },
+    {
+      "year": 2023,
+      "start_bankroll": 1000,
+      "bets": 0,
+      "turnover": null,
+      "gross_profit": null,
+      "net_profit": null,
+      "end_bankroll": null,
+      "roi": null,
+      "max_drawdown": null,
+      "number_of_bets": 0,
+      "no_bet_count": 0,
+      "events": 0,
+      "strict_events": 0,
+      "status": "INSUFFICIENT_DATA"
+    },
+    {
+      "year": 2024,
+      "start_bankroll": 1000,
+      "bets": 0,
+      "turnover": null,
+      "gross_profit": null,
+      "net_profit": null,
+      "end_bankroll": null,
+      "roi": null,
+      "max_drawdown": null,
+      "number_of_bets": 0,
+      "no_bet_count": 0,
+      "events": 0,
+      "strict_events": 0,
+      "status": "INSUFFICIENT_DATA"
+    },
+    {
+      "year": 2025,
+      "start_bankroll": 1000,
+      "bets": 0,
+      "turnover": null,
+      "gross_profit": null,
+      "net_profit": null,
+      "end_bankroll": null,
+      "roi": null,
+      "max_drawdown": null,
+      "number_of_bets": 0,
+      "no_bet_count": 0,
+      "events": 0,
+      "strict_events": 0,
+      "status": "INSUFFICIENT_DATA"
+    },
+    {
+      "year": 2026,
+      "start_bankroll": 1000,
+      "bets": 0,
+      "turnover": null,
+      "gross_profit": null,
+      "net_profit": null,
+      "end_bankroll": null,
+      "roi": null,
+      "max_drawdown": null,
+      "number_of_bets": 0,
+      "no_bet_count": 0,
+      "events": 0,
+      "strict_events": 0,
+      "status": "INCOMPLETE"
+    }
+  ],
+  "assessment": {
+    "eventId": "task-024-corpus",
+    "asOf": "2017-04-30T12:05:00.000Z",
+    "hypothesis": "HOME",
+    "probability": null,
+    "evidenceStrength": "insufficient",
+    "narrativeSummary": "HOME — Probability: n/a — Evidence strength: INSUFFICIENT\nContext: eatpizzanot/soccer-dataset odds.known_at is documented closing/around kick-off; measured known_at == date_utc on all 186813 odds fixtures",
+    "evidenceGraph": {
+      "eventId": "task-024-corpus",
+      "asOf": "2017-04-30T12:05:00.000Z",
+      "hypothesis": "HOME",
+      "supporting": [],
+      "contradicting": [],
+      "contextual": [
+        {
+          "evidenceId": "task-024|soccer-known-at",
+          "category": "market",
+          "epistemicKind": "FACT",
+          "claim": "eatpizzanot/soccer-dataset odds.known_at is documented closing/around kick-off; measured known_at == date_utc on all 186813 odds fixtures",
+          "entityRef": "soccer-dataset odds",
+          "eventId": "task-024-corpus",
+          "sourceId": "eatpizzanot/soccer-dataset",
+          "sourceUrl": "https://huggingface.co/datasets/eatpizzanot/soccer-dataset",
+          "publishedAt": "2017-04-30T12:05:00.000Z",
+          "availableAt": "2017-04-30T12:05:00.000Z",
+          "observedAt": "2017-04-30T12:05:00.000Z",
+          "temporalPrecision": "exact",
+          "polarity": "CONTEXT_ONLY",
+          "targetHypothesis": "HOME",
+          "magnitude": 186813,
+          "claimConfidence": null,
+          "sourceReliability": null,
+          "confirmations": [],
+          "rebuttals": []
+        }
+      ],
+      "insufficient": [
+        "STRICT < 100 — no capital replay, no model selection, winner = null",
+        "News/injuries remain CONTEXT_ONLY; no causal SUPPORT from articles",
+        "soccer-dataset match_stats.known_at = kickoff + 105 min is post-match",
+        "Closing odds are not prematch decision quotes"
+      ]
+    },
+    "attributions": [
+      {
+        "evidenceId": "task-024|soccer-known-at",
+        "kind": "market",
+        "sourceId": "eatpizzanot/soccer-dataset",
+        "sourceUrl": "https://huggingface.co/datasets/eatpizzanot/soccer-dataset",
+        "publishedAt": "2017-04-30T12:05:00.000Z",
+        "availableAt": "2017-04-30T12:05:00.000Z",
+        "observedAt": "2017-04-30T12:05:00.000Z",
+        "claim": "eatpizzanot/soccer-dataset odds.known_at is documented closing/around kick-off; measured known_at == date_utc on all 186813 odds fixtures",
+        "epistemicKind": "FACT",
+        "polarity": "CONTEXT_ONLY",
+        "category": "market"
+      }
+    ],
+    "blockedByTemporal": []
+  },
+  "metrics": {
+    "datasets_acquired": 3,
+    "events_listed": 1166654,
+    "odds_listed": 1035060,
+    "quotes_exact_timestamp": 213984,
+    "kickoff_exact": 112376,
+    "temporal_relation_proven": 213984,
+    "strict_events": 1,
+    "events_rejected": 666253,
+    "lineage_clusters": 4,
+    "markets_strict": [
+      "MATCH_ODDS"
+    ],
+    "first_testable_year": null,
+    "models_tested": [],
+    "blind_bets": 0,
+    "edge_demonstrated": false,
+    "bankroll_testable": false
+  },
+  "scientific": {
+    "data_available": "soccer_odds_fixtures=186813; soccer_odds_rows=213983; known_at_eq_kickoff=213983; btb_closing=479440; btb_series=false; betfair_mirror_strict=1; official_betfair=0",
+    "strict_events": 1,
+    "strict_gate": 100,
+    "years_testable": [],
+    "years_insufficient": [
+      2015,
+      2016,
+      2017,
+      2018,
+      2019,
+      2020,
+      2021,
+      2022,
+      2023,
+      2024,
+      2025,
+      2026
+    ],
+    "total_bets": 0,
+    "best_model": null,
+    "best_risk_policy": null,
+    "holdout_status": "SACRED",
+    "primary_blocker": "Official Betfair Historic BASIC is login-gated (credentials not used). BeatTheBookie odds_series / odds_series_b / SQL remain NOT_ACQUIRED (Dropbox HTML / Drive). soccer-dataset known_at equals date_utc on all 213,983 odds rows (closing, not STRICT prematch).",
+    "next_action": "Log into historicdata.betfair.com with a dedicated research account (not this run). Free BASIC Soccer, MATCH_ODDS, Premier League, start 2019–20, 100 then 500 events. Do not buy Advanced until BASIC is STRICT.",
+    "verdict": "PARTIAL_STRICT"
+  },
+  "walk_forward": {
+    "train": [
+      2017
+    ],
+    "validation": [
+      2018
+    ],
+    "test": [
+      2019
+    ],
+    "holdout": [
+      2020
+    ],
+    "holdout_used_for_selection": false,
+    "replay_launched": false
+  },
+  "multiple_testing": {
+    "alpha": 0.05,
+    "tests": 7,
+    "bonferroni": 0.0071428571428571435,
+    "any_significant": false
+  }
+}

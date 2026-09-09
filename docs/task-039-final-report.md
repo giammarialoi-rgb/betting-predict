@@ -1,0 +1,54 @@
+TASK 039 — FINAL VERDICT
+COLLECTION_STATUS: BLOCKED
+SOURCE_STATUS: BLOCKED
+API_KEY_CONFIGURED: false
+EVENTS_DISCOVERED: 0
+QUOTE_OBSERVATIONS: 0
+STRICT_EVENTS: 0
+STRICT_QUOTES: 0
+MATCH_EXACT: 0
+T72_COVERAGE: 0
+T24_COVERAGE: 0
+T1H_COVERAGE: 0
+T5M_COVERAGE: 0
+LOCKED_DECISIONS: 0
+SETTLED_EVENTS: 0
+TEST_EVENTS: 0
+HOLDOUT_EVENTS: 0
+MODEL_READY: false
+MARKET_BRIER: —
+BEST_MODEL: —
+DELTA_BRIER: —
+CI_95: —
+HOLM: —
+SIGNIFICANT: false
+BETS: 0
+BANKROLL: —
+WINNER: null
+AUTO_PROMOTION: false
+REAL_MONEY: false
+REPRODUCIBILITY: PASS
+LEAKAGE: PASS
+FINAL_VERDICT: LIVE_NOT_CONFIGURED
+
+## Contract answers
+
+1. Key configured: false
+2. Source responds: BLOCKED
+3. Events discovered: 0
+4. Quotes with SOURCE timestamp (STRICT): 0
+5. STRICT events: 0
+6. T−1h coverage (actual bin, no interpolation): 0
+7. Settled: 0
+8. MATCH_EXACT: 0
+9. TEST: 0
+10. HOLDOUT: 0
+11. Edge: no
+12. Significance: false
+13. Capital open: no
+14. Winner: null
+15. Blocker: THE_ODDS_API_KEY=<user must provide>
+
+TASK 040 is not opened. TASK_031_BASE is not rewritten. MARKET_DEVIG is frozen.
+
+- fingerprint: `9ed518688cb1cc835e84741b2c9c306f1d56cf5966a6dc25921047ea20aa9c3c`

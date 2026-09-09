@@ -1,0 +1,723 @@
+{
+  "experiment_id": "exp_022_historical_odds_recovery_v1",
+  "task": "022",
+  "dataset_id": "beat_the_bookie_temporal_v1",
+  "parser_version": "task-022-parser-v1",
+  "as_of_policy": "STRICT_AS_OF",
+  "declared_edge": false,
+  "winner": null,
+  "auto_promote": false,
+  "real_money": false,
+  "HOLDOUT_TOUCHED": false,
+  "frozen_model": "frequency",
+  "verdict": "NO_DEMONSTRATED_EDGE",
+  "inspected": true,
+  "cluster_note": "TilenKopac/beat-the-bookie-kaggle closing_odds.csv is a Kaggle austro redistribution of BeatTheBookie — same upstream cluster, not an independent source. GitHub README 880,494 matches (2000–2015) is the SQL dump; this CSV is the paper subset (479,440; 2005–2015). odds_series TXT bulk was not acquired (Dropbox HTML/403, Kaggle zip requires login).",
+  "license": {
+    "dataset": "CC BY-SA 4.0",
+    "code": "GPL-3.0",
+    "redistributed": false
+  },
+  "probes": [
+    {
+      "channel": "local-cache-tilenkopac-closing_odds.csv",
+      "url": "https://raw.githubusercontent.com/TilenKopac/beat-the-bookie-kaggle/main/data/closing_odds.csv",
+      "http_status": 200,
+      "content_type": "text/csv",
+      "bytes": 69340934,
+      "acquired": true,
+      "note": "materialized C:\\Users\\giamm\\Desktop\\app previsioni sportive\\betting predict\\audit\\external\\task-022\\closing_odds.csv; sha256=a2f4083aea15ca7cfcc6abb6db9849108a1974fb0b4145171033e4e51d469fc4; Kaggle redistribution same cluster"
+    },
+    {
+      "channel": "dropbox-closing_odds.zip",
+      "url": "https://www.dropbox.com/s/g9vpjjlxjeruc3u/closing_odds.zip?dl=1",
+      "http_status": 200,
+      "content_type": "text/html; charset=utf-8",
+      "bytes": null,
+      "acquired": false,
+      "note": "HEAD ok — body not ingested in this probe"
+    },
+    {
+      "channel": "kaggle-zip-v2",
+      "url": "https://www.kaggle.com/datasets/austro/beat-the-bookie-worldwide-football-dataset/download?datasetVersionNumber=2",
+      "http_status": 404,
+      "content_type": "text/html; charset=UTF-8",
+      "bytes": 134,
+      "acquired": false,
+      "note": "HEAD 404"
+    },
+    {
+      "channel": "google-drive-folder",
+      "url": "https://drive.google.com/drive/folders/0B3zgn2ueCERNWnJRSnpIQTBDWEU",
+      "http_status": 200,
+      "content_type": "text/html; charset=utf-8",
+      "bytes": 0,
+      "acquired": false,
+      "note": "HEAD ok — body not ingested in this probe"
+    }
+  ],
+  "closing": {
+    "acquired": true,
+    "path": "C:\\Users\\giamm\\Desktop\\app previsioni sportive\\betting predict\\audit\\external\\task-022\\closing_odds.csv",
+    "rows": 479440,
+    "dateMin": "2005-01-01",
+    "dateMax": "2015-06-30",
+    "leagues": 818,
+    "top_bookie_labels": 29,
+    "date_only": 479440,
+    "timed": 0,
+    "sha256": "a2f4083aea15ca7cfcc6abb6db9849108a1974fb0b4145171033e4e51d469fc4",
+    "has_median": false,
+    "has_t_seconds": false,
+    "vs_readme_880k": "CSV is paper subset 479,440 (2005–2015), not README 880,494 (2000–2015 SQL)",
+    "vs_kaggle_card": "Kaggle card 479,440 / 818 leagues / 2005-01-01; measured dateMax=2015-06-30 vs card 2015-07-30"
+  },
+  "series": {
+    "bulk_acquired": false,
+    "fixture_parsed": true,
+    "bookmakers": 32,
+    "markets": [
+      "1X2"
+    ],
+    "temporal": "RELATIVE_TO_KICKOFF_APPROX",
+    "strict_candidate_quotes": 10,
+    "usable_strict": 0
+  },
+  "matching": {
+    "fd_events": 13247,
+    "club_events": 238858,
+    "match_exact": 14823,
+    "match_probable": 35392,
+    "match_ambiguous": 3576,
+    "match_failed": 425649
+  },
+  "diagnostic": {
+    "has_time_series": true,
+    "granularity": "hourly (60 min LOCF bins; 72 samples at kickoff-71h … kickoff-0h)",
+    "timestamp_absolute": false,
+    "relative_to_kickoff_exact": false,
+    "can_reconstruct_asof": false,
+    "can_reconstruct_first_price": true,
+    "timezone": "UNDOCUMENTED",
+    "horizons": [
+      {
+        "window": "72h",
+        "bin_exists": false,
+        "bin_index": null,
+        "relative_seconds": null,
+        "measured_non_nan": 0,
+        "reconstructable": false
+      },
+      {
+        "window": "48h",
+        "bin_exists": true,
+        "bin_index": 23,
+        "relative_seconds": 172800,
+        "measured_non_nan": 1,
+        "reconstructable": true
+      },
+      {
+        "window": "24h",
+        "bin_exists": true,
+        "bin_index": 47,
+        "relative_seconds": 86400,
+        "measured_non_nan": 1,
+        "reconstructable": true
+      },
+      {
+        "window": "12h",
+        "bin_exists": true,
+        "bin_index": 59,
+        "relative_seconds": 43200,
+        "measured_non_nan": 1,
+        "reconstructable": true
+      },
+      {
+        "window": "6h",
+        "bin_exists": true,
+        "bin_index": 65,
+        "relative_seconds": 21600,
+        "measured_non_nan": 1,
+        "reconstructable": true
+      },
+      {
+        "window": "3h",
+        "bin_exists": true,
+        "bin_index": 68,
+        "relative_seconds": 10800,
+        "measured_non_nan": 1,
+        "reconstructable": true
+      },
+      {
+        "window": "1h",
+        "bin_exists": true,
+        "bin_index": 70,
+        "relative_seconds": 3600,
+        "measured_non_nan": 3,
+        "reconstructable": true
+      },
+      {
+        "window": "30m",
+        "bin_exists": false,
+        "bin_index": null,
+        "relative_seconds": null,
+        "measured_non_nan": 0,
+        "reconstructable": false
+      },
+      {
+        "window": "15m",
+        "bin_exists": false,
+        "bin_index": null,
+        "relative_seconds": null,
+        "measured_non_nan": 0,
+        "reconstructable": false
+      },
+      {
+        "window": "5m",
+        "bin_exists": false,
+        "bin_index": null,
+        "relative_seconds": null,
+        "measured_non_nan": 0,
+        "reconstructable": false
+      }
+    ],
+    "php_t_field_bug": "generate_closing_odds_csv.php inserts sizeof($diff_win_*) instead of $diff_win_* — t_* in generated SQL stats must not be trusted as seconds",
+    "markets_in_generator": [
+      "1x2"
+    ]
+  },
+  "quality": [
+    {
+      "source": "TilenKopac/Kaggle closing_odds.csv",
+      "rows": 479440,
+      "events": 479440,
+      "bookmakers": 29,
+      "markets": [
+        "1X2"
+      ],
+      "exact_timestamp": 0,
+      "relative_timestamp": 0,
+      "date_only": 479440,
+      "unknown": 0,
+      "match_exact": 14823,
+      "match_ambiguous": 3576,
+      "strict_usable": 0,
+      "license_status": "CC BY-SA 4.0",
+      "data_quality": "DATE_ONLY avg/max closing 1X2; not STRICT"
+    },
+    {
+      "source": "odds_series TXT (generator + fixture)",
+      "rows": 10,
+      "events": 1,
+      "bookmakers": 32,
+      "markets": [
+        "1X2"
+      ],
+      "exact_timestamp": 0,
+      "relative_timestamp": 10,
+      "date_only": 0,
+      "unknown": 0,
+      "match_exact": 0,
+      "match_ambiguous": 0,
+      "strict_usable": 0,
+      "license_status": "CC BY-SA 4.0",
+      "data_quality": "hourly LOCF; STRICT_CANDIDATE; available_at=null"
+    }
+  ],
+  "periods": [
+    {
+      "period": "2000–2015 (README SQL dump)",
+      "events": 0,
+      "quotes": 0,
+      "markets": "1X2 (documented)",
+      "bookmakers": "up to 32 (documented)",
+      "timestamp": "odds_datetime in SQL — not acquired",
+      "strict": 0,
+      "model_ready": false,
+      "stato": "NOT_ACQUIRED"
+    },
+    {
+      "period": "2005–2015 (closing_odds.csv)",
+      "events": 479440,
+      "quotes": 0,
+      "markets": "1X2",
+      "bookmakers": "29 top_bookie labels; avg/max research-only",
+      "timestamp": "DATE_ONLY",
+      "strict": 0,
+      "model_ready": false,
+      "stato": "RESEARCH_ONLY"
+    },
+    {
+      "period": "2015–2016 (odds_series)",
+      "events": 0,
+      "quotes": 10,
+      "markets": "1X2",
+      "bookmakers": "32 documented",
+      "timestamp": "RELATIVE_TO_KICKOFF_APPROX (hourly; TZ unknown)",
+      "strict": 0,
+      "model_ready": false,
+      "stato": "SERIES_BULK_NOT_ACQUIRED; fixture STRICT_CANDIDATE"
+    },
+    {
+      "period": "2016 (odds_series_b)",
+      "events": 0,
+      "quotes": 0,
+      "markets": "1X2 (documented)",
+      "bookmakers": "32 documented",
+      "timestamp": "same hourly generator",
+      "strict": 0,
+      "model_ready": false,
+      "stato": "NOT_ACQUIRED"
+    }
+  ],
+  "annual": [
+    {
+      "year": 2005,
+      "dataset": "beat_the_bookie_temporal_v1/closing_odds DATE_ONLY",
+      "events": 20989,
+      "strict_events": 0,
+      "decisions": 0,
+      "qualified_bets": 0,
+      "no_bets": 20989,
+      "start_bankroll": 1000,
+      "end_bankroll": null,
+      "pnl": null,
+      "roi": null,
+      "max_drawdown": null,
+      "win_rate": null,
+      "avg_odds": null,
+      "total_exposure": null,
+      "risk_policy": "no_bet",
+      "temporal_blocks": 20989,
+      "data_quality": "DATE_ONLY aggregates",
+      "status": "INSUFFICIENT_DATA"
+    },
+    {
+      "year": 2006,
+      "dataset": "beat_the_bookie_temporal_v1/closing_odds DATE_ONLY",
+      "events": 24209,
+      "strict_events": 0,
+      "decisions": 0,
+      "qualified_bets": 0,
+      "no_bets": 24209,
+      "start_bankroll": 1000,
+      "end_bankroll": null,
+      "pnl": null,
+      "roi": null,
+      "max_drawdown": null,
+      "win_rate": null,
+      "avg_odds": null,
+      "total_exposure": null,
+      "risk_policy": "no_bet",
+      "temporal_blocks": 24209,
+      "data_quality": "DATE_ONLY aggregates",
+      "status": "INSUFFICIENT_DATA"
+    },
+    {
+      "year": 2007,
+      "dataset": "beat_the_bookie_temporal_v1/closing_odds DATE_ONLY",
+      "events": 25325,
+      "strict_events": 0,
+      "decisions": 0,
+      "qualified_bets": 0,
+      "no_bets": 25325,
+      "start_bankroll": 1000,
+      "end_bankroll": null,
+      "pnl": null,
+      "roi": null,
+      "max_drawdown": null,
+      "win_rate": null,
+      "avg_odds": null,
+      "total_exposure": null,
+      "risk_policy": "no_bet",
+      "temporal_blocks": 25325,
+      "data_quality": "DATE_ONLY aggregates",
+      "status": "INSUFFICIENT_DATA"
+    },
+    {
+      "year": 2008,
+      "dataset": "beat_the_bookie_temporal_v1/closing_odds DATE_ONLY",
+      "events": 29993,
+      "strict_events": 0,
+      "decisions": 0,
+      "qualified_bets": 0,
+      "no_bets": 29993,
+      "start_bankroll": 1000,
+      "end_bankroll": null,
+      "pnl": null,
+      "roi": null,
+      "max_drawdown": null,
+      "win_rate": null,
+      "avg_odds": null,
+      "total_exposure": null,
+      "risk_policy": "no_bet",
+      "temporal_blocks": 29993,
+      "data_quality": "DATE_ONLY aggregates",
+      "status": "INSUFFICIENT_DATA"
+    },
+    {
+      "year": 2009,
+      "dataset": "beat_the_bookie_temporal_v1/closing_odds DATE_ONLY",
+      "events": 42902,
+      "strict_events": 0,
+      "decisions": 0,
+      "qualified_bets": 0,
+      "no_bets": 42902,
+      "start_bankroll": 1000,
+      "end_bankroll": null,
+      "pnl": null,
+      "roi": null,
+      "max_drawdown": null,
+      "win_rate": null,
+      "avg_odds": null,
+      "total_exposure": null,
+      "risk_policy": "no_bet",
+      "temporal_blocks": 42902,
+      "data_quality": "DATE_ONLY aggregates",
+      "status": "INSUFFICIENT_DATA"
+    },
+    {
+      "year": 2010,
+      "dataset": "beat_the_bookie_temporal_v1/closing_odds DATE_ONLY",
+      "events": 43878,
+      "strict_events": 0,
+      "decisions": 0,
+      "qualified_bets": 0,
+      "no_bets": 43878,
+      "start_bankroll": 1000,
+      "end_bankroll": null,
+      "pnl": null,
+      "roi": null,
+      "max_drawdown": null,
+      "win_rate": null,
+      "avg_odds": null,
+      "total_exposure": null,
+      "risk_policy": "no_bet",
+      "temporal_blocks": 43878,
+      "data_quality": "DATE_ONLY aggregates",
+      "status": "INSUFFICIENT_DATA"
+    },
+    {
+      "year": 2011,
+      "dataset": "beat_the_bookie_temporal_v1/closing_odds DATE_ONLY",
+      "events": 53496,
+      "strict_events": 0,
+      "decisions": 0,
+      "qualified_bets": 0,
+      "no_bets": 53496,
+      "start_bankroll": 1000,
+      "end_bankroll": null,
+      "pnl": null,
+      "roi": null,
+      "max_drawdown": null,
+      "win_rate": null,
+      "avg_odds": null,
+      "total_exposure": null,
+      "risk_policy": "no_bet",
+      "temporal_blocks": 53496,
+      "data_quality": "DATE_ONLY aggregates",
+      "status": "INSUFFICIENT_DATA"
+    },
+    {
+      "year": 2012,
+      "dataset": "beat_the_bookie_temporal_v1/closing_odds DATE_ONLY",
+      "events": 64753,
+      "strict_events": 0,
+      "decisions": 0,
+      "qualified_bets": 0,
+      "no_bets": 64753,
+      "start_bankroll": 1000,
+      "end_bankroll": null,
+      "pnl": null,
+      "roi": null,
+      "max_drawdown": null,
+      "win_rate": null,
+      "avg_odds": null,
+      "total_exposure": null,
+      "risk_policy": "no_bet",
+      "temporal_blocks": 64753,
+      "data_quality": "DATE_ONLY aggregates",
+      "status": "INSUFFICIENT_DATA"
+    },
+    {
+      "year": 2013,
+      "dataset": "beat_the_bookie_temporal_v1/closing_odds DATE_ONLY",
+      "events": 69060,
+      "strict_events": 0,
+      "decisions": 0,
+      "qualified_bets": 0,
+      "no_bets": 69060,
+      "start_bankroll": 1000,
+      "end_bankroll": null,
+      "pnl": null,
+      "roi": null,
+      "max_drawdown": null,
+      "win_rate": null,
+      "avg_odds": null,
+      "total_exposure": null,
+      "risk_policy": "no_bet",
+      "temporal_blocks": 69060,
+      "data_quality": "DATE_ONLY aggregates",
+      "status": "INSUFFICIENT_DATA"
+    },
+    {
+      "year": 2014,
+      "dataset": "beat_the_bookie_temporal_v1/closing_odds DATE_ONLY",
+      "events": 69843,
+      "strict_events": 0,
+      "decisions": 0,
+      "qualified_bets": 0,
+      "no_bets": 69843,
+      "start_bankroll": 1000,
+      "end_bankroll": null,
+      "pnl": null,
+      "roi": null,
+      "max_drawdown": null,
+      "win_rate": null,
+      "avg_odds": null,
+      "total_exposure": null,
+      "risk_policy": "no_bet",
+      "temporal_blocks": 69843,
+      "data_quality": "DATE_ONLY aggregates",
+      "status": "INSUFFICIENT_DATA"
+    },
+    {
+      "year": 2015,
+      "dataset": "beat_the_bookie_temporal_v1/closing_odds DATE_ONLY",
+      "events": 34992,
+      "strict_events": 0,
+      "decisions": 0,
+      "qualified_bets": 0,
+      "no_bets": 34992,
+      "start_bankroll": 1000,
+      "end_bankroll": null,
+      "pnl": null,
+      "roi": null,
+      "max_drawdown": null,
+      "win_rate": null,
+      "avg_odds": null,
+      "total_exposure": null,
+      "risk_policy": "no_bet",
+      "temporal_blocks": 34992,
+      "data_quality": "DATE_ONLY aggregates",
+      "status": "INSUFFICIENT_DATA"
+    },
+    {
+      "year": 2016,
+      "dataset": "odds_series not acquired",
+      "events": 0,
+      "strict_events": 0,
+      "decisions": 0,
+      "qualified_bets": 0,
+      "no_bets": 0,
+      "start_bankroll": 1000,
+      "end_bankroll": null,
+      "pnl": null,
+      "roi": null,
+      "max_drawdown": null,
+      "win_rate": null,
+      "avg_odds": null,
+      "total_exposure": null,
+      "risk_policy": "no_bet",
+      "temporal_blocks": 0,
+      "data_quality": "MISSING_SERIES",
+      "status": "INSUFFICIENT_DATA"
+    }
+  ],
+  "market_rows": [
+    {
+      "market": "1X2",
+      "lifecycle": "OBSERVED",
+      "model_ready": false,
+      "temporally_valid": false
+    },
+    {
+      "market": "OU",
+      "lifecycle": "CATALOGUED",
+      "model_ready": false,
+      "temporally_valid": false
+    },
+    {
+      "market": "AH",
+      "lifecycle": "CATALOGUED",
+      "model_ready": false,
+      "temporally_valid": false
+    },
+    {
+      "market": "BTTS",
+      "lifecycle": "CATALOGUED",
+      "model_ready": false,
+      "temporally_valid": false
+    },
+    {
+      "market": "DC",
+      "lifecycle": "CATALOGUED",
+      "model_ready": false,
+      "temporally_valid": false
+    },
+    {
+      "market": "DNB",
+      "lifecycle": "CATALOGUED",
+      "model_ready": false,
+      "temporally_valid": false
+    },
+    {
+      "market": "HT",
+      "lifecycle": "CATALOGUED",
+      "model_ready": false,
+      "temporally_valid": false
+    },
+    {
+      "market": "correct_score",
+      "lifecycle": "CATALOGUED",
+      "model_ready": false,
+      "temporally_valid": false
+    },
+    {
+      "market": "team_goals",
+      "lifecycle": "CATALOGUED",
+      "model_ready": false,
+      "temporally_valid": false
+    },
+    {
+      "market": "corners",
+      "lifecycle": "CATALOGUED",
+      "model_ready": false,
+      "temporally_valid": false
+    },
+    {
+      "market": "cards",
+      "lifecycle": "CATALOGUED",
+      "model_ready": false,
+      "temporally_valid": false
+    },
+    {
+      "market": "player",
+      "lifecycle": "CATALOGUED",
+      "model_ready": false,
+      "temporally_valid": false
+    },
+    {
+      "market": "other",
+      "lifecycle": "CATALOGUED",
+      "model_ready": false,
+      "temporally_valid": false
+    }
+  ],
+  "strategy_rows": [
+    {
+      "strategy": "flat",
+      "role": "challenger_unused",
+      "bets": 0,
+      "pnl": null,
+      "selected_from_pnl": false
+    },
+    {
+      "strategy": "fractional_kelly",
+      "role": "challenger_unused",
+      "bets": 0,
+      "pnl": null,
+      "selected_from_pnl": false
+    },
+    {
+      "strategy": "risk_capped_kelly",
+      "role": "challenger_unused",
+      "bets": 0,
+      "pnl": null,
+      "selected_from_pnl": false
+    },
+    {
+      "strategy": "actuarial_v1",
+      "role": "challenger_unused",
+      "bets": 0,
+      "pnl": null,
+      "selected_from_pnl": false
+    },
+    {
+      "strategy": "masaniello_challenger",
+      "role": "challenger_unused",
+      "bets": 0,
+      "pnl": null,
+      "selected_from_pnl": false
+    },
+    {
+      "strategy": "no_bet",
+      "role": "operative",
+      "bets": 0,
+      "pnl": null,
+      "selected_from_pnl": false
+    }
+  ],
+  "sanity": {
+    "locked": true,
+    "revealed": true,
+    "decisionKeys": [
+      "eventId",
+      "form_reconstructed",
+      "uses_repo_form_column",
+      "series_quotes",
+      "close_in_decision"
+    ],
+    "stake": 0,
+    "settlement": null,
+    "assessment": "HOME — Probability: n/a — Evidence strength: INSUFFICIENT\nContext: 10 hourly relative 1X2 bins (RELATIVE_TO_KICKOFF_APPROX; TZ undocumented; available_at=null)"
+  },
+  "sample_assessment": "HOME — Probability: n/a — Evidence strength: INSUFFICIENT\nContext: 10 hourly relative 1X2 bins (RELATIVE_TO_KICKOFF_APPROX; TZ undocumented; available_at=null)",
+  "counts": {
+    "decisions": 0,
+    "bets": 0,
+    "no_bet": 479440
+  },
+  "scientific": {
+    "data_available": "closing_rows=479440; series_bulk=false; DATE_ONLY dominant; hourly relative fixture only",
+    "strict_events": 0,
+    "strict_quotes": 0,
+    "model_ready_markets": [],
+    "years_testable": [],
+    "years_insufficient": [
+      2005,
+      2006,
+      2007,
+      2008,
+      2009,
+      2010,
+      2011,
+      2012,
+      2013,
+      2014,
+      2015,
+      2016
+    ],
+    "total_blind_decisions": 0,
+    "total_bets": 0,
+    "profitable_years": [],
+    "losing_years": [],
+    "no_bet_years": [
+      2005,
+      2006,
+      2007,
+      2008,
+      2009,
+      2010,
+      2011,
+      2012,
+      2013,
+      2014,
+      2015,
+      2016
+    ],
+    "best_model": null,
+    "best_risk_policy": null,
+    "statistical_significance": "none",
+    "holdout_status": "SACRED",
+    "auto_promotion": false,
+    "real_money": false,
+    "verdict": "NO_DEMONSTRATED_EDGE"
+  },
+  "multiple_testing": {
+    "alpha": 0.05,
+    "tests": 9,
+    "bonferroni": 0.005555555555555556,
+    "any_significant": false
+  }
+}

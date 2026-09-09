@@ -1,0 +1,24 @@
+---
+description: Historical data is not automatically decision-time data. Never convert outcomes or undated quotes into pre-event knowledge.
+alwaysApply: true
+---
+
+# Historical Decision Time (TASK 020+, permanent)
+
+THE SYSTEM MUST NEVER CONVERT HISTORICAL OUTCOME KNOWLEDGE INTO PRE-EVENT KNOWLEDGE.
+
+A historical dataset is not automatically a decision-time dataset.
+
+Every feature, market quote, news item, statistic, lineup, injury, weather observation and market snapshot must have defensible temporal semantics before entering STRICT_AS_OF.
+
+If temporal availability cannot be demonstrated, the information may remain available for research/benchmark purposes but MUST NOT affect the blind capital replay.
+
+No positive result may justify weakening this rule.
+
+## Do not
+
+- Invent `available_at` or treat kickoff as quote availability
+- Treat DATE_ONLY / DATASET_WINDOW / UNKNOWN as exact
+- Use closing odds in DecisionContext
+- Use post-event statistics or results before LOCK
+- Relax this firewall to obtain a prettier bankroll

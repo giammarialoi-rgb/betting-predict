@@ -1,0 +1,49 @@
+repository_field,original_source,source_type,license_status,confidence,notes
+Division,football-data.co.uk (declared),aggregator,upstream football-data.co.uk terms + repo MIT on packaging; redistribution caution,partially_verified,README attribution; sample cross-check required against CSV columns
+MatchDate,football-data.co.uk (declared),aggregator,upstream football-data.co.uk terms + repo MIT on packaging; redistribution caution,partially_verified,README attribution; sample cross-check required against CSV columns
+MatchTime,football-data.co.uk (declared),aggregator,upstream football-data.co.uk terms + repo MIT on packaging; redistribution caution,partially_verified,README attribution; sample cross-check required against CSV columns
+HomeTeam,football-data.co.uk (declared),aggregator,upstream football-data.co.uk terms + repo MIT on packaging; redistribution caution,partially_verified,README attribution; sample cross-check required against CSV columns
+AwayTeam,football-data.co.uk (declared),aggregator,upstream football-data.co.uk terms + repo MIT on packaging; redistribution caution,partially_verified,README attribution; sample cross-check required against CSV columns
+HomeElo,clubelo.com through 2025-06-01; provisional repo continuation thereafter,rating_provider,ClubElo terms unknown in this audit; provisional Elo is author-generated,suspect,HomeElo/AwayElo join method undocumented; post-2025-06-01 values are not ClubElo primary
+AwayElo,clubelo.com through 2025-06-01; provisional repo continuation thereafter,rating_provider,ClubElo terms unknown in this audit; provisional Elo is author-generated,suspect,HomeElo/AwayElo join method undocumented; post-2025-06-01 values are not ClubElo primary
+Form3Home,derived in repository from match results,derived,derived from football-data.co.uk results,unknown,Must reconstruct with explicit lag before APPROVED prematch use
+Form5Home,derived in repository from match results,derived,derived from football-data.co.uk results,unknown,Must reconstruct with explicit lag before APPROVED prematch use
+Form3Away,derived in repository from match results,derived,derived from football-data.co.uk results,unknown,Must reconstruct with explicit lag before APPROVED prematch use
+Form5Away,derived in repository from match results,derived,derived from football-data.co.uk results,unknown,Must reconstruct with explicit lag before APPROVED prematch use
+FTHome,football-data.co.uk (declared),aggregator,upstream football-data.co.uk terms + repo MIT on packaging; redistribution caution,partially_verified,README attribution; sample cross-check required against CSV columns
+FTAway,football-data.co.uk (declared),aggregator,upstream football-data.co.uk terms + repo MIT on packaging; redistribution caution,partially_verified,README attribution; sample cross-check required against CSV columns
+FTResult,football-data.co.uk (declared),aggregator,upstream football-data.co.uk terms + repo MIT on packaging; redistribution caution,partially_verified,README attribution; sample cross-check required against CSV columns
+HTHome,football-data.co.uk (declared),aggregator,upstream football-data.co.uk terms + repo MIT on packaging; redistribution caution,partially_verified,README attribution; sample cross-check required against CSV columns
+HTAway,football-data.co.uk (declared),aggregator,upstream football-data.co.uk terms + repo MIT on packaging; redistribution caution,partially_verified,README attribution; sample cross-check required against CSV columns
+HTResult,football-data.co.uk (declared),aggregator,upstream football-data.co.uk terms + repo MIT on packaging; redistribution caution,partially_verified,README attribution; sample cross-check required against CSV columns
+HomeShots,football-data.co.uk (declared),aggregator,upstream football-data.co.uk terms + repo MIT on packaging; redistribution caution,partially_verified,README attribution; sample cross-check required against CSV columns
+AwayShots,football-data.co.uk (declared),aggregator,upstream football-data.co.uk terms + repo MIT on packaging; redistribution caution,partially_verified,README attribution; sample cross-check required against CSV columns
+HomeTarget,football-data.co.uk (declared),aggregator,upstream football-data.co.uk terms + repo MIT on packaging; redistribution caution,partially_verified,README attribution; sample cross-check required against CSV columns
+AwayTarget,football-data.co.uk (declared),aggregator,upstream football-data.co.uk terms + repo MIT on packaging; redistribution caution,partially_verified,README attribution; sample cross-check required against CSV columns
+HomeFouls,football-data.co.uk (declared),aggregator,upstream football-data.co.uk terms + repo MIT on packaging; redistribution caution,partially_verified,README attribution; sample cross-check required against CSV columns
+AwayFouls,football-data.co.uk (declared),aggregator,upstream football-data.co.uk terms + repo MIT on packaging; redistribution caution,partially_verified,README attribution; sample cross-check required against CSV columns
+HomeCorners,football-data.co.uk (declared),aggregator,upstream football-data.co.uk terms + repo MIT on packaging; redistribution caution,partially_verified,README attribution; sample cross-check required against CSV columns
+AwayCorners,football-data.co.uk (declared),aggregator,upstream football-data.co.uk terms + repo MIT on packaging; redistribution caution,partially_verified,README attribution; sample cross-check required against CSV columns
+HomeYellow,football-data.co.uk (declared),aggregator,upstream football-data.co.uk terms + repo MIT on packaging; redistribution caution,partially_verified,README attribution; sample cross-check required against CSV columns
+AwayYellow,football-data.co.uk (declared),aggregator,upstream football-data.co.uk terms + repo MIT on packaging; redistribution caution,partially_verified,README attribution; sample cross-check required against CSV columns
+HomeRed,football-data.co.uk (declared),aggregator,upstream football-data.co.uk terms + repo MIT on packaging; redistribution caution,partially_verified,README attribution; sample cross-check required against CSV columns
+AwayRed,football-data.co.uk (declared),aggregator,upstream football-data.co.uk terms + repo MIT on packaging; redistribution caution,partially_verified,README attribution; sample cross-check required against CSV columns
+OddHome,Bet365 via football-data.co.uk (declared),bookmaker_feed,via football-data.co.uk packaging,partially_verified,Open vs close not labeled in this repository
+OddDraw,Bet365 via football-data.co.uk (declared),bookmaker_feed,via football-data.co.uk packaging,partially_verified,Open vs close not labeled in this repository
+OddAway,Bet365 via football-data.co.uk (declared),bookmaker_feed,via football-data.co.uk packaging,partially_verified,Open vs close not labeled in this repository
+MaxHome,Max across ~17 European bookmakers via football-data.co.uk (declared),aggregator,via football-data.co.uk packaging,partially_verified,NOT a bookmaker; Max ≠ Pinnacle/WH/etc.
+MaxDraw,Max across ~17 European bookmakers via football-data.co.uk (declared),aggregator,via football-data.co.uk packaging,partially_verified,NOT a bookmaker; Max ≠ Pinnacle/WH/etc.
+MaxAway,Max across ~17 European bookmakers via football-data.co.uk (declared),aggregator,via football-data.co.uk packaging,partially_verified,NOT a bookmaker; Max ≠ Pinnacle/WH/etc.
+Over25,Bet365 via football-data.co.uk (declared),bookmaker_feed,via football-data.co.uk packaging,partially_verified,Open vs close not labeled in this repository
+Under25,Bet365 via football-data.co.uk (declared),bookmaker_feed,via football-data.co.uk packaging,partially_verified,Open vs close not labeled in this repository
+MaxOver25,Max across ~17 European bookmakers via football-data.co.uk (declared),aggregator,via football-data.co.uk packaging,partially_verified,NOT a bookmaker; Max ≠ Pinnacle/WH/etc.
+MaxUnder25,Max across ~17 European bookmakers via football-data.co.uk (declared),aggregator,via football-data.co.uk packaging,partially_verified,NOT a bookmaker; Max ≠ Pinnacle/WH/etc.
+HandiSize,Bet365 via football-data.co.uk (declared),bookmaker_feed,via football-data.co.uk packaging,partially_verified,Open vs close not labeled in this repository
+HandiHome,Bet365 via football-data.co.uk (declared),bookmaker_feed,via football-data.co.uk packaging,partially_verified,Open vs close not labeled in this repository
+HandiAway,Bet365 via football-data.co.uk (declared),bookmaker_feed,via football-data.co.uk packaging,partially_verified,Open vs close not labeled in this repository
+C_LTH,repository clustering model (author-derived),derived,repo MIT on derived artifact,suspect,Undocumented training features; blank on newest ~8301 rows per README
+C_LTA,repository clustering model (author-derived),derived,repo MIT on derived artifact,suspect,Undocumented training features; blank on newest ~8301 rows per README
+C_VHD,repository clustering model (author-derived),derived,repo MIT on derived artifact,suspect,Undocumented training features; blank on newest ~8301 rows per README
+C_VAD,repository clustering model (author-derived),derived,repo MIT on derived artifact,suspect,Undocumented training features; blank on newest ~8301 rows per README
+C_HTB,repository clustering model (author-derived),derived,repo MIT on derived artifact,suspect,Undocumented training features; blank on newest ~8301 rows per README
+C_PHB,repository clustering model (author-derived),derived,repo MIT on derived artifact,suspect,Undocumented training features; blank on newest ~8301 rows per README

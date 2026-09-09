@@ -1,0 +1,27 @@
+{
+  "source": "API_SPORTS",
+  "status": "AVAILABLE",
+  "requests_today": 22,
+  "remaining": 78,
+  "sports": [
+    "football"
+  ],
+  "data_types": [
+    "status",
+    "leagues",
+    "fixtures",
+    "teams",
+    "standings",
+    "teams_statistics",
+    "headtohead",
+    "players_statistics",
+    "injuries",
+    "odds",
+    "fixtures_events"
+  ],
+  "last_success": "2026-09-08T20:45:35.091Z",
+  "last_error": null,
+  "plan": null,
+  "key_configured": true,
+  "key_exposed": false
+}

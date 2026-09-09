@@ -1,0 +1,2 @@
+event,competition,kickoff_utc,market,bookmaker_or_exchange,quote_timestamp,delta_kickoff_sec,outcome,strict,independence
+M001,EPL,2017-04-30T13:05:00.000Z,MATCH_ODDS,Betfair Exchange,2017-04-30T11:10:52.099Z,-6848,DRAW,YES,MIRROR

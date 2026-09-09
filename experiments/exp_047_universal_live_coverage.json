@@ -1,0 +1,20 @@
+{
+  "experiment_id": "exp_047_universal_live_coverage",
+  "immutable": true,
+  "created_at": "2026-09-08T00:00:00.000Z",
+  "task": "047",
+  "lab_a": "audit/external/task-039",
+  "lab_b": "audit/external/task-044",
+  "legacy_dataset_sha256": "6d78ca34da9df180b643976c3b4a52b93cf589984bae54e056c5e3a53b44174b",
+  "baseline": "MARKET_DEVIG",
+  "winner": null,
+  "auto_promotion": false,
+  "real_money": false,
+  "capital_gate": false,
+  "open_task_048": false,
+  "modify_lab_a": false,
+  "modify_frozen_031": false,
+  "synthetic_data": false,
+  "seed_events_are_not_a_cap": true,
+  "notes": "Universal live coverage + market intelligence. Lab A READ_ONLY. No TASK 048. Capital closed."
+}

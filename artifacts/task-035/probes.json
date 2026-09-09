@@ -1,0 +1,142 @@
+[
+  {
+    "id": "betfair-historic",
+    "url": "https://historicdata.betfair.com/",
+    "attempted": true,
+    "acquired": false,
+    "http_status": 200,
+    "sha256": null,
+    "classification": "LOGIN_HTML",
+    "note": "Official Betfair Historic. Login wall. No credentials used."
+  },
+  {
+    "id": "football-data-e0-live",
+    "url": "https://www.football-data.co.uk/mmz4281/2526/E0.csv",
+    "attempted": true,
+    "acquired": false,
+    "http_status": 503,
+    "sha256": null,
+    "classification": "HTTP_503",
+    "note": "Live football-data.co.uk. Even on 200 this is OPEN/CLOSE + kickoff Time, not a quote clock."
+  },
+  {
+    "id": "football-data-e0-ia",
+    "url": "https://web.archive.org/web/20200801120516id_/https://www.football-data.co.uk/mmz4281/1920/E0.csv",
+    "attempted": true,
+    "acquired": true,
+    "http_status": 200,
+    "sha256": "100037618b94f94057400bb02bf6bac4ef74ddaa58cde4b38370839c39caee61",
+    "classification": "DATE_ONLY_IA_COPY",
+    "note": "Internet Archive copy of E0 2019/20 saved to audit/external/task-035/ia-e0-1920.csv. Kickoff Time present; odds lack publish timestamp."
+  },
+  {
+    "id": "odds-api-no-key",
+    "url": "https://api.the-odds-api.com/v4/sports?apiKey=none",
+    "attempted": true,
+    "acquired": false,
+    "http_status": 401,
+    "sha256": null,
+    "classification": "BLOCKED_API_KEY",
+    "note": "Historical endpoint is paid. No user key. No public dump of /v4/historical found."
+  },
+  {
+    "id": "kaggle-obiguy",
+    "url": "https://www.kaggle.com/api/v1/datasets/download/obiguy/soccer-odds-data",
+    "attempted": true,
+    "acquired": false,
+    "http_status": 302,
+    "sha256": null,
+    "classification": "BLOCKED_LOGIN",
+    "note": "Best remaining clocked-looking Pinnacle archive. No GitHub/HF/DOI/IA mirror."
+  },
+  {
+    "id": "kaggle-wc-ts",
+    "url": "https://www.kaggle.com/api/v1/datasets/download/oliviersportsdata/worldcup-fulltimestamp-sample",
+    "attempted": true,
+    "acquired": false,
+    "http_status": 302,
+    "sha256": null,
+    "classification": "BLOCKED_LOGIN",
+    "note": "Naive Snapshot_TS + date-only kickoff. No public copy."
+  },
+  {
+    "id": "hf-olivier-card",
+    "url": "https://huggingface.co/api/datasets/oliviersportsdata/Sample-Historical-Football-Odds",
+    "attempted": true,
+    "acquired": true,
+    "http_status": 200,
+    "sha256": "4c1958cd6c4a3c9571975641a7876aa6503bb95f0c76a9e748f3e5c3f30b1765",
+    "classification": "DATE_ONLY_CLOSING_SAMPLE",
+    "note": "Public 1% closing sample already on disk. Master is paid."
+  },
+  {
+    "id": "hf-soccer-stats",
+    "url": "https://huggingface.co/api/datasets/JulienDelavande/soccer_stats",
+    "attempted": true,
+    "acquired": true,
+    "http_status": 200,
+    "sha256": "8369f32865d9dabe2e8a3dcd5a05d229081ac05f606f5cea88332f19ec5dd268",
+    "classification": "PUBLIC_CARD",
+    "note": "soccer_odds.csv is 18KB / one match. SQL dump is the same naive table."
+  },
+  {
+    "id": "sharpapi-github",
+    "url": "https://api.github.com/repos/Sharp-API/sports-odds-sample-data/contents",
+    "attempted": true,
+    "acquired": true,
+    "http_status": 200,
+    "sha256": "6a22f816c71050ff4bceec332f68782713323302ee691b0a5b5a5710f8aac5b2",
+    "classification": "PUBLIC_SNAPSHOT",
+    "note": "CC BY 4.0 snapshot listing: [{\"name\":\"LICENSE\",\"path\":\"LICENSE\",\"sha\":\"da6ab6cc8f333d7e89a99812866df8f24374d47c\",\"size\":18657,\"url\":\"https://api.github.com/repos/Sharp-API/sports-odds-samp"
+  },
+  {
+    "id": "ia-betfair-search",
+    "url": "https://archive.org/advancedsearch.php?q=betfair+soccer+BASIC+historical+prices&fl[]=identifier&output=json&rows=5",
+    "attempted": true,
+    "acquired": false,
+    "http_status": 200,
+    "sha256": null,
+    "classification": "NOT_FOUND",
+    "note": "Internet Archive numFound=0. No soccer BASIC price dump downloaded."
+  },
+  {
+    "id": "zenodo-12673394",
+    "url": "https://zenodo.org/api/records/12673394",
+    "attempted": true,
+    "acquired": true,
+    "http_status": 200,
+    "sha256": "12f357c823216ae4da816d04fad7ef62a35f93b809336c96e276e8b240822783",
+    "classification": "DATE_ONLY_MIRROR",
+    "note": "Already on disk as TASK 026. football-data.co.uk lineage."
+  },
+  {
+    "id": "figshare-news",
+    "url": "https://api.figshare.com/v2/articles/16884688",
+    "attempted": true,
+    "acquired": true,
+    "http_status": 200,
+    "sha256": "9eadbb253f84b92ae5ed8cf1bdd5509df7edcad221ddf4dad307d8ba6f6ab46a",
+    "classification": "NEWS_NOT_ODDS",
+    "note": "Sports news metadata. No quote clock."
+  },
+  {
+    "id": "github-betfairutil",
+    "url": "https://api.github.com/repos/mberk/betfairutil",
+    "attempted": true,
+    "acquired": true,
+    "http_status": 200,
+    "sha256": "2878b9737a9da0191d6881fed6ee4ed132a4322ca89c5545a1837166f5a6606a",
+    "classification": "PARSER_NO_DATA",
+    "note": "Parser for official Betfair bz2. Not an archive."
+  },
+  {
+    "id": "petermclagan-samples",
+    "url": "https://api.github.com/repos/petermclagan/betfair-historical/contents/tests/sample_data",
+    "attempted": true,
+    "acquired": true,
+    "http_status": 200,
+    "sha256": "a7d2a4e0f9ee773593f97d146f4a878c86937821b5441667d9b613a51efb8509",
+    "classification": "MIRROR_SAMPLE",
+    "note": "Already on disk TASK 023. n=1 football BASIC."
+  }
+]

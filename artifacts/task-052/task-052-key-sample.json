@@ -1,0 +1,13 @@
+{
+  "keys": [
+    "next|pl045_b192d200f46334e06c8e|s:AWAY|k:2026-09-08T15:00:00Z|ps:NO_BET|st:ANALYZED|i:0",
+    "next|pl045_2987db22d592b8062976|s:AWAY|k:2026-09-08T15:00:00Z|ps:NO_BET|st:ANALYZED|i:1",
+    "next|pl045_6c6e0d52f1a651fdf8be|s:AWAY|k:2026-09-08T15:00:00Z|ps:NO_BET|st:ANALYZED|i:2",
+    "next|pl045_d74d297a49071e1b0d6c|s:AWAY|k:2026-09-08T15:00:00Z|ps:NO_BET|st:ANALYZED|i:3",
+    "next|pl045_baf1888450573bd07c41|s:AWAY|k:2026-09-08T16:00:00Z|ps:NO_BET|st:ANALYZED|i:4"
+  ],
+  "synthKeys": [
+    "next|ABC|k:2026-09-10T12:00:00.000Z|st:SCHEDULED|i:0",
+    "next|ABC|k:2026-09-10T12:00:00.000Z|st:SCHEDULED|i:1"
+  ]
+}

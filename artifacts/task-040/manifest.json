@@ -1,0 +1,31 @@
+{
+  "source": "THE_ODDS_API",
+  "source_store": "C:\\Users\\giamm\\Desktop\\app previsioni sportive\\betting predict\\audit\\external\\task-039",
+  "retrieved_at": "2026-09-07T22:21:28.428Z",
+  "schema": "Event039/Quote039/Decision039",
+  "row_count": 26133,
+  "event_count": 114,
+  "quote_count": 26133,
+  "unique_quotes": 26133,
+  "locked_decisions": 114,
+  "settled_events": 0,
+  "sha256": "886ae2d55f04af1ccb994d3deeb0cc9efa54b2cf12df20a69c7e1e0515eaa2ad",
+  "coverage": {
+    "T72": 0.05263157894736842,
+    "T48": 0.05263157894736842,
+    "T24": 0.05263157894736842,
+    "T12": 0,
+    "T6": 0,
+    "T3": 0,
+    "T1H": 1,
+    "T30M": 0,
+    "T15M": 0,
+    "T5M": 0,
+    "T1M": 0
+  },
+  "license_terms": "THE_ODDS_API terms — local research cache only; do not redistribute raw API payloads",
+  "adapter_version": "recover-040/v1",
+  "experiment_id": "exp_040_recover_live",
+  "experiment_sha256": "02d5f073c76305d75cdadccb8e822858ac8e1717f968201da2c7b5d8a5650202",
+  "secrets": false
+}

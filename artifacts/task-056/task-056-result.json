@@ -1,0 +1,87 @@
+{
+  "experiment_id": "exp_056_final_system_audit",
+  "task": "056",
+  "FINAL_VERDICT": "SYSTEM_OPERATIONAL_MARKET_ONLY",
+  "SYSTEM_STATUS": "HEALTHY",
+  "SUPERVISOR_STATUS": "WORKING",
+  "WORKER_STATUS": "ALIVE",
+  "BRAIN_STATUS": "RUNNING",
+  "HEARTBEAT": "FRESH",
+  "AUTOSTART_STATUS": "STARTUP_FOLDER",
+  "SUPERVISOR_ALIVE": true,
+  "WORKER_ALIVE": true,
+  "HEARTBEAT_FRESH": true,
+  "NO_DUPLICATE_WORKERS": true,
+  "EVENTS_TOTAL": 445,
+  "EVENTS_UNIQUE": 385,
+  "EVENTS_NEXT_24H": 21,
+  "EVENTS_NEXT_72H": 78,
+  "EVENTS_NEXT_7D": 299,
+  "MARKETS_TOTAL": 4,
+  "PREDICTIONS_TOTAL": 385,
+  "BET_CANDIDATES": 0,
+  "NO_BET": 385,
+  "LOCKED": 131,
+  "SETTLED": 0,
+  "AUTOPSIED": 2,
+  "LEARNING_CASES": 0,
+  "SPORTS": {
+    "SOCCER": {
+      "status": "ACTIVE_DATA",
+      "events": 385,
+      "note": "BUDGET_STOP — remaining keys deferred"
+    },
+    "TENNIS": {
+      "status": "ACTIVE_EMPTY",
+      "events": 0,
+      "note": "BUDGET_STOP — remaining keys deferred"
+    },
+    "BASKETBALL": {
+      "status": "ACTIVE_EMPTY",
+      "events": 0,
+      "note": "BUDGET_STOP — remaining keys deferred"
+    },
+    "VOLLEYBALL": {
+      "status": "UNAVAILABLE",
+      "events": 0,
+      "note": "VOLLEYBALL_PROVIDER_UNAVAILABLE"
+    },
+    "HOCKEY": {
+      "status": "ACTIVE_EMPTY",
+      "events": 0,
+      "note": "BUDGET_STOP — remaining keys deferred"
+    },
+    "OTHER": {
+      "status": "UNKNOWN",
+      "events": 0,
+      "note": null
+    }
+  },
+  "PAPER_INITIAL_CAPITAL": 1000,
+  "PAPER_CURRENT_CAPITAL": 1000,
+  "PAPER_BETS": 0,
+  "PAPER_PNL": 0,
+  "PAPER_ROI": 0,
+  "PAPER_MAX_DD": 0,
+  "MODEL_EDGE": "UNKNOWN",
+  "MODEL_READINESS": "MARKET_ONLY",
+  "STATISTICAL_READINESS": "NOT_READY",
+  "LEARNING_READINESS": "OBSERVATION_ONLY",
+  "API_CALLS_UI": 0,
+  "ARTIFICIAL_CAP": false,
+  "LAB_A_MUTATION": false,
+  "LAB_A_EVENTS": 114,
+  "LAB_A_LOCKED": 114,
+  "REAL_MONEY": false,
+  "AUTO_PROMOTION": false,
+  "LEAKAGE": "PASS",
+  "REPRODUCIBILITY": "PASS",
+  "DIAGNOSTICS_OK": true,
+  "BLOCKERS": [
+    "MODEL_IS_MARKET_ONLY",
+    "STATISTICAL_SAMPLE_LT_100"
+  ],
+  "CANONICAL_CHAIN": "supervisor→worker→brain→massive049→decision048→bankroll053",
+  "open_task_057": false,
+  "fingerprint": "ef9351b2a53e295368a0cf3d9b38e30eef94464b16ce5392d2b57886abf81fde"
+}

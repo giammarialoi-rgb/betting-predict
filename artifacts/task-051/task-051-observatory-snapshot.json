@@ -1,0 +1,71 @@
+{
+  "counters": {
+    "EVENTS_TODAY": 34,
+    "EVENTS_TOTAL": 385,
+    "PREDICTIONS": 3828,
+    "LOCKED": 114,
+    "SETTLED": 0,
+    "AUTOPSIED": 0,
+    "LEARNING_CASES": 0,
+    "NO_BET": 385,
+    "BET_CANDIDATE": 0,
+    "STRONG_CANDIDATE": 0
+  },
+  "sport_table": [
+    {
+      "sport": "SOCCER",
+      "events": 445,
+      "next_24h": 37,
+      "analyzed": 385,
+      "predicted": 385,
+      "locked": 114,
+      "settled": 0
+    },
+    {
+      "sport": "TENNIS",
+      "events": 0,
+      "next_24h": 0,
+      "analyzed": 0,
+      "predicted": 0,
+      "locked": 0,
+      "settled": 0
+    },
+    {
+      "sport": "BASKETBALL",
+      "events": 0,
+      "next_24h": 0,
+      "analyzed": 0,
+      "predicted": 0,
+      "locked": 0,
+      "settled": 0
+    },
+    {
+      "sport": "VOLLEYBALL",
+      "events": 0,
+      "next_24h": 0,
+      "analyzed": 0,
+      "predicted": 0,
+      "locked": 0,
+      "settled": 0
+    },
+    {
+      "sport": "HOCKEY",
+      "events": 0,
+      "next_24h": 0,
+      "analyzed": 0,
+      "predicted": 0,
+      "locked": 0,
+      "settled": 0
+    },
+    {
+      "sport": "OTHER",
+      "events": 0,
+      "next_24h": 0,
+      "analyzed": 0,
+      "predicted": 0,
+      "locked": 0,
+      "settled": 0
+    }
+  ],
+  "health": []
+}

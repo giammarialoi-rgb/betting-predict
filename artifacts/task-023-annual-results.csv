@@ -1,0 +1,5 @@
+year,events,strict_events,decisions,bets,no_bet,start,end,pnl,roi,max_dd,total_exposure,clv,brier,logloss,policy,status
+2017,1,1,1,0,1,1000,,,,,,,,,no_bet,INSUFFICIENT_DATA
+2018,0,0,0,0,0,1000,,,,,,,,,no_bet,NOT_ACQUIRED
+2019,0,0,0,0,0,1000,,,,,,,,,no_bet,NOT_ACQUIRED
+2020,0,0,0,0,0,1000,,,,,,,,,no_bet,NOT_ACQUIRED

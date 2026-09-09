@@ -1,0 +1,56 @@
+{
+  "at": "2026-09-08T13:04:08.396Z",
+  "directa_status": "DISABLED_BY_POLICY",
+  "directa_policy_status": "DISABLED_BY_POLICY",
+  "catalog_events": 385,
+  "odds_events": 385,
+  "analyzed_events": 385,
+  "matched": 0,
+  "unmatched": 0,
+  "conflicts": 0,
+  "odds_available": 385,
+  "odds_missing": 0,
+  "today": 34,
+  "next_24h": 37,
+  "next_72h": 96,
+  "next_7d": 317,
+  "by_sport": {
+    "soccer": {
+      "catalog": 385,
+      "odds": 385,
+      "missing_odds": 0
+    }
+  },
+  "sources": {
+    "DIRECTA": {
+      "events": 0,
+      "status": "DISABLED_BY_POLICY",
+      "last_error": "DIRECTA_ENABLED=false (default)"
+    },
+    "ODDS_API": {
+      "events": 385,
+      "status": "ACTIVE_DATA",
+      "last_error": null
+    },
+    "FOOTBALL_DATA": {
+      "events": 0,
+      "status": "UNAVAILABLE",
+      "last_error": "adapter reserved — not wired in TASK 054 live path"
+    },
+    "OTHER": {
+      "events": 0,
+      "status": "EMPTY",
+      "last_error": null
+    }
+  },
+  "current_activity": {
+    "phase": "IDLE",
+    "source": "MULTI",
+    "sport": null,
+    "events_processed": 385,
+    "events_remaining": 0,
+    "started_at": "2026-09-08T13:04:08.396Z",
+    "note": "DIRECTA_ENABLED=false (default)"
+  },
+  "artificial_cap": false
+}

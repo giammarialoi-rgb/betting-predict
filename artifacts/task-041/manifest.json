@@ -1,0 +1,15 @@
+{
+  "experiment_id": "exp_041_prospective_close",
+  "source_store": "C:\\Users\\giamm\\Desktop\\app previsioni sportive\\betting predict\\audit\\external\\task-039",
+  "settled": 0,
+  "locked": 114,
+  "missing_to_100": 100,
+  "verdict": "INSUFFICIENT_DATA_FINAL",
+  "fingerprint": "98413827966e04de370f5b69d78197f4895c8c0756607ae3835c172ddcabf31f",
+  "corpus_fingerprint": null,
+  "adapter_version": "close-041/v1",
+  "CLV": "NOT_COMPUTABLE",
+  "EXECUTION_COST": "UNKNOWN",
+  "REAL_MONEY": false,
+  "open_task_042": false
+}

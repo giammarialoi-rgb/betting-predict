@@ -1,0 +1,4 @@
+match_id,league,home,away,btb_datetime,soccer_kickoff_utc,bookmaker,hours_before,home_odds,draw_odds,away_odds,ft_home,ft_away
+1005149,Finland: Kakkonen East,Lahti Akatemia,Klubi 04,2015-09-25 17:30:00,2015-09-25T15:30:00,bet365,1,2.4,4.0,2.55,3,2
+1005153,Denmark: Superliga,Sonderjyske,Odense,2015-09-25 18:00:00,2015-09-25T16:00:00,Pinnacle,1,2.17,3.54,3.61,4,0
+1005160,Kuwait: Premier League,Khaitan,Al Sulaibikhat,2015-10-17 19:15:00,2015-10-17T17:10:00,ComeOn,1,2.39,3.17,2.62,0,3

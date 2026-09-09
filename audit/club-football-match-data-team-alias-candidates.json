@@ -1,0 +1,231 @@
+{
+  "generated_at": "2026-09-06T19:35:29.554Z",
+  "note": "Candidates only — no fuzzy matching applied; human verification required",
+  "candidates": [
+    {
+      "name_a": "Ath Bilbao B",
+      "name_b": "",
+      "reason": "youth_or_reserve_marker"
+    },
+    {
+      "name_a": "Barcelona B",
+      "name_b": "",
+      "reason": "youth_or_reserve_marker"
+    },
+    {
+      "name_a": "Celta B",
+      "name_b": "",
+      "reason": "youth_or_reserve_marker"
+    },
+    {
+      "name_a": "Colon Santa FE",
+      "name_b": "Colon Santa Fe",
+      "reason": "case_variant"
+    },
+    {
+      "name_a": "Malaga B",
+      "name_b": "",
+      "reason": "youth_or_reserve_marker"
+    },
+    {
+      "name_a": "Real Madrid B",
+      "name_b": "",
+      "reason": "youth_or_reserve_marker"
+    },
+    {
+      "name_a": "Sevilla B",
+      "name_b": "",
+      "reason": "youth_or_reserve_marker"
+    },
+    {
+      "name_a": "Sociedad B",
+      "name_b": "",
+      "reason": "youth_or_reserve_marker"
+    },
+    {
+      "name_a": "Termalica B-B.",
+      "name_b": "",
+      "reason": "youth_or_reserve_marker"
+    },
+    {
+      "name_a": "Villarreal B",
+      "name_b": "",
+      "reason": "youth_or_reserve_marker"
+    },
+    {
+      "name_a": "Willem II",
+      "name_b": "",
+      "reason": "youth_or_reserve_marker"
+    },
+    {
+      "name_a": "Academica",
+      "name_b": "Academica Clinceni",
+      "reason": "prefix_candidate"
+    },
+    {
+      "name_a": "Airdrie",
+      "name_b": "Airdrie Utd",
+      "reason": "prefix_candidate"
+    },
+    {
+      "name_a": "Ajaccio",
+      "name_b": "Ajaccio GFCO",
+      "reason": "prefix_candidate"
+    },
+    {
+      "name_a": "Arsenal",
+      "name_b": "Arsenal Sarandi",
+      "reason": "prefix_candidate"
+    },
+    {
+      "name_a": "Arsenal",
+      "name_b": "Arsenal Tula",
+      "reason": "prefix_candidate"
+    },
+    {
+      "name_a": "Ath Bilbao",
+      "name_b": "Ath Bilbao B",
+      "reason": "prefix_candidate"
+    },
+    {
+      "name_a": "Barcelona",
+      "name_b": "Barcelona B",
+      "reason": "prefix_candidate"
+    },
+    {
+      "name_a": "Boston",
+      "name_b": "Boston Utd",
+      "reason": "prefix_candidate"
+    },
+    {
+      "name_a": "Chester",
+      "name_b": "Chesterfield",
+      "reason": "prefix_candidate"
+    },
+    {
+      "name_a": "Dundee",
+      "name_b": "Dundee United",
+      "reason": "prefix_candidate"
+    },
+    {
+      "name_a": "Extremadura",
+      "name_b": "Extremadura UD",
+      "reason": "prefix_candidate"
+    },
+    {
+      "name_a": "Gaziantep",
+      "name_b": "Gaziantepspor",
+      "reason": "prefix_candidate"
+    },
+    {
+      "name_a": "Granada",
+      "name_b": "Granada 74",
+      "reason": "prefix_candidate"
+    },
+    {
+      "name_a": "Guadalajara",
+      "name_b": "Guadalajara Chivas",
+      "reason": "prefix_candidate"
+    },
+    {
+      "name_a": "Lausanne",
+      "name_b": "Lausanne Ouchy",
+      "reason": "prefix_candidate"
+    },
+    {
+      "name_a": "Lommel",
+      "name_b": "Lommel SK",
+      "reason": "prefix_candidate"
+    },
+    {
+      "name_a": "Malaga",
+      "name_b": "Malaga B",
+      "reason": "prefix_candidate"
+    },
+    {
+      "name_a": "Mouscron",
+      "name_b": "Mouscron-Peruwelz",
+      "reason": "prefix_candidate"
+    },
+    {
+      "name_a": "Olympiakos",
+      "name_b": "Olympiakos Volou",
+      "reason": "prefix_candidate"
+    },
+    {
+      "name_a": "Osters",
+      "name_b": "Ostersunds",
+      "reason": "prefix_candidate"
+    },
+    {
+      "name_a": "Oxford",
+      "name_b": "Oxford City",
+      "reason": "prefix_candidate"
+    },
+    {
+      "name_a": "Real Madrid",
+      "name_b": "Real Madrid B",
+      "reason": "prefix_candidate"
+    },
+    {
+      "name_a": "Santos",
+      "name_b": "Santos Laguna",
+      "reason": "prefix_candidate"
+    },
+    {
+      "name_a": "Sevilla",
+      "name_b": "Sevilla B",
+      "reason": "prefix_candidate"
+    },
+    {
+      "name_a": "Shenzhen",
+      "name_b": "Shenzhen Xinpengcheng",
+      "reason": "prefix_candidate"
+    },
+    {
+      "name_a": "Sociedad",
+      "name_b": "Sociedad B",
+      "reason": "prefix_candidate"
+    },
+    {
+      "name_a": "Sparta",
+      "name_b": "Sparta Rotterdam",
+      "reason": "prefix_candidate"
+    },
+    {
+      "name_a": "Sparta",
+      "name_b": "Spartak Moscow",
+      "reason": "prefix_candidate"
+    },
+    {
+      "name_a": "Sparta",
+      "name_b": "Spartak Nalchik",
+      "reason": "prefix_candidate"
+    },
+    {
+      "name_a": "Sparta",
+      "name_b": "Spartans",
+      "reason": "prefix_candidate"
+    },
+    {
+      "name_a": "Stuttgart",
+      "name_b": "Stuttgarter K",
+      "reason": "prefix_candidate"
+    },
+    {
+      "name_a": "U Craiova",
+      "name_b": "U Craiova 1948",
+      "reason": "prefix_candidate"
+    },
+    {
+      "name_a": "Villarreal",
+      "name_b": "Villarreal B",
+      "reason": "prefix_candidate"
+    },
+    {
+      "name_a": "Zaglebie",
+      "name_b": "Zaglebie Sosnowiec",
+      "reason": "prefix_candidate"
+    }
+  ]
+}

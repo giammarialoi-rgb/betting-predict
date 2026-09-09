@@ -1,0 +1,9 @@
+{
+  "experiment_id": "exp_035_data_breakthrough",
+  "verdict": "INSUFFICIENT_DATA_FINAL",
+  "winner": null,
+  "auto_promotion": false,
+  "real_money": false,
+  "fingerprint": "34a510ee8ff602525d480cd10ca39e1a0418f86b71e8b4442c1d4c8bd7c45448",
+  "reproducibility": "PASS"
+}

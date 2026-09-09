@@ -1,0 +1,52 @@
+[
+  {
+    "source": "the-odds-api",
+    "status": "SOURCE_UNAVAILABLE",
+    "last_success": null,
+    "last_error": "THE_ODDS_API_KEY is not set. Free/paid key required for live odds with last_update + commence_time. Not bypassed.",
+    "events_seen": 0,
+    "quotes_seen": 0,
+    "strict_events": 0,
+    "last_observation": null,
+    "coverage": {
+      "T-72h": 0,
+      "T-48h": 0,
+      "T-24h": 0,
+      "T-12h": 0,
+      "T-6h": 0,
+      "T-3h": 0,
+      "T-1h": 0,
+      "T-30m": 0,
+      "T-15m": 0,
+      "T-5m": 0,
+      "T-1m": 0
+    },
+    "latency_ms": null,
+    "clock_quality": "UNAVAILABLE"
+  },
+  {
+    "source": "football-data-org",
+    "status": "SOURCE_UNAVAILABLE",
+    "last_success": null,
+    "last_error": "FOOTBALL_DATA_ORG_TOKEN is not set. Fixture/kickoff only even when set; no bookmaker quote clock on the free catalog.",
+    "events_seen": 0,
+    "quotes_seen": 0,
+    "strict_events": 0,
+    "last_observation": null,
+    "coverage": {
+      "T-72h": 0,
+      "T-48h": 0,
+      "T-24h": 0,
+      "T-12h": 0,
+      "T-6h": 0,
+      "T-3h": 0,
+      "T-1h": 0,
+      "T-30m": 0,
+      "T-15m": 0,
+      "T-5m": 0,
+      "T-1m": 0
+    },
+    "latency_ms": null,
+    "clock_quality": "UNAVAILABLE"
+  }
+]

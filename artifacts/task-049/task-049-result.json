@@ -1,0 +1,75 @@
+{
+  "experiment_id": "exp_049_massive_prospective_lab",
+  "task": "049",
+  "FINAL_VERDICT": "MASSIVE_PROSPECTIVE_LAB_READY",
+  "MODEL_EDGE": "UNKNOWN",
+  "CAPITAL": "CLOSED",
+  "REAL_MONEY": false,
+  "AUTO_PROMOTION": false,
+  "LEAKAGE": "PASS",
+  "REPRODUCIBILITY": "PASS",
+  "LAB_A_MUTATION": false,
+  "LAB_A_EVENTS": 114,
+  "LAB_A_LOCKED": 114,
+  "EVENTS_ANALYZED": 233,
+  "MARKETS_ANALYZED": 135108,
+  "SPORTS": {
+    "soccer": 233,
+    "tennis": 0,
+    "basketball": 0,
+    "volleyball": 0,
+    "hockey": 0,
+    "other": 0
+  },
+  "SPORT_COVERAGE": [
+    {
+      "family": "soccer",
+      "status": "UNKNOWN",
+      "keys_active": 0
+    },
+    {
+      "family": "tennis",
+      "status": "UNKNOWN",
+      "keys_active": 0
+    },
+    {
+      "family": "basketball",
+      "status": "UNKNOWN",
+      "keys_active": 0
+    },
+    {
+      "family": "volleyball",
+      "status": "UNKNOWN",
+      "keys_active": 0
+    },
+    {
+      "family": "hockey",
+      "status": "UNKNOWN",
+      "keys_active": 0
+    }
+  ],
+  "SETTLED": 0,
+  "AUTOPSIES": 0,
+  "LEARNING_CASES": 0,
+  "NO_BET": 233,
+  "BET_CANDIDATE": 0,
+  "STRONG_CANDIDATE": 0,
+  "ARTIFICIAL_CAP": false,
+  "DATA_COLLECTION": "READY",
+  "MODEL_READINESS": "PARTIAL",
+  "STATISTICAL_READINESS": "INSUFFICIENT_SETTLED",
+  "SETTLEMENT_READINESS": "READY",
+  "LEARNING_READINESS": "WAITING_SETTLEMENTS",
+  "CAPITAL_STATUS": "CLOSED",
+  "BLOCKERS": [
+    "SETTLED_LT_100_NO_EDGE_CLAIM",
+    "TENNIS_PROVIDER_OR_WINDOW_EMPTY",
+    "BASKETBALL_AWAITING_DISCOVERY_OR_PROVIDER",
+    "VOLLEYBALL_AWAITING_DISCOVERY_OR_PROVIDER",
+    "HOCKEY_AWAITING_DISCOVERY_OR_PROVIDER"
+  ],
+  "open_task_050": false,
+  "experiment_sha256": "252b2479883bc6db3b3c2e35aff18f28750baf2fc6629e30e76e2d731d170aa0",
+  "fingerprint": "7aa7315810b0861afce7e1f4fc9d605e7202839d94aa1b36286979b534a8763d",
+  "fingerprint_run2": "de2d10b8466d51a9e733b8286265f40fe0ccf50063f17349bdda69d0d342fcf7"
+}
