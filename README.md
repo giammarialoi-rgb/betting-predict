@@ -58,6 +58,21 @@ Historical odds (TASK 005): `pnpm ingest:mock-odds` loads the mock historical ma
 
 The intelligence catalog (`src/domain/sources`) describes origins. It does **not** create adapters. Scraping is out of scope. Reliability stays unknown.
 
+## BetMind Control Center (Lab B + Vercel)
+
+- UI: `/` (Control Center). Health: `GET /api/betmind/health`. Snapshot: `GET /api/betmind/snapshot`.
+- Analytical worker runs on the PC (Lab B under `audit/external/task-044`). Vercel is the API/UI layer.
+- Neon mirrors runtime + decision board via `betmind_runtime_status`, `betmind_analysis_cycles`, `betmind_board_events`.
+
+```bash
+pnpm brain:start          # watchdog + worker loop
+pnpm brain:once           # one real cycle (add -- --discover to force Odds discovery)
+pnpm brain:status
+pnpm runtime:publish      # push heartbeat + board to Neon for Vercel
+```
+
+Web ONLINE ≠ Runtime ONLINE ≠ Prediction Engine ONLINE. Stale mirror (>10 min) → OFFLINE. `REAL_MONEY=false`; odds never enter the independent MODEL.
+
 ## License / use
 
 Personal research. Predictions, when they exist, are experiments — not betting advice.

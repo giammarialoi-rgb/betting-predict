@@ -60,7 +60,7 @@ export default function LearnPage() {
         </Card>
         <Card title="ERROR CATEGORIES">
           {categories.size === 0 ? (
-            <Unknown label="INSUFFICIENT_DATA" />
+            <p className="text-sm bm-muted">NO SETTLED CASES YET — no error categories to show.</p>
           ) : (
             <ul className="space-y-1 text-sm">
               {[...categories.entries()].map(([k, v]) => (
@@ -76,7 +76,7 @@ export default function LearnPage() {
 
       <Card title="MODEL VERSIONS">
         {versions.size === 0 ? (
-          <Unknown label="N/A" />
+          <p className="text-sm bm-muted">NO SETTLED CASES YET — no model versions from learning cases.</p>
         ) : (
           <div className="flex flex-wrap gap-2">
             {[...versions.entries()].map(([k, v]) => (
@@ -141,7 +141,9 @@ export default function LearnPage() {
               </div>
             );
           })}
-          {cases.length === 0 && <Unknown label="INSUFFICIENT_DATA — no learning cases on disk" />}
+          {cases.length === 0 && (
+            <p className="text-sm bm-muted">NO SETTLED CASES YET — learning loop has no cases on disk/mirror.</p>
+          )}
         </div>
       </Card>
     </div>

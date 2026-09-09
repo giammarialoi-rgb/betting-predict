@@ -93,6 +93,7 @@ export async function GET() {
             mirror_published_at: remote.published_at,
             mirror_age_ms: remote.age_ms,
             mirror_host: remote.payload.host,
+            analysis: remote.payload.analysis,
           },
         });
       }

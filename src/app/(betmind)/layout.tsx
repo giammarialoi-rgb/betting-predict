@@ -6,8 +6,21 @@ import type { ReactNode } from "react";
 
 function ShellWithStatus({ children }: { children: ReactNode }) {
   const { strip } = useBetMindData();
+  const runtime =
+    strip.brain === "ONLINE" && strip.worker === "ONLINE"
+      ? "ONLINE"
+      : strip.brain === "OFFLINE" && strip.worker === "OFFLINE"
+        ? "OFFLINE"
+        : strip.brain === "ONLINE" || strip.worker === "ONLINE" || strip.brain === "DEGRADED"
+          ? "DEGRADED"
+          : "UNKNOWN";
   return (
-    <AppShell webOnline={true} brainState={strip.brain}>
+    <AppShell
+      webOnline={true}
+      runtimeState={runtime}
+      engineState={strip.predictiveEngine}
+      brainState={strip.brain}
+    >
       {children}
     </AppShell>
   );

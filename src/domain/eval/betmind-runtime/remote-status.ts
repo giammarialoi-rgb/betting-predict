@@ -1,12 +1,23 @@
 /**
- * Mirror Lab B runtime status to Neon so Vercel can show honest ONLINE/OFFLINE
- * without local disk. Stale heartbeats stay OFFLINE — never invent alive state.
+ * Mirror Lab B runtime + analysis board to Neon for Vercel Control Center.
+ * Stale heartbeats stay OFFLINE — never invent alive state or fake predictions.
  */
 import { neon } from "@neondatabase/serverless";
 import { existsSync, readFileSync } from "node:fs";
 import { hostname } from "node:os";
 import { join } from "node:path";
-import { buildHealthPayload053 } from "@/domain/eval/bankroll-053/system";
+import { buildHealthPayload053, loadCurrentWork053 } from "@/domain/eval/bankroll-053/system";
+import { loadBrainState051, BRAIN_MODEL_051 } from "@/domain/eval/brain-051/config";
+import {
+  buildLiteNextEvents,
+  readJsonlTail,
+  summarizeBoardBuckets,
+  type BoardEventRow,
+} from "@/domain/eval/betmind-runtime/board";
+import { loadCoverage055, loadCurrentActivity055, readActivityFeed055 } from "@/domain/eval/catalog-055/cycle";
+import { loadAutostartStatus055 } from "@/domain/eval/catalog-055/autostart";
+import { computeMassiveStats049 } from "@/domain/eval/factory-049/stats";
+import { loadStore044 } from "@/domain/eval/permanent-044/store";
 import { permanentRoot044 } from "@/domain/eval/permanent-044/config";
 import { piRoot } from "@/domain/eval/predictive-intelligence/config";
 
@@ -24,8 +35,29 @@ export type BetMindRemoteComponents = {
   learning: "ONLINE" | "OFFLINE" | "UNKNOWN" | "DEGRADED";
 };
 
+export type AnalysisSummary = {
+  cycle_number: number;
+  last_cycle_at: string | null;
+  last_successful_cycle_at: string | null;
+  priority: string | null;
+  idle: boolean;
+  reason: string | null;
+  events_in_store: number;
+  events_discovered: number | null;
+  events_analyzed: number;
+  predictions_produced: number;
+  decisions_on_board: number;
+  skipped: number;
+  no_bet: number;
+  model_version: string;
+  data_coverage: number | null;
+  buckets: ReturnType<typeof summarizeBoardBuckets>;
+  no_events_available: boolean;
+  no_events_reason: string | null;
+};
+
 export type BetMindRuntimePayload = {
-  schema_version: 1;
+  schema_version: 2;
   published_at: string;
   host: string;
   real_money: false;
@@ -33,12 +65,18 @@ export type BetMindRuntimePayload = {
   components: BetMindRemoteComponents;
   detail: Record<string, unknown>;
   health053: Record<string, unknown>;
+  analysis: AnalysisSummary;
   observatory: Record<string, unknown> | null;
   predictive: {
     final_verdict: Record<string, unknown> | null;
     validation: Record<string, unknown> | null;
     model_manifest: Record<string, unknown> | null;
+    learning_report: Record<string, unknown> | null;
+    paper_bankroll_report: Record<string, unknown> | null;
   };
+  learning_cases: unknown[];
+  recent_settlements: unknown[];
+  recent_autopsies: unknown[];
 };
 
 export type LoadedRuntimeStatus = {
@@ -69,6 +107,58 @@ function statusFromAlive(alive: boolean | null | undefined): "ONLINE" | "OFFLINE
   return "UNKNOWN";
 }
 
+export function buildAnalysisSummaryFromLocal(
+  root = permanentRoot044(),
+  nextEvents: BoardEventRow[] = [],
+): AnalysisSummary {
+  const state = loadBrainState051(root);
+  let stats = null as ReturnType<typeof computeMassiveStats049> | null;
+  try {
+    stats = computeMassiveStats049(loadStore044(root));
+  } catch {
+    stats = null;
+  }
+  const coverage = loadCoverage055(root);
+  const buckets = summarizeBoardBuckets(nextEvents);
+  let eventsInStore = nextEvents.length;
+  try {
+    eventsInStore = loadStore044(root).events.length;
+  } catch {
+    /* keep board length */
+  }
+  const analyzed = stats?.EVENTS_ANALYZED ?? buckets.ANALYZED;
+  const predictions = stats?.TOTAL_PREDICTIONS ?? buckets.ANALYZED;
+  const noBet = typeof stats?.NO_BET === "number" ? stats.NO_BET : buckets.SKIPPED;
+  const noEvents = eventsInStore === 0 && nextEvents.length === 0;
+  const covPct =
+    coverage && coverage.catalog_events > 0
+      ? coverage.odds_available / coverage.catalog_events
+      : null;
+
+  return {
+    cycle_number: state.cycles_completed ?? 0,
+    last_cycle_at: state.last_cycle_at,
+    last_successful_cycle_at: state.last_successful_cycle_at,
+    priority: state.last_priority,
+    idle: String(state.status).toUpperCase() === "IDLE" || String(state.status).toUpperCase() === "STOPPED",
+    reason: state.last_error,
+    events_in_store: eventsInStore,
+    events_discovered: null,
+    events_analyzed: analyzed,
+    predictions_produced: predictions,
+    decisions_on_board: nextEvents.length,
+    skipped: buckets.SKIPPED + buckets.UNAVAILABLE,
+    no_bet: noBet,
+    model_version: String(state.model_version ?? BRAIN_MODEL_051),
+    data_coverage: Number.isFinite(covPct) ? covPct : null,
+    buckets,
+    no_events_available: noEvents,
+    no_events_reason: noEvents
+      ? `NO EVENTS AVAILABLE — last discovery/cycle at ${state.last_cycle_at ?? "never"}; store empty or no board rows`
+      : null,
+  };
+}
+
 /** Build publishable payload from local Lab B (PC worker). */
 export function buildRuntimePayloadFromLocal(root = permanentRoot044()): BetMindRuntimePayload {
   const pi = piRoot(root);
@@ -80,11 +170,14 @@ export function buildRuntimePayloadFromLocal(root = permanentRoot044()): BetMind
     official_status?: string | null;
     heartbeat_age_ms?: number | null;
     last_cycle_at?: string | null;
+    last_priority?: string | null;
   };
-  const brain = base.brain as { status?: string };
+  const brain = base.brain as { status?: string; cycles_completed?: number };
   const verdict = readJson(join(pi, "final-verdict.json"));
   const validation = readJson(join(pi, "validation-report.json"));
   const modelManifest = readJson(join(pi, "model-manifest.json"));
+  const learningReport = readJson(join(pi, "learning-report.json"));
+  const paperReport = readJson(join(pi, "paper-bankroll-report.json"));
 
   const storePresent =
     existsSync(join(root, "events.jsonl")) && existsSync(join(root, "decisions.jsonl"));
@@ -98,7 +191,7 @@ export function buildRuntimePayloadFromLocal(root = permanentRoot044()): BetMind
     ? "ONLINE"
     : /DEAD|STOPPED/i.test(brainStatus)
       ? "OFFLINE"
-      : /DEGRADED|PAUSED|RECOVER/i.test(brainStatus)
+      : /DEGRADED|PAUSED|RECOVER|IDLE/i.test(brainStatus)
         ? "DEGRADED"
         : "UNKNOWN";
 
@@ -113,18 +206,30 @@ export function buildRuntimePayloadFromLocal(root = permanentRoot044()): BetMind
         : "OFFLINE";
 
   const published_at = new Date().toISOString();
+  const nowMs = Date.parse(published_at);
+  const next_events = storePresent ? buildLiteNextEvents(root, nowMs, 120) : [];
+  const analysis = buildAnalysisSummaryFromLocal(root, next_events);
+
+  const coverage = loadCoverage055(root);
+  const activity = loadCurrentActivity055(root) ?? loadCurrentWork053(root);
+  const feed = readActivityFeed055(root, 40);
+
   const components: BetMindRemoteComponents = {
     supervisor: statusFromAlive(system.supervisor_alive),
     worker: statusFromAlive(system.worker_alive),
     brain: brainLabel,
     predictive_engine: predictiveEngine,
     data_pipeline: storePresent ? "ONLINE" : "OFFLINE",
-    settlement: settlementsPresent ? "ONLINE" : "UNKNOWN",
+    settlement: settlementsPresent ? "ONLINE" : analysis.predictions_produced > 0 ? "UNKNOWN" : "UNKNOWN",
     learning: learningPresent ? "ONLINE" : "UNKNOWN",
   };
 
+  const learningPath = join(pi, "learning", "cases.jsonl");
+  const learningFromPi = readJsonlTail(learningPath, 40);
+  const learningFromStore = readJsonlTail(join(root, "learning-cases.jsonl"), 40);
+
   return {
-    schema_version: 1,
+    schema_version: 2,
     published_at,
     host: hostname(),
     real_money: false,
@@ -133,9 +238,13 @@ export function buildRuntimePayloadFromLocal(root = permanentRoot044()): BetMind
     detail: {
       official_status: system.official_status ?? null,
       heartbeat_age_ms: system.heartbeat_age_ms ?? null,
-      last_cycle_at: system.last_cycle_at ?? null,
+      last_cycle_at: analysis.last_cycle_at ?? system.last_cycle_at ?? null,
+      last_successful_cycle_at: analysis.last_successful_cycle_at,
+      last_priority: analysis.priority ?? system.last_priority ?? null,
       brain_status: brainStatus,
+      cycles_completed: analysis.cycle_number,
       model_independent: verdict?.model_independent ?? null,
+      model_version: analysis.model_version,
       model_edge:
         (verdict?.promotion_gate as { model_edge?: string } | undefined)?.model_edge ?? "UNKNOWN",
       store_root: "audit/external/task-044",
@@ -143,27 +252,72 @@ export function buildRuntimePayloadFromLocal(root = permanentRoot044()): BetMind
       pi_verdict_present: Boolean(verdict),
       mirror: "neon",
       host: hostname(),
+      events_analyzed: analysis.events_analyzed,
+      predictions_produced: analysis.predictions_produced,
+      decisions_on_board: analysis.decisions_on_board,
+      no_events_available: analysis.no_events_available,
+      no_events_reason: analysis.no_events_reason,
     },
     health053: base as unknown as Record<string, unknown>,
+    analysis,
     observatory: {
       at: published_at,
-      system: base.system,
-      brain: base.brain,
-      current_work: base.current_work,
-      next_events: [],
-      note: "Remote mirror — full decision board stays on Lab B host until store sync exists",
+      system: {
+        ...(base.system as object),
+        last_cycle_at: analysis.last_cycle_at,
+        last_successful_cycle_at: analysis.last_successful_cycle_at,
+        last_priority: analysis.priority,
+      },
+      brain: {
+        ...(base.brain as object),
+        cycles_completed: analysis.cycle_number,
+        model_version: analysis.model_version,
+      },
+      current_work: activity ?? base.current_work,
+      next_events,
+      sport_diagnostics: coverage?.by_sport ?? null,
+      coverage_047: coverage,
+      multisource_055: {
+        title: "UNIVERSAL 24/7 SPORTS INTELLIGENCE BRAIN",
+        artificial_cap: false as const,
+        coverage,
+        current_activity: activity,
+        activity_feed: feed,
+        paper_bankroll: 1000 as const,
+        capital: "PAPER_ONLY" as const,
+        real_money: false as const,
+        auto_promotion: false as const,
+        model_edge:
+          (verdict?.promotion_gate as { model_edge?: string } | undefined)?.model_edge ?? "UNKNOWN",
+        api_calls_ui: 0 as const,
+      },
       capital: { CAPITAL: "PAPER_1000", REAL_MONEY: false },
+      audit_056: {
+        AUTOSTART_STATUS: loadAutostartStatus055(root)?.ACTIVE_MECHANISM ?? "N/A",
+        model_readiness: verdict?.model_is_market_only === false ? "INDEPENDENT_ACTIVE" : "UNKNOWN",
+        model_edge:
+          (verdict?.promotion_gate as { model_edge?: string } | undefined)?.model_edge ?? "UNKNOWN",
+        decision_board_count: next_events.length,
+        canonical_chain: "supervisor→worker→brain→massive049→decision048→bankroll053",
+        open_task_057: false as const,
+      },
+      analysis,
       api_calls_ui: 0,
     },
     predictive: {
       final_verdict: verdict,
       validation,
       model_manifest: modelManifest,
+      learning_report: learningReport,
+      paper_bankroll_report: paperReport,
     },
+    learning_cases: learningFromPi.length ? learningFromPi : learningFromStore,
+    recent_settlements: readJsonlTail(join(root, "settlements.jsonl"), 30),
+    recent_autopsies: readJsonlTail(join(root, "autopsies.jsonl"), 30),
   };
 }
 
-export async function ensureRuntimeStatusTable(): Promise<boolean> {
+export async function ensureRuntimeTables(): Promise<boolean> {
   const sql = sqlClient();
   if (!sql) return false;
   await sql`
@@ -173,16 +327,85 @@ export async function ensureRuntimeStatusTable(): Promise<boolean> {
       payload jsonb NOT NULL
     )
   `;
+  await sql`
+    CREATE TABLE IF NOT EXISTS betmind_analysis_cycles (
+      id bigserial PRIMARY KEY,
+      cycle_at timestamptz NOT NULL,
+      cycle_number integer,
+      priority text,
+      idle boolean NOT NULL DEFAULT false,
+      events_in_store integer,
+      events_analyzed integer,
+      predictions_produced integer,
+      decisions_on_board integer,
+      skipped integer,
+      model_version text,
+      host text,
+      reason text,
+      stats jsonb,
+      created_at timestamptz NOT NULL DEFAULT now()
+    )
+  `;
+  await sql`
+    CREATE TABLE IF NOT EXISTS betmind_board_events (
+      event_id text PRIMARY KEY,
+      published_at timestamptz NOT NULL,
+      bucket text,
+      payload jsonb NOT NULL
+    )
+  `;
   return true;
+}
+
+async function persistCycleAndBoard(payload: BetMindRuntimePayload): Promise<void> {
+  const sql = sqlClient();
+  if (!sql) return;
+  const a = payload.analysis;
+  await sql`
+    INSERT INTO betmind_analysis_cycles (
+      cycle_at, cycle_number, priority, idle,
+      events_in_store, events_analyzed, predictions_produced, decisions_on_board,
+      skipped, model_version, host, reason, stats
+    ) VALUES (
+      ${a.last_cycle_at ?? payload.published_at}::timestamptz,
+      ${a.cycle_number},
+      ${a.priority},
+      ${a.idle},
+      ${a.events_in_store},
+      ${a.events_analyzed},
+      ${a.predictions_produced},
+      ${a.decisions_on_board},
+      ${a.skipped},
+      ${a.model_version},
+      ${payload.host},
+      ${a.reason ?? a.no_events_reason},
+      ${JSON.stringify(a)}::jsonb
+    )
+  `;
+
+  const events = (payload.observatory?.next_events as BoardEventRow[] | undefined) ?? [];
+  for (const row of events.slice(0, 200)) {
+    const eventId = String(row.event_id ?? "");
+    if (!eventId) continue;
+    const bucket = String(row.bucket ?? "DISCOVERED");
+    await sql`
+      INSERT INTO betmind_board_events (event_id, published_at, bucket, payload)
+      VALUES (${eventId}, ${payload.published_at}::timestamptz, ${bucket}, ${JSON.stringify(row)}::jsonb)
+      ON CONFLICT (event_id) DO UPDATE
+      SET published_at = EXCLUDED.published_at,
+          bucket = EXCLUDED.bucket,
+          payload = EXCLUDED.payload
+    `;
+  }
 }
 
 export async function publishRuntimeStatus(
   payload: BetMindRuntimePayload = buildRuntimePayloadFromLocal(),
-): Promise<{ ok: true; published_at: string } | { ok: false; error: string }> {
+): Promise<{ ok: true; published_at: string; board: number } | { ok: false; error: string }> {
   try {
     const sql = sqlClient();
     if (!sql) return { ok: false, error: "DATABASE_URL is not set" };
-    await ensureRuntimeStatusTable();
+    await ensureRuntimeTables();
     const publishedAt = payload.published_at;
     await sql`
       INSERT INTO betmind_runtime_status (id, published_at, payload)
@@ -191,7 +414,9 @@ export async function publishRuntimeStatus(
       SET published_at = EXCLUDED.published_at,
           payload = EXCLUDED.payload
     `;
-    return { ok: true, published_at: publishedAt };
+    await persistCycleAndBoard(payload);
+    const board = ((payload.observatory?.next_events as unknown[]) ?? []).length;
+    return { ok: true, published_at: publishedAt, board };
   } catch (e) {
     return { ok: false, error: e instanceof Error ? e.message : String(e) };
   }
@@ -233,7 +458,7 @@ let lastPublishMs = 0;
 let publishInFlight = false;
 
 /** Debounced fire-and-forget publish (brain cycles). Never throws. */
-export function schedulePublishRuntimeStatus(minIntervalMs = 60_000): void {
+export function schedulePublishRuntimeStatus(minIntervalMs = 30_000): void {
   const now = Date.now();
   if (publishInFlight || now - lastPublishMs < minIntervalMs) return;
   if (!process.env.DATABASE_URL) return;
@@ -243,9 +468,19 @@ export function schedulePublishRuntimeStatus(minIntervalMs = 60_000): void {
       if (r.ok) lastPublishMs = Date.now();
     })
     .catch(() => {
-      /* swallow — local Lab B must not die on mirror failure */
+      /* swallow */
     })
     .finally(() => {
       publishInFlight = false;
     });
+}
+
+/** Awaited publish after a real cycle — preferred over debounce. */
+export async function publishRuntimeStatusNow(): Promise<
+  { ok: true; published_at: string; board: number } | { ok: false; error: string }
+> {
+  if (!process.env.DATABASE_URL) return { ok: false, error: "DATABASE_URL is not set" };
+  const result = await publishRuntimeStatus();
+  if (result.ok) lastPublishMs = Date.now();
+  return result;
 }

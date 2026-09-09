@@ -40,7 +40,14 @@ type Ev = {
 
 const SPORTS = ["ALL", "FOOTBALL", "TENNIS", "BASKETBALL", "HOCKEY", "VOLLEYBALL"] as const;
 const TIME_TABS = ["ALL", "LIVE", "UPCOMING", "FINISHED"] as const;
-const DECISION_TABS = ["ALL", "BET", "NO BET", "LIVE", "UPCOMING"] as const;
+const BUCKET_TABS = [
+  "ALL",
+  "DISCOVERED",
+  "ELIGIBLE_FOR_MODEL",
+  "ANALYZED",
+  "SKIPPED",
+  "UNAVAILABLE",
+] as const;
 
 function isLive(e: Ev): boolean {
   return /live|in_play|playing/i.test(String(e.status));
@@ -48,21 +55,15 @@ function isLive(e: Ev): boolean {
 function isFinished(e: Ev): boolean {
   return /finish|ended|ft|final|settled/i.test(String(e.status)) || Boolean(e.result && e.result !== "N/A");
 }
-function isBet(e: Ev): boolean {
-  return /^BET/i.test(String(e.decision ?? ""));
-}
-function isNoBet(e: Ev): boolean {
-  const d = String(e.decision ?? e.prediction_status ?? "");
-  return /NO_BET|INSUFFICIENT|SKIP|HOLD/i.test(d) || d === "N/A";
-}
 
 function EventsInner() {
   const sp = useSearchParams();
   const sport = (sp.get("sport") ?? "ALL").toUpperCase();
   const time = (sp.get("time") ?? "ALL").toUpperCase();
-  const filter = (sp.get("filter") ?? "ALL").toUpperCase().replace("_", " ");
+  const bucket = (sp.get("bucket") ?? "ALL").toUpperCase();
   const { data, error, updating, lastUpdate } = useBetMindData();
   const obs = asRecord(data?.observatory);
+  const analysis = asRecord((data as { analysis?: unknown } | null)?.analysis) ?? asRecord(obs?.analysis);
   const events = ((obs?.next_events as Ev[]) ?? []).filter(Boolean);
   const diagnostics = asRecord(obs?.sport_diagnostics) ?? asRecord(obs?.coverage_047);
 
@@ -71,29 +72,42 @@ function EventsInner() {
     return set;
   }, [events]);
 
+  const bucketCounts = useMemo(() => {
+    const c: Record<string, number> = {
+      DISCOVERED: 0,
+      ELIGIBLE_FOR_MODEL: 0,
+      ANALYZED: 0,
+      SKIPPED: 0,
+      UNAVAILABLE: 0,
+    };
+    for (const e of events) {
+      const b = String((e as Ev & { bucket?: string }).bucket ?? "DISCOVERED");
+      c[b] = (c[b] ?? 0) + 1;
+    }
+    return c;
+  }, [events]);
+
   const filtered = useMemo(() => {
     return events.filter((e) => {
-      const bucket = sportBucket(e.sport);
-      if (sport !== "ALL" && bucket !== sport) return false;
+      const bucketName = String((e as Ev & { bucket?: string }).bucket ?? "DISCOVERED");
+      const sportB = sportBucket(e.sport);
+      if (sport !== "ALL" && sportB !== sport) return false;
       if (time === "LIVE" && !isLive(e)) return false;
       if (time === "UPCOMING" && (isLive(e) || isFinished(e))) return false;
       if (time === "FINISHED" && !isFinished(e)) return false;
-      if (filter === "BET" && !isBet(e)) return false;
-      if (filter === "NO BET" && !isNoBet(e)) return false;
-      if (filter === "LIVE" && !isLive(e)) return false;
-      if (filter === "UPCOMING" && (isLive(e) || isFinished(e))) return false;
+      if (bucket !== "ALL" && bucketName !== bucket) return false;
       return true;
     });
-  }, [events, sport, time, filter]);
+  }, [events, sport, time, bucket]);
 
-  function hrefFor(next: { sport?: string; time?: string; filter?: string }) {
+  function hrefFor(next: { sport?: string; time?: string; bucket?: string }) {
     const q = new URLSearchParams();
     const s = next.sport ?? sport;
     const t = next.time ?? time;
-    const f = next.filter ?? filter;
+    const b = next.bucket ?? bucket;
     if (s !== "ALL") q.set("sport", s);
     if (t !== "ALL") q.set("time", t);
-    if (f !== "ALL") q.set("filter", f.replace(" ", "_"));
+    if (b !== "ALL") q.set("bucket", b);
     const qs = q.toString();
     return qs ? `/events?${qs}` : "/events";
   }
@@ -104,10 +118,14 @@ function EventsInner() {
         <div>
           <div className="bm-section-label">Diretta</div>
           <h1 className="text-2xl font-bold">Events</h1>
+          <p className="mt-1 text-xs bm-muted">
+            Real board from Lab B / Neon mirror · store {String(analysis?.events_in_store ?? events.length)} ·
+            analyzed {String(analysis?.events_analyzed ?? "—")}
+          </p>
         </div>
         <div className="flex items-center gap-2 text-xs">
           <SnapshotBadge updating={updating} />
-          <span className="bm-muted">{lastUpdate ? new Date(lastUpdate).toLocaleTimeString() : "N/A"}</span>
+          <span className="bm-muted">{lastUpdate ? new Date(lastUpdate).toLocaleTimeString() : "—"}</span>
         </div>
       </div>
 
@@ -134,13 +152,13 @@ function EventsInner() {
       </div>
 
       <div className="bm-tabrow">
-        {DECISION_TABS.map((f) => (
+        {BUCKET_TABS.map((b) => (
           <Link
-            key={f}
-            href={hrefFor({ filter: f })}
-            className={`bm-pill ${filter === f ? "bm-pill-accent" : ""}`}
+            key={b}
+            href={hrefFor({ bucket: b })}
+            className={`bm-pill ${bucket === b ? "bm-pill-accent" : ""}`}
           >
-            {f}
+            {b === "ALL" ? "ALL" : `${b} (${bucketCounts[b] ?? 0})`}
           </Link>
         ))}
       </div>
@@ -158,7 +176,9 @@ function EventsInner() {
       )}
 
       <div className="grid gap-2">
-        {filtered.map((e) => (
+        {filtered.map((e) => {
+          const row = e as Ev & { bucket?: string; why?: string };
+          return (
           <Link key={e.event_id} href={`/events/${e.event_id}`} className="block">
             <Card className="!p-3 transition active:scale-[0.99] hover:border-[rgba(0,246,117,0.35)]">
               <div className="bm-ev-row">
@@ -170,61 +190,57 @@ function EventsInner() {
                   <div className="truncate text-[11px] bm-muted">{e.competition}</div>
                   <div className="truncate font-semibold leading-snug">{e.label || e.event_id}</div>
                   <div className="mt-1 flex flex-wrap gap-1">
-                    <Pill>{e.status || "N/A"}</Pill>
+                    <Pill>{(row.bucket ?? e.status) || "—"}</Pill>
                     {(e.markets ?? []).slice(0, 2).map((m) => (
                       <Pill key={m}>{m}</Pill>
                     ))}
                     {e.result ? <Pill>{e.result}</Pill> : null}
                   </div>
+                  {(row.bucket === "SKIPPED" || row.bucket === "UNAVAILABLE") && row.why ? (
+                    <p className="mt-1 truncate text-[11px] bm-muted">Skip: {row.why}</p>
+                  ) : null}
                 </div>
                 <div className="hidden text-xs lg:grid lg:grid-cols-3 lg:gap-3">
                   <div>
                     <div className="bm-muted">MODEL</div>
                     <div className="font-semibold bm-accent">
-                      {e.model_pct != null ? fmtN(e.model_pct, 1) : "N/A"}
+                      {e.model_pct != null ? fmtN(e.model_pct, 1) : "—"}
                     </div>
                   </div>
                   <div>
                     <div className="bm-muted">MKT</div>
-                    <div className="font-semibold">{e.market_pct != null ? fmtN(e.market_pct, 1) : "N/A"}</div>
+                    <div className="font-semibold">{e.market_pct != null ? fmtN(e.market_pct, 1) : "—"}</div>
                   </div>
                   <div>
                     <div className="bm-muted">ODDS</div>
-                    <div className="font-semibold">{e.odds != null ? fmtN(e.odds, 2) : "N/A"}</div>
+                    <div className="font-semibold">{e.odds != null ? fmtN(e.odds, 2) : "—"}</div>
                   </div>
                 </div>
                 <div className="text-right">
                   <div className="text-[10px] bm-muted">EDGE</div>
                   <div className="text-sm font-bold bm-accent">{edgeLabel(e.edge_status, e.edge)}</div>
-                  <Pill accent={isBet(e)}>{e.decision ?? e.prediction_status ?? "N/A"}</Pill>
-                </div>
-              </div>
-              <div className="mt-2 grid grid-cols-3 gap-2 text-[11px] lg:hidden">
-                <div>
-                  <span className="bm-muted">MODEL </span>
-                  {e.model_pct != null ? fmtN(e.model_pct, 1) : "N/A"}
-                </div>
-                <div>
-                  <span className="bm-muted">MKT </span>
-                  {e.market_pct != null ? fmtN(e.market_pct, 1) : "N/A"}
-                </div>
-                <div>
-                  <span className="bm-muted">ODDS </span>
-                  {e.odds != null ? fmtN(e.odds, 2) : "N/A"}
+                  <Pill>{e.decision ?? e.prediction_status ?? "—"}</Pill>
                 </div>
               </div>
             </Card>
           </Link>
-        ))}
+        );
+        })}
 
-        {filtered.length === 0 && availableSports.size > 0 && (
+        {filtered.length === 0 && events.length > 0 && (
           <Card>
             <Unknown label="INSUFFICIENT_DATA — nessun evento per questo filtro (store reale, non mock)" />
           </Card>
         )}
         {events.length === 0 && (
           <Card>
-            <Unknown label="INSUFFICIENT_DATA — decision board vuota / provider window empty" />
+            <Unknown
+              label={
+                analysis?.no_events_reason
+                  ? String(analysis.no_events_reason)
+                  : "NO EVENTS AVAILABLE — decision board empty / last discovery produced no rows"
+              }
+            />
           </Card>
         )}
       </div>

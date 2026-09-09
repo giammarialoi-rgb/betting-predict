@@ -21,11 +21,22 @@ import { useBetMindData } from "@/components/betmind/DataProvider";
 
 function hasLivePrediction(firstEv: Record<string, unknown> | null): boolean {
   if (!firstEv) return false;
+  const decision = String(firstEv.decision ?? firstEv.prediction_status ?? "");
+  if (/INSUFFICIENT|UNAVAILABLE|SKIP/i.test(decision)) return false;
   const model = firstEv.model_pct ?? firstEv.probability_model ?? firstEv.model_probability;
   if (model == null) return false;
-  if (typeof model === "number" && Number.isFinite(model)) return true;
+  if (typeof model === "number" && Number.isFinite(model) && model >= 0 && model <= 100) return true;
   if (typeof model === "object") return Object.keys(model as object).length > 0;
   return false;
+}
+
+function runtimeState(strip: { brain: BmState; worker: BmState; dataPipeline: BmState }): BmState {
+  if (strip.brain === "ONLINE" && strip.worker === "ONLINE") return "ONLINE";
+  if (strip.brain === "OFFLINE" && strip.worker === "OFFLINE") return "OFFLINE";
+  if (strip.brain === "DEGRADED" || strip.worker === "DEGRADED" || strip.brain === "ONLINE") {
+    return "DEGRADED";
+  }
+  return "UNKNOWN";
 }
 
 export default function BetMindHomePage() {
@@ -34,6 +45,10 @@ export default function BetMindHomePage() {
   const healthBody = asRecord(health) ?? asRecord(data?.health);
   const sys = asRecord(obs?.system) ?? asRecord(healthBody?.system);
   const detail = asRecord(healthBody?.detail) ?? asRecord(health?.detail);
+  const analysis =
+    asRecord((data as { analysis?: unknown } | null)?.analysis) ??
+    asRecord(obs?.analysis) ??
+    asRecord(healthBody?.analysis);
   const activity =
     asRecord(asRecord(obs?.multisource_055)?.current_activity) ??
     asRecord(obs?.current_work) ??
@@ -49,9 +64,14 @@ export default function BetMindHomePage() {
   const paper = asRecord(asRecord(data?.predictive?.paper_bankroll_report)?.summary);
   const learn = data?.learning_cases ?? [];
   const learn0 = asRecord(learn[0]);
+  const settlements = data?.recent_settlements ?? [];
 
-  const storePresent = detail?.store_present === true;
-  const livePrediction = hasLivePrediction(firstEv) && strip.brain === "ONLINE";
+  const storePresent =
+    detail?.store_present === true || detail?.store_present_local_on_publisher === true;
+  const mirrored = detail?.mirror_source === "neon" || (data as { mirror_source?: string } | null)?.mirror_source === "neon";
+  const livePrediction = hasLivePrediction(firstEv) && strip.brain !== "OFFLINE";
+  const rt = runtimeState(strip);
+  const engine = strip.predictiveEngine;
 
   const capital =
     typeof paper?.current_flat === "number"
@@ -60,15 +80,47 @@ export default function BetMindHomePage() {
         ? (asRecord(obs?.multisource_055)?.paper_bankroll as number)
         : null;
 
-  const phase = String(activity?.phase ?? "UNKNOWN");
-  const idle = /IDLE|SLEEP|WAITING|UNKNOWN/i.test(phase) || !activity || strip.brain !== "ONLINE";
+  const phase = String(activity?.phase ?? (analysis?.idle ? "IDLE" : "UNKNOWN"));
+  const lastCycle = String(
+    analysis?.last_cycle_at ?? sys?.last_cycle_at ?? detail?.last_cycle_at ?? "",
+  );
+  const cycleNum = analysis?.cycle_number ?? detail?.cycles_completed ?? null;
+  const modelName = String(
+    analysis?.model_version ??
+      verdict?.model_independent ??
+      firstEv?.model_version ??
+      audit?.model_readiness ??
+      "—",
+  );
+  const eventsAnalyzed = analysis?.events_analyzed ?? detail?.events_analyzed ?? null;
+  const predictionsProduced =
+    analysis?.predictions_produced ?? detail?.predictions_produced ?? null;
+  const boardCount =
+    analysis?.decisions_on_board ?? detail?.decisions_on_board ?? nextEvents.length;
+  const noEvents =
+    analysis?.no_events_available === true ||
+    (Number(boardCount) === 0 && Number(analysis?.events_in_store ?? 0) === 0);
 
   const statusRows: { name: string; state: BmState; detail: string }[] = [
     { name: "WEB APP", state: strip.webApp, detail: "Vercel / Next.js" },
     {
+      name: "RUNTIME",
+      state: rt,
+      detail: mirrored
+        ? `Mirror ${String(detail?.mirror_host ?? "neon")} · age ${String(detail?.mirror_age_ms ?? "—")} ms`
+        : storePresent
+          ? "Lab B local"
+          : "No runtime heartbeat",
+    },
+    {
+      name: "PREDICTION ENGINE",
+      state: engine,
+      detail: String(verdict?.model_independent ?? modelName),
+    },
+    {
       name: "DATA PIPELINE",
       state: strip.dataPipeline,
-      detail: storePresent ? "Lab B store present" : "Lab B store absent on this host",
+      detail: storePresent ? "Lab B store present (local or publisher)" : "Lab B store absent",
     },
     {
       name: "BRAIN",
@@ -83,22 +135,26 @@ export default function BetMindHomePage() {
   ];
 
   const blockers: string[] = [];
-  if (!storePresent) blockers.push("Lab B disk store not present on this host (expected on Vercel).");
-  if (strip.brain !== "ONLINE") blockers.push("Brain is not ONLINE — no predictive cycle running here.");
-  if (strip.worker !== "ONLINE") blockers.push("Worker is not ONLINE.");
-  if (coverage?.source === "memory") blockers.push("Coverage is memory fallback — not an audited Lab B report.");
-  if (!livePrediction) blockers.push("No live independent prediction on the decision board.");
+  if (rt === "OFFLINE") blockers.push("Runtime OFFLINE — PC worker not publishing a fresh heartbeat.");
+  if (engine === "OFFLINE") blockers.push("Prediction engine OFFLINE.");
+  if (coverage?.source === "memory") {
+    blockers.push("Coverage endpoint is memory fallback — not an audited Lab B report.");
+  }
+  if (noEvents) {
+    blockers.push(String(analysis?.no_events_reason ?? "NO EVENTS AVAILABLE on the decision board."));
+  } else if (!livePrediction) {
+    blockers.push("Board has events but no independent model_pct on the first row.");
+  }
 
-  const modelName = String(
-    verdict?.model_independent ?? firstEv?.model_version ?? audit?.model_readiness ?? "—",
-  );
-
-  const noPredictionReason = !storePresent
-    ? "This host has no Lab B event store. Predictions require brain/worker writing to audit/external/task-044."
-    : strip.brain !== "ONLINE"
-      ? `Brain status is ${strip.brain}. Start the local/daemon brain to produce live assessments.`
+  const noPredictionReason = noEvents
+    ? String(
+        analysis?.no_events_reason ??
+          "NO EVENTS AVAILABLE — last discovery/cycle recorded without board rows.",
+      )
+    : strip.brain === "OFFLINE"
+      ? `Brain status is OFFLINE. Start the local brain (pnpm brain:start) then pnpm runtime:publish.`
       : nextEvents.length === 0
-        ? "Decision board is empty — no next events in the observatory snapshot."
+        ? "Decision board is empty in this snapshot."
         : "Event row exists but model probability fields are not present (INSUFFICIENT_DATA or not yet analyzed).";
 
   return (
@@ -110,7 +166,7 @@ export default function BetMindHomePage() {
             Bet<span className="bm-accent">Mind</span>
           </h1>
           <p className="mt-1 max-w-xl text-sm bm-muted">
-            Honest system dashboard. Web online ≠ Brain online. Paper only · REAL_MONEY=false.
+            Honest system dashboard. Web ≠ Runtime ≠ Prediction engine. Paper only · REAL_MONEY=false.
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-2 text-xs">
@@ -131,7 +187,11 @@ export default function BetMindHomePage() {
             <div className="bm-section-label">System status</div>
             <h2 className="mt-1 text-lg font-semibold">Operational strip</h2>
           </div>
-          <StatusPill state={strip.brain} label={`BRAIN ${strip.brain}`} />
+          <div className="flex flex-wrap gap-2">
+            <StatusPill state={strip.webApp} label={`WEB ${strip.webApp}`} />
+            <StatusPill state={rt} label={`RUNTIME ${rt}`} />
+            <StatusPill state={engine} label={`ENGINE ${engine}`} />
+          </div>
         </div>
         <div className="bm-status-grid mt-4">
           {statusRows.map((s) => (
@@ -146,47 +206,82 @@ export default function BetMindHomePage() {
           ))}
         </div>
         <div className="mt-3 flex flex-wrap gap-2">
-          <Pill>Last cycle {fmtWhen(String(sys?.last_cycle_at ?? detail?.last_cycle_at ?? ""))}</Pill>
+          <Pill>Last cycle {fmtWhen(lastCycle)}</Pill>
+          <Pill>Cycle #{cycleNum != null ? String(cycleNum) : "—"}</Pill>
           <Pill>Heartbeat {String(sys?.heartbeat_age_ms ?? detail?.heartbeat_age_ms ?? "—")} ms</Pill>
-          <Pill>Priority {String(sys?.last_priority ?? "—")}</Pill>
+          <Pill>Priority {String(analysis?.priority ?? sys?.last_priority ?? "—")}</Pill>
           <Pill>Supervisor {strip.supervisor}</Pill>
         </div>
       </section>
 
       <div className="grid gap-4 lg:grid-cols-3">
-        <Card title="Current activity" className="lg:col-span-2">
-          {idle ? (
+        <Card title="Analysis" className="lg:col-span-2">
+          {noEvents ? (
             <EmptyState
-              title="WAITING — NO ACTIVE ANALYSIS CYCLE"
-              reason={`Phase ${phase}. Brain ${strip.brain}. Nothing is being invented for the board.`}
+              title="NO EVENTS AVAILABLE"
+              reason={String(
+                analysis?.no_events_reason ??
+                  `Phase ${phase}. Last cycle ${fmtWhen(lastCycle)}. Nothing invented.`,
+              )}
             />
           ) : (
-            <div className="grid gap-3 sm:grid-cols-2">
-              <Metric label="Sport" value={String(activity?.sport ?? "—")} />
-              <Metric label="Event" value={String(activity?.event ?? activity?.event_id ?? "—")} />
-              <Metric label="Phase" value={phase} accent />
-              <Metric label="Note" value={String(activity?.note ?? "—")} />
+            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+              <Metric
+                label="Cycle"
+                value={cycleNum != null ? `#${String(cycleNum)}` : "—"}
+                accent
+              />
+              <Metric label="Phase" value={phase} />
+              <Metric label="Completed at" value={fmtWhen(lastCycle)} />
+              <Metric
+                label="Events in store"
+                value={String(analysis?.events_in_store ?? "—")}
+              />
+              <Metric label="Analyzed" value={String(eventsAnalyzed ?? "—")} />
+              <Metric
+                label="Skipped / unavailable"
+                value={String(analysis?.skipped ?? "—")}
+              />
+              <Metric label="Predictions" value={String(predictionsProduced ?? "—")} />
+              <Metric label="Board rows" value={String(boardCount)} />
+              <Metric label="Note" value={String(activity?.note ?? analysis?.reason ?? "—")} />
             </div>
           )}
         </Card>
-        <Card title="At a glance">
-          <div className="grid grid-cols-2 gap-3">
-            <Metric label="Board events" value={String(nextEvents.length)} />
+        <Card title="Predictive intelligence">
+          <div className="grid grid-cols-1 gap-3">
+            <Metric label="Model" value={modelName} accent />
+            <Metric
+              label="Independent"
+              value={
+                verdict?.model_is_market_only === false ||
+                String(verdict?.model_independent ?? "").includes("INDEPENDENT")
+                  ? "ACTIVE"
+                  : String(audit?.model_readiness ?? "UNKNOWN")
+              }
+            />
             <Metric
               label="Data coverage"
               value={
-                coverage?.DATA_COVERAGE != null ? fmtPct(coverage.DATA_COVERAGE as number) : "—"
+                analysis?.data_coverage != null
+                  ? fmtPct(analysis.data_coverage as number)
+                  : coverage?.DATA_COVERAGE != null
+                    ? fmtPct(coverage.DATA_COVERAGE as number)
+                    : "—"
               }
             />
-            <Metric label="Coverage src" value={String(coverage?.source ?? "—")} />
             <Metric label="Model gate" value={String(verdict?.verdict ?? audit?.model_readiness ?? "—")} />
           </div>
         </Card>
       </div>
 
       <Card
-        title="Predictive intelligence"
-        right={<Pill tone={livePrediction ? "accent" : "warn"}>{livePrediction ? "LIVE ROW" : "NO LIVE PREDICTION"}</Pill>}
+        title="Latest prediction (real board)"
+        right={
+          <Pill tone={livePrediction ? "accent" : "warn"}>
+            {livePrediction ? "REAL ROW" : "NO MODEL ROW"}
+          </Pill>
+        }
       >
         <p className="mb-3 text-xs bm-muted">
           MODEL is independent of odds. MARKET / ODDS are compare-only when present.
@@ -198,6 +293,7 @@ export default function BetMindHomePage() {
             <div className="mb-3 flex flex-wrap gap-2">
               <Pill tone="accent">MODEL {modelName}</Pill>
               <Pill>EDGE {edgeLabel(firstEv?.edge_status, firstEv?.edge)}</Pill>
+              <Pill>{String(firstEv?.label ?? firstEv?.event_id)}</Pill>
             </div>
             <div className="bm-split">
               <div className="bm-panel-model">
@@ -234,6 +330,19 @@ export default function BetMindHomePage() {
               <Metric label="EDGE" value={edgeLabel(firstEv?.edge_status, firstEv?.edge)} accent />
               <Metric label="EV" value={firstEv?.ev != null ? fmtN(firstEv.ev as number, 3) : "—"} />
               <Metric label="Decision" value={String(firstEv?.decision ?? "—")} />
+              <Metric
+                label="Feature coverage"
+                value={
+                  firstEv?.feature_coverage != null
+                    ? fmtPct(firstEv.feature_coverage as number)
+                    : "—"
+                }
+              />
+            </div>
+            <div className="mt-3 grid gap-3 sm:grid-cols-2">
+              <Metric label="Competition" value={String(firstEv?.competition ?? "—")} />
+              <Metric label="Kickoff" value={fmtWhen(String(firstEv?.kickoff_utc ?? ""))} />
+              <Metric label="Analyzed at" value={fmtWhen(String(firstEv?.analyzed_at ?? ""))} />
               <Metric label="Selection" value={String(firstEv?.selection ?? "—")} />
             </div>
             <div className="mt-3">
@@ -247,6 +356,42 @@ export default function BetMindHomePage() {
             )}
           </>
         )}
+      </Card>
+
+      <Card title="Recent board" right={<Pill>{String(nextEvents.length)} rows</Pill>}>
+        {nextEvents.length === 0 ? (
+          <EmptyState
+            title="NO BOARD EVENTS"
+            reason={String(analysis?.no_events_reason ?? "Snapshot next_events is empty.")}
+          />
+        ) : (
+          <ul className="divide-y divide-[var(--bm-border)] text-sm">
+            {nextEvents.slice(0, 8).map((raw) => {
+              const e = asRecord(raw);
+              if (!e) return null;
+              return (
+                <li key={String(e.event_id)} className="flex flex-wrap items-center justify-between gap-2 py-2">
+                  <div className="min-w-0">
+                    <div className="truncate font-medium">{String(e.label ?? e.event_id)}</div>
+                    <div className="text-xs bm-muted">
+                      {String(e.competition ?? "—")} · {fmtWhen(String(e.kickoff_utc ?? ""))}
+                    </div>
+                  </div>
+                  <div className="flex flex-wrap gap-1 text-xs">
+                    <Pill>{String(e.bucket ?? e.decision ?? "—")}</Pill>
+                    <Pill tone="accent">
+                      {e.model_pct != null ? `${fmtN(e.model_pct as number, 1)}%` : "no model%"}
+                    </Pill>
+                    <Pill>{edgeLabel(e.edge_status, e.edge)}</Pill>
+                  </div>
+                </li>
+              );
+            })}
+          </ul>
+        )}
+        <Link href="/events" className="bm-btn bm-btn-ghost mt-3 text-xs">
+          All events
+        </Link>
       </Card>
 
       <Card title="Blockers" glow={blockers.length > 0}>
@@ -305,34 +450,52 @@ export default function BetMindHomePage() {
             />
           )}
           <div className="mt-3 grid grid-cols-3 gap-2">
-            <Metric label="Settlements" value={String((data?.recent_settlements ?? []).length)} />
+            <Metric label="Settlements" value={String(settlements.length)} />
             <Metric label="Autopsies" value={String((data?.recent_autopsies ?? []).length)} />
             <Metric label="Learning" value={String(learn.length)} />
           </div>
         </Card>
       </div>
 
-      <Card title="Learning">
-        {learn0 ? (
-          <div className="space-y-2 text-sm">
-            <div className="flex flex-wrap gap-2">
-              <Pill tone="accent">{String(learn0.category ?? learn0.case_type ?? "CASE")}</Pill>
+      <div className="grid gap-4 lg:grid-cols-2">
+        <Card title="Learning">
+          {learn0 ? (
+            <div className="space-y-2 text-sm">
+              <div className="flex flex-wrap gap-2">
+                <Pill tone="accent">{String(learn0.category ?? learn0.case_type ?? "CASE")}</Pill>
+              </div>
+              <p className="bm-muted">
+                actual={String(learn0.actual ?? "—")} ·{" "}
+                {String(learn0.calibration_note ?? learn0.note ?? "—")}
+              </p>
+              <Link href="/learn" className="bm-btn bm-btn-ghost mt-2 text-xs">
+                Open Learn
+              </Link>
             </div>
-            <p className="bm-muted">
-              actual={String(learn0.actual ?? "—")} ·{" "}
-              {String(learn0.calibration_note ?? learn0.note ?? "—")}
-            </p>
-            <Link href="/learn" className="bm-btn bm-btn-ghost mt-2 text-xs">
-              Open Learn
-            </Link>
-          </div>
-        ) : (
-          <EmptyState
-            title="NO LEARNING CASES"
-            reason="learning_cases is empty on this host — no simulated lessons."
-          />
-        )}
-      </Card>
+          ) : (
+            <EmptyState
+              title="NO SETTLED CASES YET"
+              reason="learning_cases is empty — not UNKNOWN. Settlement/learning loop has no cases yet."
+            />
+          )}
+        </Card>
+        <Card title="Settlement">
+          {settlements.length === 0 ? (
+            <EmptyState
+              title="NO SETTLED CASES YET"
+              reason="recent_settlements is empty — nothing invented."
+            />
+          ) : (
+            <div className="space-y-2 text-sm">
+              <Metric label="Recent settlements" value={String(settlements.length)} />
+              <p className="bm-muted">
+                Latest: {String(asRecord(settlements[0])?.event_id ?? "—")} ·{" "}
+                {String(asRecord(settlements[0])?.outcome ?? "—")}
+              </p>
+            </div>
+          )}
+        </Card>
+      </div>
     </div>
   );
 }

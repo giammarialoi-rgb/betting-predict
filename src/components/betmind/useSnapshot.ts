@@ -10,6 +10,8 @@ export type BetMindSnapshot = {
   real_money?: false;
   observatory: Record<string, unknown> | null;
   health: Record<string, unknown> | null;
+  analysis?: Record<string, unknown> | null;
+  mirror_source?: string;
   predictive: {
     final_verdict: Record<string, unknown> | null;
     validation: Record<string, unknown> | null;

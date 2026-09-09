@@ -35,16 +35,21 @@ function navActive(pathname: string, href: string): boolean {
 export function AppShell({
   children,
   webOnline = true,
+  runtimeState = "UNKNOWN",
+  engineState = "UNKNOWN",
   brainState = "UNKNOWN",
 }: {
   children: ReactNode;
   /** Web app reachable — always true when shell renders client-side. */
   webOnline?: boolean;
-  /** Honest Brain/predictive status — never faked ONLINE. */
+  /** Fresh PC/runtime heartbeat (Neon mirror or local). */
+  runtimeState?: BmState;
+  /** Independent prediction engine readiness. */
+  engineState?: BmState;
+  /** Honest Brain status — never faked ONLINE. */
   brainState?: BmState;
 }) {
   const pathname = usePathname() ?? "/";
-  const brainOnline = brainState === "ONLINE";
 
   return (
     <div className="bm-root flex min-h-dvh">
@@ -92,10 +97,17 @@ export function AppShell({
               </span>
             </div>
             <div className="flex items-center justify-between gap-2">
-              <span className="bm-muted">Brain</span>
+              <span className="bm-muted">Runtime</span>
               <span className="inline-flex items-center gap-1.5 font-semibold">
-                <StatusDot state={brainState} />
-                {brainState}
+                <StatusDot state={runtimeState} />
+                {runtimeState}
+              </span>
+            </div>
+            <div className="flex items-center justify-between gap-2">
+              <span className="bm-muted">Engine</span>
+              <span className="inline-flex items-center gap-1.5 font-semibold">
+                <StatusDot state={engineState} />
+                {engineState}
               </span>
             </div>
             <p className="bm-muted pt-1">Paper · REAL_MONEY=false</p>
@@ -125,11 +137,27 @@ export function AppShell({
             </span>
             <span
               className={`bm-pill ${
-                brainOnline ? "bm-pill-accent" : brainState === "OFFLINE" ? "bm-pill-danger" : "bm-pill-warn"
+                runtimeState === "ONLINE"
+                  ? "bm-pill-accent"
+                  : runtimeState === "OFFLINE"
+                    ? "bm-pill-danger"
+                    : "bm-pill-warn"
               }`}
             >
-              <StatusDot state={brainState} />
-              BRAIN {brainState}
+              <StatusDot state={runtimeState} />
+              RUNTIME {runtimeState}
+            </span>
+            <span
+              className={`bm-pill hidden md:inline-flex ${
+                engineState === "ONLINE"
+                  ? "bm-pill-accent"
+                  : engineState === "OFFLINE"
+                    ? "bm-pill-danger"
+                    : "bm-pill-warn"
+              }`}
+            >
+              <StatusDot state={engineState} />
+              ENGINE {engineState}
             </span>
           </div>
         </header>

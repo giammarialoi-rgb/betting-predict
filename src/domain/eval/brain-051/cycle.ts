@@ -85,6 +85,14 @@ export async function runBrainCycle051(input: {
   if (!plan.settle && !plan.discover && !plan.analyze) {
     appendActivity051(labB, "IDLE", plan.reason);
     writeHeartbeat051(labB, { phase: "idle", priority: plan.priority });
+    try {
+      const { publishRuntimeStatusNow } = await import(
+        "@/domain/eval/betmind-runtime/remote-status"
+      );
+      await publishRuntimeStatusNow();
+    } catch {
+      /* optional Neon mirror */
+    }
     return {
       priority: plan.priority,
       reason: plan.reason,
@@ -203,12 +211,12 @@ export async function runBrainCycle051(input: {
     });
 
     try {
-      const { schedulePublishRuntimeStatus } = await import(
+      const { publishRuntimeStatusNow } = await import(
         "@/domain/eval/betmind-runtime/remote-status"
       );
-      schedulePublishRuntimeStatus(60_000);
+      await publishRuntimeStatusNow();
     } catch {
-      /* optional Neon mirror for Vercel health */
+      /* optional Neon mirror for Vercel health + board */
     }
 
     return {

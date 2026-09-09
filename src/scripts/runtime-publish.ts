@@ -16,6 +16,7 @@ import {
 async function main() {
   const payload = buildRuntimePayloadFromLocal();
   const result = await publishRuntimeStatus(payload);
+  const next = (payload.observatory?.next_events as unknown[]) ?? [];
   console.log(
     JSON.stringify(
       {
@@ -24,6 +25,9 @@ async function main() {
         components: payload.components,
         brain_status: payload.detail.brain_status,
         store_present_local: payload.store_present_local,
+        analysis: payload.analysis,
+        board_events: next.length,
+        sample_event: next[0] ?? null,
       },
       null,
       2,
