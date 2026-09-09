@@ -11,6 +11,7 @@ import { loadBrainState051, BRAIN_MODEL_051 } from "@/domain/eval/brain-051/conf
 import {
   buildLiteNextEvents,
   readJsonlTail,
+  readJsonlAllSmall,
   summarizeBoardBuckets,
   type BoardEventRow,
 } from "@/domain/eval/betmind-runtime/board";
@@ -227,6 +228,42 @@ export function buildRuntimePayloadFromLocal(root = permanentRoot044()): BetMind
   const learningPath = join(pi, "learning", "cases.jsonl");
   const learningFromPi = readJsonlTail(learningPath, 40);
   const learningFromStore = readJsonlTail(join(root, "learning-cases.jsonl"), 40);
+  const rawLearning = learningFromPi.length ? learningFromPi : learningFromStore;
+  const eventById = new Map<string, Record<string, unknown>>();
+  for (const e of readJsonlAllSmall(join(root, "events.jsonl"), 2_000_000)) {
+    const r = e as Record<string, unknown>;
+    if (r.event_id) eventById.set(String(r.event_id), r);
+  }
+  const learning_cases = rawLearning.map((c) => {
+    const row = c as Record<string, unknown>;
+    const ev = row.event_id ? eventById.get(String(row.event_id)) : null;
+    return {
+      ...row,
+      home: ev ? String(ev.home_or_a ?? row.home ?? "") : (row.home as string | undefined) ?? null,
+      away: ev ? String(ev.away_or_b ?? row.away ?? "") : (row.away as string | undefined) ?? null,
+      competition: ev
+        ? String(ev.competition ?? row.competition ?? "")
+        : (row.competition as string | undefined) ?? null,
+      kickoff_utc: ev
+        ? ((ev.kickoff_utc as string | null) ?? null)
+        : ((row.kickoff_utc as string | null) ?? null),
+      model_version:
+        (row.model_version as string | undefined) ??
+        ((row.prediction as Record<string, unknown> | undefined)?.model_version as string | undefined) ??
+        analysis.model_version,
+      cycle_number: analysis.cycle_number,
+    };
+  });
+
+  // Counter labels (unambiguous)
+  const analysisLabeled = {
+    ...analysis,
+    labels: {
+      events_in_store: "events_discovered_store",
+      events_analyzed: "events_with_predictions_store",
+      decisions_on_board: "decision_board_window",
+    },
+  };
 
   return {
     schema_version: 2,
@@ -253,13 +290,16 @@ export function buildRuntimePayloadFromLocal(root = permanentRoot044()): BetMind
       mirror: "neon",
       host: hostname(),
       events_analyzed: analysis.events_analyzed,
+      events_with_predictions_store: analysis.events_analyzed,
+      events_discovered_store: analysis.events_in_store,
       predictions_produced: analysis.predictions_produced,
       decisions_on_board: analysis.decisions_on_board,
+      decision_board_window: analysis.decisions_on_board,
       no_events_available: analysis.no_events_available,
       no_events_reason: analysis.no_events_reason,
     },
     health053: base as unknown as Record<string, unknown>,
-    analysis,
+    analysis: analysisLabeled,
     observatory: {
       at: published_at,
       system: {
@@ -301,7 +341,7 @@ export function buildRuntimePayloadFromLocal(root = permanentRoot044()): BetMind
         canonical_chain: "supervisor→worker→brain→massive049→decision048→bankroll053",
         open_task_057: false as const,
       },
-      analysis,
+      analysis: analysisLabeled,
       api_calls_ui: 0,
     },
     predictive: {
@@ -311,7 +351,7 @@ export function buildRuntimePayloadFromLocal(root = permanentRoot044()): BetMind
       learning_report: learningReport,
       paper_bankroll_report: paperReport,
     },
-    learning_cases: learningFromPi.length ? learningFromPi : learningFromStore,
+    learning_cases,
     recent_settlements: readJsonlTail(join(root, "settlements.jsonl"), 30),
     recent_autopsies: readJsonlTail(join(root, "autopsies.jsonl"), 30),
   };

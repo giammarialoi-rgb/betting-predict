@@ -14,7 +14,7 @@ export const metadata: Metadata = {
     default: "BetMind",
     template: "%s · BetMind",
   },
-  description: "ANALYZE • LEARN • WIN — paper sports intelligence Control Center",
+  description: "Analizza · Impara · Vinci — centro di controllo per intelligenza sportiva (solo simulazione)",
   applicationName: "BetMind",
   manifest: "/manifest.webmanifest",
   appleWebApp: {

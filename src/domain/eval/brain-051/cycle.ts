@@ -165,6 +165,61 @@ export async function runBrainCycle051(input: {
       /* optional */
     }
 
+    // Research / scrape CONTEXT pipeline (never invents available_at; odds out of MODEL)
+    let researchStats: {
+      research_fetches: number;
+      research_failures: number;
+      research_denied: number;
+      events_touched: number;
+    } | null = null;
+    try {
+      const { runEventResearchBatch } = await import(
+        "@/domain/eval/data-intelligence/research/run-event-research"
+      );
+      const storeAfter = loadStore044(labB);
+      const upcoming = storeAfter.events
+        .filter((e) => e.kickoff_utc && Date.parse(e.kickoff_utc) >= nowMs)
+        .slice(0, 20);
+      const research = await runEventResearchBatch({
+        events: upcoming.length ? upcoming : storeAfter.events.slice(-12),
+        cycleNumber: loadBrainState051(labB).cycles_completed + 1,
+        nowIso,
+        labBRoot: labB,
+        maxEvents: 8,
+        allowScrapeProbes: true,
+        asOf: nowIso,
+      });
+      researchStats = {
+        research_fetches: research.research_fetches,
+        research_failures: research.research_failures,
+        research_denied: research.research_denied,
+        events_touched: research.events_touched,
+      };
+      appendActivity051(
+        labB,
+        "RESEARCH",
+        `fetches=${research.research_fetches} fail=${research.research_failures} denied=${research.research_denied}`,
+      );
+    } catch {
+      /* research optional — cycle must not die */
+    }
+
+    // Persist a few analysis dossiers to Neon for Vercel detail pages
+    try {
+      const { buildAnalysisDossier, upsertDossierNeon } = await import(
+        "@/domain/eval/betmind-runtime/dossier"
+      );
+      const boardIds = latestDecisions(labB)
+        .slice(0, 25)
+        .map((d) => d.event_id);
+      for (const eid of boardIds) {
+        const d = buildAnalysisDossier(eid, labB);
+        if (d) await upsertDossierNeon(d);
+      }
+    } catch {
+      /* optional */
+    }
+
     state = loadBrainState051(labB);
     state = {
       ...state,
@@ -182,6 +237,7 @@ export async function runBrainCycle051(input: {
       phase: "ok",
       priority: plan.priority,
       events: massive.stats.EVENTS_ANALYZED,
+      research_fetches: researchStats?.research_fetches ?? 0,
     });
     try {
       const { writeCurrentWork053 } = await import("@/domain/eval/bankroll-053/system");
@@ -192,7 +248,7 @@ export async function runBrainCycle051(input: {
         phase: "IDLE",
         started_at: nowIso,
         last_update: new Date().toISOString(),
-        note: `cycle_ok events=${massive.stats.EVENTS_ANALYZED}`,
+        note: `cycle_ok events=${massive.stats.EVENTS_ANALYZED} research_fetches=${researchStats?.research_fetches ?? 0}`,
       });
     } catch {
       /* optional */
@@ -208,6 +264,7 @@ export async function runBrainCycle051(input: {
       reason: plan.reason,
       paper,
       stats: massive.stats,
+      research: researchStats,
     });
 
     try {

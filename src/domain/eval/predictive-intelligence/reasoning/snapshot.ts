@@ -146,6 +146,11 @@ export function appendReasoningSnapshotPi(
   const root = join(piRoot(labBRoot), "reasoning");
   mkdirSync(root, { recursive: true });
   appendFileSync(join(root, "snapshots.jsonl"), `${JSON.stringify(snap)}\n`, "utf8");
+  appendFileSync(
+    join(root, "by-event-index.jsonl"),
+    `${JSON.stringify({ event_id: snap.event_id, at: snap.at })}\n`,
+    "utf8",
+  );
 }
 
 export function writeReasoningReportPi(input: {

@@ -104,12 +104,12 @@ export function Unknown({ label = "UNKNOWN" }: { label?: string }) {
   return <span className="bm-muted text-xs font-medium tracking-wide">{label}</span>;
 }
 
-/** UI polling indicator — never implies Brain/predictive LIVE. */
+/** Indicatore di polling UI — non implica Brain/predittivo LIVE. */
 export function SnapshotBadge({ updating }: { updating?: boolean }) {
   return (
     <Pill>
       <StatusDot state="ONLINE" />
-      {updating ? "REFRESHING" : "WEB ONLINE"}
+      {updating ? "AGGIORNO" : "WEB ONLINE"}
     </Pill>
   );
 }

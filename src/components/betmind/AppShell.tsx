@@ -4,26 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
 import { StatusDot, type BmState } from "@/components/betmind/ui";
-
-const DESKTOP_NAV = [
-  { href: "/", label: "Home" },
-  { href: "/events", label: "Events" },
-  { href: "/live", label: "Live" },
-  { href: "/learn", label: "Learn" },
-  { href: "/sources", label: "Sources" },
-  { href: "/models", label: "Models" },
-  { href: "/bankroll", label: "Bankroll" },
-  { href: "/settings", label: "More" },
-  { href: "/research", label: "Research" },
-] as const;
-
-const MOBILE_NAV = [
-  { href: "/", label: "Home", icon: "⌂" },
-  { href: "/events", label: "Events", icon: "◎" },
-  { href: "/live", label: "Live", icon: "◉" },
-  { href: "/sources", label: "Sources", icon: "▦" },
-  { href: "/settings", label: "More", icon: "☰" },
-] as const;
+import { useBmLocale } from "@/components/betmind/useBmLocale";
 
 function navActive(pathname: string, href: string): boolean {
   const base = href.split("?")[0]!;
@@ -40,19 +21,37 @@ export function AppShell({
   brainState = "UNKNOWN",
 }: {
   children: ReactNode;
-  /** Web app reachable — always true when shell renders client-side. */
   webOnline?: boolean;
-  /** Fresh PC/runtime heartbeat (Neon mirror or local). */
   runtimeState?: BmState;
-  /** Independent prediction engine readiness. */
   engineState?: BmState;
-  /** Honest Brain status — never faked ONLINE. */
   brainState?: BmState;
 }) {
+  void brainState;
   const pathname = usePathname() ?? "/";
+  const { t, locale, setLocale } = useBmLocale();
+
+  const DESKTOP_NAV = [
+    { href: "/", label: t.nav_home },
+    { href: "/events", label: t.nav_events },
+    { href: "/live", label: t.nav_live },
+    { href: "/learn", label: t.nav_learn },
+    { href: "/sources", label: t.nav_sources },
+    { href: "/models", label: t.nav_models },
+    { href: "/bankroll", label: t.nav_bankroll },
+    { href: "/settings", label: t.nav_settings },
+    { href: "/research", label: t.nav_research },
+  ] as const;
+
+  const MOBILE_NAV = [
+    { href: "/", label: t.nav_home, icon: "⌂" },
+    { href: "/events", label: t.nav_events, icon: "◎" },
+    { href: "/live", label: t.nav_live, icon: "◉" },
+    { href: "/sources", label: t.nav_sources, icon: "▦" },
+    { href: "/settings", label: t.nav_settings, icon: "☰" },
+  ] as const;
 
   return (
-    <div className="bm-root flex min-h-dvh">
+    <div className="bm-root flex min-h-dvh" lang={locale}>
       <aside className="hidden w-60 shrink-0 flex-col border-r border-[var(--bm-border)] bg-[var(--bm-surface-2)] lg:flex">
         <div
           className="flex items-center gap-3 border-b border-[var(--bm-border)] px-4 py-4"
@@ -65,7 +64,7 @@ export function AppShell({
               Bet<span className="bm-accent">Mind</span>
             </div>
             <div className="text-[10px] uppercase tracking-[0.18em] text-[var(--bm-muted)]">
-              Control Center
+              {t.control_center}
             </div>
           </div>
         </div>
@@ -90,27 +89,43 @@ export function AppShell({
         <div className="border-t border-[var(--bm-border)] p-3">
           <div className="bm-card space-y-2 text-xs">
             <div className="flex items-center justify-between gap-2">
-              <span className="bm-muted">Web app</span>
+              <span className="bm-muted">{t.web_app}</span>
               <span className="inline-flex items-center gap-1.5 font-semibold">
                 <StatusDot state={webOnline ? "ONLINE" : "OFFLINE"} />
-                {webOnline ? "ONLINE" : "OFFLINE"}
+                {webOnline ? t.online : t.offline}
               </span>
             </div>
             <div className="flex items-center justify-between gap-2">
-              <span className="bm-muted">Runtime</span>
+              <span className="bm-muted">{t.runtime}</span>
               <span className="inline-flex items-center gap-1.5 font-semibold">
                 <StatusDot state={runtimeState} />
                 {runtimeState}
               </span>
             </div>
             <div className="flex items-center justify-between gap-2">
-              <span className="bm-muted">Engine</span>
+              <span className="bm-muted">{t.engine}</span>
               <span className="inline-flex items-center gap-1.5 font-semibold">
                 <StatusDot state={engineState} />
                 {engineState}
               </span>
             </div>
-            <p className="bm-muted pt-1">Paper · REAL_MONEY=false</p>
+            <div className="flex items-center gap-2 pt-1">
+              <button
+                type="button"
+                className={`bm-pill ${locale === "it" ? "bm-pill-accent" : ""}`}
+                onClick={() => setLocale("it")}
+              >
+                IT
+              </button>
+              <button
+                type="button"
+                className={`bm-pill ${locale === "en" ? "bm-pill-accent" : ""}`}
+                onClick={() => setLocale("en")}
+              >
+                EN
+              </button>
+            </div>
+            <p className="bm-muted pt-1">{t.paper_only}</p>
           </div>
         </div>
       </aside>
@@ -128,12 +143,12 @@ export function AppShell({
             </span>
           </div>
           <div className="hidden text-sm tracking-[0.12em] text-[var(--bm-muted)] lg:block">
-            ANALYZE · LEARN · WIN
+            {t.brand_tagline}
           </div>
           <div className="flex shrink-0 items-center gap-2">
             <span className="bm-pill hidden sm:inline-flex">
               <StatusDot state={webOnline ? "ONLINE" : "OFFLINE"} />
-              WEB {webOnline ? "ONLINE" : "OFFLINE"}
+              WEB {webOnline ? t.online : t.offline}
             </span>
             <span
               className={`bm-pill ${
@@ -145,7 +160,7 @@ export function AppShell({
               }`}
             >
               <StatusDot state={runtimeState} />
-              RUNTIME {runtimeState}
+              {t.runtime} {runtimeState}
             </span>
             <span
               className={`bm-pill hidden md:inline-flex ${
@@ -157,7 +172,7 @@ export function AppShell({
               }`}
             >
               <StatusDot state={engineState} />
-              ENGINE {engineState}
+              {t.engine} {engineState}
             </span>
           </div>
         </header>
@@ -169,7 +184,7 @@ export function AppShell({
         <nav
           className="fixed inset-x-0 bottom-0 z-30 flex border-t border-[var(--bm-border)] bg-[rgba(10,10,10,0.96)] backdrop-blur lg:hidden"
           style={{ paddingBottom: "var(--bm-safe-bottom)" }}
-          aria-label="Mobile"
+          aria-label="Navigazione"
         >
           {MOBILE_NAV.map((item) => {
             const active = navActive(pathname, item.href);

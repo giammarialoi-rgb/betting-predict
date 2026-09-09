@@ -3,6 +3,10 @@ import { existsSync, openSync, readSync, closeSync, statSync, readFileSync } fro
 import { join } from "node:path";
 import { permanentRoot044 } from "@/domain/eval/permanent-044/config";
 import { piRoot } from "@/domain/eval/predictive-intelligence/config";
+import {
+  buildAnalysisDossier,
+  loadDossierNeon,
+} from "@/domain/eval/betmind-runtime/dossier";
 
 export const dynamic = "force-dynamic";
 
@@ -83,15 +87,40 @@ function categorizeWhy(codes: string[], explanation: Record<string, unknown> | n
   return Object.fromEntries(Object.entries(buckets).filter(([, v]) => v.length > 0));
 }
 
-/** Lite event detail — disk only, no full store load. */
+/** Event analysis dossier — disk first, Neon mirror on Vercel. */
 export async function GET(_req: Request, ctx: { params: Promise<{ id: string }> }) {
   const { id } = await ctx.params;
   const root = permanentRoot044();
   const pi = piRoot(root);
+  const storePresent = existsSync(join(root, "events.jsonl"));
+
+  if (!storePresent) {
+    const remote = await loadDossierNeon(id);
+    if (!remote) {
+      return NextResponse.json(
+        {
+          error: "not_found",
+          event_id: id,
+          reason: "NO DATA AVAILABLE — Lab B assente e nessun dossier su Neon",
+        },
+        { status: 404 },
+      );
+    }
+    return NextResponse.json({
+      ...legacyShapeFromDossier(remote),
+      dossier: remote,
+      mirror_source: "neon",
+      api_calls_ui: 0 as const,
+      real_money: false as const,
+    });
+  }
+
   const event = findEvent(root, id);
   if (!event) {
     return NextResponse.json({ error: "not_found", event_id: id }, { status: 404 });
   }
+
+  const dossier = buildAnalysisDossier(id, root);
 
   const predictions = readJsonlMatching(join(root, "predictions.jsonl"), (r) => r.event_id === id, 5);
   const decisions = readJsonlMatching(join(root, "decisions.jsonl"), (r) => r.event_id === id, 3);
@@ -113,17 +142,18 @@ export async function GET(_req: Request, ctx: { params: Promise<{ id: string }> 
     (pred?.reason_codes as string[]) ?? (decision?.decision_reason_codes as string[]) ?? [];
 
   const probability_model =
-    pred && typeof pred.home_prob === "number"
-      ? {
-          HOME: pred.home_prob as number,
-          DRAW: pred.draw_prob as number,
-          AWAY: pred.away_prob as number,
-        }
-      : pred?.probability_model && typeof pred.probability_model === "object"
-        ? (pred.probability_model as Record<string, number>)
-        : learning[0]?.prediction && typeof learning[0].prediction === "object"
-          ? (learning[0].prediction as Record<string, number>)
-          : null;
+    dossier?.independent_model.probability ??
+    (pred?.probability_model && typeof pred.probability_model === "object"
+      ? (pred.probability_model as Record<string, number>)
+      : learning[0]?.prediction && typeof learning[0].prediction === "object"
+        ? (learning[0].prediction as Record<string, number>)
+        : null);
+
+  const probability_market =
+    dossier?.market.probability ??
+    (pred?.probability_market && typeof pred.probability_market === "object"
+      ? (pred.probability_market as Record<string, number>)
+      : null);
 
   const modelP =
     typeof decision?.probability === "number"
@@ -154,37 +184,29 @@ export async function GET(_req: Request, ctx: { params: Promise<{ id: string }> 
       semantic_level: String(event.semantic_level ?? "N/A"),
       status: String(event.status ?? "N/A"),
     },
-    predictions: pred
-      ? [
-          {
-            selection:
-              (pred.selection as string | null) ?? (decision?.prediction as string | null) ?? null,
-            confidence_score: typeof pred.confidence_score === "number" ? pred.confidence_score : 0,
-            human_readable_reason: String(
-              pred.human_readable_reason ?? explanation?.WHY_PRIMARY ?? "N/A",
-            ),
-            probability_model,
-            probability_market:
-              marketP != null && decision?.prediction
-                ? { [String(decision.prediction)]: marketP }
-                : null,
-            model_version: String(pred.model_version ?? decision?.model_version ?? "N/A"),
-            reason_codes,
-          },
-        ]
-      : probability_model
-        ? [
-            {
-              selection: (decision?.prediction as string | null) ?? null,
-              confidence_score: typeof decision?.confidence === "number" ? decision.confidence : 0,
-              human_readable_reason: String(explanation?.WHY_PRIMARY ?? "N/A"),
-              probability_model,
-              probability_market: null,
-              model_version: String(decision?.model_version ?? "N/A"),
-              reason_codes,
-            },
-          ]
-        : [],
+    predictions: [
+      {
+        selection:
+          (pred?.selection as string | null) ?? (decision?.prediction as string | null) ?? null,
+        confidence_score:
+          typeof pred?.confidence_score === "number"
+            ? pred.confidence_score
+            : typeof decision?.confidence === "number"
+              ? decision.confidence
+              : 0,
+        human_readable_reason: String(
+          pred?.human_readable_reason ?? explanation?.WHY_PRIMARY ?? "N/A",
+        ),
+        probability_model,
+        probability_market,
+        model_version: String(
+          pred?.model_version ?? decision?.model_version ?? dossier?.cycle.model_version ?? "N/A",
+        ),
+        reason_codes,
+        prediction_id: (pred?.prediction_id as string | null) ?? null,
+        timestamp: (pred?.timestamp as string | null) ?? null,
+      },
+    ].filter((p) => p.probability_model || p.probability_market || pred || decision),
     settlement: settlement
       ? {
           result: String(settlement.result ?? "N/A"),
@@ -236,9 +258,7 @@ export async function GET(_req: Request, ctx: { params: Promise<{ id: string }> 
             (pred?.selection as string | null) ??
             (decision?.prediction as string | null) ??
             "N/A",
-          actual_result: String(
-            learn0?.actual ?? settlement?.result ?? "INSUFFICIENT_DATA",
-          ),
+          actual_result: String(learn0?.actual ?? settlement?.result ?? "INSUFFICIENT_DATA"),
           model_probability: modelP,
           probability_error:
             typeof learn0?.probability_error === "number" ? learn0.probability_error : null,
@@ -261,7 +281,7 @@ export async function GET(_req: Request, ctx: { params: Promise<{ id: string }> 
           RISULTATO: String(settlement?.result ?? learn0?.actual ?? "N/A"),
           OUTCOME_CLASS: String(autopsies[0].result_class ?? "N/A"),
           ERROR_LABELS: autopsies[0].error_type ? [String(autopsies[0].error_type)] : [],
-          capital_note: "PAPER_ONLY · REAL_MONEY=false",
+          capital_note: "SOLO SIMULAZIONE · REAL_MONEY=false",
         }
       : null,
     lock: lock
@@ -271,8 +291,70 @@ export async function GET(_req: Request, ctx: { params: Promise<{ id: string }> 
           model_version: String(lock.model_version ?? "N/A"),
         }
       : null,
-    model_version: String(pred?.model_version ?? decision?.model_version ?? "N/A"),
+    model_version: String(
+      pred?.model_version ?? decision?.model_version ?? dossier?.cycle.model_version ?? "N/A",
+    ),
+    dossier,
     finished,
+    mirror_source: "local_disk",
     api_calls_ui: 0 as const,
+    real_money: false as const,
   });
+}
+
+function legacyShapeFromDossier(d: NonNullable<ReturnType<typeof buildAnalysisDossier>>) {
+  return {
+    event: {
+      event_id: d.event.event_id,
+      sport: d.event.sport,
+      competition: d.event.competition,
+      home_or_a: d.event.home,
+      away_or_b: d.event.away,
+      kickoff_utc: d.event.kickoff_utc,
+      semantic_level: "N/A",
+      status: d.event.status,
+    },
+    predictions: [
+      {
+        selection: null,
+        confidence_score: d.independent_model.confidence ?? 0,
+        human_readable_reason: d.independent_model.note ?? "N/A",
+        probability_model: d.independent_model.probability,
+        probability_market: d.market.probability,
+        model_version: d.independent_model.model_version ?? d.cycle.model_version ?? "N/A",
+        reason_codes: d.independent_model.reason_codes,
+        prediction_id: d.prediction_id,
+        timestamp: d.analyzed_at,
+      },
+    ],
+    settlement: null,
+    autopsies: [],
+    structured_explanation: { WHY_SELECTED: [], WHY_NOT_SELECTED: [], FINAL: "N/A", WHY_NO_BET: null },
+    why_buckets: {},
+    decision_048: d.independent_model.decision
+      ? {
+          decision: d.independent_model.decision,
+          estimated_edge: null,
+          edge_status: "UNKNOWN",
+          confidence: d.independent_model.confidence ?? 0,
+          stake: 0,
+          model_pct: null,
+          market_pct:
+            d.market.selection_pct != null ? d.market.selection_pct * 100 : null,
+          explanation: {
+            WHY_PRIMARY: "N/A",
+            WHY_SUPPORTING: [],
+            WHY_AGAINST: [],
+            WHY_RISK: [],
+            WHY_NO_BET: null,
+          },
+        }
+      : null,
+    learning_case: null,
+    post_match: null,
+    autopsy_ui: null,
+    lock: null,
+    model_version: d.cycle.model_version,
+    finished: false,
+  };
 }

@@ -116,11 +116,11 @@ function EventsInner() {
     <div className="mx-auto flex max-w-6xl flex-col gap-4">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <div className="bm-section-label">Diretta</div>
-          <h1 className="text-2xl font-bold">Events</h1>
+          <div className="bm-section-label">Eventi</div>
+          <h1 className="text-2xl font-bold">Eventi</h1>
           <p className="mt-1 text-xs bm-muted">
-            Real board from Lab B / Neon mirror · store {String(analysis?.events_in_store ?? events.length)} ·
-            analyzed {String(analysis?.events_analyzed ?? "—")}
+            Board reale da Lab B / mirror Neon · scoperti {String(analysis?.events_in_store ?? events.length)} ·
+            con previsioni {String(analysis?.events_analyzed ?? "—")}
           </p>
         </div>
         <div className="flex items-center gap-2 text-xs">

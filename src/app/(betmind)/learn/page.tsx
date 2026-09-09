@@ -6,13 +6,22 @@ import {
   SnapshotBadge,
   Metric,
   Pill,
-  Unknown,
+  EmptyState,
   asRecord,
   fmtN,
+  fmtWhen,
 } from "@/components/betmind/ui";
 import { useBetMindData } from "@/components/betmind/DataProvider";
+import { useBmLocale } from "@/components/betmind/useBmLocale";
+
+function pct(v: unknown): string {
+  if (typeof v !== "number" || !Number.isFinite(v)) return "—";
+  const p = v <= 1 ? v * 100 : v;
+  return `${fmtN(p, 0)}%`;
+}
 
 export default function LearnPage() {
+  const { t } = useBmLocale();
   const { data, error, updating, lastUpdate } = useBetMindData();
   const cases = data?.learning_cases ?? [];
   const report = asRecord(data?.predictive?.learning_report);
@@ -20,13 +29,18 @@ export default function LearnPage() {
   const metrics = asRecord(asRecord(validation?.holdout)?.metrics) ?? asRecord(validation);
   const independent = asRecord(metrics?.independent);
   const market = asRecord(metrics?.market);
+  const analysis =
+    asRecord((data as { analysis?: unknown } | null)?.analysis) ??
+    asRecord(asRecord(data?.observatory)?.analysis);
   const categories = new Map<string, number>();
   const versions = new Map<string, number>();
   for (const c of cases) {
     const row = asRecord(c);
-    const cat = String(row?.category ?? row?.result_class ?? "UNKNOWN");
+    const cat = String(row?.category ?? row?.result_class ?? "SCONOSCIUTO");
     categories.set(cat, (categories.get(cat) ?? 0) + 1);
-    const mv = String(row?.model_version ?? asRecord(row?.prediction)?.model_version ?? "N/A");
+    const mv = String(
+      row?.model_version ?? asRecord(row?.prediction)?.model_version ?? analysis?.model_version ?? "—",
+    );
     versions.set(mv, (versions.get(mv) ?? 0) + 1);
   }
 
@@ -34,12 +48,13 @@ export default function LearnPage() {
     <div className="mx-auto flex max-w-4xl flex-col gap-4">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <div className="bm-section-label">Intelligence loop</div>
-          <h1 className="text-2xl font-bold">Learn</h1>
+          <div className="bm-section-label">{t.learning}</div>
+          <h1 className="text-2xl font-bold">{t.learn_title}</h1>
+          <p className="mt-1 text-sm bm-muted">{t.learn_subtitle}</p>
         </div>
         <div className="flex items-center gap-2 text-xs">
           <SnapshotBadge updating={updating} />
-          <span className="bm-muted">{lastUpdate ? new Date(lastUpdate).toLocaleTimeString() : "N/A"}</span>
+          <span className="bm-muted">{lastUpdate ? new Date(lastUpdate).toLocaleTimeString("it-IT") : "—"}</span>
         </div>
       </div>
 
@@ -50,17 +65,17 @@ export default function LearnPage() {
       )}
 
       <div className="grid gap-3 sm:grid-cols-2">
-        <Card title="PERFORMANCE OVER TIME">
+        <Card title={t.performance_over_time}>
           <div className="grid grid-cols-2 gap-3">
-            <Metric label="Log Loss" value={independent ? fmtN(independent.log_loss as number) : "UNKNOWN"} />
-            <Metric label="Brier" value={independent ? fmtN(independent.brier as number) : "UNKNOWN"} />
-            <Metric label="Accuracy" value={independent ? fmtN(independent.accuracy as number) : "UNKNOWN"} />
-            <Metric label="Market LL" value={market ? fmtN(market.log_loss as number) : "N/A"} />
+            <Metric label="Log Loss" value={independent ? fmtN(independent.log_loss as number) : t.unknown} />
+            <Metric label="Brier" value={independent ? fmtN(independent.brier as number) : t.unknown} />
+            <Metric label="Accuratezza" value={independent ? fmtN(independent.accuracy as number) : t.unknown} />
+            <Metric label="Log Loss mercato" value={market ? fmtN(market.log_loss as number) : "—"} />
           </div>
         </Card>
-        <Card title="ERROR CATEGORIES">
+        <Card title={t.error_categories}>
           {categories.size === 0 ? (
-            <p className="text-sm bm-muted">NO SETTLED CASES YET — no error categories to show.</p>
+            <p className="text-sm bm-muted">{t.no_settled_cases}</p>
           ) : (
             <ul className="space-y-1 text-sm">
               {[...categories.entries()].map(([k, v]) => (
@@ -74,9 +89,9 @@ export default function LearnPage() {
         </Card>
       </div>
 
-      <Card title="MODEL VERSIONS">
+      <Card title={t.model_versions}>
         {versions.size === 0 ? (
-          <p className="text-sm bm-muted">NO SETTLED CASES YET — no model versions from learning cases.</p>
+          <p className="text-sm bm-muted">{t.no_settled_cases}</p>
         ) : (
           <div className="flex flex-wrap gap-2">
             {[...versions.entries()].map(([k, v]) => (
@@ -89,60 +104,99 @@ export default function LearnPage() {
       </Card>
 
       {report && (
-        <Card title="LEARNING REPORT">
+        <Card title={t.learning_report}>
           <pre className="max-h-40 overflow-auto text-[11px] text-[var(--bm-muted)]">
             {JSON.stringify(report, null, 2).slice(0, 1800)}
           </pre>
         </Card>
       )}
 
-      <Card title="RECENT LESSONS" glow>
+      <Card title={t.recent_lessons} glow>
         <div className="space-y-3">
           {cases.map((c, i) => {
             const row = asRecord(c);
-            const id = String(row?.event_id ?? row?.case_id ?? i);
+            const id = String(row?.event_id ?? "");
             const pred = asRecord(row?.prediction);
+            const home = String(row?.home ?? "").trim();
+            const away = String(row?.away ?? "").trim();
+            const hasIdentity = Boolean(home && away && id);
+            const cycle = row?.cycle_number ?? analysis?.cycle_number;
+            const model = String(
+              row?.model_version ?? pred?.model_version ?? analysis?.model_version ?? "—",
+            );
+
+            if (!hasIdentity) {
+              return (
+                <div key={`anon-${i}`} className="rounded-xl border border-[var(--bm-border)] bg-black/20 p-3">
+                  <EmptyState
+                    title={t.no_event_identity}
+                    reason="Caso di apprendimento senza squadre/event_id — nessuna probabilità orfana mostrata."
+                  />
+                </div>
+              );
+            }
+
             return (
               <div key={`${id}-${i}`} className="rounded-xl border border-[var(--bm-border)] bg-black/20 p-3">
                 <div className="flex flex-wrap items-center gap-2">
-                  <Pill accent>{String(row?.category ?? "CASE")}</Pill>
-                  <Pill>{String(row?.stake_outcome ?? "N/A")}</Pill>
-                  <span className="text-xs bm-muted">{String(row?.created_at ?? "")}</span>
+                  <Pill accent>{String(row?.category ?? "CASO")}</Pill>
+                  <Pill>{String(row?.stake_outcome ?? "—")}</Pill>
+                  <span className="text-xs bm-muted">{fmtWhen(String(row?.created_at ?? ""))}</span>
                 </div>
-                <div className="mt-2 grid gap-2 text-sm sm:grid-cols-2">
+                <h3 className="mt-2 text-base font-semibold">
+                  {home} <span className="bm-muted font-normal">{t.vs}</span> {away}
+                </h3>
+                <p className="text-xs bm-muted">
+                  {String(row?.competition ?? "—")} · {t.kickoff}{" "}
+                  {fmtWhen(String(row?.kickoff_utc ?? ""))}
+                </p>
+                <div className="mt-3 grid gap-2 text-sm sm:grid-cols-2">
                   <div>
-                    <div className="bm-metric-label">Prediction</div>
+                    <div className="bm-metric-label">{t.prediction}</div>
+                    {pred ? (
+                      <div className="mt-1 space-y-0.5">
+                        <div>
+                          {t.home} {pct(pred.HOME)}
+                        </div>
+                        <div>
+                          {t.draw} {pct(pred.DRAW)}
+                        </div>
+                        <div>
+                          {t.away} {pct(pred.AWAY)}
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="bm-muted">{t.no_data}</div>
+                    )}
+                  </div>
+                  <div className="space-y-2">
                     <div>
-                      {pred
-                        ? `H ${fmtN(pred.HOME as number, 2)} / D ${fmtN(pred.DRAW as number, 2)} / A ${fmtN(pred.AWAY as number, 2)}`
-                        : String(row?.prediction ?? "N/A")}
+                      <div className="bm-metric-label">{t.model}</div>
+                      <div>{model}</div>
+                    </div>
+                    <div>
+                      <div className="bm-metric-label">{t.analysis}</div>
+                      <div>
+                        {t.cycle_n} #{cycle != null ? String(cycle) : "—"}
+                      </div>
+                    </div>
+                    <div>
+                      <div className="bm-metric-label">{t.result}</div>
+                      <div>{String(row?.actual ?? row?.result ?? "—")}</div>
                     </div>
                   </div>
-                  <div>
-                    <div className="bm-metric-label">Result</div>
-                    <div>{String(row?.actual ?? row?.result ?? "N/A")}</div>
-                  </div>
-                  <div>
-                    <div className="bm-metric-label">Error</div>
-                    <div>
-                      {row?.probability_error != null
-                        ? fmtN(row.probability_error as number, 3)
-                        : String(row?.error_type ?? "N/A")}
-                    </div>
-                  </div>
-                  <div>
-                    <div className="bm-metric-label">Lesson</div>
-                    <div>{String(row?.calibration_note ?? row?.decision_correctness ?? "N/A")}</div>
-                  </div>
                 </div>
-                <Link href={`/events/${id}`} className="mt-2 inline-block text-xs bm-accent underline">
-                  Open event
+                <p className="mt-2 text-xs bm-muted">
+                  {t.lesson}: {String(row?.calibration_note ?? row?.decision_correctness ?? "—")}
+                </p>
+                <Link href={`/events/${id}`} className="bm-btn bm-btn-ghost mt-3 text-xs">
+                  {t.open_analysis}
                 </Link>
               </div>
             );
           })}
           {cases.length === 0 && (
-            <p className="text-sm bm-muted">NO SETTLED CASES YET — learning loop has no cases on disk/mirror.</p>
+            <p className="text-sm bm-muted">{t.no_settled_cases}</p>
           )}
         </div>
       </Card>
