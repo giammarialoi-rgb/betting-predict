@@ -91,7 +91,11 @@ export function defaultSupervisorState054(): SupervisorState054 {
 }
 
 export function loadSupervisorState054(root = permanentRoot044()): SupervisorState054 {
-  ensureSupervisorDirs054(root);
+  try {
+    ensureSupervisorDirs054(root);
+  } catch {
+    // Read-only / missing FS (e.g. Vercel) — degrade without throwing
+  }
   const p = supervisorStatePath054(root);
   if (!existsSync(p)) return defaultSupervisorState054();
   try {

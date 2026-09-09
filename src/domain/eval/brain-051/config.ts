@@ -147,8 +147,12 @@ export function defaultBrainState051(): BrainState051 {
 export function loadBrainState051(root = permanentRoot044()): BrainState051 {
   const p = brainStatePath051(root);
   if (!existsSync(p)) return defaultBrainState051();
-  const raw = readFileSync(p, "utf8").replace(/^\uFEFF/, "");
-  return { ...defaultBrainState051(), ...JSON.parse(raw) };
+  try {
+    const raw = readFileSync(p, "utf8").replace(/^\uFEFF/, "");
+    return { ...defaultBrainState051(), ...JSON.parse(raw) };
+  } catch {
+    return defaultBrainState051();
+  }
 }
 
 export function saveBrainState051(root: string, state: BrainState051): void {

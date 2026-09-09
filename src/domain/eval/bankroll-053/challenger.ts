@@ -3,7 +3,7 @@
  * NEVER auto-promotes. NEVER invents edge. NEVER mutates LOCK/Lab A.
  */
 
-import { mkdirSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { permanentRoot044 } from "@/domain/eval/permanent-044/config";
 import { MODEL_ACTIVE_053 } from "@/domain/eval/bankroll-053/config";
@@ -18,8 +18,8 @@ export type Challenger053 = {
   note: string;
 };
 
-export function writeChallengerRegistry053(root = permanentRoot044()): Challenger053[] {
-  const rows: Challenger053[] = [
+export function defaultChallengerRegistry053(): Challenger053[] {
+  return [
     {
       model_id: MODEL_ACTIVE_053,
       role: "CHAMPION",
@@ -48,6 +48,10 @@ export function writeChallengerRegistry053(root = permanentRoot044()): Challenge
       note: "Shadow WHY/machine-readable labels only — does not invent BET from market mirror",
     },
   ];
+}
+
+export function writeChallengerRegistry053(root = permanentRoot044()): Challenger053[] {
+  const rows = defaultChallengerRegistry053();
   mkdirSync(join(root, "manifests"), { recursive: true });
   writeFileSync(
     join(root, "manifests", "challenger-registry-053.json"),
@@ -56,7 +60,18 @@ export function writeChallengerRegistry053(root = permanentRoot044()): Challenge
   return rows;
 }
 
+/** Read-only load for UI/API — never mkdir/write (safe on Vercel). */
 export function loadChallengerRegistry053(root = permanentRoot044()): Challenger053[] {
-  // Always rewrite to keep INDEPENDENT_POISSON_v1 present (idempotent, no auto-promotion)
-  return writeChallengerRegistry053(root);
+  const p = join(root, "manifests", "challenger-registry-053.json");
+  if (existsSync(p)) {
+    try {
+      const j = JSON.parse(readFileSync(p, "utf8").replace(/^\uFEFF/, "")) as {
+        models?: Challenger053[];
+      };
+      if (Array.isArray(j.models) && j.models.length) return j.models;
+    } catch {
+      /* fall through */
+    }
+  }
+  return defaultChallengerRegistry053();
 }

@@ -283,42 +283,64 @@ export async function GET() {
     return NextResponse.json({ ...cache.body, cache_hit: true });
   }
 
-  const root = permanentRoot044();
-  const pi = piRoot(root);
-  const nowIso = new Date().toISOString();
+  try {
+    const root = permanentRoot044();
+    const pi = piRoot(root);
+    const nowIso = new Date().toISOString();
 
-  const observatory = buildLiteObservatory(root, nowIso);
-  const health = {
-    ...buildHealthPayload053(root),
-    source_health: loadSourceHealth053(root),
-    autostart: loadAutostartStatus055(root),
-  };
+    const observatory = buildLiteObservatory(root, nowIso);
+    const health = {
+      ...buildHealthPayload053(root),
+      source_health: loadSourceHealth053(root),
+      autostart: loadAutostartStatus055(root),
+    };
 
-  const learningPath = join(pi, "learning", "cases.jsonl");
-  const learningFromPi = readJsonlTail(learningPath, 40);
-  const learningFromStore = readJsonlTail(join(root, "learning-cases.jsonl"), 40);
+    const learningPath = join(pi, "learning", "cases.jsonl");
+    const learningFromPi = readJsonlTail(learningPath, 40);
+    const learningFromStore = readJsonlTail(join(root, "learning-cases.jsonl"), 40);
 
-  const body = {
-    at: nowIso,
-    api_calls_ui: 0 as const,
-    real_money: false as const,
-    cache_hit: false,
-    observatory,
-    health,
-    challengers: loadChallengerRegistry053(root),
-    predictive: {
-      final_verdict: readJsonIfExists(join(pi, "final-verdict.json")),
-      validation: readJsonIfExists(join(pi, "validation-report.json")),
-      model_manifest: readJsonIfExists(join(pi, "model-manifest.json")),
-      learning_report: readJsonIfExists(join(pi, "learning-report.json")),
-      paper_bankroll_report: readJsonIfExists(join(pi, "paper-bankroll-report.json")),
-      e2e: readJsonIfExists(join(pi, "e2e-pipeline-report.json")),
-    },
-    learning_cases: learningFromPi.length ? learningFromPi : learningFromStore,
-    recent_settlements: readJsonlTail(join(root, "settlements.jsonl"), 30),
-    recent_autopsies: readJsonlTail(join(root, "autopsies.jsonl"), 30),
-  };
+    const body = {
+      at: nowIso,
+      api_calls_ui: 0 as const,
+      real_money: false as const,
+      cache_hit: false,
+      observatory,
+      health,
+      challengers: loadChallengerRegistry053(root),
+      predictive: {
+        final_verdict: readJsonIfExists(join(pi, "final-verdict.json")),
+        validation: readJsonIfExists(join(pi, "validation-report.json")),
+        model_manifest: readJsonIfExists(join(pi, "model-manifest.json")),
+        learning_report: readJsonIfExists(join(pi, "learning-report.json")),
+        paper_bankroll_report: readJsonIfExists(join(pi, "paper-bankroll-report.json")),
+        e2e: readJsonIfExists(join(pi, "e2e-pipeline-report.json")),
+      },
+      learning_cases: learningFromPi.length ? learningFromPi : learningFromStore,
+      recent_settlements: readJsonlTail(join(root, "settlements.jsonl"), 30),
+      recent_autopsies: readJsonlTail(join(root, "autopsies.jsonl"), 30),
+    };
 
-  cache = { at: now, body };
-  return NextResponse.json(body);
+    cache = { at: now, body };
+    return NextResponse.json(body);
+  } catch (error) {
+    return NextResponse.json(
+      {
+        ok: false,
+        at: new Date().toISOString(),
+        api_calls_ui: 0 as const,
+        real_money: false as const,
+        cache_hit: false,
+        observatory: null,
+        health: null,
+        challengers: [],
+        predictive: null,
+        learning_cases: [],
+        recent_settlements: [],
+        recent_autopsies: [],
+        store_root: "audit/external/task-044",
+        error: error instanceof Error ? error.message : "unknown",
+      },
+      { status: 200 },
+    );
+  }
 }
