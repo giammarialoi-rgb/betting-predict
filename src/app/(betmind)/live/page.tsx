@@ -3,7 +3,7 @@
 import Link from "next/link";
 import {
   Card,
-  LiveBadge,
+  SnapshotBadge,
   Metric,
   Pill,
   Unknown,
@@ -13,10 +13,10 @@ import {
   fmtN,
   sportBucket,
 } from "@/components/betmind/ui";
-import { useBetMindSnapshot } from "@/components/betmind/useSnapshot";
+import { useBetMindData } from "@/components/betmind/DataProvider";
 
 export default function LivePage() {
-  const { data, error, updating, lastUpdate } = useBetMindSnapshot(4000);
+  const { data, error, updating, lastUpdate } = useBetMindData();
   const obs = asRecord(data?.observatory);
   const sys = asRecord(obs?.system);
   const activity =
@@ -35,7 +35,7 @@ export default function LivePage() {
           <h1 className="text-2xl font-bold">Live</h1>
         </div>
         <div className="flex items-center gap-2 text-xs">
-          <LiveBadge updating={updating} />
+          <SnapshotBadge updating={updating} />
           <span className="bm-muted">{lastUpdate ? new Date(lastUpdate).toLocaleTimeString() : "N/A"}</span>
         </div>
       </div>

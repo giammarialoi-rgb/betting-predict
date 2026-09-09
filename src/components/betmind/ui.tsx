@@ -1,5 +1,21 @@
 import type { ReactNode } from "react";
 
+export type BmState = "ONLINE" | "OFFLINE" | "DEGRADED" | "UNKNOWN";
+
+export function normalizeState(raw: unknown): BmState {
+  const s = String(raw ?? "UNKNOWN").toUpperCase();
+  if (s === "ONLINE" || s === "OK" || s === "ACTIVE" || s === "HEALTHY") return "ONLINE";
+  if (s === "OFFLINE" || s === "DOWN" || s === "DEAD" || s === "STOPPED") return "OFFLINE";
+  if (s === "DEGRADED" || s === "PAUSED" || s === "RECOVER") return "DEGRADED";
+  return "UNKNOWN";
+}
+
+export function stateFromBool(v: boolean | null | undefined): BmState {
+  if (v === true) return "ONLINE";
+  if (v === false) return "OFFLINE";
+  return "UNKNOWN";
+}
+
 export function Card({
   children,
   className = "",
@@ -16,8 +32,14 @@ export function Card({
   return (
     <section className={`bm-card ${glow ? "bm-card-glow" : ""} ${className}`}>
       {(title || right) && (
-        <div className="mb-3 flex items-center justify-between gap-2">
-          {title ? <h2 className="text-sm font-semibold tracking-wide">{title}</h2> : <span />}
+        <div className="mb-3 flex items-start justify-between gap-2">
+          {title ? (
+            <h2 className="text-[0.78rem] font-semibold tracking-[0.08em] text-[var(--bm-muted)] uppercase">
+              {title}
+            </h2>
+          ) : (
+            <span />
+          )}
           {right}
         </div>
       )}
@@ -29,43 +51,83 @@ export function Card({
 export function Pill({
   children,
   accent = false,
+  tone,
 }: {
   children: ReactNode;
   accent?: boolean;
+  tone?: "accent" | "danger" | "warn" | "neutral";
 }) {
-  return <span className={`bm-pill ${accent ? "bm-pill-accent" : ""}`}>{children}</span>;
+  const t = tone ?? (accent ? "accent" : "neutral");
+  const cls =
+    t === "accent"
+      ? "bm-pill-accent"
+      : t === "danger"
+        ? "bm-pill-danger"
+        : t === "warn"
+          ? "bm-pill-warn"
+          : "";
+  return <span className={`bm-pill ${cls}`}>{children}</span>;
 }
 
-export function StatusDot({
-  state,
-}: {
-  state: "online" | "down" | "degraded" | "unknown";
-}) {
+export function StatusDot({ state }: { state: BmState | "online" | "down" | "degraded" | "unknown" }) {
+  const n =
+    state === "online" || state === "ONLINE"
+      ? "ONLINE"
+      : state === "down" || state === "OFFLINE"
+        ? "OFFLINE"
+        : state === "degraded" || state === "DEGRADED"
+          ? "DEGRADED"
+          : "UNKNOWN";
   const cls =
-    state === "online"
+    n === "ONLINE"
       ? "bm-dot-online"
-      : state === "down"
+      : n === "OFFLINE"
         ? "bm-dot-down"
-        : state === "degraded"
+        : n === "DEGRADED"
           ? "bm-dot-degraded"
           : "";
-  return <span className={`bm-dot ${cls}`} />;
+  return <span className={`bm-dot ${cls}`} title={n} />;
+}
+
+export function StatusPill({ state, label }: { state: BmState; label?: string }) {
+  const tone =
+    state === "ONLINE" ? "accent" : state === "OFFLINE" ? "danger" : state === "DEGRADED" ? "warn" : "neutral";
+  return (
+    <Pill tone={tone}>
+      <StatusDot state={state} />
+      {label ?? state}
+    </Pill>
+  );
 }
 
 export function Unknown({ label = "UNKNOWN" }: { label?: string }) {
   return <span className="bm-muted text-xs font-medium tracking-wide">{label}</span>;
 }
 
-export function LiveBadge({ updating }: { updating?: boolean }) {
+/** UI polling indicator — never implies Brain/predictive LIVE. */
+export function SnapshotBadge({ updating }: { updating?: boolean }) {
   return (
-    <Pill accent>
-      <StatusDot state="online" />
-      {updating ? "UPDATING" : "LIVE"}
+    <Pill>
+      <StatusDot state="ONLINE" />
+      {updating ? "REFRESHING" : "WEB ONLINE"}
     </Pill>
   );
 }
 
-export function Metric({ label, value, accent = false }: { label: string; value: ReactNode; accent?: boolean }) {
+/** @deprecated use SnapshotBadge — kept alias to avoid silent LIVE implication */
+export function LiveBadge({ updating }: { updating?: boolean }) {
+  return <SnapshotBadge updating={updating} />;
+}
+
+export function Metric({
+  label,
+  value,
+  accent = false,
+}: {
+  label: string;
+  value: ReactNode;
+  accent?: boolean;
+}) {
   return (
     <div className="bm-metric">
       <div className="bm-metric-label">{label}</div>
@@ -74,27 +136,48 @@ export function Metric({ label, value, accent = false }: { label: string; value:
   );
 }
 
+export function EmptyState({ title, reason }: { title: string; reason: string }) {
+  return (
+    <div className="bm-empty">
+      <h3>{title}</h3>
+      <p>{reason}</p>
+    </div>
+  );
+}
+
 export function fmtN(v: number | null | undefined, digits = 2): string {
-  if (v == null || !Number.isFinite(v)) return "N/A";
+  if (v == null || !Number.isFinite(v)) return "—";
   return v.toFixed(digits);
 }
 
 export function fmtPct(v: number | null | undefined, alreadyPct = false): string {
-  if (v == null || !Number.isFinite(v)) return "N/A";
+  if (v == null || !Number.isFinite(v)) return "—";
   const x = alreadyPct ? v : v * 100;
   return `${x.toFixed(1)}%`;
 }
 
 export function fmtMoney(v: number | null | undefined): string {
-  if (v == null || !Number.isFinite(v)) return "N/A";
+  if (v == null || !Number.isFinite(v)) return "—";
   return `€ ${v.toFixed(2)}`;
 }
 
 export function fmtKick(iso: string | null | undefined): string {
-  if (!iso) return "N/A";
+  if (!iso) return "—";
   const d = new Date(iso);
-  if (Number.isNaN(d.getTime())) return "N/A";
+  if (Number.isNaN(d.getTime())) return "—";
   return d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+}
+
+export function fmtWhen(iso: string | null | undefined): string {
+  if (!iso) return "—";
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return "—";
+  return d.toLocaleString([], {
+    month: "short",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
 }
 
 export function asRecord(v: unknown): Record<string, unknown> | null {
@@ -116,4 +199,9 @@ export function edgeLabel(status: unknown, edge: unknown): string {
   const st = String(status ?? "UNKNOWN").toUpperCase();
   if (st === "UNKNOWN" || edge == null || !Number.isFinite(Number(edge))) return "EDGE UNKNOWN";
   return fmtN(Number(edge), 3);
+}
+
+/** Map health.components.* strings to BmState. */
+export function componentState(raw: unknown): BmState {
+  return normalizeState(raw);
 }

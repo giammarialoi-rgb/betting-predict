@@ -1,14 +1,14 @@
 "use client";
 
-import { Card, LiveBadge, Pill, Unknown, fmtMoney, fmtPct } from "@/components/betmind/ui";
-import { useBetMindSnapshot } from "@/components/betmind/useSnapshot";
+import { Card, SnapshotBadge, Pill, Unknown, fmtMoney, fmtPct } from "@/components/betmind/ui";
+import { useBetMindData } from "@/components/betmind/DataProvider";
 
 function asRecord(v: unknown): Record<string, unknown> | null {
   return v && typeof v === "object" ? (v as Record<string, unknown>) : null;
 }
 
 export default function BankrollPage() {
-  const { data, error, updating, lastUpdate } = useBetMindSnapshot(4000);
+  const { data, error, updating, lastUpdate } = useBetMindData();
   const obs = asRecord(data?.observatory);
   const paperReport = asRecord(data?.predictive?.paper_bankroll_report);
   const summary =
@@ -35,7 +35,7 @@ export default function BankrollPage() {
           <p className="text-sm bm-muted">Paper trading · capitale iniziale €1000</p>
         </div>
         <div className="flex items-center gap-2 text-xs">
-          <LiveBadge updating={updating} />
+          <SnapshotBadge updating={updating} />
           <span className="bm-muted">{lastUpdate ? new Date(lastUpdate).toLocaleTimeString() : "N/A"}</span>
         </div>
       </div>

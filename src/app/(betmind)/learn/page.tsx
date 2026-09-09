@@ -3,17 +3,17 @@
 import Link from "next/link";
 import {
   Card,
-  LiveBadge,
+  SnapshotBadge,
   Metric,
   Pill,
   Unknown,
   asRecord,
   fmtN,
 } from "@/components/betmind/ui";
-import { useBetMindSnapshot } from "@/components/betmind/useSnapshot";
+import { useBetMindData } from "@/components/betmind/DataProvider";
 
 export default function LearnPage() {
-  const { data, error, updating, lastUpdate } = useBetMindSnapshot(4000);
+  const { data, error, updating, lastUpdate } = useBetMindData();
   const cases = data?.learning_cases ?? [];
   const report = asRecord(data?.predictive?.learning_report);
   const validation = asRecord(data?.predictive?.validation);
@@ -38,7 +38,7 @@ export default function LearnPage() {
           <h1 className="text-2xl font-bold">Learn</h1>
         </div>
         <div className="flex items-center gap-2 text-xs">
-          <LiveBadge updating={updating} />
+          <SnapshotBadge updating={updating} />
           <span className="bm-muted">{lastUpdate ? new Date(lastUpdate).toLocaleTimeString() : "N/A"}</span>
         </div>
       </div>

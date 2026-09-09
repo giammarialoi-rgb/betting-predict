@@ -1,14 +1,14 @@
 "use client";
 
-import { Card, LiveBadge, Pill, Unknown, fmtN } from "@/components/betmind/ui";
-import { useBetMindSnapshot } from "@/components/betmind/useSnapshot";
+import { Card, SnapshotBadge, Pill, Unknown, fmtN } from "@/components/betmind/ui";
+import { useBetMindData } from "@/components/betmind/DataProvider";
 
 function asRecord(v: unknown): Record<string, unknown> | null {
   return v && typeof v === "object" ? (v as Record<string, unknown>) : null;
 }
 
 export default function ModelsPage() {
-  const { data, error, updating, lastUpdate } = useBetMindSnapshot(8000);
+  const { data, error, updating, lastUpdate } = useBetMindData();
   const challengers = (data?.challengers ?? []) as {
     model_id: string;
     role: string;
@@ -34,7 +34,7 @@ export default function ModelsPage() {
           <p className="text-sm bm-muted">Champion / Challenger / Market baseline · PI disk</p>
         </div>
         <div className="flex items-center gap-2 text-xs">
-          <LiveBadge updating={updating} />
+          <SnapshotBadge updating={updating} />
           <span className="bm-muted">{lastUpdate ? new Date(lastUpdate).toLocaleTimeString() : "N/A"}</span>
         </div>
       </div>

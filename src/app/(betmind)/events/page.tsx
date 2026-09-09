@@ -5,7 +5,7 @@ import { Suspense, useMemo } from "react";
 import { useSearchParams } from "next/navigation";
 import {
   Card,
-  LiveBadge,
+  SnapshotBadge,
   Pill,
   Unknown,
   asRecord,
@@ -14,7 +14,7 @@ import {
   fmtN,
   sportBucket,
 } from "@/components/betmind/ui";
-import { useBetMindSnapshot } from "@/components/betmind/useSnapshot";
+import { useBetMindData } from "@/components/betmind/DataProvider";
 
 type Ev = {
   event_id: string;
@@ -61,7 +61,7 @@ function EventsInner() {
   const sport = (sp.get("sport") ?? "ALL").toUpperCase();
   const time = (sp.get("time") ?? "ALL").toUpperCase();
   const filter = (sp.get("filter") ?? "ALL").toUpperCase().replace("_", " ");
-  const { data, error, updating, lastUpdate } = useBetMindSnapshot(4000);
+  const { data, error, updating, lastUpdate } = useBetMindData();
   const obs = asRecord(data?.observatory);
   const events = ((obs?.next_events as Ev[]) ?? []).filter(Boolean);
   const diagnostics = asRecord(obs?.sport_diagnostics) ?? asRecord(obs?.coverage_047);
@@ -106,7 +106,7 @@ function EventsInner() {
           <h1 className="text-2xl font-bold">Events</h1>
         </div>
         <div className="flex items-center gap-2 text-xs">
-          <LiveBadge updating={updating} />
+          <SnapshotBadge updating={updating} />
           <span className="bm-muted">{lastUpdate ? new Date(lastUpdate).toLocaleTimeString() : "N/A"}</span>
         </div>
       </div>

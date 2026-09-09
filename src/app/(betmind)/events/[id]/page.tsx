@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import {
   Card,
-  LiveBadge,
+  SnapshotBadge,
   Metric,
   Pill,
   Unknown,
@@ -137,7 +137,7 @@ export default function EventDetailPage() {
           ← Events
         </Link>
         <div className="flex items-center gap-2 text-xs">
-          <LiveBadge updating={updating} />
+          <SnapshotBadge updating={updating} />
           <span className="bm-muted">{lastUpdate ? new Date(lastUpdate).toLocaleTimeString() : "N/A"}</span>
         </div>
       </div>

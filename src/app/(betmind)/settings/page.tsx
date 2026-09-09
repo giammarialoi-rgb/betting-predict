@@ -1,14 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { Card, Pill } from "@/components/betmind/ui";
-import { useBetMindSnapshot } from "@/components/betmind/useSnapshot";
+import { Card, Pill, StatusPill } from "@/components/betmind/ui";
+import { useBetMindData } from "@/components/betmind/DataProvider";
 import { asRecord } from "@/components/betmind/ui";
 
 export default function SettingsPage() {
-  const { data } = useBetMindSnapshot(8000);
-  const health = asRecord(data?.health);
-  const obs = asRecord(data?.observatory);
+  const { data, strip, health } = useBetMindData();
+  const detail = asRecord(health?.detail);
 
   return (
     <div className="mx-auto flex max-w-3xl flex-col gap-4">
@@ -27,11 +26,11 @@ export default function SettingsPage() {
           </li>
           <li className="flex justify-between gap-2">
             <span>Mode</span>
-            <Pill accent>PAPER · REAL_MONEY=false</Pill>
+            <Pill tone="accent">PAPER · REAL_MONEY=false</Pill>
           </li>
           <li className="flex justify-between gap-2">
             <span>Polling</span>
-            <span className="bm-muted">4s disk snapshot</span>
+            <span className="bm-muted">5s snapshot + health</span>
           </li>
           <li className="flex justify-between gap-2">
             <span>api_calls_ui</span>
@@ -40,15 +39,31 @@ export default function SettingsPage() {
         </ul>
       </Card>
 
+      <Card title="System (honest)">
+        <div className="flex flex-wrap gap-2">
+          <StatusPill state={strip.webApp} label={`WEB ${strip.webApp}`} />
+          <StatusPill state={strip.dataPipeline} label={`PIPELINE ${strip.dataPipeline}`} />
+          <StatusPill state={strip.brain} label={`BRAIN ${strip.brain}`} />
+          <StatusPill state={strip.worker} label={`WORKER ${strip.worker}`} />
+        </div>
+        <p className="mt-3 text-xs bm-muted">
+          store_present={String(detail?.store_present ?? false)} · snapshot at {String(data?.at ?? "—")}
+        </p>
+      </Card>
+
       <Card title="PWA / iPhone">
-        <p className="text-sm">
-          Safari → Share → <strong>Add to Home Screen</strong>. Standalone, theme #0A0A0A, safe-area
-          ready.
+        <p className="text-sm leading-relaxed">
+          Safari → Share → <strong>Add to Home Screen</strong>. Opens{" "}
+          <code className="text-[var(--bm-accent)]">/</code> in standalone (manifest start_url).
+          Theme #0A0A0A · safe-area · no offline service worker yet.
         </p>
       </Card>
 
       <Card title="SHORTCUTS">
         <div className="flex flex-col gap-2 text-sm">
+          <Link className="bm-accent underline" href="/sources">
+            Data sources
+          </Link>
           <Link className="bm-accent underline" href="/models">
             Models
           </Link>
@@ -58,24 +73,7 @@ export default function SettingsPage() {
           <Link className="bm-accent underline" href="/research">
             Research home
           </Link>
-          <Link className="bm-accent underline" href="/actuarial-lab/live-total">
-            Actuarial Lab · Live Total
-          </Link>
         </div>
-      </Card>
-
-      <Card title="SYSTEM (read-only)">
-        <pre className="max-h-40 overflow-auto text-[11px] text-[var(--bm-muted)]">
-          {JSON.stringify(
-            {
-              at: data?.at ?? null,
-              status: asRecord(health?.system)?.status ?? asRecord(obs?.system)?.status ?? "N/A",
-              model_readiness: asRecord(obs?.audit_056)?.model_readiness ?? "N/A",
-            },
-            null,
-            2,
-          )}
-        </pre>
       </Card>
     </div>
   );
