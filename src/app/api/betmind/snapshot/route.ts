@@ -6,6 +6,7 @@ import { loadChallengerRegistry053 } from "@/domain/eval/bankroll-053/challenger
 import { loadSourceHealth053 } from "@/domain/eval/bankroll-053/source-health";
 import { loadAutostartStatus055 } from "@/domain/eval/catalog-055/autostart";
 import { loadCoverage055, loadCurrentActivity055, readActivityFeed055 } from "@/domain/eval/catalog-055/cycle";
+import { loadRuntimeStatus } from "@/domain/eval/betmind-runtime/remote-status";
 import { permanentRoot044 } from "@/domain/eval/permanent-044/config";
 import { piRoot } from "@/domain/eval/predictive-intelligence/config";
 import { expectedValue056, fairOdds056, mirrorsMarket056 } from "@/domain/eval/audit-056/math";
@@ -276,7 +277,7 @@ function buildLiteObservatory(root: string, nowIso: string) {
   };
 }
 
-/** Disk-only BetMind snapshot. Zero Odds API / API-Sports. Avoids full store load. */
+/** Disk-first BetMind snapshot; Neon mirror when Lab B FS absent (Vercel). Zero Odds/API-Sports. */
 export async function GET() {
   const now = Date.now();
   if (cache && now - cache.at < CACHE_MS) {
@@ -287,6 +288,43 @@ export async function GET() {
     const root = permanentRoot044();
     const pi = piRoot(root);
     const nowIso = new Date().toISOString();
+    const storePresent =
+      existsSync(join(root, "events.jsonl")) && existsSync(join(root, "decisions.jsonl"));
+
+    if (!storePresent) {
+      const remote = await loadRuntimeStatus(now);
+      if (remote?.fresh) {
+        const body = {
+          at: nowIso,
+          api_calls_ui: 0 as const,
+          real_money: false as const,
+          cache_hit: false,
+          mirror_source: "neon" as const,
+          mirror_published_at: remote.published_at,
+          mirror_age_ms: remote.age_ms,
+          observatory: remote.payload.observatory,
+          health: {
+            ...remote.payload.health053,
+            components: remote.payload.components,
+            detail: remote.payload.detail,
+          },
+          challengers: [],
+          predictive: {
+            final_verdict: remote.payload.predictive.final_verdict,
+            validation: remote.payload.predictive.validation,
+            model_manifest: remote.payload.predictive.model_manifest,
+            learning_report: null,
+            paper_bankroll_report: null,
+            e2e: null,
+          },
+          learning_cases: [],
+          recent_settlements: [],
+          recent_autopsies: [],
+        };
+        cache = { at: now, body };
+        return NextResponse.json(body);
+      }
+    }
 
     const observatory = buildLiteObservatory(root, nowIso);
     const health = {

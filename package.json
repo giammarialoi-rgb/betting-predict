@@ -134,6 +134,7 @@
     "brain:uninstall": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/uninstall-brain.ps1",
     "brain:watchdog": "tsx src/scripts/brain-watchdog.ts",
     "brain:worker": "tsx src/scripts/brain-worker.ts",
+    "runtime:publish": "tsx src/scripts/runtime-publish.ts",
     "acquire:task-031": "tsx src/scripts/acquire-task-031.ts",
     "audit:task-031": "tsx src/scripts/audit-task-031.ts",
     "lab:task-031": "tsx src/scripts/lab-task-031.ts",

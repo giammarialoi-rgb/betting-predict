@@ -202,6 +202,15 @@ export async function runBrainCycle051(input: {
       stats: massive.stats,
     });
 
+    try {
+      const { schedulePublishRuntimeStatus } = await import(
+        "@/domain/eval/betmind-runtime/remote-status"
+      );
+      schedulePublishRuntimeStatus(60_000);
+    } catch {
+      /* optional Neon mirror for Vercel health */
+    }
+
     return {
       priority: plan.priority,
       reason: plan.reason,

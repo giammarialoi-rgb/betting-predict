@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { buildHealthPayload053 } from "@/domain/eval/bankroll-053/system";
+import { loadRuntimeStatus } from "@/domain/eval/betmind-runtime/remote-status";
 import { permanentRoot044 } from "@/domain/eval/permanent-044/config";
 import { piRoot } from "@/domain/eval/predictive-intelligence/config";
 
@@ -58,15 +59,73 @@ function degraded(started: number, error: unknown) {
 }
 
 /**
- * Production BetMind health — disk/read-only.
+ * Production BetMind health — disk first; Neon remote mirror when Lab B FS absent (Vercel).
  * Zero Odds API / API-Sports calls from this endpoint.
- * Never throws 500 when Lab B store is missing (Vercel FS).
+ * Never throws 500 when Lab B store is missing.
  */
 export async function GET() {
   const started = Date.now();
   try {
     const root = permanentRoot044();
     const pi = piRoot(root);
+    const storePresent =
+      existsSync(join(root, "events.jsonl")) && existsSync(join(root, "decisions.jsonl"));
+
+    if (!storePresent) {
+      const remote = await loadRuntimeStatus();
+      if (remote?.fresh) {
+        const components = remote.payload.components;
+        const offline = Object.values(components).filter((s) => s === "OFFLINE").length;
+        const ok = offline === 0 && components.data_pipeline === "ONLINE";
+        return NextResponse.json({
+          ok,
+          service: "betmind",
+          at: new Date().toISOString(),
+          latency_ms: Date.now() - started,
+          real_money: false as const,
+          api_calls: 0 as const,
+          components,
+          detail: {
+            ...remote.payload.detail,
+            store_present: false,
+            store_present_local_on_publisher: remote.payload.store_present_local,
+            mirror_source: "neon",
+            mirror_published_at: remote.published_at,
+            mirror_age_ms: remote.age_ms,
+            mirror_host: remote.payload.host,
+          },
+        });
+      }
+      if (remote && !remote.fresh) {
+        return NextResponse.json({
+          ok: false,
+          service: "betmind",
+          at: new Date().toISOString(),
+          latency_ms: Date.now() - started,
+          real_money: false as const,
+          api_calls: 0 as const,
+          components: {
+            supervisor: "OFFLINE",
+            worker: "OFFLINE",
+            brain: "OFFLINE",
+            predictive_engine: "OFFLINE",
+            data_pipeline: "OFFLINE",
+            settlement: "UNKNOWN",
+            learning: "UNKNOWN",
+          },
+          detail: {
+            ...remote.payload.detail,
+            store_present: false,
+            mirror_source: "neon",
+            mirror_published_at: remote.published_at,
+            mirror_age_ms: remote.age_ms,
+            mirror_stale: true,
+            brain_status: "STALE_MIRROR",
+          },
+        });
+      }
+    }
+
     const base = buildHealthPayload053(root);
     const system = base.system;
     const brain = base.brain;
@@ -74,8 +133,6 @@ export async function GET() {
     const validation = readJson(join(pi, "validation-report.json"));
     const modelManifest = readJson(join(pi, "model-manifest.json"));
 
-    const storePresent =
-      existsSync(join(root, "events.jsonl")) && existsSync(join(root, "decisions.jsonl"));
     const settlementsPresent = existsSync(join(root, "settlements.jsonl"));
     const learningPresent =
       existsSync(join(pi, "learning", "cases.jsonl")) ||
@@ -138,6 +195,7 @@ export async function GET() {
         store_root: "audit/external/task-044",
         store_present: storePresent,
         pi_verdict_present: Boolean(verdict),
+        mirror_source: storePresent ? "local_disk" : "none",
       },
     });
   } catch (error) {
