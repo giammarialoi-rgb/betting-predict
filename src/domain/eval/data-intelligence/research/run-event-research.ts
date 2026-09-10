@@ -453,6 +453,44 @@ export async function runEventResearchBatch(input: {
       result.research_failures += 1;
     }
 
+    // 4b) Club-Football-Match-Data — cache presence only (no invented fetch)
+    {
+      const cfCandidates = [
+        join(process.cwd(), "audit", "club-football-match-data"),
+        join(root, "club-football-match-data"),
+      ];
+      const cfPresent = cfCandidates.some((p) => existsSync(p));
+      appendResearchStatus(
+        baseRow({
+          event_id: ev.event_id,
+          source_id: "club-football-match-data",
+          phase: cfPresent ? "OK" : "UNAVAILABLE",
+          ok: cfPresent,
+          fetched: cfPresent,
+          fetched_at: cfPresent ? nowIso : null,
+          available_at: null,
+          reason: cfPresent
+            ? "Local Club-Football-Match-Data dataset present (research cache)"
+            : "Club-Football-Match-Data cache absent — no invented history",
+          raw_ref: cfPresent ? "club-football-match-data" : null,
+          cycle_number: input.cycleNumber,
+          at: nowIso,
+          url: null,
+          adapter_kind: "CACHE_ONLY",
+          parser_status: cfPresent ? "CACHE_PRESENT" : "CACHE_ABSENT",
+          fields_extracted: cfPresent ? ["historical_matches"] : [],
+        }),
+        root,
+      );
+      if (cfPresent) {
+        bump(result.by_source, "club-football-match-data", "ok");
+        result.research_fetches += 1;
+      } else {
+        bump(result.by_source, "club-football-match-data", "fail");
+        result.research_failures += 1;
+      }
+    }
+
     // Odds API — market layer only (explicit: does not enter model)
     appendResearchStatus(
       baseRow({
@@ -495,45 +533,49 @@ export async function runEventResearchBatch(input: {
     }
   }
 
-  // Gated scrape probes once per batch
+  // Gated scrape probes once per batch (site-level, not match-page)
   if (input.allowScrapeProbes !== false && isTestScrapeEnabled() && slice[0]) {
     const probes = await runTestScrapeProbes({
       eventId: slice[0].event_id,
       eventTime: slice[0].kickoff_utc,
       labBRoot: root,
     });
+    for (const ev of slice) {
+      for (const p of probes) {
+        const fetched = p.status === "OK" || p.status === "BLOCKED" || p.status === "INVALID";
+        const fields = p.observations.map((o) => o.key);
+        appendResearchStatus(
+          baseRow({
+            event_id: ev.event_id,
+            source_id: p.source_id,
+            phase:
+              p.status === "OK"
+                ? "OK"
+                : p.status === "DENIED"
+                  ? "DENIED"
+                  : p.status === "BLOCKED"
+                    ? "BLOCKED"
+                    : "UNAVAILABLE",
+            ok: p.status === "OK",
+            fetched,
+            fetched_at: fetched ? nowIso : null,
+            available_at: null,
+            observed_at: fetched ? nowIso : null,
+            reason: `${p.reason ?? `probe_${p.status}`} — SITE_PROBE (homepage, not match page)`,
+            raw_ref: p.content_hash,
+            cycle_number: input.cycleNumber,
+            at: nowIso,
+            url: p.url,
+            http_status: p.http_status || null,
+            parser_status: p.status,
+            fields_extracted: fields,
+            adapter_kind: "TEST_PROBE",
+          }),
+          root,
+        );
+      }
+    }
     for (const p of probes) {
-      const fetched = p.status === "OK" || p.status === "BLOCKED" || p.status === "INVALID";
-      const fields = p.observations.map((o) => o.key);
-      appendResearchStatus(
-        baseRow({
-          event_id: slice[0].event_id,
-          source_id: p.source_id,
-          phase:
-            p.status === "OK"
-              ? "OK"
-              : p.status === "DENIED"
-                ? "DENIED"
-                : p.status === "BLOCKED"
-                  ? "BLOCKED"
-                  : "UNAVAILABLE",
-          ok: p.status === "OK",
-          fetched,
-          fetched_at: fetched ? nowIso : null,
-          available_at: null,
-          observed_at: fetched ? nowIso : null,
-          reason: p.reason ?? `probe_${p.status}`,
-          raw_ref: p.content_hash,
-          cycle_number: input.cycleNumber,
-          at: nowIso,
-          url: p.url,
-          http_status: p.http_status || null,
-          parser_status: p.status,
-          fields_extracted: fields,
-          adapter_kind: "TEST_PROBE",
-        }),
-        root,
-      );
       if (p.status === "DENIED") {
         bump(result.by_source, p.source_id, "denied");
         result.research_denied += 1;

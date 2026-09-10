@@ -1,6 +1,7 @@
 import { loadPiMatches } from "@/domain/eval/predictive-intelligence/dataset/loader";
 import { buildFeatureVectorPi } from "@/domain/eval/predictive-intelligence/features/engine";
 import type { PiMatchRow } from "@/domain/eval/predictive-intelligence/types";
+import { resolveLivePiTarget } from "@/domain/eval/predictive-intelligence/live-resolve";
 
 /** Resolve as-of PI form/history for a live Lab B event — never invents; returns null if unmatched. */
 export function resolvePiFormHistoryForEvent(input: {
@@ -19,22 +20,22 @@ export function resolvePiFormHistoryForEvent(input: {
   const away = input.away.trim().toLowerCase();
   if (!home || !away) return null;
 
-  const homeHit = matches.find(
-    (m) => m.home_team.toLowerCase() === home || m.home_team.toLowerCase().includes(home),
-  );
-  const awayHit = matches.find(
-    (m) => m.away_team.toLowerCase() === away || m.away_team.toLowerCase().includes(away),
-  );
-  const homeId = homeHit?.home_team_id ?? `live:${home}`;
-  const awayId = awayHit?.away_team_id ?? `live:${away}`;
+  const resolved = resolveLivePiTarget({
+    home_team: input.home,
+    away_team: input.away,
+    competition: input.competition,
+    matches,
+  });
+  const homeId = resolved.home_team_id;
+  const awayId = resolved.away_team_id;
   const kick = input.kickoff_utc ?? new Date().toISOString();
   const day = kick.slice(0, 10);
 
   const target: PiMatchRow = {
     canonical_id: `live-snap|${day}|${homeId}|${awayId}`,
     source: "football-data-co-uk",
-    season: "live",
-    league: input.competition ?? "UNK",
+    season: resolved.season,
+    league: resolved.division ?? input.competition ?? "UNK",
     match_date: day,
     event_time: kick,
     home_team: input.home,

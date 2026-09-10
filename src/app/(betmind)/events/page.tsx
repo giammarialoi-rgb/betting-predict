@@ -9,7 +9,6 @@ import {
   Pill,
   Unknown,
   asRecord,
-  edgeLabel,
   fmtKick,
   fmtN,
   sportBucket,
@@ -36,6 +35,9 @@ type Ev = {
   result?: string | null;
   markets?: string[];
   minutes_to_kickoff?: number | null;
+  probability_model?: Record<string, number> | null;
+  home_or_a?: string | null;
+  away_or_b?: string | null;
 };
 
 const SPORTS = ["ALL", "FOOTBALL", "TENNIS", "BASKETBALL", "HOCKEY", "VOLLEYBALL"] as const;
@@ -217,24 +219,32 @@ function EventsInner() {
                 </div>
                 <div className="hidden text-xs lg:grid lg:grid-cols-3 lg:gap-3">
                   <div>
-                    <div className="bm-muted">MODEL</div>
+                    <div className="bm-muted">Casa</div>
                     <div className="font-semibold bm-accent">
-                      {e.model_pct != null ? fmtN(e.model_pct, 1) : "—"}
+                      {e.probability_model?.HOME != null
+                        ? `${fmtN(e.probability_model.HOME * 100, 1)}%`
+                        : "—"}
                     </div>
                   </div>
                   <div>
-                    <div className="bm-muted">MKT</div>
-                    <div className="font-semibold">{e.market_pct != null ? fmtN(e.market_pct, 1) : "—"}</div>
+                    <div className="bm-muted">Pareggio</div>
+                    <div className="font-semibold">
+                      {e.probability_model?.DRAW != null
+                        ? `${fmtN(e.probability_model.DRAW * 100, 1)}%`
+                        : "—"}
+                    </div>
                   </div>
                   <div>
-                    <div className="bm-muted">ODDS</div>
-                    <div className="font-semibold">{e.odds != null ? fmtN(e.odds, 2) : "—"}</div>
+                    <div className="bm-muted">Trasferta</div>
+                    <div className="font-semibold">
+                      {e.probability_model?.AWAY != null
+                        ? `${fmtN(e.probability_model.AWAY * 100, 1)}%`
+                        : "—"}
+                    </div>
                   </div>
                 </div>
                 <div className="text-right">
-                  <div className="text-[10px] bm-muted">EDGE</div>
-                  <div className="text-sm font-bold bm-accent">{edgeLabel(e.edge_status, e.edge)}</div>
-                  <Pill>{e.decision ?? e.prediction_status ?? "—"}</Pill>
+                  <span className="text-[10px] bm-accent">Vedi analisi completa</span>
                 </div>
               </div>
             </Card>

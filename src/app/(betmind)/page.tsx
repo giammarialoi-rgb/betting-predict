@@ -206,11 +206,9 @@ export default function BetMindHomePage() {
           ))}
         </div>
         <div className="mt-3 flex flex-wrap gap-2">
-          <Pill>Last cycle {fmtWhen(lastCycle)}</Pill>
-          <Pill>Cycle #{cycleNum != null ? String(cycleNum) : "—"}</Pill>
-          <Pill>Heartbeat {String(sys?.heartbeat_age_ms ?? detail?.heartbeat_age_ms ?? "—")} ms</Pill>
-          <Pill>Priority {String(analysis?.priority ?? sys?.last_priority ?? "—")}</Pill>
-          <Pill>Supervisor {strip.supervisor}</Pill>
+          <Pill>Cervello {strip.brain}</Pill>
+          <Pill>Ultimo ciclo #{cycleNum != null ? String(cycleNum) : "—"}</Pill>
+          <Pill>{fmtWhen(lastCycle)}</Pill>
         </div>
       </section>
 
@@ -227,12 +225,11 @@ export default function BetMindHomePage() {
           ) : (
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
               <Metric
-                label="Cycle"
+                label="Ultimo ciclo"
                 value={cycleNum != null ? `#${String(cycleNum)}` : "—"}
                 accent
               />
-              <Metric label="Phase" value={phase} />
-              <Metric label="Completed at" value={fmtWhen(lastCycle)} />
+              <Metric label="Ultimo aggiornamento" value={fmtWhen(lastCycle)} />
                   <Metric
                     label="Eventi scoperti"
                     value={String(
@@ -255,7 +252,7 @@ export default function BetMindHomePage() {
                     )}
                   />
                   <Metric
-                    label="Inference modello"
+                    label="Previsioni indipendenti"
                     value={String(
                       (analysis as { model_inferences?: number } | null)?.model_inferences ?? "—",
                     )}
@@ -331,74 +328,76 @@ export default function BetMindHomePage() {
         ) : (
           <>
             <div className="mb-3 flex flex-wrap gap-2">
-              <Pill tone="accent">MODEL {modelName}</Pill>
-              <Pill>EDGE {edgeLabel(firstEv?.edge_status, firstEv?.edge)}</Pill>
+              <Pill tone="accent">Modello indipendente</Pill>
               <Pill>{String(firstEv?.label ?? firstEv?.event_id)}</Pill>
             </div>
             <div className="bm-split">
               <div className="bm-panel-model">
-                <div className="bm-section-label">Model (independent)</div>
-                <div className="mt-2 grid grid-cols-2 gap-3">
+                <div className="bm-section-label">Modello indipendente</div>
+                <div className="mt-2 grid grid-cols-3 gap-3">
                   <Metric
-                    label="Model %"
-                    value={firstEv?.model_pct != null ? fmtN(firstEv.model_pct as number, 1) : "—"}
+                    label="Casa"
+                    value={
+                      asRecord(firstEv?.probability_model)?.HOME != null
+                        ? `${fmtN(Number(asRecord(firstEv?.probability_model)?.HOME) * 100, 1)}%`
+                        : firstEv?.model_pct != null
+                          ? `${fmtN(firstEv.model_pct as number, 1)}%`
+                          : "—"
+                    }
                     accent
                   />
                   <Metric
-                    label="Confidence"
+                    label="Pareggio"
                     value={
-                      firstEv?.confidence != null ? fmtPct(firstEv.confidence as number) : "—"
+                      asRecord(firstEv?.probability_model)?.DRAW != null
+                        ? `${fmtN(Number(asRecord(firstEv?.probability_model)?.DRAW) * 100, 1)}%`
+                        : "—"
+                    }
+                  />
+                  <Metric
+                    label="Trasferta"
+                    value={
+                      asRecord(firstEv?.probability_model)?.AWAY != null
+                        ? `${fmtN(Number(asRecord(firstEv?.probability_model)?.AWAY) * 100, 1)}%`
+                        : "—"
                     }
                   />
                 </div>
               </div>
               <div className="bm-panel-market">
-                <div className="bm-section-label">Market / odds (baseline only)</div>
+                <div className="bm-section-label">Mercato (separato)</div>
                 <div className="mt-2 grid grid-cols-2 gap-3">
                   <Metric
-                    label="Market %"
+                    label="Prob. implicita"
                     value={firstEv?.market_pct != null ? fmtN(firstEv.market_pct as number, 1) : "—"}
                   />
                   <Metric
-                    label="Odds"
+                    label="Quota osservata"
                     value={firstEv?.odds != null ? fmtN(firstEv.odds as number, 2) : "—"}
                   />
                 </div>
               </div>
             </div>
-            <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-              <Metric label="EDGE" value={edgeLabel(firstEv?.edge_status, firstEv?.edge)} accent />
-              <Metric label="EV" value={firstEv?.ev != null ? fmtN(firstEv.ev as number, 3) : "—"} />
-              <Metric label="Decision" value={String(firstEv?.decision ?? "—")} />
-              <Metric
-                label="Feature coverage"
-                value={
-                  firstEv?.feature_coverage != null
-                    ? fmtPct(firstEv.feature_coverage as number)
-                    : "—"
-                }
-              />
-            </div>
+            {String(firstEv?.edge_status ?? "") === "CALCULATED" ? (
+              <div className="mt-3 grid gap-3 sm:grid-cols-2">
+                <Metric label="Scarto vs mercato" value={edgeLabel(firstEv?.edge_status, firstEv?.edge)} />
+                <Metric label="Decisione" value={String(firstEv?.decision ?? "—")} />
+              </div>
+            ) : null}
             <div className="mt-3 grid gap-3 sm:grid-cols-2">
-              <Metric label="Competition" value={String(firstEv?.competition ?? "—")} />
+              <Metric label="Competizione" value={String(firstEv?.competition ?? "—")} />
               <Metric label="Kickoff" value={fmtWhen(String(firstEv?.kickoff_utc ?? ""))} />
-              <Metric label="Analyzed at" value={fmtWhen(String(firstEv?.analyzed_at ?? ""))} />
-              <Metric label="Selection" value={String(firstEv?.selection ?? "—")} />
-            </div>
-            <div className="mt-3">
-              <div className="bm-metric-label">Why</div>
-              <p className="mt-1 text-sm leading-relaxed">{String(firstEv?.why ?? "—")}</p>
             </div>
             {typeof firstEv?.event_id === "string" && (
               <Link href={`/events/${firstEv.event_id}`} className="bm-btn bm-btn-ghost mt-4 text-xs">
-                Open event
+                Vedi analisi completa
               </Link>
             )}
           </>
         )}
       </Card>
 
-      <Card title="Recent board" right={<Pill>{String(nextEvents.length)} rows</Pill>}>
+      <Card title="Ultime analisi" right={<Pill>{String(nextEvents.length)}</Pill>}>
         {nextEvents.length === 0 ? (
           <EmptyState
             title="NO BOARD EVENTS"
@@ -409,28 +408,34 @@ export default function BetMindHomePage() {
             {nextEvents.slice(0, 8).map((raw) => {
               const e = asRecord(raw);
               if (!e) return null;
+              const pm = asRecord(e.probability_model);
+              const home = String(e.home_or_a ?? "").trim();
+              const away = String(e.away_or_b ?? "").trim();
+              const title =
+                home && away ? `${home} vs ${away}` : String(e.label ?? e.event_id);
+              const pct = (v: unknown) =>
+                typeof v === "number" && Number.isFinite(v) ? `${fmtN(v * 100, 1)}%` : "—";
               return (
                 <li key={String(e.event_id)} className="flex flex-wrap items-center justify-between gap-2 py-2">
                   <div className="min-w-0">
-                    <div className="truncate font-medium">{String(e.label ?? e.event_id)}</div>
+                    <div className="truncate font-medium">{title}</div>
                     <div className="text-xs bm-muted">
                       {String(e.competition ?? "—")} · {fmtWhen(String(e.kickoff_utc ?? ""))}
                     </div>
+                    <div className="mt-1 text-xs">
+                      Casa {pct(pm?.HOME)} · Pareggio {pct(pm?.DRAW)} · Trasferta {pct(pm?.AWAY)}
+                    </div>
                   </div>
-                  <div className="flex flex-wrap gap-1 text-xs">
-                    <Pill>{String(e.bucket ?? e.decision ?? "—")}</Pill>
-                    <Pill tone="accent">
-                      {e.model_pct != null ? `${fmtN(e.model_pct as number, 1)}%` : "no model%"}
-                    </Pill>
-                    <Pill>{edgeLabel(e.edge_status, e.edge)}</Pill>
-                  </div>
+                  <Link href={`/events/${String(e.event_id)}`} className="text-xs bm-accent underline">
+                    Vedi analisi completa
+                  </Link>
                 </li>
               );
             })}
           </ul>
         )}
         <Link href="/events" className="bm-btn bm-btn-ghost mt-3 text-xs">
-          All events
+          Tutti gli eventi
         </Link>
       </Card>
 

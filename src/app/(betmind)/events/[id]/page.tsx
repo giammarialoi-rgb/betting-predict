@@ -127,6 +127,64 @@ type Detail = {
     analyzed_at: string | null;
     prediction_persisted_at?: string | null;
     lineage?: DossierLineage | null;
+    research_summary?: {
+      sources_attempted: number;
+      sources_successful: number;
+      sources_partial: number;
+      sources_blocked: number;
+      sources_missing_adapter: number;
+      sources_no_data: number;
+      source_rows: Array<{
+        source_id: string;
+        title: string;
+        human_status: string;
+        fetched: boolean;
+        http_status: number | null;
+        fetched_at: string | null;
+        market_layer: boolean;
+        reason_it: string;
+        public_url: string | null;
+      }>;
+      feature_groups_found: string[];
+      feature_groups_missing: string[];
+      model_inputs: Array<{ key: string; label_it: string; value: number | string | null; quality: string }>;
+      model_exclusions: Array<{ key: string; label_it: string; reason_it: string; quality: string }>;
+      timeline: Array<{ at: string | null; label_it: string }>;
+      prediction_snapshot: {
+        feature_count_entered: number;
+        feature_coverage: number | null;
+        has_independent_inference: boolean;
+        odds_entered_model: false;
+        model_version: string | null;
+      };
+    } | null;
+    human_explanation?: {
+      match_line: string;
+      prediction_lines: string[];
+      why: string[];
+      analyzed: string;
+      used: string[];
+      missing: string[];
+      sources_summary: string;
+      odds_sentence: string;
+      model_card: {
+        name_it: string;
+        version: string;
+        inputs: number;
+        coverage_pct: string | null;
+        odds_used: false;
+      };
+      how_model_works: string;
+      poisson: string | null;
+      insufficient: string | null;
+      category_checks: Array<{ label: string; found: boolean; note: string }>;
+    } | null;
+    team_identity?: {
+      home: { display_name: string; canonical_id: string; matched: boolean };
+      away: { display_name: string; canonical_id: string; matched: boolean };
+      division: string | null;
+    } | null;
+    poisson?: { lambda_home: number; lambda_away: number } | null;
   } | null;
   model_version: string | null;
   finished?: boolean;
@@ -202,16 +260,11 @@ export default function EventDetailPage() {
 
   const pred = data?.predictions?.[0];
   const dossier = data?.dossier;
+  const hx = dossier?.human_explanation ?? null;
+  const rs = dossier?.research_summary ?? null;
   const modelProbs = dossier?.independent_model.probability ?? pred?.probability_model;
   const marketProbs = dossier?.market.probability ?? pred?.probability_market;
   const edgeStatus = data?.decision_048?.edge_status ?? "UNKNOWN";
-  const cycleN = dossier?.cycle.cycle_number;
-  const modelVer =
-    dossier?.independent_model.model_version ??
-    dossier?.cycle.model_version ??
-    data?.model_version ??
-    pred?.model_version ??
-    "—";
 
   return (
     <div className="mx-auto flex max-w-4xl flex-col gap-4">
@@ -242,81 +295,170 @@ export default function EventDetailPage() {
         <>
           <header className="bm-hero text-center">
             <div className="bm-section-label">{data.event.competition}</div>
-            <h1 className="mt-2 text-2xl font-bold leading-tight">
+            <h1 className="mt-2 text-3xl font-bold leading-tight">
               {data.event.home_or_a}
-              <span className="mx-2 text-base bm-muted">{t.vs}</span>
+              <div className="my-1 text-base font-medium bm-muted">{t.vs}</div>
               {data.event.away_or_b}
             </h1>
             <p className="mt-2 text-sm bm-muted">
-              {data.event.sport} · {t.kickoff} {fmtWhen(String(data.event.kickoff_utc ?? ""))} ·{" "}
-              {data.event.status ?? data.event.semantic_level}
+              {fmtWhen(String(data.event.kickoff_utc ?? ""))}
             </p>
-            <div className="mt-3 flex flex-wrap justify-center gap-2">
-              <Pill accent>{modelVer}</Pill>
-              <Pill>
-                {t.cycle_n} #{cycleN != null ? String(cycleN) : "—"}
-              </Pill>
-              <Pill>{t.event_id}: {data.event.event_id.slice(0, 12)}…</Pill>
-              <Pill>{data.decision_048?.decision ?? "—"}</Pill>
-            </div>
           </header>
 
-          <div className="grid gap-3 sm:grid-cols-2">
-            <Card title={t.independent_model} glow>
-              <p className="mb-2 text-xs bm-muted">
-                Probabilità del modello indipendente — senza quote.
+          <Card title="Previsione BetMind" glow>
+            {hx?.insufficient ? (
+              <p className="text-sm leading-relaxed">{hx.insufficient}</p>
+            ) : modelProbs ? (
+              <ul className="space-y-2 text-lg">
+                <li className="flex justify-between">
+                  <span>Casa</span>
+                  <span className="font-semibold bm-accent">{fmtPct(modelProbs.HOME ?? modelProbs.home)}</span>
+                </li>
+                <li className="flex justify-between">
+                  <span>Pareggio</span>
+                  <span className="font-semibold bm-accent">{fmtPct(modelProbs.DRAW ?? modelProbs.draw)}</span>
+                </li>
+                <li className="flex justify-between">
+                  <span>Trasferta</span>
+                  <span className="font-semibold bm-accent">{fmtPct(modelProbs.AWAY ?? modelProbs.away)}</span>
+                </li>
+              </ul>
+            ) : (
+              <EmptyState
+                title="Nessuna previsione indipendente"
+                reason={
+                  hx?.insufficient ??
+                  dossier?.independent_model.note ??
+                  "I dati disponibili non hanno raggiunto i requisiti del modello."
+                }
+              />
+            )}
+            {hx?.model_card && (
+              <p className="mt-3 text-sm bm-muted">
+                Modello statistico indipendente · {hx.model_card.name_it}
+                {hx.model_card.coverage_pct ? ` · copertura dei dati ${hx.model_card.coverage_pct}` : ""}
+                {hx.model_card.inputs ? ` · ${hx.model_card.inputs} informazioni usate` : ""}
               </p>
-              {modelProbs ? (
-                <ul className="space-y-1 text-sm">
-                  <li className="flex justify-between">
-                    <span>{t.home}</span>
-                    <span className="bm-accent">{fmtPct(modelProbs.HOME ?? modelProbs.home)}</span>
+            )}
+            {hx?.poisson && <p className="mt-2 text-sm">{hx.poisson}</p>}
+          </Card>
+
+          {hx && (
+            <Card title="Perché">
+              {hx.why.map((line) => (
+                <p key={line} className="mb-2 text-sm leading-relaxed">
+                  {line}
+                </p>
+              ))}
+              <details className="mt-3 text-sm">
+                <summary className="cursor-pointer bm-muted">Come funziona il modello?</summary>
+                <p className="mt-2 leading-relaxed">{hx.how_model_works}</p>
+              </details>
+            </Card>
+          )}
+
+          {hx && (
+            <Card title="Cosa ha analizzato BetMind">
+              <p className="mb-3 text-sm leading-relaxed">{hx.analyzed}</p>
+              <ul className="space-y-1 text-sm">
+                {hx.category_checks.map((c) => (
+                  <li key={c.label}>
+                    {c.found ? "✓" : "✕"} {c.label}
+                    {!c.found ? <span className="bm-muted"> — {c.note}</span> : null}
                   </li>
-                  <li className="flex justify-between">
-                    <span>{t.draw}</span>
-                    <span className="bm-accent">{fmtPct(modelProbs.DRAW ?? modelProbs.draw)}</span>
-                  </li>
-                  <li className="flex justify-between">
-                    <span>{t.away}</span>
-                    <span className="bm-accent">{fmtPct(modelProbs.AWAY ?? modelProbs.away)}</span>
-                  </li>
-                </ul>
+                ))}
+              </ul>
+            </Card>
+          )}
+
+          {hx && (
+            <Card title="Informazioni utilizzate">
+              {hx.used.length === 0 ? (
+                <p className="text-sm bm-muted">Nessuna informazione è entrata nel modello indipendente.</p>
               ) : (
-                <EmptyState
-                  title={t.no_data}
-                  reason={
-                    dossier?.independent_model.note ??
-                    "probability_model assente per questo evento"
-                  }
-                />
+                <ul className="space-y-1 text-sm">
+                  {hx.used.map((u) => (
+                    <li key={u}>• {u}</li>
+                  ))}
+                </ul>
               )}
-              <div className="mt-3 grid grid-cols-2 gap-2">
-                <Metric label={t.model_version} value={String(modelVer)} />
-                <Metric
-                  label={t.confidence}
-                  value={fmtN(
-                    dossier?.independent_model.confidence ?? pred?.confidence_score,
-                    2,
-                  )}
-                />
-                <Metric
-                  label={t.feature_coverage}
-                  value={
-                    dossier?.independent_model.feature_coverage != null
-                      ? fmtPct(dossier.independent_model.feature_coverage)
-                      : "—"
-                  }
-                />
-                <Metric
-                  label={t.prediction_persisted_at}
-                  value={fmtWhen(
-                    String(dossier?.prediction_persisted_at ?? dossier?.analyzed_at ?? ""),
-                  )}
-                />
-              </div>
+            </Card>
+          )}
+
+          {hx && (
+            <Card title="Cosa non è riuscito a trovare">
+              {hx.missing.length === 0 ? (
+                <p className="text-sm bm-muted">Nessuna lacuna aggiuntiva registrata oltre al catalogo tecnico.</p>
+              ) : (
+                <ul className="space-y-2 text-sm">
+                  {hx.missing.map((m) => (
+                    <li key={m}>• {m}</li>
+                  ))}
+                </ul>
+              )}
+            </Card>
+          )}
+
+          {rs && (
+            <Card title="Fonti consultate">
+              <p className="mb-3 text-sm leading-relaxed">{hx?.sources_summary}</p>
+              <ul className="space-y-2 text-sm">
+                {rs.source_rows.map((r) => (
+                  <li key={r.source_id} className="flex flex-wrap items-center justify-between gap-2">
+                    <span className="font-medium">{r.title}</span>
+                    <span className="text-xs bm-muted">
+                      {r.human_status === "SUCCESS"
+                        ? "disponibile"
+                        : r.human_status === "BLOCKED"
+                          ? r.http_status === 403
+                            ? "accesso negato (403)"
+                            : "bloccata"
+                          : r.human_status === "MISSING_ADAPTER"
+                            ? "adapter mancante"
+                            : r.human_status === "DISABLED_BY_POLICY"
+                              ? "disabilitata per policy"
+                              : r.human_status === "NO_DATA"
+                                ? "nessun dato"
+                                : r.human_status === "HTTP_ERROR"
+                                  ? `errore HTTP ${r.http_status ?? ""}`
+                                  : r.human_status.toLowerCase()}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </Card>
+          )}
+
+          {rs && rs.timeline.length > 0 && (
+            <Card title="Cronologia della ricerca">
+              <ul className="space-y-2 text-sm">
+                {rs.timeline.map((row) => (
+                  <li key={`${row.at}-${row.label_it}`}>
+                    <span className="bm-muted">{row.at ? fmtWhen(row.at) : "—"}</span>
+                    <span className="ml-2">{row.label_it}</span>
+                  </li>
+                ))}
+              </ul>
+            </Card>
+          )}
+
+          <div className="grid gap-3 sm:grid-cols-2">
+            <Card title="Modello indipendente">
+              <p className="mb-2 text-sm">
+                {hx?.odds_sentence ??
+                  "Il modello non ha utilizzato le quote per calcolare queste probabilità."}
+              </p>
+              {hx?.model_card && (
+                <div className="grid grid-cols-2 gap-2">
+                  <Metric label="Modello" value={hx.model_card.name_it} />
+                  <Metric label="Versione" value={hx.model_card.version} />
+                  <Metric label="Informazioni usate" value={String(hx.model_card.inputs)} />
+                  <Metric label="Copertura dei dati" value={hx.model_card.coverage_pct ?? "—"} />
+                </div>
+              )}
             </Card>
 
-            <Card title={t.market}>
+            <Card title="Mercato — separato">
               <p className="mb-2 text-xs bm-muted">
                 {dossier?.market.note ??
                   "Solo confronto — le quote non entrano nel modello indipendente."}
@@ -342,6 +484,9 @@ export default function EventDetailPage() {
             </Card>
           </div>
 
+          <details className="rounded-xl border border-[var(--bm-border)] bg-[var(--bm-card)] p-4">
+            <summary className="cursor-pointer text-sm font-semibold">Dettagli tecnici</summary>
+            <div className="mt-4 flex flex-col gap-4">
           {dossier?.lineage && (
             <Card title={t.lineage_title} glow>
               <dl className="space-y-3 text-sm">
@@ -513,8 +658,10 @@ export default function EventDetailPage() {
               </div>
             )}
           </Card>
+            </div>
+          </details>
 
-          <Card title={t.settlement}>
+          <Card title="Esito">
             {data.settlement ? (
               <div className="space-y-1 text-sm">
                 <div>

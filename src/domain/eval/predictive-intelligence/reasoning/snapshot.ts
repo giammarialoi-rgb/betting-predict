@@ -27,6 +27,7 @@ export type ReasoningSnapshotPi = {
   why: ReasoningWhyPi;
   at: string;
   real_money: false;
+  poisson?: { lambda_home: number; lambda_away: number } | null;
 };
 
 function pushUnique(arr: string[], v: string): void {

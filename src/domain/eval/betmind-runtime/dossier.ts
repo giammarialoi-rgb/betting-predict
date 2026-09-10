@@ -10,6 +10,11 @@ import { loadBrainState051 } from "@/domain/eval/brain-051/config";
 import { latestResearchBySource } from "@/domain/eval/data-intelligence/research/status";
 import type { FeatureDatum } from "@/domain/eval/predictive-intelligence/types";
 import { readJsonlTail } from "@/domain/eval/betmind-runtime/board";
+import { buildResearchSummary, type ResearchSummary } from "@/domain/eval/betmind-runtime/explain/research-summary";
+import { buildHumanExplanation, type HumanExplanation } from "@/domain/eval/betmind-runtime/explain/italian-explanation";
+import { resolveEventTeamIdentity, type EventTeamIdentity } from "@/domain/eval/betmind-runtime/explain/team-identity";
+import { assertIndependentOddsFirewall } from "@/domain/eval/betmind-runtime/explain/odds-firewall";
+import { predictPoissonIndependentDetailed } from "@/domain/eval/predictive-intelligence/models/poisson-independent";
 
 export type UiFeatureStatus =
   | "ELIGIBLE"
@@ -104,6 +109,10 @@ export type AnalysisDossier = {
   analyzed_at: string | null;
   prediction_persisted_at: string | null;
   lineage: DossierLineageAnswers;
+  research_summary?: ResearchSummary;
+  human_explanation?: HumanExplanation;
+  team_identity?: EventTeamIdentity | null;
+  poisson?: { lambda_home: number; lambda_away: number } | null;
   real_money: false;
 };
 
@@ -386,7 +395,7 @@ export function buildAnalysisDossier(
     confidence_defined: conf != null && Number.isFinite(conf),
   };
 
-  return {
+  const base: AnalysisDossier = {
     event: {
       event_id: eventId,
       home: String(event.home_or_a ?? "N/A"),
@@ -438,6 +447,86 @@ export function buildAnalysisDossier(
     lineage,
     real_money: false,
   };
+
+  assertIndependentOddsFirewall({
+    featureKeys: features.map((f) => f.name),
+    enteredKeys: entered.map((f) => f.name),
+    oddsEnteredModel: false,
+  });
+
+  const homeName = String(event.home_or_a ?? "N/A");
+  const awayName = String(event.away_or_b ?? "N/A");
+  let team_identity: EventTeamIdentity | null = null;
+  try {
+    team_identity = resolveEventTeamIdentity({
+      home: homeName,
+      away: awayName,
+      competition: String(event.competition ?? ""),
+      labBRoot: labB,
+    });
+  } catch {
+    team_identity = null;
+  }
+
+  const research_summary = buildResearchSummary({
+    home: homeName,
+    away: awayName,
+    features,
+    research,
+    prediction_time: persistedAt,
+    model_version: String(modelVersion ?? pred?.model_version ?? ""),
+    feature_coverage:
+      typeof reasoning?.feature_coverage === "number"
+        ? (reasoning.feature_coverage as number)
+        : null,
+    has_independent_inference: Boolean(probability_model),
+    event_identified_at: (event.collected_at_utc as string | null) ?? persistedAt,
+  });
+
+  const storedPoisson =
+    reasoning &&
+    reasoning.poisson &&
+    typeof (reasoning.poisson as { lambda_home?: number }).lambda_home === "number"
+      ? (reasoning.poisson as { lambda_home: number; lambda_away: number })
+      : null;
+  let poisson = storedPoisson;
+  if (!poisson && probability_model && reasoning?.feature_snapshot) {
+    const values = reasoning.feature_snapshot as Record<string, number | null>;
+    const hasAttack = values.home_attack_home != null || values.home_gf_l5 != null;
+    if (hasAttack) {
+      const detail = predictPoissonIndependentDetailed({
+        features: {
+          example: {} as never,
+          values,
+          feature_data: [],
+          missing_keys: [],
+          data_coverage: 1,
+          feature_coverage: 1,
+          data_quality: 1,
+          features_version: "features_pi_v1",
+          closing_odds_used: false,
+        },
+      });
+      poisson = { lambda_home: detail.lambda_home, lambda_away: detail.lambda_away };
+    }
+  }
+
+  const human_explanation = buildHumanExplanation({
+    home: homeName,
+    away: awayName,
+    probability: probability_model,
+    summary: research_summary,
+    poisson,
+    reason_codes: (pred?.reason_codes as string[]) ?? [],
+  });
+
+  return {
+    ...base,
+    research_summary,
+    human_explanation,
+    team_identity,
+    poisson,
+  };
 }
 
 /** Compact dossier for Neon mirror (cap features/research). */
@@ -454,6 +543,10 @@ export function compactDossierForMirror(d: AnalysisDossier): Record<string, unkn
     analyzed_at: d.analyzed_at,
     prediction_persisted_at: d.prediction_persisted_at,
     lineage: d.lineage,
+    research_summary: d.research_summary,
+    human_explanation: d.human_explanation,
+    team_identity: d.team_identity,
+    poisson: d.poisson ?? null,
     real_money: false,
   };
 }
@@ -479,8 +572,11 @@ export async function upsertDossierNeon(dossier: AnalysisDossier): Promise<void>
       SET published_at = EXCLUDED.published_at,
           payload = EXCLUDED.payload
     `;
-  } catch {
-    /* mirror optional */
+  } catch (e) {
+    console.warn(
+      `[dossier-neon] upsert failed event=${dossier.event.event_id}:`,
+      e instanceof Error ? e.message : e,
+    );
   }
 }
 

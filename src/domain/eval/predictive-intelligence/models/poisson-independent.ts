@@ -28,10 +28,21 @@ function dixonColesAdjust(p: PiProb3, rho: number): PiProb3 {
   return normalizeProb3(p.HOME * (1 - rho * 0.15), draw, p.AWAY * (1 - rho * 0.15));
 }
 
-export function predictPoissonIndependent(input: {
+export type PoissonIndependentDetail = {
+  probability: PiProb3;
+  lambda_home: number;
+  lambda_away: number;
+  attack_home: number | null;
+  defense_home: number | null;
+  attack_away: number | null;
+  defense_away: number | null;
+  league_avg_gf: number;
+};
+
+export function predictPoissonIndependentDetailed(input: {
   features: PiFeatureVector;
   params?: PoissonParamsPi;
-}): PiProb3 {
+}): PoissonIndependentDetail {
   const p = input.params ?? DEFAULT_POISSON_PARAMS;
   const ha = input.features.values.home_attack_home ?? input.features.values.home_attack_all ?? input.features.values.home_gf_l5;
   const hd = input.features.values.home_defense_home ?? input.features.values.home_ga_l5;
@@ -66,7 +77,24 @@ export function predictPoissonIndependent(input: {
 
   const raw = poisson1x2({ homeLambda, awayLambda }, 8);
   const base = dixonColesAdjust(normalizeProb3(raw.HOME, raw.DRAW, raw.AWAY), p.rho);
-  return applyTemperature(base, p.temperature ?? 1);
+  const probability = applyTemperature(base, p.temperature ?? 1);
+  return {
+    probability,
+    lambda_home: homeLambda,
+    lambda_away: awayLambda,
+    attack_home: ha ?? null,
+    defense_home: hd ?? null,
+    attack_away: aa ?? null,
+    defense_away: ad ?? null,
+    league_avg_gf: league,
+  };
+}
+
+export function predictPoissonIndependent(input: {
+  features: PiFeatureVector;
+  params?: PoissonParamsPi;
+}): PiProb3 {
+  return predictPoissonIndependentDetailed(input).probability;
 }
 
 /** Fit rho on TRAIN only by minimizing mean log-loss (coarse grid). */

@@ -10,7 +10,8 @@ import { buildFeatureVectorPi } from "@/domain/eval/predictive-intelligence/feat
 import { assertNoMarketInputsInPredictionContext } from "@/domain/eval/predictive-intelligence/features/asof";
 import {
   DEFAULT_POISSON_PARAMS,
-  predictPoissonIndependent,
+  predictPoissonIndependentDetailed,
+  type PoissonIndependentDetail,
   type PoissonParamsPi,
 } from "@/domain/eval/predictive-intelligence/models/poisson-independent";
 import { assertProbSumsToOne, probsClose } from "@/domain/eval/predictive-intelligence/models/normalize-probs";
@@ -44,6 +45,7 @@ export type IndependentPredictResult = {
   model_confidence: number | null;
   why: ReasoningWhyPi | null;
   di_conflicts?: Array<{ field: string; sources: string[]; detail: string }>;
+  poisson?: Pick<PoissonIndependentDetail, "lambda_home" | "lambda_away"> | null;
 };
 
 function loadPoissonParams(labBRoot?: string): PoissonParamsPi {
@@ -85,6 +87,7 @@ function failResult(
     model_confidence: extra?.model_confidence ?? null,
     why: extra?.why ?? null,
     di_conflicts: extra?.di_conflicts,
+    poisson: extra?.poisson ?? null,
   };
 }
 
@@ -237,7 +240,8 @@ export function predictIndependentForEvent(input: {
   }
 
   const params = loadPoissonParams(input.labBRoot);
-  const p: PiProb3 = predictPoissonIndependent({ features, params });
+  const detail = predictPoissonIndependentDetailed({ features, params });
+  const p: PiProb3 = detail.probability;
   assertProbSumsToOne(p);
   const asRecord = { HOME: p.HOME, DRAW: p.DRAW, AWAY: p.AWAY };
 
@@ -295,5 +299,6 @@ export function predictIndependentForEvent(input: {
     model_confidence,
     why,
     di_conflicts: diConflicts,
+    poisson: { lambda_home: detail.lambda_home, lambda_away: detail.lambda_away },
   };
 }

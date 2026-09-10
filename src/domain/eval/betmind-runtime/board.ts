@@ -122,6 +122,25 @@ export function buildLiteNextEvents(root: string, nowMs: number, limit = 120): B
     if (!latest.has(id)) latest.set(id, r);
   }
 
+  const predTail = readJsonlTail(join(root, "predictions.jsonl"), 800);
+  const latestPred = new Map<string, Record<string, unknown>>();
+  for (const p of predTail) {
+    const r = asRec(p);
+    if (!r?.event_id) continue;
+    const id = String(r.event_id);
+    const hasModel = r.probability_model && typeof r.probability_model === "object";
+    const prev = latestPred.get(id);
+    if (!prev) {
+      latestPred.set(id, r);
+      continue;
+    }
+    const ts = String(r.timestamp ?? "");
+    const prevTs = String(prev.timestamp ?? "");
+    if (ts > prevTs || (ts === prevTs && hasModel && !prev.probability_model)) {
+      latestPred.set(id, r);
+    }
+  }
+
   const rows: BoardEventRow[] = [];
   for (const [event_id, d] of latest) {
     const ev = byId.get(event_id);
@@ -212,6 +231,13 @@ export function buildLiteNextEvents(root: string, nowMs: number, limit = 120): B
       edge_status: edgeUnknown ? "UNKNOWN" : edge == null ? "UNKNOWN" : "KNOWN",
       feature_coverage: featureCoverage,
       analyzed_at: (d.timestamp as string | null) ?? (d.analyzed_at as string | null) ?? null,
+      probability_model:
+        latestPred.get(event_id)?.probability_model &&
+        typeof latestPred.get(event_id)?.probability_model === "object"
+          ? latestPred.get(event_id)?.probability_model
+          : null,
+      home_or_a: ev?.home_or_a ?? null,
+      away_or_b: ev?.away_or_b ?? null,
       bucket: null as EventBucket | null,
     };
     row.bucket = classifyBoardEvent(row);

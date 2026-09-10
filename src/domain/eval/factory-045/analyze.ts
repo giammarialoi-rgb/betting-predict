@@ -364,6 +364,7 @@ export function analyzeAllLabB045(input: {
             })(),
             at: input.nowIso,
             real_money: false,
+            poisson: independent.poisson ?? null,
           },
           input.store.root,
         );
