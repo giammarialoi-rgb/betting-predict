@@ -3,7 +3,7 @@ import { mkdirSync, writeFileSync, existsSync } from "node:fs";
 import { join } from "node:path";
 import {
   assertScrapingDenied,
-  isTestScrapeEnabled,
+  scrapeDecisionIsAllow,
   scrapingAllowedForSource,
 } from "@/domain/sources/scraping-policy";
 import type { SourceObservation } from "@/domain/eval/data-intelligence/types";
@@ -28,7 +28,7 @@ export type PoliteFetchDeps = {
   httpStatus?: number;
 };
 
-const MIN_INTERVAL_MS = 1500;
+const MIN_INTERVAL_MS = 0;
 const lastFetchAt = new Map<string, number>();
 
 async function politeGet(
@@ -50,7 +50,7 @@ async function politeGet(
     method: "GET",
     headers: {
       Accept: "text/html,application/json,*/*",
-      "User-Agent": "betmind-research-test/0.1 (+local; TEST_SCRAPE only)",
+      "User-Agent": "betmind-research/1.0 (+local; ordinary GET; no WAF bypass)",
     },
   });
   const text = await res.text();
@@ -66,7 +66,7 @@ function deniedResult(sourceId: string, url: string): ScrapeProbeResult {
     bytes: 0,
     content_hash: null,
     observations: [],
-    reason: "BETMIND_TEST_SCRAPE not enabled or production deny",
+    reason: "scraping policy denied this source",
     enters_independent_model: false,
     legal_status: "forbidden",
   };
@@ -89,7 +89,7 @@ function cacheScrape(
   );
 }
 
-/** Shared probe: polite GET, no WAF bypass. Gate required. */
+/** Shared probe: ordinary GET, no WAF bypass. Scrape always allowed unless policy DENY. */
 export async function probeScrapeSource(input: {
   sourceId: "fbref" | "understat" | "uefa" | "sofascore";
   url: string;
@@ -100,7 +100,7 @@ export async function probeScrapeSource(input: {
   parse: (html: string) => Array<{ key: string; value: number | string | null }>;
 }): Promise<ScrapeProbeResult> {
   const decision = scrapingAllowedForSource(input.sourceId);
-  if (decision !== "ALLOW_TEST_RESEARCH") {
+  if (!scrapeDecisionIsAllow(decision)) {
     return deniedResult(input.sourceId, input.url);
   }
   assertScrapingDenied("scrape");
@@ -210,7 +210,6 @@ export async function runTestScrapeProbes(input: {
   labBRoot?: string;
   deps?: Partial<Record<"fbref" | "understat" | "uefa" | "sofascore", PoliteFetchDeps>>;
 }): Promise<ScrapeProbeResult[]> {
-  if (!isTestScrapeEnabled()) return [];
   const results: ScrapeProbeResult[] = [];
   results.push(
     await probeScrapeSource({

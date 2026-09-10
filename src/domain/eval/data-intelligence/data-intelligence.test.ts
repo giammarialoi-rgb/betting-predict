@@ -21,7 +21,11 @@ import {
   probeScrapeSource,
   parseFbrefStub,
 } from "@/domain/eval/data-intelligence";
-import { isTestScrapeEnabled, scrapingAllowedForSource } from "@/domain/sources/scraping-policy";
+import {
+  assertScrapingDenied,
+  isTestScrapeEnabled,
+  scrapingAllowedForSource,
+} from "@/domain/sources/scraping-policy";
 import { buildFeatureVectorPi } from "@/domain/eval/predictive-intelligence/features/engine";
 import { assertNoMarketInputsInPredictionContext } from "@/domain/eval/predictive-intelligence/features/asof";
 import { predictPoissonIndependent } from "@/domain/eval/predictive-intelligence/models/poisson-independent";
@@ -89,27 +93,31 @@ function mkdtempLab(): string {
 }
 
 describe("data-intelligence", () => {
-  it("registry marks FBRef DISABLED unless TEST_SCRAPE", () => {
+  it("registry marks FBRef RESEARCH_TEST even if callers pass testScrapeEnabled=false", () => {
     const off = buildSourceRegistry({
       footballDataRows: 9000,
       clubeloCachePresent: false,
       testScrapeEnabled: false,
     });
-    assert.equal(off.find((s) => s.id === "fbref")!.status, "DISABLED_BY_POLICY");
+    assert.equal(off.find((s) => s.id === "fbref")!.status, "RESEARCH_TEST");
+    assert.equal(off.find((s) => s.id === "fbref")!.enters_independent_model, false);
     const on = buildSourceRegistry({
       footballDataRows: 9000,
       testScrapeEnabled: true,
     });
     assert.equal(on.find((s) => s.id === "fbref")!.status, "RESEARCH_TEST");
-    assert.equal(on.find((s) => s.id === "fbref")!.enters_independent_model, false);
+    assert.equal(on.find((s) => s.id === "directa")!.status, "RESEARCH_TEST");
     assert.ok(on.find((s) => s.id === "open-meteo"));
   });
 
-  it("scrape gate off by default", () => {
+  it("scrape lane always ALLOW; bypass actions still denied", () => {
     const env = { ...process.env };
     delete env.BETMIND_TEST_SCRAPE;
-    assert.equal(isTestScrapeEnabled(env), false);
-    assert.equal(scrapingAllowedForSource("fbref", env), "DENY");
+    assert.equal(isTestScrapeEnabled(env), true);
+    assert.equal(scrapingAllowedForSource("fbref", env), "ALLOW");
+    assert.throws(() => assertScrapingDenied("bypass_cloudflare"));
+    assert.throws(() => assertScrapingDenied("bypass_captcha"));
+    assert.throws(() => assertScrapingDenied("bypass_waf"));
   });
 
   it("Open-Meteo mock respects asOf firewall", async () => {
@@ -393,15 +401,15 @@ describe("data-intelligence", () => {
     assert.equal(bag.features.get("home_injuries_n")?.value, 1);
   });
 
-  it("production denies scrape even if BETMIND_TEST_SCRAPE=true without CI allow", () => {
+  it("production still allows ordinary GET scrape; bypass remains forbidden", () => {
     const env = {
       ...process.env,
       BETMIND_TEST_SCRAPE: "true",
       NODE_ENV: "production",
     };
     delete env.BETMIND_ALLOW_TEST_SCRAPE_IN_CI;
-    assert.equal(isTestScrapeEnabled(env), false);
-    assert.equal(scrapingAllowedForSource("sofascore", env), "DENY");
+    assert.equal(isTestScrapeEnabled(env), true);
+    assert.equal(scrapingAllowedForSource("sofascore", env), "ALLOW");
   });
 
   it("audit writes feature-manifest-p0 and FINAL_VERDICT block", async () => {

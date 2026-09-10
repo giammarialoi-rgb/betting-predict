@@ -242,9 +242,7 @@ export async function runDataIntelligenceAudit(input?: {
     warnings: [
       "Football-Data temporal_precision=DATE_ONLY — not EXACT available_at",
       ...(clubeloPresent ? [] : ["ClubElo cache absent — elo features UNAVAILABLE"]),
-      testScrape
-        ? "TEST_SCRAPE enabled — RESEARCH_TEST sources CONTEXT only"
-        : "FBRef/Understat/UEFA/SofaScore DISABLED_BY_POLICY (set BETMIND_TEST_SCRAPE=true for research probes)",
+      "Scraping always on — ordinary HTTP GET; RESEARCH_TEST sources CONTEXT only; 403/CAPTCHA stay BLOCKED; no WAF bypass",
       "API-Sports injuries/lineups enter MODEL only with demonstrable available_at",
       "Open-Meteo weather is CONTEXT not MODEL in this phase",
     ],

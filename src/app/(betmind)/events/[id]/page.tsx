@@ -26,6 +26,8 @@ type DossierFeature = {
   available_at: string | null;
   status: string;
   entered_model: boolean;
+  derived_from?: string[];
+  calculation?: string | null;
 };
 
 type DossierResearch = {
@@ -160,6 +162,9 @@ type Detail = {
     } | null;
     human_explanation?: {
       match_line: string;
+      did?: string;
+      live_research?: string;
+      archive?: string;
       prediction_lines: string[];
       why: string[];
       analyzed: string;
@@ -180,11 +185,24 @@ type Detail = {
       category_checks: Array<{ label: string; found: boolean; note: string }>;
     } | null;
     team_identity?: {
-      home: { display_name: string; canonical_id: string; matched: boolean };
-      away: { display_name: string; canonical_id: string; matched: boolean };
+      home: {
+        display_name: string;
+        canonical_id: string;
+        matched: boolean;
+        provisional?: boolean;
+        provider_ids?: Record<string, string | null>;
+      };
+      away: {
+        display_name: string;
+        canonical_id: string;
+        matched: boolean;
+        provisional?: boolean;
+        provider_ids?: Record<string, string | null>;
+      };
       division: string | null;
     } | null;
     poisson?: { lambda_home: number; lambda_away: number } | null;
+    reconciliation?: Array<{ field: string; label_it: string; status: string; note_it: string }>;
   } | null;
   model_version: string | null;
   finished?: boolean;
@@ -262,7 +280,7 @@ export default function EventDetailPage() {
   const dossier = data?.dossier;
   const hx = dossier?.human_explanation ?? null;
   const rs = dossier?.research_summary ?? null;
-  const modelProbs = dossier?.independent_model.probability ?? pred?.probability_model;
+  const modelProbs = dossier?.independent_model.probability ?? null;
   const marketProbs = dossier?.market.probability ?? pred?.probability_market;
   const edgeStatus = data?.decision_048?.edge_status ?? "UNKNOWN";
 
@@ -344,6 +362,49 @@ export default function EventDetailPage() {
           </Card>
 
           {hx && (
+            <Card title="Cosa ha fatto BetMind">
+              <p className="mb-2 text-sm leading-relaxed">{hx.did}</p>
+              {hx.live_research ? <p className="mb-1 text-sm">{hx.live_research}</p> : null}
+              {hx.archive ? <p className="text-sm">{hx.archive}</p> : null}
+            </Card>
+          )}
+
+          {dossier?.team_identity && (
+            <Card title="Identità dell'evento">
+              <p className="mb-2 text-sm">
+                {dossier.team_identity.home.display_name}:{" "}
+                <code className="text-xs">{dossier.team_identity.home.canonical_id}</code>
+                {dossier.team_identity.home.provisional ? " (provvisoria)" : ""}
+                {dossier.team_identity.home.matched ? "" : " — non abbinata all'archivio"}
+              </p>
+              <p className="mb-2 text-sm">
+                {dossier.team_identity.away.display_name}:{" "}
+                <code className="text-xs">{dossier.team_identity.away.canonical_id}</code>
+                {dossier.team_identity.away.provisional ? " (provvisoria)" : ""}
+                {dossier.team_identity.away.matched ? "" : " — non abbinata all'archivio"}
+              </p>
+              <p className="text-xs bm-muted">
+                Division: {dossier.team_identity.division ?? "non risolta"}. ID SofaScore / API-Sports /
+                FBref / Understat / WhoScored: non inventati (null finché non sono realmente noti).
+              </p>
+            </Card>
+          )}
+
+          {dossier?.reconciliation && dossier.reconciliation.length > 0 && (
+            <Card title="Riconciliazione tra fonti">
+              <ul className="space-y-2 text-sm">
+                {dossier.reconciliation.map((row) => (
+                  <li key={row.field}>
+                    <span className="font-medium">{row.label_it}</span>{" "}
+                    <span className="text-xs bm-muted">{row.status}</span>
+                    <p className="bm-muted">{row.note_it}</p>
+                  </li>
+                ))}
+              </ul>
+            </Card>
+          )}
+
+          {hx && (
             <Card title="Perché">
               {hx.why.map((line) => (
                 <p key={line} className="mb-2 text-sm leading-relaxed">
@@ -421,6 +482,10 @@ export default function EventDetailPage() {
                               ? "disabilitata per policy"
                               : r.human_status === "NO_DATA"
                                 ? "nessun dato"
+                                : r.human_status === "NO_EVENT"
+                                  ? "partita non trovata"
+                                : r.human_status === "POST_KICKOFF"
+                                  ? "dopo kickoff (esclusa)"
                                 : r.human_status === "HTTP_ERROR"
                                   ? `errore HTTP ${r.http_status ?? ""}`
                                   : r.human_status.toLowerCase()}
@@ -566,6 +631,7 @@ export default function EventDetailPage() {
                       <th className="py-1 pr-2">{t.available_at}</th>
                       <th className="py-1 pr-2">{t.status}</th>
                       <th className="py-1">{t.entered_model}</th>
+                      <th className="py-1">derived_from</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -580,6 +646,9 @@ export default function EventDetailPage() {
                         <td className="py-1.5 pr-2">{fmtWhen(String(f.available_at ?? ""))}</td>
                         <td className="py-1.5 pr-2">{statusIt(f.status, t)}</td>
                         <td className="py-1.5">{f.entered_model ? "sì" : "no"}</td>
+                        <td className="py-1.5 text-[10px] bm-muted">
+                          {(f.derived_from ?? []).slice(0, 5).join(", ") || "—"}
+                        </td>
                       </tr>
                     ))}
                   </tbody>

@@ -7,11 +7,13 @@ export type HumanSourceStatus =
   | "SUCCESS"
   | "PARTIAL"
   | "NO_DATA"
+  | "NO_EVENT"
   | "HTTP_ERROR"
   | "BLOCKED"
   | "MISSING_ADAPTER"
   | "DISABLED_BY_POLICY"
   | "STALE"
+  | "POST_KICKOFF"
   | "PARSE_ERROR"
   | "RATE_LIMITED";
 
@@ -35,12 +37,16 @@ export function classifyHumanSourceStatus(row: ResearchLike): HumanSourceStatus 
   const http = row.http_status ?? null;
   const fields = row.fields_extracted ?? [];
 
+  if (parser === "POST_KICKOFF" || phase === "POST_KICKOFF" || reason.includes("POST_KICKOFF")) {
+    return "POST_KICKOFF";
+  }
   if (phase === "MISSING_ADAPTER" || adapter === "MISSING_ADAPTER") return "MISSING_ADAPTER";
   if (phase === "DENIED" || adapter === "POLICY_DENIED" || reason.includes("DISABLED_BY_POLICY")) {
     return "DISABLED_BY_POLICY";
   }
   if (http === 429 || reason.includes("429") || reason.includes("RATE_LIMIT")) return "RATE_LIMITED";
   if (http === 403 || phase === "BLOCKED" || reason.includes("HTTP_403")) return "BLOCKED";
+  if (parser === "NO_EVENT" || reason.includes("DOES NOT CONTAIN BOTH TEAM")) return "NO_EVENT";
   if (parser === "ERROR" || parser === "PARSE_ERROR" || parser === "INVALID") return "PARSE_ERROR";
   if (http != null && http >= 400) return "HTTP_ERROR";
   if (phase === "UNAVAILABLE" && !row.fetched) return "NO_DATA";
@@ -69,6 +75,8 @@ export function humanSourceStatusLabelIt(s: HumanSourceStatus): string {
       return "Dati parziali";
     case "NO_DATA":
       return "Nessun dato utilizzabile";
+    case "NO_EVENT":
+      return "Partita non trovata sulla fonte";
     case "HTTP_ERROR":
       return "Errore HTTP";
     case "BLOCKED":
@@ -79,6 +87,8 @@ export function humanSourceStatusLabelIt(s: HumanSourceStatus): string {
       return "Disabilitato per policy";
     case "STALE":
       return "Osservazione scaduta";
+    case "POST_KICKOFF":
+      return "Pubblicato dopo il calcio d'inizio";
     case "PARSE_ERROR":
       return "Risposta non interpretabile";
     case "RATE_LIMITED":
@@ -144,6 +154,12 @@ export function sourceFailureReasonIt(row: ResearchLike): string {
   }
   if (status === "NO_DATA") {
     return `Il sistema ha consultato ${sourceTitleIt(row.source_id)} ma non ha trovato dati utilizzabili per questa partita.`;
+  }
+  if (status === "POST_KICKOFF") {
+    return `${sourceTitleIt(row.source_id)} ha un'osservazione disponibile solo dopo il calcio d'inizio. Esclusa dal modello pre-match.`;
+  }
+  if (status === "NO_EVENT") {
+    return `${sourceTitleIt(row.source_id)} non conteneva questa partita. Nessun dato utilizzato.`;
   }
   if (status === "PARSE_ERROR") {
     return `La risposta di ${sourceTitleIt(row.source_id)} non e stata interpretata.`;

@@ -53,7 +53,7 @@ export function runSourceIntelligenceReport() {
       "no invented reliability percentages",
       "value score components may be UNKNOWN",
       "benchmark is MARKET INFORMATION SET, not beat-the-bookmaker claims",
-      "scraping remains DENY",
+      "ordinary GET scrape ALLOW; WAF/CAPTCHA bypass remains DENY",
     ],
   };
 }

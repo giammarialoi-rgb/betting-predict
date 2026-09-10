@@ -47,7 +47,7 @@ export type SourceAvailabilityRow = {
   http_status: number | null;
   reason: string | null;
   retry_policy: "backoff" | "manual" | "none";
-  scraping: "DENY";
+  scraping: "DENY" | "ALLOW";
 };
 
 function mapAccessType(sourceType: SourceType, id: string): AccessType {

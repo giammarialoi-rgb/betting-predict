@@ -15,7 +15,8 @@ export type ResearchPhase =
   | "DENIED"
   | "UNAVAILABLE"
   | "OK"
-  | "MISSING_ADAPTER";
+  | "MISSING_ADAPTER"
+  | "POST_KICKOFF";
 
 export type ResearchStatusRow = {
   event_id: string;

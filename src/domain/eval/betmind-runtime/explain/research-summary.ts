@@ -41,6 +41,7 @@ export type ResearchSummary = {
   sources_blocked: number;
   sources_missing_adapter: number;
   sources_no_data: number;
+  sources_no_event: number;
   sources_policy_denied: number;
   sources_http_error: number;
   sources_rate_limited: number;
@@ -61,6 +62,13 @@ export type ResearchSummary = {
   feature_groups_found: FeatureGroupId[];
   feature_groups_missing: FeatureGroupId[];
   feature_quality: Record<FeatureQualityKind, number>;
+  origin: {
+    live_research_sources: number;
+    historical_prior_features: number;
+    derived_features: number;
+    static_context_features: number;
+    market_sources: number;
+  };
   model_inputs: Array<{
     key: string;
     label_it: string;
@@ -232,6 +240,7 @@ export function buildResearchSummary(input: {
     sources_blocked: countStatus(source_rows, "BLOCKED"),
     sources_missing_adapter: countStatus(source_rows, "MISSING_ADAPTER"),
     sources_no_data: countStatus(source_rows, "NO_DATA"),
+    sources_no_event: countStatus(source_rows, "NO_EVENT"),
     sources_policy_denied: countStatus(source_rows, "DISABLED_BY_POLICY"),
     sources_http_error: countStatus(source_rows, "HTTP_ERROR"),
     sources_rate_limited: countStatus(source_rows, "RATE_LIMITED"),
@@ -240,6 +249,21 @@ export function buildResearchSummary(input: {
     feature_groups_found: FEATURE_GROUPS.map((g) => g.id).filter((id) => found.has(id)),
     feature_groups_missing: missing,
     feature_quality,
+    origin: {
+      live_research_sources: source_rows.filter(
+        (r) =>
+          !r.market_layer &&
+          (r.human_status === "SUCCESS" || r.human_status === "PARTIAL") &&
+          r.source_id !== "football-data-co-uk" &&
+          r.source_id !== "club-football-match-data",
+      ).length,
+      historical_prior_features: model_inputs.filter((f) => f.quality === "HISTORICAL_PRIOR").length,
+      derived_features: model_inputs.filter((f) => f.quality === "DERIVED").length,
+      static_context_features: model_inputs.filter(
+        (f) => f.quality === "DERIVED" && (f.key === "home_advantage" || f.key === "season_phase"),
+      ).length,
+      market_sources: source_rows.filter((r) => r.market_layer && r.fetched).length,
+    },
     model_inputs,
     model_exclusions,
     explanation_facts,

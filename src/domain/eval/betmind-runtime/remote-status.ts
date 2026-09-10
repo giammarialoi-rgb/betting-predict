@@ -68,6 +68,12 @@ export type AnalysisSummary = {
   insufficient_data: number;
   no_independent_features: number;
   no_independent_model: number;
+  events_queued: number | null;
+  events_researched: number | null;
+  sources_attempted_today: number | null;
+  data_acquired_today: number | null;
+  sources_blocked_today: number | null;
+  sources_missing_adapter_today: number | null;
   pipeline?: PipelineCounters3d;
 };
 
@@ -180,6 +186,12 @@ export function buildAnalysisSummaryFromLocal(
     insufficient_data: pipeline.insufficient_data,
     no_independent_features: pipeline.no_independent_features,
     no_independent_model: pipeline.no_independent_model,
+    events_queued: pipeline.events_queued,
+    events_researched: pipeline.events_researched,
+    sources_attempted_today: pipeline.sources_attempted_today,
+    data_acquired_today: pipeline.data_acquired_today,
+    sources_blocked_today: pipeline.sources_blocked_today,
+    sources_missing_adapter_today: pipeline.sources_missing_adapter_today,
     pipeline,
   };
 }
@@ -324,6 +336,12 @@ export function buildRuntimePayloadFromLocal(root = permanentRoot044()): BetMind
       events_discovered_store: analysis.events_in_store,
       events_discovered: analysis.events_discovered ?? analysis.events_in_store,
       events_with_research: analysis.events_with_research,
+      events_queued: analysis.events_queued,
+      events_researched: analysis.events_researched,
+      sources_attempted_today: analysis.sources_attempted_today,
+      data_acquired_today: analysis.data_acquired_today,
+      sources_blocked_today: analysis.sources_blocked_today,
+      sources_missing_adapter_today: analysis.sources_missing_adapter_today,
       events_eligible: analysis.events_eligible,
       model_inferences: analysis.model_inferences,
       predictions_persisted_events: analysis.predictions_persisted_events,

@@ -394,7 +394,7 @@ describe("TASK 011 multi-market data engine", () => {
     assert.ok(coverage.every((c) => c.model_ready === false));
 
     assert.throws(() => assertTemporalPrecision("unknown", "exact"));
-    assert.equal(scrapingAllowedForSource("sofascore"), "DENY");
+    assert.equal(scrapingAllowedForSource("sofascore"), "ALLOW");
     assert.throws(() => assertScrapingDenied("bypass_cloudflare"));
     assert.throws(() => assertBookmakerNotAggregate("max"));
     assert.ok(isAggregateOddsLabel("AvgH"));

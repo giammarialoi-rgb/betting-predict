@@ -14,7 +14,10 @@ import { buildResearchSummary, type ResearchSummary } from "@/domain/eval/betmin
 import { buildHumanExplanation, type HumanExplanation } from "@/domain/eval/betmind-runtime/explain/italian-explanation";
 import { resolveEventTeamIdentity, type EventTeamIdentity } from "@/domain/eval/betmind-runtime/explain/team-identity";
 import { assertIndependentOddsFirewall } from "@/domain/eval/betmind-runtime/explain/odds-firewall";
+import { reconcileResearchRows, type FieldReconciliation } from "@/domain/eval/data-intelligence/research/reconcile";
+import { RESEARCH_PLAN_TOPICS } from "@/domain/eval/data-intelligence/research/research-plan";
 import { predictPoissonIndependentDetailed } from "@/domain/eval/predictive-intelligence/models/poisson-independent";
+import { hasIndependentModel } from "@/domain/eval/permanent-044/prediction-precedence";
 
 export type UiFeatureStatus =
   | "ELIGIBLE"
@@ -31,6 +34,9 @@ export type DossierFeatureRow = {
   available_at: string | null;
   status: UiFeatureStatus;
   entered_model: boolean;
+  derived_from?: string[];
+  calculation?: string | null;
+  origin?: string;
 };
 
 export type DossierResearchRow = {
@@ -113,6 +119,8 @@ export type AnalysisDossier = {
   human_explanation?: HumanExplanation;
   team_identity?: EventTeamIdentity | null;
   poisson?: { lambda_home: number; lambda_away: number } | null;
+  reconciliation?: FieldReconciliation[];
+  research_plan?: { topics: string[] };
   real_money: false;
 };
 
@@ -247,6 +255,12 @@ export function buildAnalysisDossier(
     pred?.probability_model && typeof pred.probability_model === "object"
       ? (pred.probability_model as Record<string, number>)
       : null;
+  const independentOk = hasIndependentModel({
+    probability_model,
+    model_version: String(pred?.model_version ?? ""),
+    reason_codes: (pred?.reason_codes as string[]) ?? [],
+  });
+  const independentProbability = independentOk ? probability_model : null;
   const probability_market =
     pred?.probability_market && typeof pred.probability_market === "object"
       ? (pred.probability_market as Record<string, number>)
@@ -267,6 +281,9 @@ export function buildAnalysisDossier(
         available_at: d.available_at,
         status: mapFeatureStatus(d),
         entered_model: d.status === "ELIGIBLE" && d.value != null,
+        derived_from: d.derived_from ?? [],
+        calculation: d.calculation ?? null,
+        origin: d.origin,
       });
     }
   } else {
@@ -306,7 +323,7 @@ export function buildAnalysisDossier(
   const entered = features.filter((f) => f.entered_model);
   const eligibleNames = features.filter((f) => f.status === "ELIGIBLE").map((f) => f.name);
   const missing: string[] = [];
-  if (!probability_model) missing.push("independent probability_model (null)");
+  if (!independentOk) missing.push("independent probability_model (null or not INDEPENDENT_POISSON)");
   if (entered.length === 0) missing.push("eligible independent features with values");
   if (research.every((r) => !r.ok && r.phase !== "OK")) {
     missing.push("successful independent research observations with available_at");
@@ -351,7 +368,7 @@ export function buildAnalysisDossier(
     null;
 
   const lineage: DossierLineageAnswers = {
-    what_betmind_knew_before_kickoff: probability_model
+    what_betmind_knew_before_kickoff: independentOk
       ? `Independent model HDA available; ${entered.length} features entered MODEL.`
       : `No independent model probability. Feature bag size=${features.length}; entered_model=${entered.length}. Market compare may exist but is NOT model knowledge.`,
     sources_consulted: consulted.map((r) => r.source_id),
@@ -373,14 +390,14 @@ export function buildAnalysisDossier(
     eligible_information: eligibleNames,
     features_entered_model: entered.map((f) => `${f.name}=${String(f.value)}`),
     model_version: modelVersion,
-    prediction_produced: probability_model
-      ? `INDEPENDENT ${JSON.stringify(probability_model)}`
+    prediction_produced: independentOk
+      ? `INDEPENDENT ${JSON.stringify(independentProbability)}`
       : pred
-        ? `PERSISTED_ROW_WITHOUT_INFERENCE reason_codes=${((pred.reason_codes as string[]) ?? []).slice(0, 8).join(",")}`
+        ? `PERSISTED_ROW_WITHOUT_INFERENCE model_version=${String(pred.model_version ?? "")} reason_codes=${((pred.reason_codes as string[]) ?? []).slice(0, 8).join(",")}`
         : "NO_PREDICTION_ROW",
     odds_entered_model: false,
     information_missing: missing.slice(0, 40),
-    after_inference: probability_model
+    after_inference: independentOk
       ? decision
         ? `Decision persisted: ${String(decision.decision)}`
         : "Model inference present; decision row may be absent"
@@ -412,7 +429,7 @@ export function buildAnalysisDossier(
       model_version: String(modelVersion ?? "N/A"),
     },
     independent_model: {
-      probability: probability_model,
+      probability: independentProbability,
       model_version: (pred?.model_version as string | null) ?? null,
       confidence: conf,
       feature_coverage:
@@ -424,9 +441,9 @@ export function buildAnalysisDossier(
       decision: decision ? String(decision.decision) : null,
       reason_codes: (pred?.reason_codes as string[]) ?? [],
       why: (reasoning?.why as Record<string, unknown> | null) ?? null,
-      note: probability_model
+      note: independentOk
         ? null
-        : "NO DATA AVAILABLE — probability_model assente (spesso INSUFFICIENT_DATA / feature sparse). Non chiamare questo evento MODEL INFERENCE.",
+        : "NO DATA AVAILABLE — nessuna inference indipendente (INDEPENDENT_POISSON). Una riga previsione puo esistere senza essere un modello indipendente.",
     },
     market: {
       probability: probability_market,
@@ -479,7 +496,7 @@ export function buildAnalysisDossier(
       typeof reasoning?.feature_coverage === "number"
         ? (reasoning.feature_coverage as number)
         : null,
-    has_independent_inference: Boolean(probability_model),
+    has_independent_inference: independentOk,
     event_identified_at: (event.collected_at_utc as string | null) ?? persistedAt,
   });
 
@@ -490,7 +507,7 @@ export function buildAnalysisDossier(
       ? (reasoning.poisson as { lambda_home: number; lambda_away: number })
       : null;
   let poisson = storedPoisson;
-  if (!poisson && probability_model && reasoning?.feature_snapshot) {
+  if (!poisson && independentOk && reasoning?.feature_snapshot) {
     const values = reasoning.feature_snapshot as Record<string, number | null>;
     const hasAttack = values.home_attack_home != null || values.home_gf_l5 != null;
     if (hasAttack) {
@@ -514,11 +531,14 @@ export function buildAnalysisDossier(
   const human_explanation = buildHumanExplanation({
     home: homeName,
     away: awayName,
-    probability: probability_model,
+    probability: independentProbability,
     summary: research_summary,
     poisson,
     reason_codes: (pred?.reason_codes as string[]) ?? [],
   });
+
+  const reconciliation = reconcileResearchRows(research);
+  const research_plan = { topics: RESEARCH_PLAN_TOPICS.map((t) => t.id) };
 
   return {
     ...base,
@@ -526,6 +546,8 @@ export function buildAnalysisDossier(
     human_explanation,
     team_identity,
     poisson,
+    reconciliation,
+    research_plan,
   };
 }
 
@@ -547,6 +569,8 @@ export function compactDossierForMirror(d: AnalysisDossier): Record<string, unkn
     human_explanation: d.human_explanation,
     team_identity: d.team_identity,
     poisson: d.poisson ?? null,
+    reconciliation: d.reconciliation ?? [],
+    research_plan: d.research_plan ?? null,
     real_money: false,
   };
 }

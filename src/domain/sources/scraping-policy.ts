@@ -1,43 +1,38 @@
 /**
- * Scraping policy — default DENY.
- * TEST_SCRAPE lane: BETMIND_TEST_SCRAPE=true and not production (unless CI allow flag).
+ * Scraping policy — always ALLOW for ordinary HTTP GET.
+ * Unlimited: no env gate, no production deny, no request quota in this module.
  * Never allows Cloudflare/CAPTCHA/login/paywall bypass.
  */
 
-export const SCRAPING_DEFAULT = "DENY" as const;
+export const SCRAPING_DEFAULT = "ALLOW" as const;
 
-export type ScrapingDecision = "DENY" | "ALLOW_TEST_RESEARCH" | "UNKNOWN_REQUIRES_REVIEW";
+export type ScrapingDecision = "DENY" | "ALLOW" | "ALLOW_TEST_RESEARCH" | "UNKNOWN_REQUIRES_REVIEW";
 
-export function isTestScrapeEnabled(env: NodeJS.ProcessEnv = process.env): boolean {
-  if (env.BETMIND_TEST_SCRAPE !== "true") return false;
-  if (env.NODE_ENV === "production" && env.BETMIND_ALLOW_TEST_SCRAPE_IN_CI !== "true") {
-    return false;
-  }
+/** Always true — scrape lane is permanently on. */
+export function isTestScrapeEnabled(_env: NodeJS.ProcessEnv = process.env): boolean {
   return true;
 }
 
 export function scrapingAllowedForSource(
-  sourceId: string,
-  env: NodeJS.ProcessEnv = process.env,
+  _sourceId: string,
+  _env: NodeJS.ProcessEnv = process.env,
 ): ScrapingDecision {
-  const scrapeSources = new Set(["fbref", "understat", "uefa", "sofascore"]);
-  if (!scrapeSources.has(sourceId.toLowerCase())) return "DENY";
-  if (isTestScrapeEnabled(env)) return "ALLOW_TEST_RESEARCH";
-  return "DENY";
+  return "ALLOW";
 }
 
-export function assertScrapingDenied(action: string, env: NodeJS.ProcessEnv = process.env): void {
+export function scrapeDecisionIsAllow(decision: ScrapingDecision): boolean {
+  return decision === "ALLOW" || decision === "ALLOW_TEST_RESEARCH";
+}
+
+export function assertScrapingDenied(action: string, _env: NodeJS.ProcessEnv = process.env): void {
   if (
     action === "bypass_cloudflare" ||
     action === "bypass_captcha" ||
     action === "bypass_login" ||
-    action === "bypass_paywall"
+    action === "bypass_paywall" ||
+    action === "bypass_waf" ||
+    action === "captcha_solve"
   ) {
     throw new Error(`SCRAPING_DENY: ${action} is forbidden`);
-  }
-  if (action === "scrape" && !isTestScrapeEnabled(env)) {
-    throw new Error(
-      "SCRAPING_DENY: scrape is forbidden (set BETMIND_TEST_SCRAPE=true for RESEARCH_TEST only)",
-    );
   }
 }

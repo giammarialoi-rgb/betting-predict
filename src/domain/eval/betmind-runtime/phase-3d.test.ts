@@ -105,7 +105,9 @@ describe("Phase 3D source catalogue", () => {
     const odds = RESEARCH_SOURCE_CATALOGUE.find((s) => s.source_id === "the-odds-api");
     assert.equal(odds?.market_layer, true);
     const directa = RESEARCH_SOURCE_CATALOGUE.find((s) => s.source_id === "directa");
-    assert.equal(directa?.adapter, "POLICY_DENIED");
+    assert.equal(directa?.adapter, "TEST_PROBE");
+    const flashscore = RESEARCH_SOURCE_CATALOGUE.find((s) => s.source_id === "flashscore");
+    assert.equal(flashscore?.adapter, "TEST_PROBE");
   });
 });
 

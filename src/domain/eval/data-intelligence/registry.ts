@@ -1,52 +1,39 @@
 import { existsSync, readdirSync } from "node:fs";
 import { join } from "node:path";
-import { isTestScrapeEnabled } from "@/domain/sources/scraping-policy";
 import type { SourceEntry } from "@/domain/eval/data-intelligence/types";
 
-/** Honest static registry — scrape sources RESEARCH_TEST only when gate on. */
+/** Honest static registry — scrape sources always on for ordinary GET (never MODEL). */
 export function buildSourceRegistry(input?: {
   footballDataRows?: number;
   clubeloCachePresent?: boolean;
   oddsApiConfigured?: boolean;
   apiSportsConfigured?: boolean;
   openMeteoOk?: boolean;
+  /** Ignored — scrape lane is always on. Kept for call-site compatibility. */
   testScrapeEnabled?: boolean;
 }): SourceEntry[] {
   const fdRows = input?.footballDataRows ?? 0;
   const clubelo = Boolean(input?.clubeloCachePresent);
   const oddsApi = input?.oddsApiConfigured ?? Boolean(process.env.THE_ODDS_API_KEY);
   const apiSports = input?.apiSportsConfigured ?? Boolean(process.env.API_SPORTS_KEY);
-  const testScrape = input?.testScrapeEnabled ?? isTestScrapeEnabled();
   const meteo = input?.openMeteoOk !== false;
 
   const scrapeEntry = (
     id: string,
     title: string,
     priority: "high" | "medium" | "low",
-  ): SourceEntry =>
-    testScrape
-      ? {
-          id,
-          title,
-          priority,
-          role: "CONTEXT",
-          temporal_precision: "UNKNOWN",
-          status: "RESEARCH_TEST",
-          reason: "BETMIND_TEST_SCRAPE=true — CONTEXT only; available_at usually UNKNOWN → NOT_ELIGIBLE STRICT",
-          enters_independent_model: false,
-          legal_status: "research_test",
-        }
-      : {
-          id,
-          title,
-          priority,
-          role: "DISABLED",
-          temporal_precision: "N/A",
-          status: "DISABLED_BY_POLICY",
-          reason: "Scraping denied unless BETMIND_TEST_SCRAPE=true",
-          enters_independent_model: false,
-          legal_status: "forbidden",
-        };
+  ): SourceEntry => ({
+    id,
+    title,
+    priority,
+    role: "CONTEXT",
+    temporal_precision: "UNKNOWN",
+    status: "RESEARCH_TEST",
+    reason:
+      "Scraping always on — ordinary HTTP GET; CONTEXT only; 403/CAPTCHA recorded as BLOCKED; no WAF bypass",
+    enters_independent_model: false,
+    legal_status: "research_test",
+  });
 
   return [
     {
@@ -119,6 +106,9 @@ export function buildSourceRegistry(input?: {
     scrapeEntry("understat", "Understat", "medium"),
     scrapeEntry("uefa", "UEFA statistics", "high"),
     scrapeEntry("sofascore", "SofaScore", "low"),
+    scrapeEntry("directa", "Diretta", "low"),
+    scrapeEntry("flashscore", "Flashscore", "low"),
+    scrapeEntry("soccerway", "Soccerway", "low"),
     {
       id: "sportradar-news",
       title: "Sportradar News",

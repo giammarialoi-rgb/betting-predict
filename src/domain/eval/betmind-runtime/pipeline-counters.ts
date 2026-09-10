@@ -6,6 +6,9 @@ import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { permanentRoot044 } from "@/domain/eval/permanent-044/config";
 import { catalogueById } from "@/domain/eval/data-intelligence/research/source-catalogue";
+import { loadResearchQueue, queueCounts } from "@/domain/eval/data-intelligence/research/queue";
+import { RESEARCH_BUDGET_PER_CYCLE } from "@/domain/eval/data-intelligence/research/orchestrator";
+import { hasIndependentModel } from "@/domain/eval/permanent-044/prediction-precedence";
 
 export type PipelineCounters3d = {
   events_discovered: number;
@@ -21,6 +24,13 @@ export type PipelineCounters3d = {
   features_too_sparse: number;
   skipped: number;
   events_with_multi_research_sources: number;
+  events_queued: number;
+  events_researched: number;
+  research_budget_per_cycle: number;
+  sources_attempted_today: number;
+  data_acquired_today: number;
+  sources_blocked_today: number;
+  sources_missing_adapter_today: number;
   /** Explicit: what the old "analyzed" counter meant. */
   legacy_analyzed_meaning: string;
 };
@@ -97,8 +107,12 @@ export function computePipelineCounters3d(root = permanentRoot044()): PipelineCo
   const latest = latestByEvent(preds);
   const latestRows = [...latest.values()];
 
-  const withModel = latestRows.filter(
-    (p) => p.probability_model && typeof p.probability_model === "object",
+  const withModel = latestRows.filter((p) =>
+    hasIndependentModel({
+      probability_model: p.probability_model as Record<string, number> | null,
+      model_version: String(p.model_version ?? ""),
+      reason_codes: (p.reason_codes as string[]) ?? [],
+    }),
   );
 
   /** Eligible = had non-null independent model probability (strict). */
@@ -133,6 +147,12 @@ export function computePipelineCounters3d(root = permanentRoot044()): PipelineCo
       hasCode(p, "NO_INDEPENDENT_FEATURES"),
   ).length;
 
+  const q = queueCounts(loadResearchQueue(root), Date.now());
+  const today = new Date().toISOString().slice(0, 10);
+  const todayRows = research.filter((r) => String(r.at ?? "").slice(0, 10) === today);
+  const uniq = (pred: (r: Record<string, unknown>) => boolean) =>
+    new Set(todayRows.filter(pred).map((r) => String(r.source_id))).size;
+
   return {
     events_discovered: events.length,
     events_with_research: researchOk.size,
@@ -147,6 +167,26 @@ export function computePipelineCounters3d(root = permanentRoot044()): PipelineCo
     features_too_sparse: sparse,
     skipped,
     events_with_multi_research_sources: [...researchOk.values()].filter((s) => s.size >= 2).length,
+    events_queued: q.queued,
+    events_researched: q.researched,
+    research_budget_per_cycle: RESEARCH_BUDGET_PER_CYCLE,
+    sources_attempted_today: uniq(
+      (r) =>
+        r.fetched === true ||
+        r.phase === "OK" ||
+        r.phase === "BLOCKED" ||
+        r.phase === "UNAVAILABLE" ||
+        r.adapter_kind === "CACHE_ONLY" ||
+        r.adapter_kind === "PRODUCTION_ADAPTER" ||
+        r.adapter_kind === "TEST_PROBE",
+    ),
+    data_acquired_today: uniq(
+      (r) => r.ok === true && Array.isArray(r.fields_extracted) && (r.fields_extracted as unknown[]).length > 0,
+    ),
+    sources_blocked_today: uniq((r) => r.phase === "BLOCKED" || r.http_status === 403),
+    sources_missing_adapter_today: uniq(
+      (r) => r.phase === "MISSING_ADAPTER" || r.adapter_kind === "MISSING_ADAPTER",
+    ),
     legacy_analyzed_meaning:
       "Unique event_id with ≥1 predictions.jsonl row. Includes INSUFFICIENT_DATA / null probability_model. Does NOT mean independent model inference.",
   };

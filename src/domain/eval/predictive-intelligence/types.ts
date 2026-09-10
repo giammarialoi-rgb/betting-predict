@@ -74,6 +74,13 @@ export type PiProb3 = { HOME: number; DRAW: number; AWAY: number };
 export type FeatureDatumStatus = "ELIGIBLE" | "NOT_ELIGIBLE" | "UNAVAILABLE";
 export type FeatureTemporalPrecision = "DATE_ONLY" | "STRICT_AS_OF" | "UNKNOWN";
 
+export type FeatureOriginKind =
+  | "LIVE_RESEARCH"
+  | "HISTORICAL_ARCHIVE"
+  | "DERIVED"
+  | "STATIC"
+  | "MARKET";
+
 export type FeatureDatum = {
   key: string;
   source: string;
@@ -84,6 +91,11 @@ export type FeatureDatum = {
   quality: number | null;
   status: FeatureDatumStatus;
   temporal_precision: FeatureTemporalPrecision;
+  /** Prior match canonical ids used to compute this feature (target excluded). */
+  derived_from?: string[];
+  calculation?: string | null;
+  origin?: FeatureOriginKind;
+  entered_model?: boolean;
 };
 
 export type PiFeatureVector = {

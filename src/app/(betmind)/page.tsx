@@ -239,6 +239,20 @@ export default function BetMindHomePage() {
                     )}
                   />
                   <Metric
+                    label="Eventi in coda ricerca"
+                    value={String(
+                      (analysis as { events_queued?: number } | null)?.events_queued ?? "—",
+                    )}
+                  />
+                  <Metric
+                    label="Eventi ricercati"
+                    value={String(
+                      (analysis as { events_researched?: number } | null)?.events_researched ??
+                        (analysis as { events_with_research?: number } | null)?.events_with_research ??
+                        "—",
+                    )}
+                  />
+                  <Metric
                     label="Eventi con ricerca"
                     value={String(
                       (analysis as { events_with_research?: number } | null)?.events_with_research ??
@@ -265,6 +279,31 @@ export default function BetMindHomePage() {
                     label="Dati insufficienti"
                     value={String(
                       (analysis as { insufficient_data?: number } | null)?.insufficient_data ?? "—",
+                    )}
+                  />
+                  <Metric
+                    label="Fonti interrogate oggi"
+                    value={String(
+                      (analysis as { sources_attempted_today?: number } | null)?.sources_attempted_today ?? "—",
+                    )}
+                  />
+                  <Metric
+                    label="Dati acquisiti oggi"
+                    value={String(
+                      (analysis as { data_acquired_today?: number } | null)?.data_acquired_today ?? "—",
+                    )}
+                  />
+                  <Metric
+                    label="Fonti bloccate oggi"
+                    value={String(
+                      (analysis as { sources_blocked_today?: number } | null)?.sources_blocked_today ?? "—",
+                    )}
+                  />
+                  <Metric
+                    label="Fonti senza adapter oggi"
+                    value={String(
+                      (analysis as { sources_missing_adapter_today?: number } | null)
+                        ?.sources_missing_adapter_today ?? "—",
                     )}
                   />
                   <Metric

@@ -3,7 +3,11 @@
  * Default DENY — no CAPTCHA/WAF/login/proxy bypass.
  */
 
-import { scrapingAllowedForSource, assertScrapingDenied } from "@/domain/sources/scraping-policy";
+import {
+  scrapeDecisionIsAllow,
+  scrapingAllowedForSource,
+  assertScrapingDenied,
+} from "@/domain/sources/scraping-policy";
 import {
   envFlagTrue055,
   type SourceEvent055,
@@ -22,7 +26,7 @@ export function createPolicyGatedCatalogAdapter055(input: {
   const enabledFlag = envFlagTrue055(input.enabledEnv);
   const scrapingFlag = envFlagTrue055(input.scrapingEnv);
   const scrapingDecision = scrapingAllowedForSource(input.sourceId.toLowerCase());
-  const allowed = enabledFlag && scrapingFlag && scrapingDecision !== "DENY";
+  const allowed = enabledFlag && scrapingFlag && scrapeDecisionIsAllow(scrapingDecision);
 
   const status: SourceRuntimeStatus055 = allowed ? "UNAVAILABLE" : "DISABLED_BY_POLICY";
   const reason = !enabledFlag

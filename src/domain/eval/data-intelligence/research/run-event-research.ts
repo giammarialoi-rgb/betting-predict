@@ -8,9 +8,6 @@ import { join } from "node:path";
 import { permanentRoot044 } from "@/domain/eval/permanent-044/config";
 import { loadApiSportsPrematchFromCacheSync } from "@/domain/eval/data-intelligence/adapters/api-sports-prematch";
 import { fetchOpenMeteoContext } from "@/domain/eval/data-intelligence/open-meteo";
-import { isTestScrapeEnabled } from "@/domain/sources/scraping-policy";
-import { runTestScrapeProbes } from "@/domain/eval/data-intelligence/scrape/probe";
-import { clubEloCachePresent, findClubEloCachePaths } from "@/domain/eval/data-intelligence/registry";
 import {
   ensureClubEloCacheDay,
   clubEloAsOfDateForKickoff,
@@ -25,6 +22,12 @@ import {
   type CatalogueSource,
 } from "@/domain/eval/data-intelligence/research/source-catalogue";
 import type { PermanentEvent044 } from "@/domain/eval/permanent-044/types";
+import { inspectClubEloForEvent } from "@/domain/eval/data-intelligence/research/clubelo-lookup";
+import { asOfAfterKickoff } from "@/domain/eval/data-intelligence/research/temporal";
+import {
+  buildEventResearchPlan,
+  persistEventResearchPlan,
+} from "@/domain/eval/data-intelligence/research/research-plan";
 
 export type ResearchCycleResult = {
   events_touched: number;
@@ -123,7 +126,7 @@ function recordMissingOrDenied(
 
 /**
  * Research a capped set of events. Cache-only API-Sports; Open-Meteo network;
- * scrape probes only when BETMIND_TEST_SCRAPE allows; catalogue stubs for the rest.
+ * ordinary GET scrape probes always on (403/CAPTCHA stay BLOCKED); catalogue stubs for the rest.
  */
 export async function runEventResearchBatch(input: {
   events: PermanentEvent044[];
@@ -180,6 +183,16 @@ export async function runEventResearchBatch(input: {
   for (const ev of slice) {
     const kickoff = ev.kickoff_utc ?? nowIso;
     const asOf = input.asOf ?? nowIso;
+    const postKickoff = asOfAfterKickoff(asOf, ev.kickoff_utc);
+    try {
+      persistEventResearchPlan(buildEventResearchPlan(ev, root), root);
+    } catch {
+      /* plan persist optional */
+    }
+
+    const postNote = postKickoff
+      ? " POST_KICKOFF — osservazione dopo kickoff, esclusa dal modello pre-match."
+      : "";
 
     // 1) API-Sports cache-only
     const fixtureRaw = (ev as { fixture_id?: number | string }).fixture_id;
@@ -370,47 +383,47 @@ export async function runEventResearchBatch(input: {
       result.research_failures += 1;
     }
 
-    // 3) ClubElo — batch-fetched public API CSV (DATE_ONLY as-of)
+    // 3) ClubElo — event-specific team ratings (CSV presence is not success)
     {
       const eloDay = clubEloAsOfDateForKickoff(kickoff, nowIso);
-      const eloEnsure =
-        batchElo ??
-        ({
-          ok: false,
-          path: null,
-          rating_date: eloDay,
-          http_status: null,
-          observations: 0,
-          reason: "BATCH_FETCH_SKIPPED",
-          url: `http://api.clubelo.com/${eloDay}`,
-        } as const);
-      const eloPresent = eloEnsure.ok || clubEloCachePresent(process.cwd());
-      const eloPaths = findClubEloCachePaths(process.cwd());
+      if (!batchElo) {
+        try {
+          batchElo = await ensureClubEloCacheDay({ ratingDateIso: eloDay });
+        } catch {
+          batchElo = null;
+        }
+      }
+      const elo = inspectClubEloForEvent({
+        home: ev.home_or_a,
+        away: ev.away_or_b,
+        kickoffIso: kickoff,
+      });
+      const eloOk = elo.status === "SUCCESS" || elo.status === "PARTIAL";
+      const avail = elo.home_available_at ?? elo.away_available_at;
+      const blockedTemporal = postKickoff || (avail != null && asOfAfterKickoff(avail, ev.kickoff_utc));
       appendResearchStatus(
         baseRow({
           event_id: ev.event_id,
           source_id: "clubelo",
-          phase: eloPresent ? "OK" : "UNAVAILABLE",
-          ok: eloPresent,
-          fetched: eloEnsure.ok || eloEnsure.reason === "CACHE_HIT",
-          fetched_at: eloPresent ? nowIso : null,
-          available_at: eloPresent ? `${eloEnsure.rating_date}T00:00:00.000Z` : null,
-          observed_at: eloPresent ? nowIso : null,
-          reason: eloPresent
-            ? `ClubElo day=${eloEnsure.rating_date} observations≈${eloEnsure.observations} (${eloEnsure.reason ?? "fetched"})`
-            : `ClubElo unavailable: ${eloEnsure.reason ?? "unknown"} http=${eloEnsure.http_status}`,
-          raw_ref: eloEnsure.path ?? eloPaths[0] ?? null,
+          phase: blockedTemporal ? "POST_KICKOFF" : eloOk ? "OK" : "UNAVAILABLE",
+          ok: eloOk && !blockedTemporal,
+          fetched: elo.file_present,
+          fetched_at: elo.file_present ? nowIso : null,
+          available_at: blockedTemporal ? avail : eloOk ? avail : null,
+          observed_at: elo.file_present ? nowIso : null,
+          reason: (blockedTemporal ? `POST_KICKOFF. ${elo.reason}` : elo.reason) + postNote,
+          raw_ref: batchElo?.path ?? null,
           cycle_number: input.cycleNumber,
           at: nowIso,
-          url: eloEnsure.url,
+          url: `http://api.clubelo.com/${eloDay}`,
           adapter_kind: "PRODUCTION_ADAPTER",
-          http_status: eloEnsure.http_status,
-          parser_status: eloPresent ? "OK" : "FETCH_FAIL",
-          fields_extracted: eloPresent ? ["home_elo", "away_elo", "elo_diff"] : [],
+          http_status: batchElo?.http_status ?? null,
+          parser_status: blockedTemporal ? "POST_KICKOFF" : elo.status === "SUCCESS" ? "OK" : elo.status,
+          fields_extracted: blockedTemporal ? [] : elo.fields_extracted,
         }),
         root,
       );
-      if (eloPresent) {
+      if (eloOk && !blockedTemporal) {
         bump(result.by_source, "clubelo", "ok");
         result.research_fetches += 1;
       } else {
@@ -419,38 +432,54 @@ export async function runEventResearchBatch(input: {
       }
     }
 
-    // 4) football-data / PI matches.jsonl
-    const fdPath = join(root, "predictive-intelligence", "datasets", "matches.jsonl");
-    const fdAlt = join(process.cwd(), "audit", "external", "task-044", "predictive-intelligence", "datasets", "matches.jsonl");
-    const fdPresent = existsSync(fdPath) || existsSync(fdAlt);
-    appendResearchStatus(
-      baseRow({
-        event_id: ev.event_id,
-        source_id: "football-data-co-uk",
-        phase: fdPresent ? "OK" : "UNAVAILABLE",
-        ok: fdPresent,
-        fetched: fdPresent,
-        fetched_at: fdPresent ? nowIso : null,
-        available_at: null,
-        reason: fdPresent
-          ? "Local historical matches present — DATE_ONLY; form features often NOT_ELIGIBLE STRICT"
-          : "No local matches.jsonl",
-        raw_ref: fdPresent ? "matches.jsonl" : null,
-        cycle_number: input.cycleNumber,
-        at: nowIso,
-        url: "https://www.football-data.co.uk/",
-        adapter_kind: "CACHE_ONLY",
-        parser_status: fdPresent ? "CACHE_PRESENT" : "CACHE_ABSENT",
-        fields_extracted: fdPresent ? ["form_l3", "form_l5", "form_l10"] : [],
-      }),
-      root,
-    );
-    if (fdPresent) {
-      bump(result.by_source, "football-data-co-uk", "ok");
-      result.research_fetches += 1;
-    } else {
-      bump(result.by_source, "football-data-co-uk", "fail");
-      result.research_failures += 1;
+    // 4) football-data — event-specific archive match (not file presence)
+    {
+      const { inspectFootballDataArchive } = await import(
+        "@/domain/eval/data-intelligence/research/archive-lookup"
+      );
+      const arch = inspectFootballDataArchive({
+        home: ev.home_or_a,
+        away: ev.away_or_b,
+        competition: String(ev.competition ?? ""),
+        kickoffIso: kickoff,
+        labBRoot: root,
+      });
+      const fdOk = arch.status === "SUCCESS" || arch.status === "PARTIAL";
+      const fdPhase = postKickoff
+        ? "POST_KICKOFF"
+        : fdOk
+          ? "OK"
+          : "UNAVAILABLE";
+      appendResearchStatus(
+        baseRow({
+          event_id: ev.event_id,
+          source_id: "football-data-co-uk",
+          phase: fdPhase,
+          ok: fdOk && !postKickoff,
+          fetched: arch.file_present,
+          fetched_at: arch.file_present ? nowIso : null,
+          available_at: null,
+          observed_at: fdOk ? nowIso : null,
+          reason: (postKickoff ? `POST_KICKOFF. ${arch.reason}` : arch.reason) + postNote,
+          raw_ref: arch.file_present
+            ? `priors_home=${arch.prior_n_home};priors_away=${arch.prior_n_away};div=${arch.division};ids_home=${arch.prior_ids_home.slice(-5).join(",")}`
+            : null,
+          cycle_number: input.cycleNumber,
+          at: nowIso,
+          url: "https://www.football-data.co.uk/",
+          adapter_kind: "CACHE_ONLY",
+          parser_status: postKickoff ? "POST_KICKOFF" : arch.status === "SUCCESS" ? "OK" : arch.status,
+          fields_extracted: postKickoff ? [] : arch.fields_extracted,
+        }),
+        root,
+      );
+      if (fdOk && !postKickoff) {
+        bump(result.by_source, "football-data-co-uk", "ok");
+        result.research_fetches += 1;
+      } else {
+        bump(result.by_source, "football-data-co-uk", "fail");
+        result.research_failures += 1;
+      }
     }
 
     // 4b) Club-Football-Match-Data — cache presence only (no invented fetch)
@@ -464,31 +493,26 @@ export async function runEventResearchBatch(input: {
         baseRow({
           event_id: ev.event_id,
           source_id: "club-football-match-data",
-          phase: cfPresent ? "OK" : "UNAVAILABLE",
-          ok: cfPresent,
+          phase: "UNAVAILABLE",
+          ok: false,
           fetched: cfPresent,
           fetched_at: cfPresent ? nowIso : null,
           available_at: null,
           reason: cfPresent
-            ? "Local Club-Football-Match-Data dataset present (research cache)"
-            : "Club-Football-Match-Data cache absent — no invented history",
+            ? "Dataset Club-Football-Match-Data presente in locale ma non abbinato a questa partita (nessuna estrazione evento)."
+            : "Club-Football-Match-Data cache assente — nessuna storia inventata.",
           raw_ref: cfPresent ? "club-football-match-data" : null,
           cycle_number: input.cycleNumber,
           at: nowIso,
           url: null,
           adapter_kind: "CACHE_ONLY",
-          parser_status: cfPresent ? "CACHE_PRESENT" : "CACHE_ABSENT",
-          fields_extracted: cfPresent ? ["historical_matches"] : [],
+          parser_status: cfPresent ? "NO_EVENT" : "CACHE_ABSENT",
+          fields_extracted: [],
         }),
         root,
       );
-      if (cfPresent) {
-        bump(result.by_source, "club-football-match-data", "ok");
-        result.research_fetches += 1;
-      } else {
-        bump(result.by_source, "club-football-match-data", "fail");
-        result.research_failures += 1;
-      }
+      bump(result.by_source, "club-football-match-data", "fail");
+      result.research_failures += 1;
     }
 
     // Odds API — market layer only (explicit: does not enter model)
@@ -516,10 +540,66 @@ export async function runEventResearchBatch(input: {
     // Do NOT count as research_fetches for independent research — market layer
     // (still recorded for lineage honesty)
 
-    // Policy denied sources (per event)
-    for (const sid of ["directa", "flashscore", "soccerway"] as const) {
-      const cat = RESEARCH_SOURCE_CATALOGUE.find((c) => c.source_id === sid)!;
-      recordMissingOrDenied(ev, cat, input.cycleNumber, nowIso, root, result);
+    // Event-page probes (never homepage). One ordinary GET per source per event.
+    if (input.allowScrapeProbes !== false) {
+      const { fetchEventPage } = await import(
+        "@/domain/eval/data-intelligence/research/event-page-fetch"
+      );
+      for (const sid of [
+        "fbref",
+        "understat",
+        "uefa",
+        "sofascore",
+        "directa",
+        "flashscore",
+        "soccerway",
+      ] as const) {
+        const page = await fetchEventPage({
+          sourceId: sid,
+          home: ev.home_or_a,
+          away: ev.away_or_b,
+        });
+        const phase =
+          page.status === "BLOCKED"
+            ? "BLOCKED"
+            : page.status === "DENIED"
+              ? "DENIED"
+              : page.status === "PARTIAL"
+                ? "OK"
+                : "UNAVAILABLE";
+        appendResearchStatus(
+          baseRow({
+            event_id: ev.event_id,
+            source_id: sid,
+            phase,
+            ok: page.status === "PARTIAL",
+            fetched: page.fetched,
+            fetched_at: page.fetched ? nowIso : null,
+            available_at: null,
+            observed_at: page.fetched ? nowIso : null,
+            reason: page.reason,
+            raw_ref: null,
+            cycle_number: input.cycleNumber,
+            at: nowIso,
+            url: page.url || null,
+            http_status: page.http_status,
+            parser_status: page.status,
+            fields_extracted: page.fields_extracted,
+            adapter_kind: "TEST_PROBE",
+          }),
+          root,
+        );
+        if (page.status === "DENIED") {
+          bump(result.by_source, sid, "denied");
+          result.research_denied += 1;
+        } else if (page.status === "PARTIAL") {
+          bump(result.by_source, sid, "ok");
+          result.research_fetches += 1;
+        } else {
+          bump(result.by_source, sid, "fail");
+          result.research_failures += 1;
+        }
+      }
     }
 
     // Full catalogue stubs (MISSING_ADAPTER) once per event
@@ -530,86 +610,6 @@ export async function runEventResearchBatch(input: {
           recordMissingOrDenied(ev, cat, input.cycleNumber, nowIso, root, result);
         }
       }
-    }
-  }
-
-  // Gated scrape probes once per batch (site-level, not match-page)
-  if (input.allowScrapeProbes !== false && isTestScrapeEnabled() && slice[0]) {
-    const probes = await runTestScrapeProbes({
-      eventId: slice[0].event_id,
-      eventTime: slice[0].kickoff_utc,
-      labBRoot: root,
-    });
-    for (const ev of slice) {
-      for (const p of probes) {
-        const fetched = p.status === "OK" || p.status === "BLOCKED" || p.status === "INVALID";
-        const fields = p.observations.map((o) => o.key);
-        appendResearchStatus(
-          baseRow({
-            event_id: ev.event_id,
-            source_id: p.source_id,
-            phase:
-              p.status === "OK"
-                ? "OK"
-                : p.status === "DENIED"
-                  ? "DENIED"
-                  : p.status === "BLOCKED"
-                    ? "BLOCKED"
-                    : "UNAVAILABLE",
-            ok: p.status === "OK",
-            fetched,
-            fetched_at: fetched ? nowIso : null,
-            available_at: null,
-            observed_at: fetched ? nowIso : null,
-            reason: `${p.reason ?? `probe_${p.status}`} — SITE_PROBE (homepage, not match page)`,
-            raw_ref: p.content_hash,
-            cycle_number: input.cycleNumber,
-            at: nowIso,
-            url: p.url,
-            http_status: p.http_status || null,
-            parser_status: p.status,
-            fields_extracted: fields,
-            adapter_kind: "TEST_PROBE",
-          }),
-          root,
-        );
-      }
-    }
-    for (const p of probes) {
-      if (p.status === "DENIED") {
-        bump(result.by_source, p.source_id, "denied");
-        result.research_denied += 1;
-      } else if (p.status === "OK") {
-        bump(result.by_source, p.source_id, "ok");
-        result.research_fetches += 1;
-      } else {
-        bump(result.by_source, p.source_id, "fail");
-        result.research_failures += 1;
-      }
-    }
-  } else if (!isTestScrapeEnabled()) {
-    for (const sid of ["fbref", "understat", "uefa", "sofascore"] as const) {
-      appendResearchStatus(
-        baseRow({
-          event_id: slice[0]?.event_id ?? "batch",
-          source_id: sid,
-          phase: "DENIED",
-          ok: false,
-          fetched: false,
-          fetched_at: null,
-          available_at: null,
-          reason: "BETMIND_TEST_SCRAPE disabled — probe not run",
-          raw_ref: null,
-          cycle_number: input.cycleNumber,
-          at: nowIso,
-          adapter_kind: "TEST_PROBE",
-          parser_status: "DENIED",
-          fields_extracted: [],
-        }),
-        root,
-      );
-      bump(result.by_source, sid, "denied");
-      result.research_denied += 1;
     }
   }
 

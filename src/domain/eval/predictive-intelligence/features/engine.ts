@@ -227,10 +227,16 @@ export function buildFeatureVectorPi(
   const values: Record<string, number | null> = {};
   const missing: string[] = [];
 
+  const windowIds: { home: Record<number, string[]>; away: Record<number, string[]> } = {
+    home: {},
+    away: {},
+  };
   const windows = [3, 5, 10] as const;
   for (const w of windows) {
     const hM = lastN(formPriors, target.home_team_id, w);
     const aM = lastN(formPriors, target.away_team_id, w);
+    windowIds.home[w] = hM.map((m) => m.canonical_id);
+    windowIds.away[w] = aM.map((m) => m.canonical_id);
     const hA = aggregate(hM, target.home_team_id);
     const aA = aggregate(aM, target.away_team_id);
     put(values, missing, `home_gf_l${w}`, rate(hA, "gf", "n"));
@@ -319,9 +325,42 @@ export function buildFeatureVectorPi(
   assertNoMarketInputsInPredictionContext(Object.keys(values));
 
   const keys = Object.keys(values);
+  const provenanceFor = (key: string): {
+    derived_from: string[];
+    calculation: string;
+    origin: NonNullable<FeatureDatum["origin"]>;
+  } => {
+    if (key === "home_advantage" || key === "season_phase") {
+      return { derived_from: [], calculation: "static/contextual", origin: "STATIC" };
+    }
+    const roll = key.match(/^(home|away)_[a-z_]+_l(3|5|10)$/);
+    if (roll) {
+      const side = roll[1] as "home" | "away";
+      const w = Number(roll[2]);
+      const ids = windowIds[side][w] ?? [];
+      return {
+        derived_from: ids,
+        calculation: `rolling mean over last ${w} prior matches excluding target`,
+        origin: "DERIVED",
+      };
+    }
+    if (key.startsWith("h2h")) {
+      return {
+        derived_from: [],
+        calculation: "head-to-head priors excluding target",
+        origin: "DERIVED",
+      };
+    }
+    return {
+      derived_from: [],
+      calculation: "derived from football-data priors excluding target",
+      origin: "DERIVED",
+    };
+  };
   const feature_data: FeatureDatum[] = keys.map((key) => {
     const value = values[key]!;
     const isElo = key === "home_elo" || key === "away_elo" || key === "elo_diff";
+    const prov = provenanceFor(key);
 
     if (isElo) {
       const avail =
@@ -343,6 +382,10 @@ export function buildFeatureVectorPi(
         quality: eligible ? 1 : 0,
         status: eligible ? ("ELIGIBLE" as const) : ("NOT_ELIGIBLE" as const),
         temporal_precision: "DATE_ONLY" as const,
+        derived_from: [],
+        calculation: "clubelo rating_date < match_date",
+        origin: "HISTORICAL_ARCHIVE",
+        entered_model: eligible,
       };
     }
 
@@ -357,6 +400,10 @@ export function buildFeatureVectorPi(
       quality: eligible ? 1 : 0,
       status: eligible ? ("ELIGIBLE" as const) : ("NOT_ELIGIBLE" as const),
       temporal_precision: "DATE_ONLY" as const,
+      derived_from: prov.derived_from,
+      calculation: prov.calculation,
+      origin: prov.origin,
+      entered_model: eligible,
     };
   });
 
@@ -397,6 +444,10 @@ export function buildFeatureVectorPi(
       quality: null,
       status: "UNAVAILABLE",
       temporal_precision: "UNKNOWN",
+      derived_from: [],
+      calculation: null,
+      origin: "LIVE_RESEARCH",
+      entered_model: false,
     });
   }
 

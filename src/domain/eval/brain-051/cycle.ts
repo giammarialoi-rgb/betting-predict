@@ -171,35 +171,60 @@ export async function runBrainCycle051(input: {
       research_failures: number;
       research_denied: number;
       events_touched: number;
+      queued?: number;
+      researched?: number;
+      upcoming?: number;
+      budget?: number;
     } | null = null;
     try {
-      const { runEventResearchBatch } = await import(
-        "@/domain/eval/data-intelligence/research/run-event-research"
+      const { runEventResearchOrchestrator } = await import(
+        "@/domain/eval/data-intelligence/research/orchestrator"
       );
       const storeAfter = loadStore044(labB);
-      const upcoming = storeAfter.events
-        .filter((e) => e.kickoff_utc && Date.parse(e.kickoff_utc) >= nowMs)
-        .slice(0, 20);
-      const research = await runEventResearchBatch({
-        events: upcoming.length ? upcoming : storeAfter.events.slice(-12),
-        cycleNumber: loadBrainState051(labB).cycles_completed + 1,
+      const research = await runEventResearchOrchestrator({
+        events: storeAfter.events,
         nowIso,
+        nowMs,
+        cycleNumber: loadBrainState051(labB).cycles_completed + 1,
         labBRoot: labB,
-        maxEvents: 8,
-        allowScrapeProbes: true,
-        asOf: nowIso,
       });
       researchStats = {
         research_fetches: research.research_fetches,
         research_failures: research.research_failures,
         research_denied: research.research_denied,
         events_touched: research.events_touched,
+        queued: research.queued,
+        researched: research.researched,
+        upcoming: research.upcoming,
+        budget: research.budget,
       };
       appendActivity051(
         labB,
         "RESEARCH",
-        `fetches=${research.research_fetches} fail=${research.research_failures} denied=${research.research_denied}`,
+        `budget=${research.budget} touched=${research.events_touched} queued=${research.queued} researched=${research.researched} fetches=${research.research_fetches}`,
       );
+      try {
+        const { appendFileSync } = await import("node:fs");
+        const { join } = await import("node:path");
+        appendFileSync(
+          join(labB, "cycle-traces.jsonl"),
+          `${JSON.stringify({
+            cycle: loadBrainState051(labB).cycles_completed + 1,
+            at: nowIso,
+            discovered: storeAfter.events.length,
+            research_attempted: research.events_touched,
+            research_completed: research.research_fetches,
+            research_failures: research.research_failures,
+            blocked: research.by_source,
+            queued: research.queued,
+            researched: research.researched,
+            budget: research.budget,
+          })}\n`,
+          "utf8",
+        );
+      } catch {
+        /* trace optional */
+      }
     } catch {
       /* research optional — cycle must not die */
     }

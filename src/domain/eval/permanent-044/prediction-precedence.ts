@@ -16,7 +16,7 @@ export type PredictionAppendDecision =
   | { action: "allow"; reason: string }
   | { action: "block"; reason: string };
 
-function hasIndependentModel(
+export function hasIndependentModel(
   p: Pick<PermanentPrediction044, "probability_model" | "model_version" | "reason_codes">,
 ): boolean {
   if (!p.probability_model || typeof p.probability_model !== "object") return false;
@@ -83,7 +83,9 @@ export function decidePredictionAppend(input: {
     };
   }
 
-  if (candScore < latestScore && candScore < 100) {
+  // Only true independent inferences (score 100) are protected from weaker appends.
+  // Stale MODEL_v1 rows with a probability object must be replaceable by honest INSUFFICIENT.
+  if (latestScore >= 100 && candScore < latestScore) {
     return {
       action: "block",
       reason: `BLOCKED_PRECEDENCE — candidate_score=${candScore} < latest_score=${latestScore} (${latest.model_version})`,

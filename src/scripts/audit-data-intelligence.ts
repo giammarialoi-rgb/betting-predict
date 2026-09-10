@@ -6,7 +6,7 @@ config();
 
 async function main() {
   const result = await runDataIntelligenceAudit({
-    runScrapeProbes: process.env.BETMIND_TEST_SCRAPE === "true",
+    runScrapeProbes: true,
   });
   console.log(JSON.stringify(result, null, 2));
 }

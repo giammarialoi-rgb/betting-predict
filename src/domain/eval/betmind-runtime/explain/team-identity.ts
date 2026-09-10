@@ -11,6 +11,16 @@ export type TeamIdentity = {
   method: string;
   aliases: string[];
   competition: string | null;
+  /** true when canonical_id is a live: slug or the team was not matched in archive. */
+  provisional: boolean;
+  /** Provider IDs only when actually known — never invented. */
+  provider_ids: {
+    sofascore: string | null;
+    api_sports: string | null;
+    fbref: string | null;
+    understat: string | null;
+    whoscored: string | null;
+  };
 };
 
 export type EventTeamIdentity = {
@@ -43,6 +53,14 @@ export function resolveEventTeamIdentity(input: {
       method: home.method,
       aliases: uniqueAliases(input.home, target.home_team_id),
       competition: target.division,
+      provisional: !home.matched || target.home_team_id.startsWith("live:"),
+      provider_ids: {
+        sofascore: null,
+        api_sports: null,
+        fbref: null,
+        understat: null,
+        whoscored: null,
+      },
     },
     away: {
       display_name: input.away,
@@ -51,6 +69,14 @@ export function resolveEventTeamIdentity(input: {
       method: away.method,
       aliases: uniqueAliases(input.away, target.away_team_id),
       competition: target.division,
+      provisional: !away.matched || target.away_team_id.startsWith("live:"),
+      provider_ids: {
+        sofascore: null,
+        api_sports: null,
+        fbref: null,
+        understat: null,
+        whoscored: null,
+      },
     },
     division: target.division,
     season: target.season,

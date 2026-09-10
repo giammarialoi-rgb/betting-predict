@@ -113,4 +113,27 @@ describe("Phase 3E.1 prediction precedence", () => {
     const d = decidePredictionAppend({ existing, candidate });
     assert.equal(d.action, "allow");
   });
+
+  it("allows honest INSUFFICIENT to replace stale MODEL_v1 with a probability object", () => {
+    const existing = [
+      pred({
+        prediction_id: "old",
+        event_id: "uefa1",
+        model_version: "MODEL_v1",
+        probability_model: { HOME: 0.4, DRAW: 0.3, AWAY: 0.3 },
+        reason_codes: [],
+      }),
+    ];
+    const candidate = pred({
+      prediction_id: "new",
+      event_id: "uefa1",
+      model_version: "MODEL_v1|NO_INDEPENDENT",
+      probability_model: null,
+      reason_codes: ["NO_INDEPENDENT_MODEL", "FEATURES_TOO_SPARSE"],
+      prediction_seq: 2,
+      timestamp: "2026-09-10T01:00:00Z",
+    });
+    const d = decidePredictionAppend({ existing, candidate });
+    assert.equal(d.action, "allow");
+  });
 });
