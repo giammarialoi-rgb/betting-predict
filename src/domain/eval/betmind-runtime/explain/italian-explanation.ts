@@ -234,7 +234,9 @@ export function buildHumanExplanation(input: {
       odds_used: false,
     },
     how_model_works:
-      "BetMind utilizza un modello statistico Poisson per stimare la distribuzione dei gol delle due squadre e da questa distribuzione ricava le probabilità di vittoria, pareggio e sconfitta. Sono stime del modello, non probabilità esatte.",
+      foundLabels.length > 0
+        ? `Il modello ha confrontato il rendimento storico delle due squadre e ha stimato il numero di gol attesi per ciascuna. Queste stime vengono poi utilizzate dal modello Poisson per calcolare le probabilità dei tre risultati. Le quote di mercato sono state osservate separatamente e non sono state utilizzate per calcolare la previsione.`
+        : "BetMind non ha ottenuto abbastanza dati storici o di ricerca per stimare i gol attesi. Le quote di mercato restano separate e non sostituiscono i dati mancanti.",
     poisson,
     insufficient,
     category_checks,

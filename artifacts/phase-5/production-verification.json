@@ -1,0 +1,18 @@
+{
+  "commit": "pending",
+  "deploy": "pending",
+  "brain_status": "pending",
+  "worker_count": null,
+  "events_today": null,
+  "events_tomorrow": null,
+  "events_discovered": null,
+  "events_researched": null,
+  "sources_attempted": null,
+  "sources_successful": null,
+  "observations": null,
+  "features": null,
+  "inferences": null,
+  "insufficient": null,
+  "errors": [],
+  "notes": "Filled after push, Vercel deploy, single worker restart, and production smoke."
+}

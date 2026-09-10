@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState, useEffect } from "react";
+import { useMemo, useState } from "react";
 import {
   DEFAULT_BM_LOCALE,
   getBmMessages,
@@ -10,11 +10,9 @@ import {
 } from "@/components/betmind/i18n";
 
 export function useBmLocale(): { locale: BmLocale; t: BmMessages; setLocale: (l: BmLocale) => void } {
-  const [locale, setLocaleState] = useState<BmLocale>(DEFAULT_BM_LOCALE);
-
-  useEffect(() => {
-    setLocaleState(resolveBmLocale());
-  }, []);
+  const [locale, setLocaleState] = useState<BmLocale>(() =>
+    typeof window === "undefined" ? DEFAULT_BM_LOCALE : resolveBmLocale(),
+  );
 
   const setLocale = (l: BmLocale) => {
     setLocaleState(l);

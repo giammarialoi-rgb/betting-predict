@@ -3,8 +3,6 @@
  * Executes real adapters/probes where they exist; records MISSING_ADAPTER / DENIED honestly.
  * Never invents available_at; scrape / market never enters independent MODEL.
  */
-import { existsSync } from "node:fs";
-import { join } from "node:path";
 import { permanentRoot044 } from "@/domain/eval/permanent-044/config";
 import { loadApiSportsPrematchFromCacheSync } from "@/domain/eval/data-intelligence/adapters/api-sports-prematch";
 import { fetchOpenMeteoContext } from "@/domain/eval/data-intelligence/open-meteo";
@@ -484,11 +482,16 @@ export async function runEventResearchBatch(input: {
 
     // 4b) Club-Football-Match-Data — cache presence only (no invented fetch)
     {
-      const cfCandidates = [
-        join(process.cwd(), "audit", "club-football-match-data"),
-        join(root, "club-football-match-data"),
-      ];
-      const cfPresent = cfCandidates.some((p) => existsSync(p));
+      const hist = (
+        await import("@/domain/eval/data-intelligence/research/historical-provider")
+      ).lookupHistoricalPriors({
+        home: ev.home_or_a,
+        away: ev.away_or_b,
+        competition: ev.competition,
+        kickoffIso: ev.kickoff_utc ?? nowIso,
+        labBRoot: root,
+      });
+      const cfPresent = hist.club_football_file_present;
       appendResearchStatus(
         baseRow({
           event_id: ev.event_id,
@@ -498,15 +501,13 @@ export async function runEventResearchBatch(input: {
           fetched: cfPresent,
           fetched_at: cfPresent ? nowIso : null,
           available_at: null,
-          reason: cfPresent
-            ? "Dataset Club-Football-Match-Data presente in locale ma non abbinato a questa partita (nessuna estrazione evento)."
-            : "Club-Football-Match-Data cache assente — nessuna storia inventata.",
+          reason: hist.reason,
           raw_ref: cfPresent ? "club-football-match-data" : null,
           cycle_number: input.cycleNumber,
           at: nowIso,
           url: null,
           adapter_kind: "CACHE_ONLY",
-          parser_status: cfPresent ? "NO_EVENT" : "CACHE_ABSENT",
+          parser_status: hist.status,
           fields_extracted: [],
         }),
         root,
@@ -521,11 +522,11 @@ export async function runEventResearchBatch(input: {
         event_id: ev.event_id,
         source_id: "the-odds-api",
         phase: "OK",
-        ok: true,
+        ok: false,
         fetched: true,
         fetched_at: nowIso,
         available_at: null,
-        reason: "MARKET_COMPARE_ONLY — odds never enter independent MODEL vector",
+        reason: "MARKET_COMPARE_ONLY — odds never enter independent MODEL vector. Not a research SUCCESS.",
         raw_ref: "lab_b_quotes",
         cycle_number: input.cycleNumber,
         at: nowIso,
@@ -538,7 +539,6 @@ export async function runEventResearchBatch(input: {
     );
     bump(result.by_source, "the-odds-api", "ok");
     // Do NOT count as research_fetches for independent research — market layer
-    // (still recorded for lineage honesty)
 
     // Event-page probes (never homepage). One ordinary GET per source per event.
     if (input.allowScrapeProbes !== false) {
@@ -592,9 +592,15 @@ export async function runEventResearchBatch(input: {
         if (page.status === "DENIED") {
           bump(result.by_source, sid, "denied");
           result.research_denied += 1;
-        } else if (page.status === "PARTIAL") {
+        } else if (
+          page.status === "PARTIAL" &&
+          page.fields_extracted.some((f) => f !== "page_mentions_both_teams" && f !== "page_mentions_xg")
+        ) {
           bump(result.by_source, sid, "ok");
           result.research_fetches += 1;
+        } else if (page.status === "PARTIAL") {
+          bump(result.by_source, sid, "fail");
+          result.research_failures += 1;
         } else {
           bump(result.by_source, sid, "fail");
           result.research_failures += 1;

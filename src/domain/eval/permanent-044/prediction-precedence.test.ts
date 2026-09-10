@@ -32,7 +32,7 @@ function pred(partial: Partial<PermanentPrediction044> & Pick<PermanentPredictio
 
 describe("Phase 3E.1 prediction precedence", () => {
   it("exports analysis runtime version", () => {
-    assert.match(ANALYSIS_RUNTIME_VERSION, /phase-3e/);
+    assert.match(ANALYSIS_RUNTIME_VERSION, /phase-5/);
   });
 
   it("scores independent above NO_INDEPENDENT", () => {

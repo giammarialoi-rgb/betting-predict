@@ -9,12 +9,12 @@ import { join } from "node:path";
 import { buildHealthPayload053, loadCurrentWork053 } from "@/domain/eval/bankroll-053/system";
 import { loadBrainState051, BRAIN_MODEL_051 } from "@/domain/eval/brain-051/config";
 import {
-  buildLiteNextEvents,
   readJsonlTail,
   readJsonlAllSmall,
   summarizeBoardBuckets,
   type BoardEventRow,
 } from "@/domain/eval/betmind-runtime/board";
+import { listCalendarEvents, todayCalendarDay } from "@/domain/eval/betmind-runtime/calendar";
 import { loadCoverage055, loadCurrentActivity055, readActivityFeed055 } from "@/domain/eval/catalog-055/cycle";
 import { loadAutostartStatus055 } from "@/domain/eval/catalog-055/autostart";
 import { computeMassiveStats049 } from "@/domain/eval/factory-049/stats";
@@ -243,8 +243,13 @@ export function buildRuntimePayloadFromLocal(root = permanentRoot044()): BetMind
         : "OFFLINE";
 
   const published_at = new Date().toISOString();
-  const nowMs = Date.parse(published_at);
-  const next_events = storePresent ? buildLiteNextEvents(root, nowMs, 120) : [];
+  const today = todayCalendarDay(published_at);
+  const calendar = storePresent
+    ? listCalendarEvents({ root, date: today, sport: "football" })
+    : { day: today, total: 0, events: [] };
+  const next_events = storePresent
+    ? listCalendarEvents({ root, from: today, sport: "ALL" }).events
+    : [];
   const analysis = buildAnalysisSummaryFromLocal(root, next_events);
 
   const coverage = loadCoverage055(root);
@@ -372,6 +377,8 @@ export function buildRuntimePayloadFromLocal(root = permanentRoot044()): BetMind
       },
       current_work: activity ?? base.current_work,
       next_events,
+      calendar,
+      analysis,
       sport_diagnostics: coverage?.by_sport ?? null,
       coverage_047: coverage,
       multisource_055: {
@@ -481,7 +488,7 @@ async function persistCycleAndBoard(payload: BetMindRuntimePayload): Promise<voi
   `;
 
   const events = (payload.observatory?.next_events as BoardEventRow[] | undefined) ?? [];
-  for (const row of events.slice(0, 200)) {
+  for (const row of events) {
     const eventId = String(row.event_id ?? "");
     if (!eventId) continue;
     const bucket = String(row.bucket ?? "DISCOVERED");

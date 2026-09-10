@@ -668,7 +668,7 @@ export async function mirrorDossiersToNeon(
   labB = permanentRoot044(),
   opts: { limit?: number; eventIds?: string[] } = {},
 ): Promise<{ attempted: number; upserted: number; skipped: number }> {
-  const limit = opts.limit ?? 150;
+  const limit = opts.limit ?? 2000;
   const ids: string[] = [];
   const seen = new Set<string>();
   const push = (id: string) => {
@@ -680,8 +680,8 @@ export async function mirrorDossiersToNeon(
   if (opts.eventIds?.length) {
     for (const id of opts.eventIds) push(String(id));
   } else {
-    const { buildLiteNextEvents } = await import("@/domain/eval/betmind-runtime/board");
-    const board = buildLiteNextEvents(labB, Date.now(), 200);
+    const { listCalendarEvents } = await import("@/domain/eval/betmind-runtime/calendar");
+    const board = listCalendarEvents({ root: labB, from: new Date().toISOString().slice(0, 10), sport: "ALL" }).events;
     for (const row of board) {
       if (String(row.bucket) === "ANALYZED") push(String(row.event_id));
     }

@@ -33,6 +33,11 @@ const PRIORITY_IDS = [
 export default function SourcesPage() {
   const { sources, coverage, updating, lastUpdate, error } = useBetMindData();
   const list = sources?.sources ?? [];
+  const operational = (sources?.operational ?? []).map((s) => ({
+    ...s,
+    id: s.id ?? (s as { source_id?: string }).source_id,
+    title: s.title ?? (s as { name?: string }).name,
+  }));
   const byId = new Map(list.map((s) => [s.id, s]));
 
   const ordered = [
@@ -121,8 +126,30 @@ export default function SourcesPage() {
                     <dd>{String(s.enters_independent_model ?? false)}</dd>
                   </div>
                   <div>
-                    <dt className="bm-metric-label">Last update</dt>
-                    <dd>—</dd>
+                    <dt className="bm-metric-label">Last attempt</dt>
+                    <dd>{fmtWhen(s.last_attempt ?? null)}</dd>
+                  </div>
+                  <div>
+                    <dt className="bm-metric-label">Last success</dt>
+                    <dd>{fmtWhen(s.last_success ?? null)}</dd>
+                  </div>
+                  <div>
+                    <dt className="bm-metric-label">Last failure</dt>
+                    <dd>{fmtWhen(s.last_failure ?? null)}</dd>
+                  </div>
+                  <div>
+                    <dt className="bm-metric-label">Ultimo evento reperito</dt>
+                    <dd>{s.last_event_label ?? "nessun evento reperito"}</dd>
+                  </div>
+                  <div>
+                    <dt className="bm-metric-label">Blocked / NO_EVENT</dt>
+                    <dd>
+                      {s.blocked_count ?? 0} / {s.no_event_count ?? 0}
+                    </dd>
+                  </div>
+                  <div>
+                    <dt className="bm-metric-label">Capabilities</dt>
+                    <dd className="bm-muted">{(s.capabilities ?? []).join(", ") || "—"}</dd>
                   </div>
                   <div className="sm:col-span-2">
                     <dt className="bm-metric-label">Reason / coverage note</dt>
@@ -141,7 +168,25 @@ export default function SourcesPage() {
         </div>
       )}
 
-      {(coverage?.FEATURES_STUB?.length || coverage?.FEATURES_MISSING?.length) && (
+      {!!operational.length && (
+        <Card title="Esecuzioni reali del Brain">
+          <p className="mb-3 text-xs bm-muted">
+            Contatori da research-status.jsonl — HTTP 200 senza evento non è SUCCESS.
+          </p>
+          <div className="grid gap-2 text-sm">
+            {operational.map((s) => (
+              <div key={String(s.id)} className="flex flex-wrap justify-between gap-2 border-b border-[rgba(255,255,255,0.06)] py-2">
+                <span className="font-medium">{s.title ?? s.id}</span>
+                <span className="bm-muted">
+                  {String(s.status ?? "IDLE")} · found {s.events_found ?? 0} · blocked {s.blocked_count ?? 0} ·{" "}
+                  {s.last_event_label ?? "nessun evento reperito"}
+                </span>
+              </div>
+            ))}
+          </div>
+        </Card>
+      )}
+      {(coverage?.FEATURES_STUB?.length || coverage?.FEATURES_MISSING?.length || coverage?.FEATURES_ACTIVE?.length) && (
         <Card title="Feature readiness (manifest)">
           <div className="space-y-2 text-sm">
             {!!coverage?.FEATURES_ACTIVE?.length && (

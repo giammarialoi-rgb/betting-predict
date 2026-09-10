@@ -7,9 +7,9 @@ import { loadSourceHealth053 } from "@/domain/eval/bankroll-053/source-health";
 import { loadAutostartStatus055 } from "@/domain/eval/catalog-055/autostart";
 import { loadCoverage055, loadCurrentActivity055, readActivityFeed055 } from "@/domain/eval/catalog-055/cycle";
 import {
-  buildLiteNextEvents,
-  readJsonlTail,
-} from "@/domain/eval/betmind-runtime/board";
+  listCalendarEvents,
+  todayCalendarDay,
+} from "@/domain/eval/betmind-runtime/calendar";
 import { loadRuntimeStatus } from "@/domain/eval/betmind-runtime/remote-status";
 import { permanentRoot044 } from "@/domain/eval/permanent-044/config";
 import { piRoot } from "@/domain/eval/predictive-intelligence/config";
@@ -34,7 +34,11 @@ function buildLiteObservatory(root: string, nowIso: string) {
   const activity = loadCurrentActivity055(root) ?? loadCurrentWork053(root);
   const feed = readActivityFeed055(root, 40);
   const health053 = buildHealthPayload053(root);
-  const next_events = buildLiteNextEvents(root, Date.parse(nowIso), 120);
+  const next_events = listCalendarEvents({
+    root,
+    from: todayCalendarDay(nowIso),
+    sport: "ALL",
+  }).events;
   const piVerdict = readJsonIfExists(join(root, "predictive-intelligence", "final-verdict.json"));
 
   return {

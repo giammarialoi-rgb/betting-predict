@@ -125,6 +125,7 @@ export async function runBrainCycle051(input: {
       forceDiscovery: allowDiscover && input.forceDiscover === true,
       fetchImpl: input.fetchImpl,
       nowIso,
+      research: true,
     });
 
     let paper = 0;
@@ -165,8 +166,7 @@ export async function runBrainCycle051(input: {
       /* optional */
     }
 
-    // Research / scrape CONTEXT pipeline (never invents available_at; odds out of MODEL)
-    let researchStats: {
+    const researchStats: {
       research_fetches: number;
       research_failures: number;
       research_denied: number;
@@ -175,64 +175,30 @@ export async function runBrainCycle051(input: {
       researched?: number;
       upcoming?: number;
       budget?: number;
-    } | null = null;
-    try {
-      const { runEventResearchOrchestrator } = await import(
-        "@/domain/eval/data-intelligence/research/orchestrator"
-      );
-      const storeAfter = loadStore044(labB);
-      const research = await runEventResearchOrchestrator({
-        events: storeAfter.events,
-        nowIso,
-        nowMs,
-        cycleNumber: loadBrainState051(labB).cycles_completed + 1,
-        labBRoot: labB,
-      });
-      researchStats = {
-        research_fetches: research.research_fetches,
-        research_failures: research.research_failures,
-        research_denied: research.research_denied,
-        events_touched: research.events_touched,
-        queued: research.queued,
-        researched: research.researched,
-        upcoming: research.upcoming,
-        budget: research.budget,
-      };
+    } | null = massive.research
+      ? {
+          research_fetches: massive.research.research_fetches,
+          research_failures: massive.research.research_failures,
+          research_denied: massive.research.research_denied,
+          events_touched: massive.research.events_touched,
+          queued: massive.research.queued,
+          researched: massive.research.researched,
+          upcoming: massive.research.upcoming,
+          budget: massive.research.budget,
+        }
+      : null;
+    if (researchStats) {
       appendActivity051(
         labB,
         "RESEARCH",
-        `budget=${research.budget} touched=${research.events_touched} queued=${research.queued} researched=${research.researched} fetches=${research.research_fetches}`,
+        `budget=${researchStats.budget} touched=${researchStats.events_touched} queued=${researchStats.queued} researched=${researchStats.researched} fetches=${researchStats.research_fetches}`,
       );
-      try {
-        const { appendFileSync } = await import("node:fs");
-        const { join } = await import("node:path");
-        appendFileSync(
-          join(labB, "cycle-traces.jsonl"),
-          `${JSON.stringify({
-            cycle: loadBrainState051(labB).cycles_completed + 1,
-            at: nowIso,
-            discovered: storeAfter.events.length,
-            research_attempted: research.events_touched,
-            research_completed: research.research_fetches,
-            research_failures: research.research_failures,
-            blocked: research.by_source,
-            queued: research.queued,
-            researched: research.researched,
-            budget: research.budget,
-          })}\n`,
-          "utf8",
-        );
-      } catch {
-        /* trace optional */
-      }
-    } catch {
-      /* research optional — cycle must not die */
     }
 
     // Mirror ANALYZED / independent dossiers to Neon for Vercel `/events/[id]`
     try {
       const { mirrorDossiersToNeon } = await import("@/domain/eval/betmind-runtime/dossier");
-      await mirrorDossiersToNeon(labB, { limit: 150 });
+      await mirrorDossiersToNeon(labB, { limit: 2000 });
     } catch {
       /* optional */
     }

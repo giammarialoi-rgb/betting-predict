@@ -74,7 +74,7 @@ export async function runPredictiveIntelligenceLab(input?: {
   // leakage + independence self-check on a sample
   let leakageOk = true;
   let oddsIndependenceOk = false;
-  let marketAsModelForbidden = true;
+  const marketAsModelForbidden = true;
   try {
     if (matches.length >= 50) {
       const sample = matches[Math.floor(matches.length / 2)]!;

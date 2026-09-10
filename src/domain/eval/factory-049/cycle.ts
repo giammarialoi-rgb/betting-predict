@@ -20,12 +20,25 @@ export type CycleResult049 = {
   engine: ReturnType<typeof runDecisionEngine048>;
   stats: ReturnType<typeof computeMassiveStats049>;
   skipped_discovery: boolean;
+  research: {
+    events_touched: number;
+    research_fetches: number;
+    research_failures: number;
+    research_denied: number;
+    queued?: number;
+    researched?: number;
+    upcoming?: number;
+    budget?: number;
+    by_source?: Record<string, { ok: number; fail: number; denied: number; missing: number }>;
+  } | null;
 };
 
 export async function runMassive049Cycle(input: {
   discover?: boolean;
   settle?: boolean;
   forceDiscovery?: boolean;
+  /** When true, research runs after discovery and BEFORE analyze. */
+  research?: boolean;
   fetchImpl?: typeof fetch;
   nowIso?: string;
 } = {}): Promise<CycleResult049> {
@@ -67,6 +80,41 @@ export async function runMassive049Cycle(input: {
         nowIso,
       });
       if (discovery.stopped_gracefully) skipped_discovery = true;
+    }
+  }
+
+  let research: CycleResult049["research"] = null;
+  if (input.research) {
+    try {
+      const { runEventResearchOrchestrator } = await import(
+        "@/domain/eval/data-intelligence/research/orchestrator"
+      );
+      const storePre = loadStore044(labB);
+      const envBudgetRaw = process.env.RESEARCH_EVENT_BUDGET;
+      const envBudget = envBudgetRaw != null && Number.isFinite(Number(envBudgetRaw)) && Number(envBudgetRaw) >= 1
+        ? Math.floor(Number(envBudgetRaw))
+        : undefined;
+      const r = await runEventResearchOrchestrator({
+        events: storePre.events,
+        nowIso,
+        nowMs: Date.parse(nowIso),
+        cycleNumber: null,
+        labBRoot: labB,
+        budget: envBudget,
+      });
+      research = {
+        events_touched: r.events_touched,
+        research_fetches: r.research_fetches,
+        research_failures: r.research_failures,
+        research_denied: r.research_denied,
+        queued: r.queued,
+        researched: r.researched,
+        upcoming: r.upcoming,
+        budget: r.budget,
+        by_source: r.by_source,
+      };
+    } catch {
+      research = null;
     }
   }
 
@@ -113,5 +161,5 @@ export async function runMassive049Cycle(input: {
     artificial_cap: false,
   });
 
-  return { discovery, analyze, multi_market, engine, stats, skipped_discovery };
+  return { discovery, analyze, multi_market, engine, stats, skipped_discovery, research };
 }

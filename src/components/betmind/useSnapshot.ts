@@ -45,6 +45,15 @@ export type DataSourceEntry = {
   temporal_precision?: string;
   legal_status?: string;
   last_error?: string | null;
+  last_attempt?: string | null;
+  last_success?: string | null;
+  last_failure?: string | null;
+  events_found?: number;
+  blocked_count?: number;
+  no_event_count?: number;
+  last_event_label?: string | null;
+  capabilities?: string[];
+  missing_adapter?: boolean;
 };
 
 export type DataSourcesPayload = {
@@ -55,6 +64,7 @@ export type DataSourcesPayload = {
   test_scrape_enabled?: boolean;
   scrape_enters_model?: boolean;
   sources?: DataSourceEntry[];
+  operational?: DataSourceEntry[];
 };
 
 export type CoveragePayload = {
@@ -147,9 +157,14 @@ export function useBetMindSnapshot(pollMs = 4000) {
   }, []);
 
   useEffect(() => {
-    void load();
+    const kick = window.setTimeout(() => {
+      void load();
+    }, 0);
     const t = setInterval(() => void load(), pollMs);
-    return () => clearInterval(t);
+    return () => {
+      window.clearTimeout(kick);
+      clearInterval(t);
+    };
   }, [load, pollMs]);
 
   const strip = deriveSystemStrip({ snapshotOk: Boolean(data) && !error, health });

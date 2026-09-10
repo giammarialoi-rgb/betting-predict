@@ -10,7 +10,7 @@ import type { PermanentPrediction044 } from "@/domain/eval/permanent-044/types";
 import { PI_MODEL_INDEPENDENT_ID } from "@/domain/eval/predictive-intelligence/config";
 
 /** Bump when live-resolve / independent path changes materially. */
-export const ANALYSIS_RUNTIME_VERSION = "phase-3e.1-live-resolve-v1";
+export const ANALYSIS_RUNTIME_VERSION = "phase-5-data-acquisition-v1";
 
 export type PredictionAppendDecision =
   | { action: "allow"; reason: string }

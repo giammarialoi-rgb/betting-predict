@@ -10,7 +10,6 @@ import {
   Pill,
   Unknown,
   EmptyState,
-  asRecord,
   edgeLabel,
   fmtN,
   fmtPct,
