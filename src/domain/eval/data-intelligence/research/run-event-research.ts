@@ -12,6 +12,10 @@ import { isTestScrapeEnabled } from "@/domain/sources/scraping-policy";
 import { runTestScrapeProbes } from "@/domain/eval/data-intelligence/scrape/probe";
 import { clubEloCachePresent, findClubEloCachePaths } from "@/domain/eval/data-intelligence/registry";
 import {
+  ensureClubEloCacheDay,
+  clubEloAsOfDateForKickoff,
+} from "@/domain/eval/data-intelligence/clubelo-ensure";
+import {
   appendResearchStatus,
   writeResearchCycleSummary,
   type ResearchStatusRow,
@@ -160,6 +164,18 @@ export async function runEventResearchBatch(input: {
     "club-football-match-data",
     "the-odds-api",
   ]);
+
+  // ClubElo once per batch (shared day as-of now) — avoid N× network
+  const batchEloDay = clubEloAsOfDateForKickoff(
+    slice[0]?.kickoff_utc ?? nowIso,
+    nowIso,
+  );
+  let batchElo: Awaited<ReturnType<typeof ensureClubEloCacheDay>> | null = null;
+  try {
+    batchElo = await ensureClubEloCacheDay({ ratingDateIso: batchEloDay });
+  } catch {
+    batchElo = null;
+  }
 
   for (const ev of slice) {
     const kickoff = ev.kickoff_utc ?? nowIso;
@@ -354,44 +370,58 @@ export async function runEventResearchBatch(input: {
       result.research_failures += 1;
     }
 
-    // 3) ClubElo local cache presence (no network)
-    const eloPresent = clubEloCachePresent(process.cwd());
-    const eloPaths = findClubEloCachePaths(process.cwd());
-    appendResearchStatus(
-      baseRow({
-        event_id: ev.event_id,
-        source_id: "clubelo",
-        phase: eloPresent ? "OK" : "UNAVAILABLE",
-        ok: eloPresent,
-        fetched: eloPresent,
-        fetched_at: eloPresent ? nowIso : null,
-        available_at: null, // DATE_ONLY — no invented exact clock
-        observed_at: eloPresent ? nowIso : null,
-        reason: eloPresent
-          ? `local_csv_paths=${eloPaths.length} (DATE_ONLY; enters model only if rating_date < match_date)`
-          : "No local ClubElo CSV cache",
-        raw_ref: eloPaths[0] ?? null,
-        cycle_number: input.cycleNumber,
-        at: nowIso,
-        url: "http://clubelo.com/",
-        adapter_kind: "CACHE_ONLY",
-        http_status: null,
-        parser_status: eloPresent ? "CACHE_PRESENT" : "CACHE_ABSENT",
-        fields_extracted: eloPresent ? ["club_elo_rating"] : [],
-      }),
-      root,
-    );
-    if (eloPresent) {
-      bump(result.by_source, "clubelo", "ok");
-      result.research_fetches += 1;
-    } else {
-      bump(result.by_source, "clubelo", "fail");
-      result.research_failures += 1;
+    // 3) ClubElo — batch-fetched public API CSV (DATE_ONLY as-of)
+    {
+      const eloDay = clubEloAsOfDateForKickoff(kickoff, nowIso);
+      const eloEnsure =
+        batchElo ??
+        ({
+          ok: false,
+          path: null,
+          rating_date: eloDay,
+          http_status: null,
+          observations: 0,
+          reason: "BATCH_FETCH_SKIPPED",
+          url: `http://api.clubelo.com/${eloDay}`,
+        } as const);
+      const eloPresent = eloEnsure.ok || clubEloCachePresent(process.cwd());
+      const eloPaths = findClubEloCachePaths(process.cwd());
+      appendResearchStatus(
+        baseRow({
+          event_id: ev.event_id,
+          source_id: "clubelo",
+          phase: eloPresent ? "OK" : "UNAVAILABLE",
+          ok: eloPresent,
+          fetched: eloEnsure.ok || eloEnsure.reason === "CACHE_HIT",
+          fetched_at: eloPresent ? nowIso : null,
+          available_at: eloPresent ? `${eloEnsure.rating_date}T00:00:00.000Z` : null,
+          observed_at: eloPresent ? nowIso : null,
+          reason: eloPresent
+            ? `ClubElo day=${eloEnsure.rating_date} observations≈${eloEnsure.observations} (${eloEnsure.reason ?? "fetched"})`
+            : `ClubElo unavailable: ${eloEnsure.reason ?? "unknown"} http=${eloEnsure.http_status}`,
+          raw_ref: eloEnsure.path ?? eloPaths[0] ?? null,
+          cycle_number: input.cycleNumber,
+          at: nowIso,
+          url: eloEnsure.url,
+          adapter_kind: "PRODUCTION_ADAPTER",
+          http_status: eloEnsure.http_status,
+          parser_status: eloPresent ? "OK" : "FETCH_FAIL",
+          fields_extracted: eloPresent ? ["home_elo", "away_elo", "elo_diff"] : [],
+        }),
+        root,
+      );
+      if (eloPresent) {
+        bump(result.by_source, "clubelo", "ok");
+        result.research_fetches += 1;
+      } else {
+        bump(result.by_source, "clubelo", "fail");
+        result.research_failures += 1;
+      }
     }
 
-    // 4) football-data / club-football local hints
-    const fdPath = join(process.cwd(), "audit", "external", "task-044", "predictive-intelligence", "matches.jsonl");
-    const fdAlt = join(root, "predictive-intelligence", "matches.jsonl");
+    // 4) football-data / PI matches.jsonl
+    const fdPath = join(root, "predictive-intelligence", "datasets", "matches.jsonl");
+    const fdAlt = join(process.cwd(), "audit", "external", "task-044", "predictive-intelligence", "datasets", "matches.jsonl");
     const fdPresent = existsSync(fdPath) || existsSync(fdAlt);
     appendResearchStatus(
       baseRow({

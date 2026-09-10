@@ -1,0 +1,224 @@
+/**
+ * Map live Odds-API events → Football-Data PI universe (division + team ids).
+ * No invented history — only resolution against known aliases / imported matches.
+ */
+import { FOOTBALL_DATA_CO_UK_TEAM_ALIASES } from "@/providers/football-data-co-uk/team-aliases";
+import type { PiMatchRow } from "@/domain/eval/predictive-intelligence/types";
+import type { PiDivision } from "@/domain/eval/predictive-intelligence/config";
+
+/** Odds API / Lab B competition keys → football-data.co.uk division codes. */
+const COMPETITION_TO_DIVISION: Record<string, PiDivision> = {
+  soccer_epl: "E0",
+  epl: "E0",
+  e0: "E0",
+  "premier league": "E0",
+  soccer_italy_serie_a: "I1",
+  serie_a: "I1",
+  i1: "I1",
+  soccer_spain_la_liga: "SP1",
+  la_liga: "SP1",
+  sp1: "SP1",
+  soccer_germany_bundesliga: "D1",
+  bundesliga: "D1",
+  d1: "D1",
+  soccer_france_ligue_one: "F1",
+  ligue_1: "F1",
+  f1: "F1",
+};
+
+/**
+ * Extra Odds-API / common English names → same canonical ids as football-data aliases.
+ * Keys stored lowercased.
+ */
+const LIVE_NAME_TO_ID: Record<string, string> = {
+  "nottingham forest": "nottingham-forest",
+  "nottm forest": "nottingham-forest",
+  "nott'm forest": "nottingham-forest",
+  "aston villa": "aston-villa",
+  "manchester united": "manchester-united",
+  "man united": "manchester-united",
+  "man utd": "manchester-united",
+  "manchester city": "manchester-city",
+  "man city": "manchester-city",
+  "west ham": "west-ham",
+  "west ham united": "west-ham",
+  "crystal palace": "crystal-palace",
+  "sheffield united": "sheffield-united",
+  "sheffield utd": "sheffield-united",
+  "newcastle united": "newcastle",
+  newcastle: "newcastle",
+  "brighton and hove albion": "brighton",
+  "brighton & hove albion": "brighton",
+  brighton: "brighton",
+  "wolverhampton wanderers": "wolves",
+  wolves: "wolves",
+  "tottenham hotspur": "tottenham",
+  spurs: "tottenham",
+  "leicester city": "leicester",
+  "leeds united": "leeds",
+  "afc bournemouth": "bournemouth",
+  bournemouth: "bournemouth",
+  // Serie A / La Liga / Bundesliga / Ligue 1 common Odds names
+  "inter milan": "inter",
+  inter: "inter",
+  "ac milan": "milan",
+  "atletico madrid": "ath-madrid",
+  "atlético madrid": "ath-madrid",
+  "athletic bilbao": "ath-bilbao",
+  "athletic club": "ath-bilbao",
+  "real madrid": "real-madrid",
+  barcelona: "barcelona",
+  "bayern munich": "bayern-munich",
+  "bayern münchen": "bayern-munich",
+  "borussia dortmund": "dortmund",
+  "psg": "paris-sg",
+  "paris saint germain": "paris-sg",
+  "paris saint-germain": "paris-sg",
+};
+
+function slugify(name: string): string {
+  return name
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/\p{M}/gu, "")
+    .replace(/[''`]/g, "")
+    .replace(/&/g, " and ")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
+/** Build lowercased lookup from published football-data alias table. */
+function aliasLookup(): Map<string, string> {
+  const m = new Map<string, string>();
+  for (const [raw, id] of Object.entries(FOOTBALL_DATA_CO_UK_TEAM_ALIASES)) {
+    m.set(raw.toLowerCase(), id);
+    m.set(slugify(raw), id);
+  }
+  for (const [raw, id] of Object.entries(LIVE_NAME_TO_ID)) {
+    m.set(raw.toLowerCase(), id);
+    m.set(slugify(raw), id);
+  }
+  return m;
+}
+
+const ALIAS_LC = aliasLookup();
+
+export function mapCompetitionToPiDivision(competition?: string | null): PiDivision | null {
+  if (!competition) return null;
+  const k = competition.trim().toLowerCase().replace(/\s+/g, "_");
+  if (COMPETITION_TO_DIVISION[k]) return COMPETITION_TO_DIVISION[k]!;
+  const compact = competition.trim().toLowerCase();
+  if (COMPETITION_TO_DIVISION[compact]) return COMPETITION_TO_DIVISION[compact]!;
+  // Already a division code
+  const up = competition.trim().toUpperCase();
+  if (up === "E0" || up === "SP1" || up === "D1" || up === "I1" || up === "F1") {
+    return up as PiDivision;
+  }
+  return null;
+}
+
+/**
+ * Resolve Odds/live team display name to PI home_team_id / away_team_id.
+ * Prefers alias table, then exact id presence in matches, then slug equality.
+ */
+export function resolveLiveTeamId(
+  rawName: string | null | undefined,
+  matches: readonly PiMatchRow[],
+): { team_id: string; matched: boolean; method: string } {
+  const raw = (rawName ?? "").trim();
+  if (!raw) return { team_id: "live:unknown", matched: false, method: "empty" };
+
+  const lc = raw.toLowerCase();
+  const slug = slugify(raw);
+
+  const fromAlias = ALIAS_LC.get(lc) ?? ALIAS_LC.get(slug);
+  if (fromAlias) {
+    const present = matches.some(
+      (m) => m.home_team_id === fromAlias || m.away_team_id === fromAlias,
+    );
+    if (present) return { team_id: fromAlias, matched: true, method: "alias" };
+    // Alias known even if not in current division slice — still use canonical id
+    return { team_id: fromAlias, matched: true, method: "alias_unverified" };
+  }
+
+  // Exact team_id hit
+  for (const m of matches) {
+    if (m.home_team_id === slug || m.away_team_id === slug) {
+      return { team_id: slug, matched: true, method: "slug_id" };
+    }
+    if (m.home_team.toLowerCase() === lc || m.away_team.toLowerCase() === lc) {
+      return {
+        team_id: m.home_team.toLowerCase() === lc ? m.home_team_id : m.away_team_id,
+        matched: true,
+        method: "exact_name",
+      };
+    }
+  }
+
+  // Token containment on known ids (conservative: prefer longer id matches)
+  const ids = new Set<string>();
+  for (const m of matches) {
+    ids.add(m.home_team_id);
+    ids.add(m.away_team_id);
+  }
+  let best: string | null = null;
+  for (const id of ids) {
+    if (id.startsWith("raw:")) continue;
+    if (slug.includes(id) || id.includes(slug)) {
+      if (!best || id.length > best.length) best = id;
+    }
+  }
+  if (best && best.length >= 5) {
+    return { team_id: best, matched: true, method: "slug_contains" };
+  }
+
+  return { team_id: `live:${slug || lc}`, matched: false, method: "unresolved" };
+}
+
+/** Latest season code present in matches for a division (e.g. "2324"). */
+export function latestSeasonForDivision(
+  matches: readonly PiMatchRow[],
+  division: string,
+): string | null {
+  let best: string | null = null;
+  for (const m of matches) {
+    if (m.league !== division) continue;
+    if (!best || m.season > best) best = m.season;
+  }
+  return best;
+}
+
+export type LivePiTargetMeta = {
+  division: string | null;
+  season: string;
+  home_team_id: string;
+  away_team_id: string;
+  home_matched: boolean;
+  away_matched: boolean;
+  home_method: string;
+  away_method: string;
+};
+
+export function resolveLivePiTarget(input: {
+  home_team?: string | null;
+  away_team?: string | null;
+  competition?: string | null;
+  matches: readonly PiMatchRow[];
+}): LivePiTargetMeta {
+  const division = mapCompetitionToPiDivision(input.competition);
+  const scoped = division ? input.matches.filter((m) => m.league === division) : input.matches;
+  const home = resolveLiveTeamId(input.home_team, scoped.length ? scoped : input.matches);
+  const away = resolveLiveTeamId(input.away_team, scoped.length ? scoped : input.matches);
+  const season =
+    (division ? latestSeasonForDivision(input.matches, division) : null) ?? "live";
+  return {
+    division,
+    season,
+    home_team_id: home.team_id,
+    away_team_id: away.team_id,
+    home_matched: home.matched,
+    away_matched: away.matched,
+    home_method: home.method,
+    away_method: away.method,
+  };
+}

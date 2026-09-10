@@ -142,7 +142,6 @@ export function buildAnalysisSummaryFromLocal(
     /* keep board length */
   }
   const analyzed = stats?.EVENTS_ANALYZED ?? buckets.ANALYZED;
-  const predictions = stats?.TOTAL_PREDICTIONS ?? buckets.ANALYZED;
   const noBet = typeof stats?.NO_BET === "number" ? stats.NO_BET : buckets.SKIPPED;
   const noEvents = eventsInStore === 0 && nextEvents.length === 0;
   const covPct =
@@ -162,7 +161,8 @@ export function buildAnalysisSummaryFromLocal(
     events_in_store: eventsInStore,
     events_discovered: pipeline.events_discovered,
     events_analyzed: analyzed,
-    predictions_produced: predictions,
+    /** Phase 3E: only independent inferences — not insufficient placeholder rows. */
+    predictions_produced: pipeline.predictions_produced,
     decisions_on_board: nextEvents.length,
     skipped: pipeline.skipped || buckets.SKIPPED + buckets.UNAVAILABLE,
     no_bet: noBet,

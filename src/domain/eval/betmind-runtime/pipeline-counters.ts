@@ -42,11 +42,35 @@ function readJsonl(path: string): Record<string, unknown>[] {
 
 function latestByEvent(rows: Record<string, unknown>[]): Map<string, Record<string, unknown>> {
   const by = new Map<string, Record<string, unknown>>();
+  const hasModel = (p: Record<string, unknown>) =>
+    Boolean(p.probability_model && typeof p.probability_model === "object");
   for (const p of rows) {
     const id = String(p.event_id ?? "");
     if (!id) continue;
     const prev = by.get(id);
-    if (!prev || String(p.timestamp ?? "") >= String(prev.timestamp ?? "")) by.set(id, p);
+    if (!prev) {
+      by.set(id, p);
+      continue;
+    }
+    const ts = String(p.timestamp ?? "");
+    const prevTs = String(prev.timestamp ?? "");
+    if (ts > prevTs) {
+      by.set(id, p);
+      continue;
+    }
+    if (ts < prevTs) continue;
+    // Same timestamp: prefer real independent inference over null placeholder
+    if (hasModel(p) && !hasModel(prev)) by.set(id, p);
+    else if (hasModel(p) === hasModel(prev)) {
+      // Prefer INDEPENDENT model version over NO_INDEPENDENT / market-only
+      const score = (x: Record<string, unknown>) => {
+        const mv = String(x.model_version ?? "");
+        if (mv.includes("INDEPENDENT") && !mv.includes("NO_INDEPENDENT")) return 2;
+        if (hasModel(x)) return 1;
+        return 0;
+      };
+      if (score(p) > score(prev)) by.set(id, p);
+    }
   }
   return by;
 }
@@ -114,7 +138,8 @@ export function computePipelineCounters3d(root = permanentRoot044()): PipelineCo
     events_with_research: researchOk.size,
     events_eligible: eligible,
     model_inferences: withModel.length,
-    predictions_produced: preds.length,
+    /** Successful independent inferences only — not insufficient placeholder rows. */
+    predictions_produced: withModel.length,
     predictions_persisted_events: latest.size,
     insufficient_data: insufficient,
     no_independent_features: noFeat,

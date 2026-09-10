@@ -139,21 +139,38 @@ function findLatestReasoning(
 ): Record<string, unknown> | null {
   const snapPath = join(piRoot(labB), "reasoning", "snapshots.jsonl");
   if (!existsSync(snapPath)) return null;
-  // Tail-first scan (newest last in append-only file)
-  const rows = readJsonlTail(snapPath, 800);
-  for (const r of rows) {
-    const row = r as Record<string, unknown>;
-    if (row.event_id === eventId) return row;
-  }
-  // Fallback: slow full scan only if tail miss (small files)
+  const score = (row: Record<string, unknown>) => {
+    const cov = typeof row.feature_coverage === "number" ? row.feature_coverage : 0;
+    const hasModel =
+      row.model_probability && typeof row.model_probability === "object" ? 1 : 0;
+    const mv = String(row.model_version ?? "");
+    const indep = mv.includes("INDEPENDENT") && !mv.includes("NO_INDEPENDENT") ? 1 : 0;
+    return { ts: String(row.at ?? ""), cov, hasModel, indep };
+  };
+  let best: Record<string, unknown> | null = null;
+  const consider = (row: Record<string, unknown>) => {
+    if (row.event_id !== eventId) return;
+    if (!best) {
+      best = row;
+      return;
+    }
+    const a = score(row);
+    const b = score(best);
+    if (a.ts > b.ts && (a.cov >= b.cov || a.hasModel >= b.hasModel)) best = row;
+    else if (a.ts === b.ts && (a.cov > b.cov || a.hasModel > b.hasModel || a.indep > b.indep))
+      best = row;
+    else if (a.cov > b.cov + 0.1 && a.hasModel >= b.hasModel) best = row;
+  };
+  const rows = readJsonlTail(snapPath, 1200);
+  for (const r of rows) consider(r as Record<string, unknown>);
+  if (best) return best;
   try {
     const sizeHint = readFileSync(snapPath, "utf8");
     if (sizeHint.length > 12_000_000) return null;
     const lines = sizeHint.split(/\n/).filter(Boolean);
     for (let i = lines.length - 1; i >= 0; i--) {
       try {
-        const row = JSON.parse(lines[i]!) as Record<string, unknown>;
-        if (row.event_id === eventId) return row;
+        consider(JSON.parse(lines[i]!) as Record<string, unknown>);
       } catch {
         /* skip */
       }
@@ -161,7 +178,7 @@ function findLatestReasoning(
   } catch {
     return null;
   }
-  return null;
+  return best;
 }
 
 function findEvent(root: string, id: string): Record<string, unknown> | null {
@@ -182,12 +199,27 @@ function findLatestJsonl(
   path: string,
   eventId: string,
 ): Record<string, unknown> | null {
-  const rows = readJsonlTail(path, 600);
+  const rows = readJsonlTail(path, 1200);
+  let best: Record<string, unknown> | null = null;
+  const score = (row: Record<string, unknown>) => {
+    const hasModel = row.probability_model && typeof row.probability_model === "object" ? 1 : 0;
+    const mv = String(row.model_version ?? "");
+    const indep = mv.includes("INDEPENDENT") && !mv.includes("NO_INDEPENDENT") ? 1 : 0;
+    return { ts: String(row.timestamp ?? ""), hasModel, indep };
+  };
   for (const r of rows) {
     const row = r as Record<string, unknown>;
-    if (row.event_id === eventId) return row;
+    if (row.event_id !== eventId) continue;
+    if (!best) {
+      best = row;
+      continue;
+    }
+    const a = score(row);
+    const b = score(best);
+    if (a.ts > b.ts) best = row;
+    else if (a.ts === b.ts && (a.hasModel > b.hasModel || a.indep > b.indep)) best = row;
   }
-  return null;
+  return best;
 }
 
 export function buildAnalysisDossier(

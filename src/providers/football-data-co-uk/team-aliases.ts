@@ -33,6 +33,8 @@ export const FOOTBALL_DATA_CO_UK_TEAM_ALIASES: Readonly<Record<string, string>> 
     "Sheffield United": "sheffield-united",
     Bournemouth: "bournemouth",
     "Nott'm Forest": "nottingham-forest",
+    "Nottingham Forest": "nottingham-forest",
+    "Nottm Forest": "nottingham-forest",
     "Inter": "inter",
     "Inter Milan": "inter",
     Milan: "milan",

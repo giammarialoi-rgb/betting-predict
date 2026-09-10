@@ -273,7 +273,10 @@ export function analyzeAllLabB045(input: {
       !prev ||
       JSON.stringify(prev.probability_market) !== JSON.stringify(marketP) ||
       JSON.stringify(prev.probability_model) !== JSON.stringify(modelP) ||
-      prev.confidence_score !== conf;
+      prev.confidence_score !== conf ||
+      // Always persist when independent inference flips on/off
+      (Boolean(prev.probability_model) !== Boolean(modelP)) ||
+      (independent.ok && !String(prev.model_version ?? "").includes("INDEPENDENT_POISSON"));
 
     if (material) {
       const pred: PermanentPrediction044 = {

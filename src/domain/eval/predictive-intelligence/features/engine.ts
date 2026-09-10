@@ -220,14 +220,17 @@ export function buildFeatureVectorPi(
 
   const seasonPriors = priors.filter((m) => m.season === target.season && m.league === target.league);
   const leaguePriors = priors.filter((m) => m.league === target.league);
+  /** Live / unmapped season: form + venue fall back to same-league priors (still as-of cut). */
+  const formPriors = seasonPriors.length ? seasonPriors : leaguePriors;
+  const venuePriors = seasonPriors.length ? seasonPriors : leaguePriors;
 
   const values: Record<string, number | null> = {};
   const missing: string[] = [];
 
   const windows = [3, 5, 10] as const;
   for (const w of windows) {
-    const hM = lastN(seasonPriors.length ? seasonPriors : leaguePriors, target.home_team_id, w);
-    const aM = lastN(seasonPriors.length ? seasonPriors : leaguePriors, target.away_team_id, w);
+    const hM = lastN(formPriors, target.home_team_id, w);
+    const aM = lastN(formPriors, target.away_team_id, w);
     const hA = aggregate(hM, target.home_team_id);
     const aA = aggregate(aM, target.away_team_id);
     put(values, missing, `home_gf_l${w}`, rate(hA, "gf", "n"));
@@ -250,10 +253,10 @@ export function buildFeatureVectorPi(
     put(values, missing, `away_score_cons_l${w}`, aA.n ? aA.scored / aA.n : null);
   }
 
-  const hHome = aggregate(seasonPriors, target.home_team_id, "home");
-  const aAway = aggregate(seasonPriors, target.away_team_id, "away");
-  const hAll = aggregate(seasonPriors, target.home_team_id);
-  const aAll = aggregate(seasonPriors, target.away_team_id);
+  const hHome = aggregate(venuePriors, target.home_team_id, "home");
+  const aAway = aggregate(venuePriors, target.away_team_id, "away");
+  const hAll = aggregate(venuePriors, target.home_team_id);
+  const aAll = aggregate(venuePriors, target.away_team_id);
 
   put(values, missing, "home_attack_home", rate(hHome, "gf", "n"));
   put(values, missing, "home_defense_home", rate(hHome, "ga", "n"));
@@ -280,7 +283,7 @@ export function buildFeatureVectorPi(
 
   // season phase proxy: match index / expected ~38
   const seasonPlayed =
-    seasonPriors.filter(
+    venuePriors.filter(
       (m) => m.home_team_id === target.home_team_id || m.away_team_id === target.home_team_id,
     ).length;
   put(values, missing, "season_phase", seasonPlayed / 38);

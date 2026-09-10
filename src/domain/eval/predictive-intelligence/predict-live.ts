@@ -24,6 +24,7 @@ import { loadClubEloCacheSync } from "@/domain/eval/data-intelligence/clubelo-ca
 import { clubEloCachePresent } from "@/domain/eval/data-intelligence/registry";
 import { synthesizeFeatureBag } from "@/domain/eval/data-intelligence/feature-bag";
 import type { PrematchFeatureObservation } from "@/domain/eval/data-intelligence/types";
+import { resolveLivePiTarget } from "@/domain/eval/predictive-intelligence/live-resolve";
 
 export type IndependentPredictResult = {
   ok: boolean;
@@ -124,26 +125,33 @@ export function predictIndependentForEvent(input: {
 
   const kick = input.kickoff_utc ?? new Date().toISOString();
   const day = kick.slice(0, 10);
-  const homeHits = matches.filter(
-    (m) =>
-      m.home_team.toLowerCase() === home ||
-      m.home_team_id.toLowerCase().includes(home) ||
-      m.home_team.toLowerCase().includes(home),
-  );
-  const awayHits = matches.filter(
-    (m) =>
-      m.away_team.toLowerCase() === away ||
-      m.away_team_id.toLowerCase().includes(away) ||
-      m.away_team.toLowerCase().includes(away),
-  );
-  const homeId = homeHits[0]?.home_team_id ?? `live:${home}`;
-  const awayId = awayHits[0]?.away_team_id ?? `live:${away}`;
+  const resolved = resolveLivePiTarget({
+    home_team: input.home_team,
+    away_team: input.away_team,
+    competition: input.competition,
+    matches,
+  });
+  const homeId = resolved.home_team_id;
+  const awayId = resolved.away_team_id;
+  const league = resolved.division ?? input.competition ?? "UNK";
+  const season = resolved.season;
+
+  const resolveCodes: string[] = [];
+  if (!resolved.home_matched || !resolved.away_matched) {
+    resolveCodes.push("TEAM_ID_PARTIAL_RESOLVE");
+  }
+  if (!resolved.division) {
+    resolveCodes.push("COMPETITION_DIVISION_UNMAPPED");
+  }
+  if (resolved.home_matched && resolved.away_matched && resolved.division) {
+    resolveCodes.push("PI_UNIVERSE_RESOLVED");
+  }
 
   const target = {
     canonical_id: `live|${day}|${homeId}|${awayId}`,
     source: "football-data-co-uk" as const,
-    season: "live",
-    league: input.competition ?? "UNK",
+    season,
+    league,
     match_date: day,
     event_time: kick,
     home_team: input.home_team ?? home,
@@ -214,7 +222,7 @@ export function predictIndependentForEvent(input: {
   });
 
   if (features.missing_keys.length > 45 || features.feature_coverage < 0.35) {
-    return failResult(["INSUFFICIENT_DATA", "FEATURES_TOO_SPARSE", ...diCodes], {
+    return failResult(["INSUFFICIENT_DATA", "FEATURES_TOO_SPARSE", ...diCodes, ...resolveCodes], {
       uncertain: true,
       feature_snapshot: features.values,
       feature_data: features.feature_data,
@@ -241,7 +249,7 @@ export function predictIndependentForEvent(input: {
       AWAY: input.marketProbability.AWAY ?? input.marketProbability.away ?? 0,
     });
 
-  const codes = ["INDEPENDENT_MODEL", PI_MODEL_INDEPENDENT_ID, ...diCodes];
+  const codes = ["INDEPENDENT_MODEL", PI_MODEL_INDEPENDENT_ID, ...diCodes, ...resolveCodes];
   if (marketOnlyMirror) codes.push("MODEL_NEAR_MARKET", "EDGE_UNKNOWN_OR_LOW");
   const uncertain =
     features.missing_keys.length > 25 ||

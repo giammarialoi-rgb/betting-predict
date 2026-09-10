@@ -19,6 +19,7 @@ export const PI_SEASONS = [
   "2122",
   "2223",
   "2324",
+  "2425",
 ] as const;
 
 export type PiDivision = (typeof PI_DIVISIONS)[number];

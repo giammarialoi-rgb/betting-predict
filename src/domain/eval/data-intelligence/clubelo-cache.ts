@@ -9,6 +9,31 @@ export function clubKeyFromTeamName(name: string): string {
   return name.toLowerCase().replace(/\s+/g, "");
 }
 
+/** ClubElo club keys often differ from Odds display names. */
+const CLUBELO_NAME_ALIASES: Record<string, string> = {
+  nottinghamforest: "forest",
+  nottmforest: "forest",
+  astonvilla: "astonvilla",
+  mancity: "manchestercity",
+  manunited: "manchesterunited",
+  manutd: "manchesterunited",
+  intermilan: "inter",
+  acmilan: "milan",
+  psg: "parissg",
+  parissaintgermain: "parissg",
+  bayernmunich: "bayern",
+  atleticomadrid: "atletico",
+};
+
+export function clubEloKeysForTeamName(name: string): string[] {
+  const base = clubKeyFromTeamName(name);
+  const out = new Set<string>([base]);
+  if (CLUBELO_NAME_ALIASES[base]) out.add(CLUBELO_NAME_ALIASES[base]!);
+  // also try without common suffixes
+  out.add(base.replace(/united$/, "").replace(/city$/, "").replace(/fc$/, ""));
+  return [...out].filter(Boolean);
+}
+
 export function parseClubEloCsvSync(csvText: string, ratingDateIso: string): ClubEloObservation[] {
   const table = parseCsv(csvText);
   const ratingDate = new Date(`${ratingDateIso}T00:00:00.000Z`);
@@ -52,15 +77,18 @@ export function resolveTeamEloAsOf(input: {
   if (!input.observations.length) return null;
   const matchDay = new Date(`${input.matchDateIso.slice(0, 10)}T00:00:00.000Z`);
   const asOf = new Date(matchDay.getTime() - 1);
-  const cell = clubEloAsOf({
-    observations: input.observations,
-    teamId: clubKeyFromTeamName(input.teamName),
-    asOf,
-  });
-  if (cell.value == null || cell.availableAt == null) return null;
-  if (cell.availableAt.getTime() >= matchDay.getTime()) return null;
-  return {
-    rating: cell.value,
-    available_at: cell.availableAt.toISOString(),
-  };
+  for (const teamId of clubEloKeysForTeamName(input.teamName)) {
+    const cell = clubEloAsOf({
+      observations: input.observations,
+      teamId,
+      asOf,
+    });
+    if (cell.value == null || cell.availableAt == null) continue;
+    if (cell.availableAt.getTime() >= matchDay.getTime()) continue;
+    return {
+      rating: cell.value,
+      available_at: cell.availableAt.toISOString(),
+    };
+  }
+  return null;
 }
