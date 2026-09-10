@@ -113,6 +113,10 @@ export type PermanentPrediction044 = {
   ranking_bucket: RankingBucket044;
   prediction_seq: number;
   immutable: true;
+  /** Phase 3E.1 — producer stamp; optional for historical rows. */
+  analysis_runtime_version?: string;
+  worker_pid?: number | null;
+  cycle_number?: number | null;
 };
 
 export type PermanentLock044 = {

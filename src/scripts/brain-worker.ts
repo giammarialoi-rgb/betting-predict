@@ -5,6 +5,8 @@ import {
   brainWorkerLockPath051,
   loadBrainState051,
   saveBrainState051,
+  BRAIN_MODEL_051,
+  ANALYSIS_RUNTIME_VERSION,
 } from "@/domain/eval/brain-051/config";
 import { runBrainCycle051 } from "@/domain/eval/brain-051/cycle";
 import { appendBrainLog051 } from "@/domain/eval/brain-051/health";
@@ -36,9 +38,14 @@ async function main() {
     worker_pid: process.pid,
     started_at: started,
     uptime_started_at: state.uptime_started_at ?? started,
+    analysis_runtime_version: ANALYSIS_RUNTIME_VERSION,
+    model_version: BRAIN_MODEL_051,
   };
   saveBrainState051(root, state);
-  appendBrainLog051(root, `worker_start pid=${process.pid}`);
+  appendBrainLog051(
+    root,
+    `worker_start pid=${process.pid} analysis_runtime_version=${ANALYSIS_RUNTIME_VERSION}`,
+  );
   writeRichHeartbeat054(root, {
     pid: process.pid,
     started_at: started,

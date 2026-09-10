@@ -4,8 +4,10 @@ import { join } from "node:path";
 import { ExperimentIntegrityError } from "@/domain/eval/actuarial-018/integrity";
 import { permanentRoot044, labAStore044 } from "@/domain/eval/permanent-044/config";
 import { FROZEN_031_SHA256_044 } from "@/domain/eval/permanent-044/types";
+import { ANALYSIS_RUNTIME_VERSION } from "@/domain/eval/permanent-044/prediction-precedence";
 
 export { permanentRoot044 as labBStore051, labAStore044 };
+export { ANALYSIS_RUNTIME_VERSION };
 
 export const BRAIN_MODEL_051 = "MODEL_v2_DECISION_ENGINE";
 
@@ -118,6 +120,8 @@ export type BrainState051 = {
   last_priority: SchedulerPriority051;
   cycles_completed: number;
   model_version: string;
+  /** Phase 3E.1 — stamps which analysis code the worker is running. */
+  analysis_runtime_version: string;
   capital: "CLOSED";
   real_money: false;
   auto_promotion: false;
@@ -138,6 +142,7 @@ export function defaultBrainState051(): BrainState051 {
     last_priority: "IDLE",
     cycles_completed: 0,
     model_version: BRAIN_MODEL_051,
+    analysis_runtime_version: ANALYSIS_RUNTIME_VERSION,
     capital: "CLOSED",
     real_money: false,
     auto_promotion: false,

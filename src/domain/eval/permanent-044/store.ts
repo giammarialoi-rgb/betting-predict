@@ -10,6 +10,10 @@ import type {
   PermanentQuote044,
   PermanentSettlement044,
 } from "@/domain/eval/permanent-044/types";
+import {
+  decidePredictionAppend,
+  logPredictionBlocked,
+} from "@/domain/eval/permanent-044/prediction-precedence";
 
 export const LEDGER_FILES_044 = [
   "events.jsonl",
@@ -114,8 +118,23 @@ export function appendQuote044(store: Store044, q: PermanentQuote044): "ok" | "d
   return "ok";
 }
 
-export function appendPrediction044(store: Store044, p: PermanentPrediction044): "ok" | "dup" {
+export function appendPrediction044(
+  store: Store044,
+  p: PermanentPrediction044,
+): "ok" | "dup" | "blocked_downgrade" {
   if (store.predictionIds.has(p.prediction_id)) return "dup";
+  const decision = decidePredictionAppend({ existing: store.predictions, candidate: p });
+  if (decision.action === "block") {
+    logPredictionBlocked(store.root, {
+      event_id: p.event_id,
+      candidate_model_version: p.model_version,
+      reason: decision.reason,
+      at: p.timestamp,
+      analysis_runtime_version: p.analysis_runtime_version ?? "unknown",
+      worker_pid: p.worker_pid ?? null,
+    });
+    return "blocked_downgrade";
+  }
   store.predictionIds.add(p.prediction_id);
   store.predictions.push(p);
   appendJsonl044(join(store.root, "predictions.jsonl"), p);

@@ -38,6 +38,8 @@ import {
   appendJournal044,
   type Store044,
 } from "@/domain/eval/permanent-044/store";
+import { ANALYSIS_RUNTIME_VERSION } from "@/domain/eval/permanent-044/prediction-precedence";
+import { loadBrainState051 } from "@/domain/eval/brain-051/config";
 import type { PermanentLock044, PermanentPrediction044, PermanentQuote044 } from "@/domain/eval/permanent-044/types";
 import type { Quote039 } from "@/domain/eval/live-039/types";
 
@@ -76,7 +78,13 @@ function nextSeq(store: Store044, eventId: string): number {
 export function analyzeAllLabB045(input: {
   store: Store044;
   nowIso: string;
-}): { predicted: number; locked: number; noBet: number; candidates: number } {
+}): {
+  predicted: number;
+  locked: number;
+  noBet: number;
+  candidates: number;
+  blocked_downgrades: number;
+} {
   const reg = loadModelRegistry044(input.store.root);
   const modelVersion = reg.current_version;
   const featureVersion = "features_pi_v1_independent";
@@ -84,8 +92,12 @@ export function analyzeAllLabB045(input: {
   let locked = 0;
   let noBet = 0;
   const candidates = 0;
+  let blocked_downgrades = 0;
   let reasoningWritten = 0;
   let marketSignalsWritten = 0;
+  const brain = loadBrainState051(input.store.root);
+  const workerPid = brain.worker_pid ?? (typeof process !== "undefined" ? process.pid : null);
+  const cycleNumber = brain.cycles_completed ?? null;
   const movementRows: Array<{
     event_id: string;
     market: string;
@@ -281,7 +293,7 @@ export function analyzeAllLabB045(input: {
     if (material) {
       const pred: PermanentPrediction044 = {
         prediction_id: createHash("sha256")
-          .update(`pred|${ev.event_id}|${seq}|${input.nowIso}`)
+          .update(`pred|${ev.event_id}|${seq}|${input.nowIso}|${ANALYSIS_RUNTIME_VERSION}`)
           .digest("hex")
           .slice(0, 24),
         event_id: ev.event_id,
@@ -306,8 +318,14 @@ export function analyzeAllLabB045(input: {
         ranking_bucket: reasons.bucket,
         prediction_seq: seq,
         immutable: true,
+        analysis_runtime_version: ANALYSIS_RUNTIME_VERSION,
+        worker_pid: workerPid,
+        cycle_number: cycleNumber,
       };
-      if (appendPrediction044(input.store, pred) === "ok") {
+      const appendResult = appendPrediction044(input.store, pred);
+      if (appendResult === "blocked_downgrade") {
+        blocked_downgrades += 1;
+      } else if (appendResult === "ok") {
         predicted += 1;
         appendJsonl044(join(input.store.root, "updates.jsonl"), {
           kind: "WHY_THIS_PREDICTION",
@@ -443,5 +461,5 @@ export function analyzeAllLabB045(input: {
     market_signals_enter_model: false,
   });
 
-  return { predicted, locked, noBet, candidates };
+  return { predicted, locked, noBet, candidates, blocked_downgrades };
 }
