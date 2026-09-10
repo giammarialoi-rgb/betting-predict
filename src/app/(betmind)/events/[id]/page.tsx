@@ -185,6 +185,7 @@ type Detail = {
       insufficient: string | null;
       category_checks: Array<{ label: string; found: boolean; note: string }>;
       analyzed_topics?: Array<{ id: string; label_it: string; light: string; note_it: string }>;
+      found?: string[];
     } | null;
     data_quality?: { data_quality_score: number; note_it: string } | null;
     conflicts?: Array<{ field: string; note_it: string; used_source: string | null }>;
@@ -432,6 +433,20 @@ export default function EventDetailPage() {
                 <summary className="cursor-pointer bm-muted">Come funziona il modello?</summary>
                 <p className="mt-2 leading-relaxed">{hx.how_model_works}</p>
               </details>
+            </Card>
+          )}
+
+          {hx && (
+            <Card title="Cosa abbiamo trovato">
+              {(hx.found ?? []).length === 0 ? (
+                <p className="text-sm bm-muted">Nessuna osservazione persistita per questa partita.</p>
+              ) : (
+                <ul className="space-y-1 text-sm">
+                  {(hx.found ?? []).map((f) => (
+                    <li key={f}>• {f}</li>
+                  ))}
+                </ul>
+              )}
             </Card>
           )}
 

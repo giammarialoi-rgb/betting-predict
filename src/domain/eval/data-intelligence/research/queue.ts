@@ -99,7 +99,8 @@ export function eventPriority(kickoffIso: string | null, nowMs: number): EventPr
   if (!Number.isFinite(ko)) return "P3";
   const ms = ko - nowMs;
   if (ms < 0) return "P4";
-  if (ms <= 60 * 60 * 1000) return "P0";
+  if (ms <= 30 * 60 * 1000) return "P0";
+  if (ms <= 3 * 60 * 60 * 1000) return "P0";
   if (ms <= 6 * 60 * 60 * 1000) return "P1";
   if (ms <= 24 * 60 * 60 * 1000) return "P2";
   return "P3";
@@ -117,6 +118,17 @@ export function researchRefreshDue(item: ResearchQueueItem, nowMs: number): bool
   const p = eventPriority(item.kickoff_utc, nowMs);
   const last = item.last_attempt_at ? Date.parse(item.last_attempt_at) : 0;
   const age = nowMs - (Number.isFinite(last) ? last : 0);
+  const msToKick = (item.kickoff_utc ? Date.parse(item.kickoff_utc) : NaN) - nowMs;
+  if (Number.isFinite(msToKick)) {
+    if (msToKick <= 15 * 60 * 1000) return age >= 15 * 60 * 1000;
+    if (msToKick <= 30 * 60 * 1000) return age >= 15 * 60 * 1000;
+    if (msToKick <= 60 * 60 * 1000) return age >= 30 * 60 * 1000;
+    if (msToKick <= 3 * 60 * 60 * 1000) return age >= 60 * 60 * 1000;
+    if (msToKick <= 6 * 60 * 60 * 1000) return age >= 3 * 60 * 60 * 1000;
+    if (msToKick <= 12 * 60 * 60 * 1000) return age >= 6 * 60 * 60 * 1000;
+    if (msToKick <= 24 * 60 * 60 * 1000) return age >= 12 * 60 * 60 * 1000;
+    if (msToKick <= 48 * 60 * 60 * 1000) return age >= 24 * 60 * 60 * 1000;
+  }
   if (p === "P0") return age >= 15 * 60 * 1000;
   if (p === "P1") return age >= 60 * 60 * 1000;
   if (p === "P2") return age >= 6 * 60 * 60 * 1000;

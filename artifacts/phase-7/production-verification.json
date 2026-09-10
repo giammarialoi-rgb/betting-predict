@@ -1,0 +1,24 @@
+{
+  "at": "2026-09-10T22:40:00Z",
+  "runtime": "phase-7-data-acquisition-v1",
+  "tests_pass": 685,
+  "gates_unchanged": {
+    "coverage_min": 0.35,
+    "missing_keys_max": 45,
+    "odds_in_model": false
+  },
+  "scrape_test_gate": false,
+  "worker_runtime_expected": "phase-7-data-acquisition-v1",
+  "cycle_20_events": {
+    "processed": 20,
+    "observations_created": 744,
+    "real_event": 48,
+    "historical": 36,
+    "derived": 660,
+    "data_yield": 1.958,
+    "html_typed_success": 0
+  },
+  "commit": null,
+  "deploy": "pending_push",
+  "note": "Commit hash filled after git push. Worker must be restarted once onto this runtime."
+}

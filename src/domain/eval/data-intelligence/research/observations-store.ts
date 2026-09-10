@@ -6,6 +6,13 @@ import { appendFileSync, existsSync, mkdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { permanentRoot044 } from "@/domain/eval/permanent-044/config";
 
+export type ResearchObservationKind =
+  | "HISTORICAL_PRIOR"
+  | "EVENT_RESEARCH"
+  | "DERIVED"
+  | "CONTEXT"
+  | "MARKET";
+
 export type ResearchObservation = {
   event_id: string;
   feature_key: string;
@@ -17,7 +24,10 @@ export type ResearchObservation = {
   extraction_method: string;
   confidence: number | null;
   status: "REAL" | "CONTEXT" | "MISSING" | "INVALID" | "EXCLUDED_TEMPORALLY";
-  enters_independent_model: false;
+  kind?: ResearchObservationKind;
+  derived_from?: string[];
+  /** True only when the independent PI engine already consumes this key. */
+  enters_independent_model: boolean;
   content_hash?: string | null;
 };
 

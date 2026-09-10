@@ -533,6 +533,7 @@ export function buildAnalysisDossier(
     }
   }
 
+  const obsForExplain = loadResearchObservationsForEvent(String(event.event_id ?? ""), labB);
   const human_explanation = buildHumanExplanation({
     home: homeName,
     away: awayName,
@@ -540,11 +541,12 @@ export function buildAnalysisDossier(
     summary: research_summary,
     poisson,
     reason_codes: (pred?.reason_codes as string[]) ?? [],
+    observations: obsForExplain,
   });
 
   const reconciliation = reconcileResearchRows(research);
   const research_plan = { topics: RESEARCH_PLAN_TOPICS.map((t) => t.id) };
-  const obs = loadResearchObservationsForEvent(String(event.event_id ?? ""), labB);
+  const obs = obsForExplain;
   const conflicts = detectConflicts(
     obs.map((o) => ({ feature_key: o.feature_key, source: o.source, value: o.value })),
   );

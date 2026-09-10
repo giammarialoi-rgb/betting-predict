@@ -33,6 +33,13 @@ export type ResearchCycleResult = {
   research_failures: number;
   research_denied: number;
   missing_adapters: number;
+  observations_created: number;
+  real_event_observations: number;
+  historical_observations: number;
+  derived_observations: number;
+  events_with_real_event_data: number;
+  events_with_historical_data: number;
+  data_yield: number;
   by_source: Record<string, { ok: number; fail: number; denied: number; missing: number }>;
 };
 
@@ -147,7 +154,41 @@ export async function runEventResearchBatch(input: {
     research_failures: 0,
     research_denied: 0,
     missing_adapters: 0,
+    observations_created: 0,
+    real_event_observations: 0,
+    historical_observations: 0,
+    derived_observations: 0,
+    events_with_real_event_data: 0,
+    events_with_historical_data: 0,
+    data_yield: 0,
     by_source: {},
+  };
+  const eventsWithReal = new Set<string>();
+  const eventsWithHist = new Set<string>();
+
+  const noteObs = async (
+    rows: Array<{
+      kind?: string;
+      status?: string;
+      source?: string;
+    }>,
+    eventId: string,
+  ) => {
+    result.observations_created += rows.length;
+    for (const o of rows) {
+      if (o.kind === "EVENT_RESEARCH" || o.source === "open-meteo" || o.source === "ansa" || o.source === "sky-sport") {
+        result.real_event_observations += 1;
+        eventsWithReal.add(eventId);
+      } else if (o.kind === "DERIVED") {
+        result.derived_observations += 1;
+        eventsWithHist.add(eventId);
+      } else if (o.kind === "CONTEXT" || o.status === "CONTEXT") {
+        /* context scrape — not historical, not model */
+      } else {
+        result.historical_observations += 1;
+        eventsWithHist.add(eventId);
+      }
+    }
   };
 
   const executed = new Set([
@@ -159,11 +200,18 @@ export async function runEventResearchBatch(input: {
     "sofascore",
     "directa",
     "flashscore",
-    "soccerway",
-    "clubelo",
+        "soccerway",
+        "whoscored",
+        "soccervista",
+        "soccervital",
+        "the-analyst",
+        "abseits",
+        "clubelo",
     "football-data-co-uk",
     "club-football-match-data",
-    "the-odds-api",
+        "the-odds-api",
+    "ansa",
+    "sky-sport",
   ]);
 
   // ClubElo once per batch (shared day as-of now) — avoid N× network
@@ -351,6 +399,30 @@ export async function runEventResearchBatch(input: {
         if (eligible.length > 0) {
           bump(result.by_source, "open-meteo", "ok");
           result.research_fetches += 1;
+          const { appendResearchObservation } = await import(
+            "@/domain/eval/data-intelligence/research/observations-store"
+          );
+          const persisted = [];
+          for (const o of eligible) {
+            if (o.value == null || !Number.isFinite(Number(o.value))) continue;
+            const row = {
+              event_id: ev.event_id,
+              feature_key: o.key,
+              value: o.value,
+              source: "open-meteo",
+              source_url: "https://api.open-meteo.com/",
+              observed_at: nowIso,
+              available_at: o.available_at ?? nowIso,
+              extraction_method: "open_meteo_forecast_or_archive",
+              confidence: null,
+              status: "CONTEXT" as const,
+              kind: "EVENT_RESEARCH" as const,
+              enters_independent_model: false,
+            };
+            appendResearchObservation(row, root);
+            persisted.push(row);
+          }
+          await noteObs(persisted, ev.event_id);
         } else {
           bump(result.by_source, "open-meteo", "fail");
           result.research_failures += 1;
@@ -424,6 +496,47 @@ export async function runEventResearchBatch(input: {
       if (eloOk && !blockedTemporal) {
         bump(result.by_source, "clubelo", "ok");
         result.research_fetches += 1;
+        const { appendResearchObservation } = await import(
+          "@/domain/eval/data-intelligence/research/observations-store"
+        );
+        const eloRows = [];
+        if (elo.home_rating != null) {
+          const row = {
+            event_id: ev.event_id,
+            feature_key: "home_elo",
+            value: elo.home_rating,
+            source: "clubelo",
+            source_url: `http://api.clubelo.com/${eloDay}`,
+            observed_at: nowIso,
+            available_at: elo.home_available_at,
+            extraction_method: "clubelo_asof",
+            confidence: null,
+            status: "REAL" as const,
+            kind: "HISTORICAL_PRIOR" as const,
+            enters_independent_model: true,
+          };
+          appendResearchObservation(row, root);
+          eloRows.push(row);
+        }
+        if (elo.away_rating != null) {
+          const row = {
+            event_id: ev.event_id,
+            feature_key: "away_elo",
+            value: elo.away_rating,
+            source: "clubelo",
+            source_url: `http://api.clubelo.com/${eloDay}`,
+            observed_at: nowIso,
+            available_at: elo.away_available_at,
+            extraction_method: "clubelo_asof",
+            confidence: null,
+            status: "REAL" as const,
+            kind: "HISTORICAL_PRIOR" as const,
+            enters_independent_model: true,
+          };
+          appendResearchObservation(row, root);
+          eloRows.push(row);
+        }
+        await noteObs(eloRows, ev.event_id);
       } else {
         bump(result.by_source, "clubelo", "fail");
         result.research_failures += 1;
@@ -474,6 +587,23 @@ export async function runEventResearchBatch(input: {
       if (fdOk && !postKickoff) {
         bump(result.by_source, "football-data-co-uk", "ok");
         result.research_fetches += 1;
+        const { extractFootballDataObservations } = await import(
+          "@/domain/eval/data-intelligence/research/extract-archive-observations"
+        );
+        const { appendResearchObservation } = await import(
+          "@/domain/eval/data-intelligence/research/observations-store"
+        );
+        const fdObs = extractFootballDataObservations({
+          eventId: ev.event_id,
+          home: ev.home_or_a,
+          away: ev.away_or_b,
+          competition: ev.competition,
+          kickoffIso: kickoff,
+          nowIso,
+          labBRoot: root,
+        });
+        for (const o of fdObs) appendResearchObservation(o, root);
+        await noteObs(fdObs, ev.event_id);
       } else {
         bump(result.by_source, "football-data-co-uk", "fail");
         result.research_failures += 1;
@@ -517,42 +647,44 @@ export async function runEventResearchBatch(input: {
         const { appendResearchObservation } = await import(
           "@/domain/eval/data-intelligence/research/observations-store"
         );
+        const cfRows = [];
         if (bind.home_gf_l5 != null) {
-          appendResearchObservation(
-            {
-              event_id: ev.event_id,
-              feature_key: "home_gf_l5",
-              value: bind.home_gf_l5,
-              source: "club-football-match-data",
-              source_url: null,
-              observed_at: nowIso,
-              available_at: null,
-              extraction_method: "csv_prior_rows",
-              confidence: null,
-              status: "REAL",
-              enters_independent_model: false,
-            },
-            root,
-          );
+          const row = {
+            event_id: ev.event_id,
+            feature_key: "home_gf_l5",
+            value: bind.home_gf_l5,
+            source: "club-football-match-data",
+            source_url: null,
+            observed_at: nowIso,
+            available_at: null,
+            extraction_method: "csv_prior_rows",
+            confidence: null,
+            status: "REAL" as const,
+            kind: "HISTORICAL_PRIOR" as const,
+            enters_independent_model: false,
+          };
+          appendResearchObservation(row, root);
+          cfRows.push(row);
         }
         if (bind.away_gf_l5 != null) {
-          appendResearchObservation(
-            {
-              event_id: ev.event_id,
-              feature_key: "away_gf_l5",
-              value: bind.away_gf_l5,
-              source: "club-football-match-data",
-              source_url: null,
-              observed_at: nowIso,
-              available_at: null,
-              extraction_method: "csv_prior_rows",
-              confidence: null,
-              status: "REAL",
-              enters_independent_model: false,
-            },
-            root,
-          );
+          const row = {
+            event_id: ev.event_id,
+            feature_key: "away_gf_l5",
+            value: bind.away_gf_l5,
+            source: "club-football-match-data",
+            source_url: null,
+            observed_at: nowIso,
+            available_at: null,
+            extraction_method: "csv_prior_rows",
+            confidence: null,
+            status: "REAL" as const,
+            kind: "HISTORICAL_PRIOR" as const,
+            enters_independent_model: false,
+          };
+          appendResearchObservation(row, root);
+          cfRows.push(row);
         }
+        await noteObs(cfRows, ev.event_id);
       } else {
         bump(result.by_source, "club-football-match-data", "fail");
         result.research_failures += 1;
@@ -596,6 +728,11 @@ export async function runEventResearchBatch(input: {
         "directa",
         "flashscore",
         "soccerway",
+        "whoscored",
+        "soccervista",
+        "soccervital",
+        "the-analyst",
+        "abseits",
       ] as const) {
         const page = await fetchEventPage({
           sourceId: sid,
@@ -643,27 +780,29 @@ export async function runEventResearchBatch(input: {
           const { appendResearchObservation } = await import(
             "@/domain/eval/data-intelligence/research/observations-store"
           );
+          const scrapeRows = [];
           for (const field of page.extracted_values ?? []) {
             if (typed.includes(field.key)) {
-              appendResearchObservation(
-                {
-                  event_id: ev.event_id,
-                  feature_key: `page_${field.key}`,
-                  value: field.value,
-                  source: sid,
-                  source_url: page.url || null,
-                  observed_at: nowIso,
-                  available_at: null,
-                  extraction_method: "html_extract",
-                  confidence: null,
-                  status: "CONTEXT",
-                  enters_independent_model: false,
-                  content_hash: page.content_hash ?? null,
-                },
-                root,
-              );
+              const row = {
+                event_id: ev.event_id,
+                feature_key: `page_${field.key}`,
+                value: field.value,
+                source: sid,
+                source_url: page.url || null,
+                observed_at: nowIso,
+                available_at: null,
+                extraction_method: "html_extract",
+                confidence: null,
+                status: "CONTEXT" as const,
+                kind: "CONTEXT" as const,
+                enters_independent_model: false,
+                content_hash: page.content_hash ?? null,
+              };
+              appendResearchObservation(row, root);
+              scrapeRows.push(row);
             }
           }
+          await noteObs(scrapeRows, ev.event_id);
         }
         if (page.status === "DENIED" || page.status === "POLICY_DISABLED") {
           bump(result.by_source, sid, "denied");
@@ -671,6 +810,73 @@ export async function runEventResearchBatch(input: {
         } else if (page.status === "SUCCESS" && typed.length > 0) {
           bump(result.by_source, sid, "ok");
           result.research_fetches += 1;
+        } else {
+          bump(result.by_source, sid, "fail");
+          result.research_failures += 1;
+        }
+      }
+    }
+
+    // Public RSS (ANSA / Sky) — CONTEXT mention only
+    {
+      const { matchRssToEvent } = await import("@/domain/eval/data-intelligence/research/rss-news");
+      for (const sid of ["ansa", "sky-sport"] as const) {
+        const rss = await matchRssToEvent({ sourceId: sid, home: ev.home_or_a, away: ev.away_or_b });
+        const phase =
+          rss.status === "BLOCKED"
+            ? "BLOCKED"
+            : rss.status === "PARTIAL"
+              ? "OK"
+              : rss.status === "HTTP_ERROR"
+                ? "UNAVAILABLE"
+                : "UNAVAILABLE";
+        appendResearchStatus(
+          baseRow({
+            event_id: ev.event_id,
+            source_id: sid,
+            phase,
+            ok: rss.status === "PARTIAL",
+            fetched: rss.http_status != null,
+            fetched_at: rss.http_status != null ? nowIso : null,
+            available_at: rss.matched_pubDate,
+            observed_at: rss.status === "PARTIAL" ? nowIso : null,
+            reason: rss.reason,
+            raw_ref: rss.matched_link,
+            cycle_number: input.cycleNumber,
+            at: nowIso,
+            url: rss.url,
+            http_status: rss.http_status,
+            parser_status: rss.status,
+            fields_extracted: rss.matched_title ? ["rss_mention"] : [],
+            adapter_kind: "PRODUCTION_ADAPTER",
+          }),
+          root,
+        );
+        if (rss.status === "PARTIAL" && rss.matched_title) {
+          bump(result.by_source, sid, "ok");
+          result.research_fetches += 1;
+          const { appendResearchObservation } = await import(
+            "@/domain/eval/data-intelligence/research/observations-store"
+          );
+          const row = {
+            event_id: ev.event_id,
+            feature_key: "rss_mention",
+            value: rss.matched_title,
+            source: sid,
+            source_url: rss.matched_link ?? rss.url,
+            observed_at: nowIso,
+            available_at: rss.matched_pubDate,
+            extraction_method: "public_rss",
+            confidence: null,
+            status: "CONTEXT" as const,
+            kind: "EVENT_RESEARCH" as const,
+            enters_independent_model: false,
+          };
+          appendResearchObservation(row, root);
+          await noteObs([row], ev.event_id);
+        } else if (rss.status === "BLOCKED") {
+          bump(result.by_source, sid, "fail");
+          result.research_failures += 1;
         } else {
           bump(result.by_source, sid, "fail");
           result.research_failures += 1;
@@ -688,6 +894,11 @@ export async function runEventResearchBatch(input: {
       }
     }
   }
+
+  result.events_with_real_event_data = eventsWithReal.size;
+  result.events_with_historical_data = eventsWithHist.size;
+  const attempts = result.research_fetches + result.research_failures + result.research_denied;
+  result.data_yield = attempts > 0 ? Math.round((result.observations_created / attempts) * 1000) / 1000 : 0;
 
   writeResearchCycleSummary(
     {

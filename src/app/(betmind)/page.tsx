@@ -294,6 +294,44 @@ export default function BetMindHomePage() {
                     )}
                   />
                   <Metric
+                    label="Eventi con dati reali"
+                    value={String(
+                      (analysis as { events_with_real_event_data?: number } | null)
+                        ?.events_with_real_event_data ?? "—",
+                    )}
+                  />
+                  <Metric
+                    label="Eventi con archivio storico"
+                    value={String(
+                      (analysis as { events_with_historical_data?: number } | null)
+                        ?.events_with_historical_data ?? "—",
+                    )}
+                  />
+                  <Metric
+                    label="Osservazioni reali"
+                    value={String(
+                      (analysis as { real_observations?: number } | null)?.real_observations ?? "—",
+                    )}
+                  />
+                  <Metric
+                    label="Osservazioni storiche"
+                    value={String(
+                      (analysis as { historical_observations?: number } | null)
+                        ?.historical_observations ?? "—",
+                    )}
+                  />
+                  <Metric
+                    label="Feature derivate"
+                    value={String(
+                      (analysis as { derived_observations?: number } | null)?.derived_observations ??
+                        "—",
+                    )}
+                  />
+                  <Metric
+                    label="Resa dati (osservazioni/tentativi)"
+                    value={String((analysis as { data_yield?: number } | null)?.data_yield ?? "—")}
+                  />
+                  <Metric
                     label="Fonti bloccate oggi"
                     value={String(
                       (analysis as { sources_blocked_today?: number } | null)?.sources_blocked_today ?? "—",

@@ -9,6 +9,10 @@ import { catalogueById } from "@/domain/eval/data-intelligence/research/source-c
 import { loadResearchQueue, queueCounts } from "@/domain/eval/data-intelligence/research/queue";
 import { RESEARCH_BUDGET_PER_CYCLE } from "@/domain/eval/data-intelligence/research/orchestrator";
 import { hasIndependentModel } from "@/domain/eval/permanent-044/prediction-precedence";
+import {
+  loadAllResearchObservations,
+  summarizeObservations,
+} from "@/domain/eval/data-intelligence/research/data-yield";
 
 export type PipelineCounters3d = {
   events_discovered: number;
@@ -31,6 +35,13 @@ export type PipelineCounters3d = {
   data_acquired_today: number;
   sources_blocked_today: number;
   sources_missing_adapter_today: number;
+  events_with_real_event_data: number;
+  events_with_historical_data: number;
+  real_observations: number;
+  historical_observations: number;
+  derived_observations: number;
+  missing_features_estimate: number;
+  data_yield: number;
   /** Explicit: what the old "analyzed" counter meant. */
   legacy_analyzed_meaning: string;
 };
@@ -150,6 +161,7 @@ export function computePipelineCounters3d(root = permanentRoot044()): PipelineCo
   const q = queueCounts(loadResearchQueue(root), Date.now());
   const today = new Date().toISOString().slice(0, 10);
   const todayRows = research.filter((r) => String(r.at ?? "").slice(0, 10) === today);
+  const yieldSum = summarizeObservations(loadAllResearchObservations(root), todayRows.length);
   const uniq = (pred: (r: Record<string, unknown>) => boolean) =>
     new Set(todayRows.filter(pred).map((r) => String(r.source_id))).size;
 
@@ -187,6 +199,13 @@ export function computePipelineCounters3d(root = permanentRoot044()): PipelineCo
     sources_missing_adapter_today: uniq(
       (r) => r.phase === "MISSING_ADAPTER" || r.adapter_kind === "MISSING_ADAPTER",
     ),
+    events_with_real_event_data: yieldSum.events_with_real_event_data,
+    events_with_historical_data: yieldSum.events_with_historical_data,
+    real_observations: yieldSum.real_event_observations,
+    historical_observations: yieldSum.historical_observations,
+    derived_observations: yieldSum.derived_observations,
+    missing_features_estimate: Math.max(0, latest.size * 8 - yieldSum.model_eligible_observations),
+    data_yield: yieldSum.data_yield,
     legacy_analyzed_meaning:
       "Unique event_id with ≥1 predictions.jsonl row. Includes INSUFFICIENT_DATA / null probability_model. Does NOT mean independent model inference.",
   };

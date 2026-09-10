@@ -5,6 +5,8 @@
 import { FEATURE_GROUPS, qualityLabelIt, parseRollingFeature } from "@/domain/eval/betmind-runtime/explain/feature-dictionary";
 import type { ResearchSummary } from "@/domain/eval/betmind-runtime/explain/research-summary";
 import { buildAnalyzedTopics, type AnalyzedTopic } from "@/domain/eval/betmind-runtime/explain/analyzed-topics";
+import { buildFoundFacts } from "@/domain/eval/betmind-runtime/explain/found-facts";
+import type { ResearchObservation } from "@/domain/eval/data-intelligence/research/observations-store";
 
 export type PoissonInternals = {
   lambda_home: number;
@@ -36,6 +38,7 @@ export type HumanExplanation = {
   category_checks: Array<{ label: string; found: boolean; note: string }>;
   analyzed_topics: AnalyzedTopic[];
   facts_used: string[];
+  found: string[];
 };
 
 function pct1(v: number): string {
@@ -49,6 +52,7 @@ export function buildHumanExplanation(input: {
   summary: ResearchSummary;
   poisson?: PoissonInternals | null;
   reason_codes?: string[];
+  observations?: ResearchObservation[];
 }): HumanExplanation {
   const home = input.home || "Squadra di casa";
   const away = input.away || "Squadra ospite";
@@ -120,6 +124,11 @@ export function buildHumanExplanation(input: {
           ? `Archivio storico: ${o.historical_prior_features} feature storiche sono entrate nel modello (priors), anche se la ricerca live di questo ciclo non ha una riga fonte.`
           : "Archivio storico: nessuna feature storica usata.";
 
+  const found = buildFoundFacts({
+    observations: input.observations ?? [],
+    home,
+    away,
+  });
   const foundLabels = s.feature_groups_found
     .map((id) => FEATURE_GROUPS.find((g) => g.id === id)?.label_it)
     .filter(Boolean) as string[];
@@ -254,5 +263,6 @@ export function buildHumanExplanation(input: {
     category_checks,
     analyzed_topics,
     facts_used: facts,
+    found,
   };
 }

@@ -1,0 +1,3835 @@
+{
+  "at": "2026-09-10T22:39:25.452Z",
+  "events": [
+    {
+      "event_id": "b54ded61f9dc94423dfcb089",
+      "home": "Aston Villa",
+      "away": "Nottingham Forest",
+      "competition": "soccer_epl",
+      "kickoff_utc": "2026-09-12T14:00:00Z",
+      "identity": {
+        "home": "aston-villa",
+        "away": "nottingham-forest",
+        "confidence": "HIGH"
+      },
+      "sources": [
+        {
+          "source_id": "tennis-abstract",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "MISSING_ADAPTER — Tennis catalogue candidate — no production adapter"
+        },
+        {
+          "source_id": "tennis-explorer",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "MISSING_ADAPTER — Tennis catalogue candidate — no production adapter"
+        },
+        {
+          "source_id": "the-athletic",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "MISSING_ADAPTER — Paywalled — no scrape/bypass"
+        },
+        {
+          "source_id": "cies",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "MISSING_ADAPTER — Catalogued candidate — no production adapter"
+        },
+        {
+          "source_id": "soccer-association",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "MISSING_ADAPTER — Catalogued candidate — no production adapter"
+        },
+        {
+          "source_id": "opta",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "MISSING_ADAPTER — Commercial — no licensed adapter in lab"
+        },
+        {
+          "source_id": "ilveggente",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "MISSING_ADAPTER — Catalogued candidate — no production adapter"
+        },
+        {
+          "source_id": "sportytrader",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "MISSING_ADAPTER — Catalogued — tips/odds-adjacent; no adapter"
+        },
+        {
+          "source_id": "analysisportiva",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "MISSING_ADAPTER — Catalogued candidate — no production adapter"
+        },
+        {
+          "source_id": "click4soccer",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "MISSING_ADAPTER — Catalogued candidate — no production adapter"
+        },
+        {
+          "source_id": "betshoot",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "MISSING_ADAPTER — Catalogued candidate — no production adapter"
+        },
+        {
+          "source_id": "oddspedia",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "MISSING_ADAPTER — Catalogued — market-ish; no adapter; would be MARKET layer if wired"
+        },
+        {
+          "source_id": "sky-sport",
+          "parser_status": "HTTP_ERROR",
+          "ok": false,
+          "http_status": 404,
+          "fields": [],
+          "reason": "HTTP_404"
+        },
+        {
+          "source_id": "ansa",
+          "parser_status": "NO_EVENT",
+          "ok": false,
+          "http_status": 200,
+          "fields": [],
+          "reason": "RSS letto (77 item) ma nessuna voce cita entrambe le squadre"
+        },
+        {
+          "source_id": "abseits",
+          "parser_status": "BLOCKED",
+          "ok": false,
+          "http_status": 403,
+          "fields": [],
+          "reason": "Event-page blocked HTTP 403. No data from abseits used."
+        },
+        {
+          "source_id": "the-analyst",
+          "parser_status": "HTTP_ERROR",
+          "ok": false,
+          "http_status": 404,
+          "fields": [],
+          "reason": "HTTP 404 on event search page."
+        },
+        {
+          "source_id": "soccervital",
+          "parser_status": "NO_EVENT",
+          "ok": false,
+          "http_status": 200,
+          "fields": [],
+          "reason": "HTTP body does not contain both team names. Not event data."
+        },
+        {
+          "source_id": "soccervista",
+          "parser_status": "HTTP_ERROR",
+          "ok": false,
+          "http_status": 404,
+          "fields": [],
+          "reason": "HTTP 404 on event search page."
+        },
+        {
+          "source_id": "whoscored",
+          "parser_status": "BLOCKED",
+          "ok": false,
+          "http_status": 403,
+          "fields": [],
+          "reason": "Event-page blocked HTTP 403. No data from whoscored used."
+        },
+        {
+          "source_id": "soccerway",
+          "parser_status": "HTTP_ERROR",
+          "ok": false,
+          "http_status": 404,
+          "fields": [],
+          "reason": "HTTP 404 on event search page."
+        },
+        {
+          "source_id": "flashscore",
+          "parser_status": "HTTP_ERROR",
+          "ok": false,
+          "http_status": 404,
+          "fields": [],
+          "reason": "HTTP 404 on event search page."
+        },
+        {
+          "source_id": "directa",
+          "parser_status": "HTTP_ERROR",
+          "ok": false,
+          "http_status": 404,
+          "fields": [],
+          "reason": "HTTP 404 on event search page."
+        },
+        {
+          "source_id": "sofascore",
+          "parser_status": "BLOCKED",
+          "ok": false,
+          "http_status": 403,
+          "fields": [],
+          "reason": "Event-page blocked HTTP 403. No data from sofascore used."
+        },
+        {
+          "source_id": "uefa",
+          "parser_status": "AMBIGUOUS_EVENT",
+          "ok": false,
+          "http_status": 200,
+          "fields": [],
+          "reason": "Only one team name found. Not treated as this fixture."
+        },
+        {
+          "source_id": "understat",
+          "parser_status": "DENIED",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "No event-page URL template for this source."
+        },
+        {
+          "source_id": "fbref",
+          "parser_status": "NO_EVENT",
+          "ok": false,
+          "http_status": 200,
+          "fields": [],
+          "reason": "HTTP body does not contain both team names. Not event data."
+        },
+        {
+          "source_id": "the-odds-api",
+          "parser_status": "MARKET_LAYER",
+          "ok": false,
+          "http_status": null,
+          "fields": [
+            "probability_market",
+            "odds"
+          ],
+          "reason": "MARKET_COMPARE_ONLY — odds never enter independent MODEL vector. Not a research SUCCESS."
+        },
+        {
+          "source_id": "club-football-match-data",
+          "parser_status": "PARTIAL",
+          "ok": true,
+          "http_status": null,
+          "fields": [
+            "home_gf_l5"
+          ],
+          "reason": "Bound 1006 prior rows (MatchDate < kickoff). Odds columns ignored. DATE_ONLY — available_at null."
+        },
+        {
+          "source_id": "football-data-co-uk",
+          "parser_status": "OK",
+          "ok": true,
+          "http_status": null,
+          "fields": [
+            "form_priors",
+            "form_l3",
+            "form_l5",
+            "form_l10"
+          ],
+          "reason": "Archivio: 228 match precedenti casa, 114 trasferta, division=E0. Target escluso."
+        },
+        {
+          "source_id": "clubelo",
+          "parser_status": "MISSING_FILE",
+          "ok": false,
+          "http_status": 502,
+          "fields": [],
+          "reason": "Nessun CSV ClubElo locale. Nessun Elo inventato."
+        },
+        {
+          "source_id": "open-meteo",
+          "parser_status": "OK",
+          "ok": true,
+          "http_status": 200,
+          "fields": [
+            "temp_c",
+            "precip_mm",
+            "precip_prob_pct",
+            "humidity_pct",
+            "wind_kmh"
+          ],
+          "reason": "osservazioni CONTEXT=5"
+        },
+        {
+          "source_id": "api-sports",
+          "parser_status": "SKIPPED",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "NO_FIXTURE_ID — cache lookup skipped (no invented id)"
+        }
+      ],
+      "observations": 221,
+      "real_event": 10,
+      "historical": 210,
+      "model_eligible": 207,
+      "categories": {
+        "form": true,
+        "team_stats": true,
+        "xg": false,
+        "injuries": false,
+        "lineup": false,
+        "referee": false,
+        "weather": true
+      },
+      "sample": [
+        {
+          "key": "home_gf_l5",
+          "value": 1.6,
+          "source": "club-football-match-data",
+          "kind": "HISTORICAL_PRIOR",
+          "available_at": null
+        },
+        {
+          "key": "season_phase",
+          "value": 1,
+          "source": "football-data-co-uk",
+          "kind": "DERIVED",
+          "available_at": "2025-05-26T00:00:00.000Z"
+        },
+        {
+          "key": "h2h_draw_rate",
+          "value": 0.16666666666666666,
+          "source": "football-data-co-uk",
+          "kind": "DERIVED",
+          "available_at": "2025-05-26T00:00:00.000Z"
+        },
+        {
+          "key": "h2h_home_win_rate",
+          "value": 0.5,
+          "source": "football-data-co-uk",
+          "kind": "DERIVED",
+          "available_at": "2025-05-26T00:00:00.000Z"
+        },
+        {
+          "key": "h2h_n",
+          "value": 6,
+          "source": "football-data-co-uk",
+          "kind": "DERIVED",
+          "available_at": "2025-05-26T00:00:00.000Z"
+        },
+        {
+          "key": "league_avg_gf",
+          "value": 1.4416666666666667,
+          "source": "football-data-co-uk",
+          "kind": "DERIVED",
+          "available_at": "2025-05-26T00:00:00.000Z"
+        },
+        {
+          "key": "home_advantage",
+          "value": 1,
+          "source": "football-data-co-uk",
+          "kind": "DERIVED",
+          "available_at": "2025-05-26T00:00:00.000Z"
+        },
+        {
+          "key": "away_rest_days",
+          "value": 474.9166666666667,
+          "source": "football-data-co-uk",
+          "kind": "DERIVED",
+          "available_at": "2025-05-26T00:00:00.000Z"
+        },
+        {
+          "key": "home_rest_days",
+          "value": 474.9166666666667,
+          "source": "football-data-co-uk",
+          "kind": "DERIVED",
+          "available_at": "2025-05-26T00:00:00.000Z"
+        },
+        {
+          "key": "strength_diff_pts",
+          "value": 0.026315789473684292,
+          "source": "football-data-co-uk",
+          "kind": "DERIVED",
+          "available_at": "2025-05-26T00:00:00.000Z"
+        },
+        {
+          "key": "away_attack_all",
+          "value": 1.5263157894736843,
+          "source": "football-data-co-uk",
+          "kind": "DERIVED",
+          "available_at": "2025-05-26T00:00:00.000Z"
+        },
+        {
+          "key": "home_attack_all",
+          "value": 1.5263157894736843,
+          "source": "football-data-co-uk",
+          "kind": "DERIVED",
+          "available_at": "2025-05-26T00:00:00.000Z"
+        }
+      ]
+    },
+    {
+      "event_id": "aa61ed76290f6bad175de6c1",
+      "home": "Liverpool",
+      "away": "Fulham",
+      "competition": "soccer_epl",
+      "kickoff_utc": "2026-09-12T14:00:00Z",
+      "identity": {
+        "home": "liverpool",
+        "away": "fulham",
+        "confidence": "HIGH"
+      },
+      "sources": [
+        {
+          "source_id": "tennis-abstract",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "MISSING_ADAPTER — Tennis catalogue candidate — no production adapter"
+        },
+        {
+          "source_id": "tennis-explorer",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "MISSING_ADAPTER — Tennis catalogue candidate — no production adapter"
+        },
+        {
+          "source_id": "the-athletic",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "MISSING_ADAPTER — Paywalled — no scrape/bypass"
+        },
+        {
+          "source_id": "cies",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "MISSING_ADAPTER — Catalogued candidate — no production adapter"
+        },
+        {
+          "source_id": "soccer-association",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "MISSING_ADAPTER — Catalogued candidate — no production adapter"
+        },
+        {
+          "source_id": "opta",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "MISSING_ADAPTER — Commercial — no licensed adapter in lab"
+        },
+        {
+          "source_id": "ilveggente",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "MISSING_ADAPTER — Catalogued candidate — no production adapter"
+        },
+        {
+          "source_id": "sportytrader",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "MISSING_ADAPTER — Catalogued — tips/odds-adjacent; no adapter"
+        },
+        {
+          "source_id": "analysisportiva",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "MISSING_ADAPTER — Catalogued candidate — no production adapter"
+        },
+        {
+          "source_id": "click4soccer",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "MISSING_ADAPTER — Catalogued candidate — no production adapter"
+        },
+        {
+          "source_id": "betshoot",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "MISSING_ADAPTER — Catalogued candidate — no production adapter"
+        },
+        {
+          "source_id": "oddspedia",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "MISSING_ADAPTER — Catalogued — market-ish; no adapter; would be MARKET layer if wired"
+        },
+        {
+          "source_id": "sky-sport",
+          "parser_status": "HTTP_ERROR",
+          "ok": false,
+          "http_status": 404,
+          "fields": [],
+          "reason": "HTTP_404"
+        },
+        {
+          "source_id": "ansa",
+          "parser_status": "NO_EVENT",
+          "ok": false,
+          "http_status": 200,
+          "fields": [],
+          "reason": "RSS letto (77 item) ma nessuna voce cita entrambe le squadre"
+        },
+        {
+          "source_id": "abseits",
+          "parser_status": "BLOCKED",
+          "ok": false,
+          "http_status": 403,
+          "fields": [],
+          "reason": "Event-page blocked HTTP 403. No data from abseits used."
+        },
+        {
+          "source_id": "the-analyst",
+          "parser_status": "HTTP_ERROR",
+          "ok": false,
+          "http_status": 404,
+          "fields": [],
+          "reason": "HTTP 404 on event search page."
+        },
+        {
+          "source_id": "soccervital",
+          "parser_status": "NO_EVENT",
+          "ok": false,
+          "http_status": 200,
+          "fields": [],
+          "reason": "HTTP body does not contain both team names. Not event data."
+        },
+        {
+          "source_id": "soccervista",
+          "parser_status": "HTTP_ERROR",
+          "ok": false,
+          "http_status": 404,
+          "fields": [],
+          "reason": "HTTP 404 on event search page."
+        },
+        {
+          "source_id": "whoscored",
+          "parser_status": "BLOCKED",
+          "ok": false,
+          "http_status": 403,
+          "fields": [],
+          "reason": "Event-page blocked HTTP 403. No data from whoscored used."
+        },
+        {
+          "source_id": "soccerway",
+          "parser_status": "HTTP_ERROR",
+          "ok": false,
+          "http_status": 404,
+          "fields": [],
+          "reason": "HTTP 404 on event search page."
+        },
+        {
+          "source_id": "flashscore",
+          "parser_status": "HTTP_ERROR",
+          "ok": false,
+          "http_status": 404,
+          "fields": [],
+          "reason": "HTTP 404 on event search page."
+        },
+        {
+          "source_id": "directa",
+          "parser_status": "HTTP_ERROR",
+          "ok": false,
+          "http_status": 404,
+          "fields": [],
+          "reason": "HTTP 404 on event search page."
+        },
+        {
+          "source_id": "sofascore",
+          "parser_status": "BLOCKED",
+          "ok": false,
+          "http_status": 403,
+          "fields": [],
+          "reason": "Event-page blocked HTTP 403. No data from sofascore used."
+        },
+        {
+          "source_id": "uefa",
+          "parser_status": "AMBIGUOUS_EVENT",
+          "ok": false,
+          "http_status": 200,
+          "fields": [],
+          "reason": "Only one team name found. Not treated as this fixture."
+        },
+        {
+          "source_id": "understat",
+          "parser_status": "DENIED",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "No event-page URL template for this source."
+        },
+        {
+          "source_id": "fbref",
+          "parser_status": "BLOCKED",
+          "ok": false,
+          "http_status": 403,
+          "fields": [],
+          "reason": "Event-page blocked HTTP 403. No data from fbref used."
+        },
+        {
+          "source_id": "the-odds-api",
+          "parser_status": "MARKET_LAYER",
+          "ok": false,
+          "http_status": null,
+          "fields": [
+            "probability_market",
+            "odds"
+          ],
+          "reason": "MARKET_COMPARE_ONLY — odds never enter independent MODEL vector. Not a research SUCCESS."
+        },
+        {
+          "source_id": "club-football-match-data",
+          "parser_status": "SUCCESS",
+          "ok": true,
+          "http_status": null,
+          "fields": [
+            "home_gf_l5",
+            "away_gf_l5"
+          ],
+          "reason": "Bound 1980 prior rows (MatchDate < kickoff). Odds columns ignored. DATE_ONLY — available_at null."
+        },
+        {
+          "source_id": "football-data-co-uk",
+          "parser_status": "OK",
+          "ok": true,
+          "http_status": null,
+          "fields": [
+            "form_priors",
+            "form_l3",
+            "form_l5",
+            "form_l10"
+          ],
+          "reason": "Archivio: 228 match precedenti casa, 152 trasferta, division=E0. Target escluso."
+        },
+        {
+          "source_id": "clubelo",
+          "parser_status": "MISSING_FILE",
+          "ok": false,
+          "http_status": 502,
+          "fields": [],
+          "reason": "Nessun CSV ClubElo locale. Nessun Elo inventato."
+        },
+        {
+          "source_id": "open-meteo",
+          "parser_status": "OK",
+          "ok": true,
+          "http_status": 200,
+          "fields": [
+            "temp_c",
+            "precip_mm",
+            "precip_prob_pct",
+            "humidity_pct",
+            "wind_kmh"
+          ],
+          "reason": "osservazioni CONTEXT=5"
+        },
+        {
+          "source_id": "api-sports",
+          "parser_status": "SKIPPED",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "NO_FIXTURE_ID — cache lookup skipped (no invented id)"
+        }
+      ],
+      "observations": 225,
+      "real_event": 10,
+      "historical": 213,
+      "model_eligible": 207,
+      "categories": {
+        "form": true,
+        "team_stats": true,
+        "xg": false,
+        "injuries": false,
+        "lineup": false,
+        "referee": false,
+        "weather": true
+      },
+      "sample": [
+        {
+          "key": "away_gf_l5",
+          "value": 1,
+          "source": "club-football-match-data",
+          "kind": "HISTORICAL_PRIOR",
+          "available_at": null
+        },
+        {
+          "key": "home_gf_l5",
+          "value": 1.6,
+          "source": "club-football-match-data",
+          "kind": "HISTORICAL_PRIOR",
+          "available_at": null
+        },
+        {
+          "key": "season_phase",
+          "value": 1,
+          "source": "football-data-co-uk",
+          "kind": "DERIVED",
+          "available_at": "2025-05-26T00:00:00.000Z"
+        },
+        {
+          "key": "h2h_draw_rate",
+          "value": 0.375,
+          "source": "football-data-co-uk",
+          "kind": "DERIVED",
+          "available_at": "2025-05-26T00:00:00.000Z"
+        },
+        {
+          "key": "h2h_home_win_rate",
+          "value": 0.375,
+          "source": "football-data-co-uk",
+          "kind": "DERIVED",
+          "available_at": "2025-05-26T00:00:00.000Z"
+        },
+        {
+          "key": "h2h_n",
+          "value": 8,
+          "source": "football-data-co-uk",
+          "kind": "DERIVED",
+          "available_at": "2025-05-26T00:00:00.000Z"
+        },
+        {
+          "key": "league_avg_gf",
+          "value": 1.4416666666666667,
+          "source": "football-data-co-uk",
+          "kind": "DERIVED",
+          "available_at": "2025-05-26T00:00:00.000Z"
+        },
+        {
+          "key": "home_advantage",
+          "value": 1,
+          "source": "football-data-co-uk",
+          "kind": "DERIVED",
+          "available_at": "2025-05-26T00:00:00.000Z"
+        },
+        {
+          "key": "away_rest_days",
+          "value": 474.9166666666667,
+          "source": "football-data-co-uk",
+          "kind": "DERIVED",
+          "available_at": "2025-05-26T00:00:00.000Z"
+        },
+        {
+          "key": "home_rest_days",
+          "value": 474.9166666666667,
+          "source": "football-data-co-uk",
+          "kind": "DERIVED",
+          "available_at": "2025-05-26T00:00:00.000Z"
+        },
+        {
+          "key": "strength_diff_pts",
+          "value": 0.7894736842105265,
+          "source": "football-data-co-uk",
+          "kind": "DERIVED",
+          "available_at": "2025-05-26T00:00:00.000Z"
+        },
+        {
+          "key": "away_attack_all",
+          "value": 1.4210526315789473,
+          "source": "football-data-co-uk",
+          "kind": "DERIVED",
+          "available_at": "2025-05-26T00:00:00.000Z"
+        }
+      ]
+    },
+    {
+      "event_id": "6ad3005597157baf9d6cee11",
+      "home": "Tottenham Hotspur",
+      "away": "Everton",
+      "competition": "soccer_epl",
+      "kickoff_utc": "2026-09-12T16:30:00Z",
+      "identity": {
+        "home": "tottenham",
+        "away": "everton",
+        "confidence": "HIGH"
+      },
+      "sources": [
+        {
+          "source_id": "tennis-abstract",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "MISSING_ADAPTER — Tennis catalogue candidate — no production adapter"
+        },
+        {
+          "source_id": "tennis-explorer",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "MISSING_ADAPTER — Tennis catalogue candidate — no production adapter"
+        },
+        {
+          "source_id": "the-athletic",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "MISSING_ADAPTER — Paywalled — no scrape/bypass"
+        },
+        {
+          "source_id": "cies",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "MISSING_ADAPTER — Catalogued candidate — no production adapter"
+        },
+        {
+          "source_id": "soccer-association",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "MISSING_ADAPTER — Catalogued candidate — no production adapter"
+        },
+        {
+          "source_id": "opta",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "MISSING_ADAPTER — Commercial — no licensed adapter in lab"
+        },
+        {
+          "source_id": "ilveggente",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "MISSING_ADAPTER — Catalogued candidate — no production adapter"
+        },
+        {
+          "source_id": "sportytrader",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "MISSING_ADAPTER — Catalogued — tips/odds-adjacent; no adapter"
+        },
+        {
+          "source_id": "analysisportiva",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "MISSING_ADAPTER — Catalogued candidate — no production adapter"
+        },
+        {
+          "source_id": "click4soccer",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "MISSING_ADAPTER — Catalogued candidate — no production adapter"
+        },
+        {
+          "source_id": "betshoot",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "MISSING_ADAPTER — Catalogued candidate — no production adapter"
+        },
+        {
+          "source_id": "oddspedia",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "MISSING_ADAPTER — Catalogued — market-ish; no adapter; would be MARKET layer if wired"
+        },
+        {
+          "source_id": "sky-sport",
+          "parser_status": "HTTP_ERROR",
+          "ok": false,
+          "http_status": 404,
+          "fields": [],
+          "reason": "HTTP_404"
+        },
+        {
+          "source_id": "ansa",
+          "parser_status": "NO_EVENT",
+          "ok": false,
+          "http_status": 200,
+          "fields": [],
+          "reason": "RSS letto (77 item) ma nessuna voce cita entrambe le squadre"
+        },
+        {
+          "source_id": "abseits",
+          "parser_status": "BLOCKED",
+          "ok": false,
+          "http_status": 403,
+          "fields": [],
+          "reason": "Event-page blocked HTTP 403. No data from abseits used."
+        },
+        {
+          "source_id": "the-analyst",
+          "parser_status": "HTTP_ERROR",
+          "ok": false,
+          "http_status": 404,
+          "fields": [],
+          "reason": "HTTP 404 on event search page."
+        },
+        {
+          "source_id": "soccervital",
+          "parser_status": "NO_EVENT",
+          "ok": false,
+          "http_status": 200,
+          "fields": [],
+          "reason": "HTTP body does not contain both team names. Not event data."
+        },
+        {
+          "source_id": "soccervista",
+          "parser_status": "HTTP_ERROR",
+          "ok": false,
+          "http_status": 404,
+          "fields": [],
+          "reason": "HTTP 404 on event search page."
+        },
+        {
+          "source_id": "whoscored",
+          "parser_status": "BLOCKED",
+          "ok": false,
+          "http_status": 403,
+          "fields": [],
+          "reason": "Event-page blocked HTTP 403. No data from whoscored used."
+        },
+        {
+          "source_id": "soccerway",
+          "parser_status": "HTTP_ERROR",
+          "ok": false,
+          "http_status": 404,
+          "fields": [],
+          "reason": "HTTP 404 on event search page."
+        },
+        {
+          "source_id": "flashscore",
+          "parser_status": "HTTP_ERROR",
+          "ok": false,
+          "http_status": 404,
+          "fields": [],
+          "reason": "HTTP 404 on event search page."
+        },
+        {
+          "source_id": "directa",
+          "parser_status": "HTTP_ERROR",
+          "ok": false,
+          "http_status": 404,
+          "fields": [],
+          "reason": "HTTP 404 on event search page."
+        },
+        {
+          "source_id": "sofascore",
+          "parser_status": "BLOCKED",
+          "ok": false,
+          "http_status": 403,
+          "fields": [],
+          "reason": "Event-page blocked HTTP 403. No data from sofascore used."
+        },
+        {
+          "source_id": "uefa",
+          "parser_status": "AMBIGUOUS_EVENT",
+          "ok": false,
+          "http_status": 200,
+          "fields": [],
+          "reason": "Only one team name found. Not treated as this fixture."
+        },
+        {
+          "source_id": "understat",
+          "parser_status": "DENIED",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "No event-page URL template for this source."
+        },
+        {
+          "source_id": "fbref",
+          "parser_status": "BLOCKED",
+          "ok": false,
+          "http_status": 403,
+          "fields": [],
+          "reason": "Event-page blocked HTTP 403. No data from fbref used."
+        },
+        {
+          "source_id": "the-odds-api",
+          "parser_status": "MARKET_LAYER",
+          "ok": false,
+          "http_status": null,
+          "fields": [
+            "probability_market",
+            "odds"
+          ],
+          "reason": "MARKET_COMPARE_ONLY — odds never enter independent MODEL vector. Not a research SUCCESS."
+        },
+        {
+          "source_id": "club-football-match-data",
+          "parser_status": "SUCCESS",
+          "ok": true,
+          "http_status": null,
+          "fields": [
+            "home_gf_l5",
+            "away_gf_l5"
+          ],
+          "reason": "Bound 1911 prior rows (MatchDate < kickoff). Odds columns ignored. DATE_ONLY — available_at null."
+        },
+        {
+          "source_id": "football-data-co-uk",
+          "parser_status": "OK",
+          "ok": true,
+          "http_status": null,
+          "fields": [
+            "form_priors",
+            "form_l3",
+            "form_l5",
+            "form_l10"
+          ],
+          "reason": "Archivio: 228 match precedenti casa, 228 trasferta, division=E0. Target escluso."
+        },
+        {
+          "source_id": "clubelo",
+          "parser_status": "MISSING_FILE",
+          "ok": false,
+          "http_status": 502,
+          "fields": [],
+          "reason": "Nessun CSV ClubElo locale. Nessun Elo inventato."
+        },
+        {
+          "source_id": "open-meteo",
+          "parser_status": "OK",
+          "ok": true,
+          "http_status": 200,
+          "fields": [
+            "temp_c",
+            "precip_mm",
+            "precip_prob_pct",
+            "humidity_pct",
+            "wind_kmh"
+          ],
+          "reason": "osservazioni CONTEXT=5"
+        },
+        {
+          "source_id": "api-sports",
+          "parser_status": "SKIPPED",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "NO_FIXTURE_ID — cache lookup skipped (no invented id)"
+        }
+      ],
+      "observations": 225,
+      "real_event": 10,
+      "historical": 213,
+      "model_eligible": 207,
+      "categories": {
+        "form": true,
+        "team_stats": true,
+        "xg": false,
+        "injuries": false,
+        "lineup": false,
+        "referee": false,
+        "weather": true
+      },
+      "sample": [
+        {
+          "key": "away_gf_l5",
+          "value": 1.2,
+          "source": "club-football-match-data",
+          "kind": "HISTORICAL_PRIOR",
+          "available_at": null
+        },
+        {
+          "key": "home_gf_l5",
+          "value": 0.6,
+          "source": "club-football-match-data",
+          "kind": "HISTORICAL_PRIOR",
+          "available_at": null
+        },
+        {
+          "key": "season_phase",
+          "value": 1,
+          "source": "football-data-co-uk",
+          "kind": "DERIVED",
+          "available_at": "2025-05-26T00:00:00.000Z"
+        },
+        {
+          "key": "h2h_draw_rate",
+          "value": 0.4166666666666667,
+          "source": "football-data-co-uk",
+          "kind": "DERIVED",
+          "available_at": "2025-05-26T00:00:00.000Z"
+        },
+        {
+          "key": "h2h_home_win_rate",
+          "value": 0.4166666666666667,
+          "source": "football-data-co-uk",
+          "kind": "DERIVED",
+          "available_at": "2025-05-26T00:00:00.000Z"
+        },
+        {
+          "key": "h2h_n",
+          "value": 12,
+          "source": "football-data-co-uk",
+          "kind": "DERIVED",
+          "available_at": "2025-05-26T00:00:00.000Z"
+        },
+        {
+          "key": "league_avg_gf",
+          "value": 1.4416666666666667,
+          "source": "football-data-co-uk",
+          "kind": "DERIVED",
+          "available_at": "2025-05-26T00:00:00.000Z"
+        },
+        {
+          "key": "home_advantage",
+          "value": 1,
+          "source": "football-data-co-uk",
+          "kind": "DERIVED",
+          "available_at": "2025-05-26T00:00:00.000Z"
+        },
+        {
+          "key": "away_rest_days",
+          "value": 475.0208333333333,
+          "source": "football-data-co-uk",
+          "kind": "DERIVED",
+          "available_at": "2025-05-26T00:00:00.000Z"
+        },
+        {
+          "key": "home_rest_days",
+          "value": 475.0208333333333,
+          "source": "football-data-co-uk",
+          "kind": "DERIVED",
+          "available_at": "2025-05-26T00:00:00.000Z"
+        },
+        {
+          "key": "strength_diff_pts",
+          "value": -0.26315789473684204,
+          "source": "football-data-co-uk",
+          "kind": "DERIVED",
+          "available_at": "2025-05-26T00:00:00.000Z"
+        },
+        {
+          "key": "away_attack_all",
+          "value": 1.105263157894737,
+          "source": "football-data-co-uk",
+          "kind": "DERIVED",
+          "available_at": "2025-05-26T00:00:00.000Z"
+        }
+      ]
+    },
+    {
+      "event_id": "7339035cbce8739a356589b4",
+      "home": "Sunderland",
+      "away": "Arsenal",
+      "competition": "soccer_epl",
+      "kickoff_utc": "2026-09-12T19:00:00Z",
+      "identity": {
+        "home": "live:sunderland",
+        "away": "arsenal",
+        "confidence": "PROVISIONAL"
+      },
+      "sources": [
+        {
+          "source_id": "tennis-abstract",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "MISSING_ADAPTER — Tennis catalogue candidate — no production adapter"
+        },
+        {
+          "source_id": "tennis-explorer",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "MISSING_ADAPTER — Tennis catalogue candidate — no production adapter"
+        },
+        {
+          "source_id": "the-athletic",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "MISSING_ADAPTER — Paywalled — no scrape/bypass"
+        },
+        {
+          "source_id": "cies",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "MISSING_ADAPTER — Catalogued candidate — no production adapter"
+        },
+        {
+          "source_id": "soccer-association",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "MISSING_ADAPTER — Catalogued candidate — no production adapter"
+        },
+        {
+          "source_id": "opta",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "MISSING_ADAPTER — Commercial — no licensed adapter in lab"
+        },
+        {
+          "source_id": "ilveggente",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "MISSING_ADAPTER — Catalogued candidate — no production adapter"
+        },
+        {
+          "source_id": "sportytrader",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "MISSING_ADAPTER — Catalogued — tips/odds-adjacent; no adapter"
+        },
+        {
+          "source_id": "analysisportiva",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "MISSING_ADAPTER — Catalogued candidate — no production adapter"
+        },
+        {
+          "source_id": "click4soccer",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "MISSING_ADAPTER — Catalogued candidate — no production adapter"
+        },
+        {
+          "source_id": "betshoot",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "MISSING_ADAPTER — Catalogued candidate — no production adapter"
+        },
+        {
+          "source_id": "oddspedia",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "MISSING_ADAPTER — Catalogued — market-ish; no adapter; would be MARKET layer if wired"
+        },
+        {
+          "source_id": "sky-sport",
+          "parser_status": "HTTP_ERROR",
+          "ok": false,
+          "http_status": 404,
+          "fields": [],
+          "reason": "HTTP_404"
+        },
+        {
+          "source_id": "ansa",
+          "parser_status": "NO_EVENT",
+          "ok": false,
+          "http_status": 200,
+          "fields": [],
+          "reason": "RSS letto (77 item) ma nessuna voce cita entrambe le squadre"
+        },
+        {
+          "source_id": "abseits",
+          "parser_status": "BLOCKED",
+          "ok": false,
+          "http_status": 403,
+          "fields": [],
+          "reason": "Event-page blocked HTTP 403. No data from abseits used."
+        },
+        {
+          "source_id": "the-analyst",
+          "parser_status": "HTTP_ERROR",
+          "ok": false,
+          "http_status": 404,
+          "fields": [],
+          "reason": "HTTP 404 on event search page."
+        },
+        {
+          "source_id": "soccervital",
+          "parser_status": "NO_EVENT",
+          "ok": false,
+          "http_status": 200,
+          "fields": [],
+          "reason": "HTTP body does not contain both team names. Not event data."
+        },
+        {
+          "source_id": "soccervista",
+          "parser_status": "HTTP_ERROR",
+          "ok": false,
+          "http_status": 404,
+          "fields": [],
+          "reason": "HTTP 404 on event search page."
+        },
+        {
+          "source_id": "whoscored",
+          "parser_status": "BLOCKED",
+          "ok": false,
+          "http_status": 403,
+          "fields": [],
+          "reason": "Event-page blocked HTTP 403. No data from whoscored used."
+        },
+        {
+          "source_id": "soccerway",
+          "parser_status": "HTTP_ERROR",
+          "ok": false,
+          "http_status": 404,
+          "fields": [],
+          "reason": "HTTP 404 on event search page."
+        },
+        {
+          "source_id": "flashscore",
+          "parser_status": "HTTP_ERROR",
+          "ok": false,
+          "http_status": 404,
+          "fields": [],
+          "reason": "HTTP 404 on event search page."
+        },
+        {
+          "source_id": "directa",
+          "parser_status": "HTTP_ERROR",
+          "ok": false,
+          "http_status": 404,
+          "fields": [],
+          "reason": "HTTP 404 on event search page."
+        },
+        {
+          "source_id": "sofascore",
+          "parser_status": "BLOCKED",
+          "ok": false,
+          "http_status": 403,
+          "fields": [],
+          "reason": "Event-page blocked HTTP 403. No data from sofascore used."
+        },
+        {
+          "source_id": "uefa",
+          "parser_status": "AMBIGUOUS_EVENT",
+          "ok": false,
+          "http_status": 200,
+          "fields": [],
+          "reason": "Only one team name found. Not treated as this fixture."
+        },
+        {
+          "source_id": "understat",
+          "parser_status": "DENIED",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "No event-page URL template for this source."
+        },
+        {
+          "source_id": "fbref",
+          "parser_status": "BLOCKED",
+          "ok": false,
+          "http_status": 403,
+          "fields": [],
+          "reason": "Event-page blocked HTTP 403. No data from fbref used."
+        },
+        {
+          "source_id": "the-odds-api",
+          "parser_status": "MARKET_LAYER",
+          "ok": false,
+          "http_status": null,
+          "fields": [
+            "probability_market",
+            "odds"
+          ],
+          "reason": "MARKET_COMPARE_ONLY — odds never enter independent MODEL vector. Not a research SUCCESS."
+        },
+        {
+          "source_id": "club-football-match-data",
+          "parser_status": "SUCCESS",
+          "ok": true,
+          "http_status": null,
+          "fields": [
+            "home_gf_l5",
+            "away_gf_l5"
+          ],
+          "reason": "Bound 2571 prior rows (MatchDate < kickoff). Odds columns ignored. DATE_ONLY — available_at null."
+        },
+        {
+          "source_id": "football-data-co-uk",
+          "parser_status": "NO_EVENT",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "Archivio Football-Data presente, ma questa partita non e stata abbinata (squadre o competizione assenti dal dataset storico)."
+        },
+        {
+          "source_id": "clubelo",
+          "parser_status": "MISSING_FILE",
+          "ok": false,
+          "http_status": 502,
+          "fields": [],
+          "reason": "Nessun CSV ClubElo locale. Nessun Elo inventato."
+        },
+        {
+          "source_id": "open-meteo",
+          "parser_status": "OK",
+          "ok": true,
+          "http_status": 200,
+          "fields": [
+            "temp_c",
+            "precip_mm",
+            "precip_prob_pct",
+            "humidity_pct",
+            "wind_kmh"
+          ],
+          "reason": "osservazioni CONTEXT=5"
+        },
+        {
+          "source_id": "api-sports",
+          "parser_status": "SKIPPED",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "NO_FIXTURE_ID — cache lookup skipped (no invented id)"
+        }
+      ],
+      "observations": 18,
+      "real_event": 10,
+      "historical": 6,
+      "model_eligible": 0,
+      "categories": {
+        "form": true,
+        "team_stats": true,
+        "xg": false,
+        "injuries": false,
+        "lineup": false,
+        "referee": false,
+        "weather": true
+      },
+      "sample": [
+        {
+          "key": "away_gf_l5",
+          "value": 1.6,
+          "source": "club-football-match-data",
+          "kind": "HISTORICAL_PRIOR",
+          "available_at": null
+        },
+        {
+          "key": "home_gf_l5",
+          "value": 1.4,
+          "source": "club-football-match-data",
+          "kind": "HISTORICAL_PRIOR",
+          "available_at": null
+        },
+        {
+          "key": "wind_kmh",
+          "value": 14,
+          "source": "open-meteo",
+          "kind": "EVENT_RESEARCH",
+          "available_at": "2026-09-10T22:39:25.452Z"
+        },
+        {
+          "key": "humidity_pct",
+          "value": 71,
+          "source": "open-meteo",
+          "kind": "EVENT_RESEARCH",
+          "available_at": "2026-09-10T22:39:25.452Z"
+        },
+        {
+          "key": "precip_prob_pct",
+          "value": 22,
+          "source": "open-meteo",
+          "kind": "EVENT_RESEARCH",
+          "available_at": "2026-09-10T22:39:25.452Z"
+        },
+        {
+          "key": "precip_mm",
+          "value": 0,
+          "source": "open-meteo",
+          "kind": "EVENT_RESEARCH",
+          "available_at": "2026-09-10T22:39:25.452Z"
+        },
+        {
+          "key": "temp_c",
+          "value": 19,
+          "source": "open-meteo",
+          "kind": "EVENT_RESEARCH",
+          "available_at": "2026-09-10T22:39:25.452Z"
+        },
+        {
+          "key": "away_gf_l5",
+          "value": 1.6,
+          "source": "club-football-match-data",
+          "kind": "HISTORICAL_PRIOR",
+          "available_at": null
+        },
+        {
+          "key": "home_gf_l5",
+          "value": 1.4,
+          "source": "club-football-match-data",
+          "kind": "HISTORICAL_PRIOR",
+          "available_at": null
+        },
+        {
+          "key": "wind_kmh",
+          "value": 14,
+          "source": "open-meteo",
+          "kind": "EVENT_RESEARCH",
+          "available_at": "2026-09-10T22:36:34.970Z"
+        },
+        {
+          "key": "humidity_pct",
+          "value": 71,
+          "source": "open-meteo",
+          "kind": "EVENT_RESEARCH",
+          "available_at": "2026-09-10T22:36:34.970Z"
+        },
+        {
+          "key": "precip_prob_pct",
+          "value": 22,
+          "source": "open-meteo",
+          "kind": "EVENT_RESEARCH",
+          "available_at": "2026-09-10T22:36:34.970Z"
+        }
+      ]
+    },
+    {
+      "event_id": "95479bab3a9bf2e349a7825d",
+      "home": "Bournemouth",
+      "away": "Brentford",
+      "competition": "soccer_epl",
+      "kickoff_utc": "2026-09-12T14:00:00Z",
+      "identity": {
+        "home": "bournemouth",
+        "away": "brentford",
+        "confidence": "HIGH"
+      },
+      "sources": [
+        {
+          "source_id": "tennis-abstract",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "MISSING_ADAPTER — Tennis catalogue candidate — no production adapter"
+        },
+        {
+          "source_id": "tennis-explorer",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "MISSING_ADAPTER — Tennis catalogue candidate — no production adapter"
+        },
+        {
+          "source_id": "the-athletic",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "MISSING_ADAPTER — Paywalled — no scrape/bypass"
+        },
+        {
+          "source_id": "cies",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "MISSING_ADAPTER — Catalogued candidate — no production adapter"
+        },
+        {
+          "source_id": "soccer-association",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "MISSING_ADAPTER — Catalogued candidate — no production adapter"
+        },
+        {
+          "source_id": "opta",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "MISSING_ADAPTER — Commercial — no licensed adapter in lab"
+        },
+        {
+          "source_id": "ilveggente",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "MISSING_ADAPTER — Catalogued candidate — no production adapter"
+        },
+        {
+          "source_id": "sportytrader",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "MISSING_ADAPTER — Catalogued — tips/odds-adjacent; no adapter"
+        },
+        {
+          "source_id": "analysisportiva",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "MISSING_ADAPTER — Catalogued candidate — no production adapter"
+        },
+        {
+          "source_id": "click4soccer",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "MISSING_ADAPTER — Catalogued candidate — no production adapter"
+        },
+        {
+          "source_id": "betshoot",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "MISSING_ADAPTER — Catalogued candidate — no production adapter"
+        },
+        {
+          "source_id": "oddspedia",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "MISSING_ADAPTER — Catalogued — market-ish; no adapter; would be MARKET layer if wired"
+        },
+        {
+          "source_id": "sky-sport",
+          "parser_status": "HTTP_ERROR",
+          "ok": false,
+          "http_status": 404,
+          "fields": [],
+          "reason": "HTTP_404"
+        },
+        {
+          "source_id": "ansa",
+          "parser_status": "NO_EVENT",
+          "ok": false,
+          "http_status": 200,
+          "fields": [],
+          "reason": "RSS letto (77 item) ma nessuna voce cita entrambe le squadre"
+        },
+        {
+          "source_id": "abseits",
+          "parser_status": "BLOCKED",
+          "ok": false,
+          "http_status": 403,
+          "fields": [],
+          "reason": "Event-page blocked HTTP 403. No data from abseits used."
+        },
+        {
+          "source_id": "the-analyst",
+          "parser_status": "HTTP_ERROR",
+          "ok": false,
+          "http_status": 404,
+          "fields": [],
+          "reason": "HTTP 404 on event search page."
+        },
+        {
+          "source_id": "soccervital",
+          "parser_status": "NO_EVENT",
+          "ok": false,
+          "http_status": 200,
+          "fields": [],
+          "reason": "HTTP body does not contain both team names. Not event data."
+        },
+        {
+          "source_id": "soccervista",
+          "parser_status": "HTTP_ERROR",
+          "ok": false,
+          "http_status": 404,
+          "fields": [],
+          "reason": "HTTP 404 on event search page."
+        },
+        {
+          "source_id": "whoscored",
+          "parser_status": "BLOCKED",
+          "ok": false,
+          "http_status": 403,
+          "fields": [],
+          "reason": "Event-page blocked HTTP 403. No data from whoscored used."
+        },
+        {
+          "source_id": "soccerway",
+          "parser_status": "HTTP_ERROR",
+          "ok": false,
+          "http_status": 404,
+          "fields": [],
+          "reason": "HTTP 404 on event search page."
+        },
+        {
+          "source_id": "flashscore",
+          "parser_status": "HTTP_ERROR",
+          "ok": false,
+          "http_status": 404,
+          "fields": [],
+          "reason": "HTTP 404 on event search page."
+        },
+        {
+          "source_id": "directa",
+          "parser_status": "HTTP_ERROR",
+          "ok": false,
+          "http_status": 404,
+          "fields": [],
+          "reason": "HTTP 404 on event search page."
+        },
+        {
+          "source_id": "sofascore",
+          "parser_status": "BLOCKED",
+          "ok": false,
+          "http_status": 403,
+          "fields": [],
+          "reason": "Event-page blocked HTTP 403. No data from sofascore used."
+        },
+        {
+          "source_id": "uefa",
+          "parser_status": "NO_EVENT",
+          "ok": false,
+          "http_status": 200,
+          "fields": [],
+          "reason": "HTTP body does not contain both team names. Not event data."
+        },
+        {
+          "source_id": "understat",
+          "parser_status": "DENIED",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "No event-page URL template for this source."
+        },
+        {
+          "source_id": "fbref",
+          "parser_status": "BLOCKED",
+          "ok": false,
+          "http_status": 403,
+          "fields": [],
+          "reason": "Event-page blocked HTTP 403. No data from fbref used."
+        },
+        {
+          "source_id": "the-odds-api",
+          "parser_status": "MARKET_LAYER",
+          "ok": false,
+          "http_status": null,
+          "fields": [
+            "probability_market",
+            "odds"
+          ],
+          "reason": "MARKET_COMPARE_ONLY — odds never enter independent MODEL vector. Not a research SUCCESS."
+        },
+        {
+          "source_id": "club-football-match-data",
+          "parser_status": "SUCCESS",
+          "ok": true,
+          "http_status": null,
+          "fields": [
+            "home_gf_l5",
+            "away_gf_l5"
+          ],
+          "reason": "Bound 2174 prior rows (MatchDate < kickoff). Odds columns ignored. DATE_ONLY — available_at null."
+        },
+        {
+          "source_id": "football-data-co-uk",
+          "parser_status": "OK",
+          "ok": true,
+          "http_status": null,
+          "fields": [
+            "form_priors",
+            "form_l3",
+            "form_l5",
+            "form_l10"
+          ],
+          "reason": "Archivio: 152 match precedenti casa, 152 trasferta, division=E0. Target escluso."
+        },
+        {
+          "source_id": "clubelo",
+          "parser_status": "MISSING_FILE",
+          "ok": false,
+          "http_status": 502,
+          "fields": [],
+          "reason": "Nessun CSV ClubElo locale. Nessun Elo inventato."
+        },
+        {
+          "source_id": "open-meteo",
+          "parser_status": "OK",
+          "ok": true,
+          "http_status": 200,
+          "fields": [
+            "temp_c",
+            "precip_mm",
+            "precip_prob_pct",
+            "humidity_pct",
+            "wind_kmh"
+          ],
+          "reason": "osservazioni CONTEXT=5"
+        },
+        {
+          "source_id": "api-sports",
+          "parser_status": "SKIPPED",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "NO_FIXTURE_ID — cache lookup skipped (no invented id)"
+        }
+      ],
+      "observations": 225,
+      "real_event": 10,
+      "historical": 213,
+      "model_eligible": 207,
+      "categories": {
+        "form": true,
+        "team_stats": true,
+        "xg": false,
+        "injuries": false,
+        "lineup": false,
+        "referee": false,
+        "weather": true
+      },
+      "sample": [
+        {
+          "key": "away_gf_l5",
+          "value": 1.4,
+          "source": "club-football-match-data",
+          "kind": "HISTORICAL_PRIOR",
+          "available_at": null
+        },
+        {
+          "key": "home_gf_l5",
+          "value": 1,
+          "source": "club-football-match-data",
+          "kind": "HISTORICAL_PRIOR",
+          "available_at": null
+        },
+        {
+          "key": "season_phase",
+          "value": 1,
+          "source": "football-data-co-uk",
+          "kind": "DERIVED",
+          "available_at": "2025-05-26T00:00:00.000Z"
+        },
+        {
+          "key": "h2h_draw_rate",
+          "value": 0.3333333333333333,
+          "source": "football-data-co-uk",
+          "kind": "DERIVED",
+          "available_at": "2025-05-26T00:00:00.000Z"
+        },
+        {
+          "key": "h2h_home_win_rate",
+          "value": 0,
+          "source": "football-data-co-uk",
+          "kind": "DERIVED",
+          "available_at": "2025-05-26T00:00:00.000Z"
+        },
+        {
+          "key": "h2h_n",
+          "value": 6,
+          "source": "football-data-co-uk",
+          "kind": "DERIVED",
+          "available_at": "2025-05-26T00:00:00.000Z"
+        },
+        {
+          "key": "league_avg_gf",
+          "value": 1.4416666666666667,
+          "source": "football-data-co-uk",
+          "kind": "DERIVED",
+          "available_at": "2025-05-26T00:00:00.000Z"
+        },
+        {
+          "key": "home_advantage",
+          "value": 1,
+          "source": "football-data-co-uk",
+          "kind": "DERIVED",
+          "available_at": "2025-05-26T00:00:00.000Z"
+        },
+        {
+          "key": "away_rest_days",
+          "value": 474.9166666666667,
+          "source": "football-data-co-uk",
+          "kind": "DERIVED",
+          "available_at": "2025-05-26T00:00:00.000Z"
+        },
+        {
+          "key": "home_rest_days",
+          "value": 474.9166666666667,
+          "source": "football-data-co-uk",
+          "kind": "DERIVED",
+          "available_at": "2025-05-26T00:00:00.000Z"
+        },
+        {
+          "key": "strength_diff_pts",
+          "value": 0,
+          "source": "football-data-co-uk",
+          "kind": "DERIVED",
+          "available_at": "2025-05-26T00:00:00.000Z"
+        },
+        {
+          "key": "away_attack_all",
+          "value": 1.736842105263158,
+          "source": "football-data-co-uk",
+          "kind": "DERIVED",
+          "available_at": "2025-05-26T00:00:00.000Z"
+        }
+      ]
+    },
+    {
+      "event_id": "b125036643aab594cfc12125",
+      "home": "Chelsea",
+      "away": "Hull City",
+      "competition": "soccer_epl",
+      "kickoff_utc": "2026-09-12T14:00:00Z",
+      "identity": {
+        "home": "chelsea",
+        "away": "live:hull-city",
+        "confidence": "PROVISIONAL"
+      },
+      "sources": [
+        {
+          "source_id": "tennis-abstract",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "MISSING_ADAPTER — Tennis catalogue candidate — no production adapter"
+        },
+        {
+          "source_id": "tennis-explorer",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "MISSING_ADAPTER — Tennis catalogue candidate — no production adapter"
+        },
+        {
+          "source_id": "the-athletic",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "MISSING_ADAPTER — Paywalled — no scrape/bypass"
+        },
+        {
+          "source_id": "cies",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "MISSING_ADAPTER — Catalogued candidate — no production adapter"
+        },
+        {
+          "source_id": "soccer-association",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "MISSING_ADAPTER — Catalogued candidate — no production adapter"
+        },
+        {
+          "source_id": "opta",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "MISSING_ADAPTER — Commercial — no licensed adapter in lab"
+        },
+        {
+          "source_id": "ilveggente",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "MISSING_ADAPTER — Catalogued candidate — no production adapter"
+        },
+        {
+          "source_id": "sportytrader",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "MISSING_ADAPTER — Catalogued — tips/odds-adjacent; no adapter"
+        },
+        {
+          "source_id": "analysisportiva",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "MISSING_ADAPTER — Catalogued candidate — no production adapter"
+        },
+        {
+          "source_id": "click4soccer",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "MISSING_ADAPTER — Catalogued candidate — no production adapter"
+        },
+        {
+          "source_id": "betshoot",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "MISSING_ADAPTER — Catalogued candidate — no production adapter"
+        },
+        {
+          "source_id": "oddspedia",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "MISSING_ADAPTER — Catalogued — market-ish; no adapter; would be MARKET layer if wired"
+        },
+        {
+          "source_id": "sky-sport",
+          "parser_status": "HTTP_ERROR",
+          "ok": false,
+          "http_status": 404,
+          "fields": [],
+          "reason": "HTTP_404"
+        },
+        {
+          "source_id": "ansa",
+          "parser_status": "NO_EVENT",
+          "ok": false,
+          "http_status": 200,
+          "fields": [],
+          "reason": "RSS letto (77 item) ma nessuna voce cita entrambe le squadre"
+        },
+        {
+          "source_id": "abseits",
+          "parser_status": "BLOCKED",
+          "ok": false,
+          "http_status": 403,
+          "fields": [],
+          "reason": "Event-page blocked HTTP 403. No data from abseits used."
+        },
+        {
+          "source_id": "the-analyst",
+          "parser_status": "HTTP_ERROR",
+          "ok": false,
+          "http_status": 404,
+          "fields": [],
+          "reason": "HTTP 404 on event search page."
+        },
+        {
+          "source_id": "soccervital",
+          "parser_status": "NO_EVENT",
+          "ok": false,
+          "http_status": 200,
+          "fields": [],
+          "reason": "HTTP body does not contain both team names. Not event data."
+        },
+        {
+          "source_id": "soccervista",
+          "parser_status": "HTTP_ERROR",
+          "ok": false,
+          "http_status": 404,
+          "fields": [],
+          "reason": "HTTP 404 on event search page."
+        },
+        {
+          "source_id": "whoscored",
+          "parser_status": "BLOCKED",
+          "ok": false,
+          "http_status": 403,
+          "fields": [],
+          "reason": "Event-page blocked HTTP 403. No data from whoscored used."
+        },
+        {
+          "source_id": "soccerway",
+          "parser_status": "HTTP_ERROR",
+          "ok": false,
+          "http_status": 404,
+          "fields": [],
+          "reason": "HTTP 404 on event search page."
+        },
+        {
+          "source_id": "flashscore",
+          "parser_status": "HTTP_ERROR",
+          "ok": false,
+          "http_status": 404,
+          "fields": [],
+          "reason": "HTTP 404 on event search page."
+        },
+        {
+          "source_id": "directa",
+          "parser_status": "HTTP_ERROR",
+          "ok": false,
+          "http_status": 404,
+          "fields": [],
+          "reason": "HTTP 404 on event search page."
+        },
+        {
+          "source_id": "sofascore",
+          "parser_status": "BLOCKED",
+          "ok": false,
+          "http_status": 403,
+          "fields": [],
+          "reason": "Event-page blocked HTTP 403. No data from sofascore used."
+        },
+        {
+          "source_id": "uefa",
+          "parser_status": "AMBIGUOUS_EVENT",
+          "ok": false,
+          "http_status": 200,
+          "fields": [],
+          "reason": "Only one team name found. Not treated as this fixture."
+        },
+        {
+          "source_id": "understat",
+          "parser_status": "DENIED",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "No event-page URL template for this source."
+        },
+        {
+          "source_id": "fbref",
+          "parser_status": "BLOCKED",
+          "ok": false,
+          "http_status": 403,
+          "fields": [],
+          "reason": "Event-page blocked HTTP 403. No data from fbref used."
+        },
+        {
+          "source_id": "the-odds-api",
+          "parser_status": "MARKET_LAYER",
+          "ok": false,
+          "http_status": null,
+          "fields": [
+            "probability_market",
+            "odds"
+          ],
+          "reason": "MARKET_COMPARE_ONLY — odds never enter independent MODEL vector. Not a research SUCCESS."
+        },
+        {
+          "source_id": "club-football-match-data",
+          "parser_status": "SUCCESS",
+          "ok": true,
+          "http_status": null,
+          "fields": [
+            "home_gf_l5",
+            "away_gf_l5"
+          ],
+          "reason": "Bound 2469 prior rows (MatchDate < kickoff). Odds columns ignored. DATE_ONLY — available_at null."
+        },
+        {
+          "source_id": "football-data-co-uk",
+          "parser_status": "NO_EVENT",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "Archivio Football-Data presente, ma questa partita non e stata abbinata (squadre o competizione assenti dal dataset storico)."
+        },
+        {
+          "source_id": "clubelo",
+          "parser_status": "MISSING_FILE",
+          "ok": false,
+          "http_status": 502,
+          "fields": [],
+          "reason": "Nessun CSV ClubElo locale. Nessun Elo inventato."
+        },
+        {
+          "source_id": "open-meteo",
+          "parser_status": "OK",
+          "ok": true,
+          "http_status": 200,
+          "fields": [
+            "temp_c",
+            "precip_mm",
+            "precip_prob_pct",
+            "humidity_pct",
+            "wind_kmh"
+          ],
+          "reason": "osservazioni CONTEXT=5"
+        },
+        {
+          "source_id": "api-sports",
+          "parser_status": "SKIPPED",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "NO_FIXTURE_ID — cache lookup skipped (no invented id)"
+        }
+      ],
+      "observations": 18,
+      "real_event": 10,
+      "historical": 6,
+      "model_eligible": 0,
+      "categories": {
+        "form": true,
+        "team_stats": true,
+        "xg": false,
+        "injuries": false,
+        "lineup": false,
+        "referee": false,
+        "weather": true
+      },
+      "sample": [
+        {
+          "key": "away_gf_l5",
+          "value": 1.2,
+          "source": "club-football-match-data",
+          "kind": "HISTORICAL_PRIOR",
+          "available_at": null
+        },
+        {
+          "key": "home_gf_l5",
+          "value": 2.2,
+          "source": "club-football-match-data",
+          "kind": "HISTORICAL_PRIOR",
+          "available_at": null
+        },
+        {
+          "key": "wind_kmh",
+          "value": 19.4,
+          "source": "open-meteo",
+          "kind": "EVENT_RESEARCH",
+          "available_at": "2026-09-10T22:39:25.452Z"
+        },
+        {
+          "key": "humidity_pct",
+          "value": 47,
+          "source": "open-meteo",
+          "kind": "EVENT_RESEARCH",
+          "available_at": "2026-09-10T22:39:25.452Z"
+        },
+        {
+          "key": "precip_prob_pct",
+          "value": 0,
+          "source": "open-meteo",
+          "kind": "EVENT_RESEARCH",
+          "available_at": "2026-09-10T22:39:25.452Z"
+        },
+        {
+          "key": "precip_mm",
+          "value": 0,
+          "source": "open-meteo",
+          "kind": "EVENT_RESEARCH",
+          "available_at": "2026-09-10T22:39:25.452Z"
+        },
+        {
+          "key": "temp_c",
+          "value": 23.6,
+          "source": "open-meteo",
+          "kind": "EVENT_RESEARCH",
+          "available_at": "2026-09-10T22:39:25.452Z"
+        },
+        {
+          "key": "away_gf_l5",
+          "value": 1.2,
+          "source": "club-football-match-data",
+          "kind": "HISTORICAL_PRIOR",
+          "available_at": null
+        },
+        {
+          "key": "home_gf_l5",
+          "value": 2.2,
+          "source": "club-football-match-data",
+          "kind": "HISTORICAL_PRIOR",
+          "available_at": null
+        },
+        {
+          "key": "wind_kmh",
+          "value": 19.4,
+          "source": "open-meteo",
+          "kind": "EVENT_RESEARCH",
+          "available_at": "2026-09-10T22:36:34.970Z"
+        },
+        {
+          "key": "humidity_pct",
+          "value": 47,
+          "source": "open-meteo",
+          "kind": "EVENT_RESEARCH",
+          "available_at": "2026-09-10T22:36:34.970Z"
+        },
+        {
+          "key": "precip_prob_pct",
+          "value": 0,
+          "source": "open-meteo",
+          "kind": "EVENT_RESEARCH",
+          "available_at": "2026-09-10T22:36:34.970Z"
+        }
+      ]
+    },
+    {
+      "event_id": "b394c96ef1080986b753eefa",
+      "home": "Crystal Palace",
+      "away": "Ipswich Town",
+      "competition": "soccer_epl",
+      "kickoff_utc": "2026-09-12T14:00:00Z",
+      "identity": {
+        "home": "crystal-palace",
+        "away": "live:ipswich-town",
+        "confidence": "PROVISIONAL"
+      },
+      "sources": [
+        {
+          "source_id": "tennis-abstract",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "MISSING_ADAPTER — Tennis catalogue candidate — no production adapter"
+        },
+        {
+          "source_id": "tennis-explorer",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "MISSING_ADAPTER — Tennis catalogue candidate — no production adapter"
+        },
+        {
+          "source_id": "the-athletic",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "MISSING_ADAPTER — Paywalled — no scrape/bypass"
+        },
+        {
+          "source_id": "cies",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "MISSING_ADAPTER — Catalogued candidate — no production adapter"
+        },
+        {
+          "source_id": "soccer-association",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "MISSING_ADAPTER — Catalogued candidate — no production adapter"
+        },
+        {
+          "source_id": "opta",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "MISSING_ADAPTER — Commercial — no licensed adapter in lab"
+        },
+        {
+          "source_id": "ilveggente",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "MISSING_ADAPTER — Catalogued candidate — no production adapter"
+        },
+        {
+          "source_id": "sportytrader",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "MISSING_ADAPTER — Catalogued — tips/odds-adjacent; no adapter"
+        },
+        {
+          "source_id": "analysisportiva",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "MISSING_ADAPTER — Catalogued candidate — no production adapter"
+        },
+        {
+          "source_id": "click4soccer",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "MISSING_ADAPTER — Catalogued candidate — no production adapter"
+        },
+        {
+          "source_id": "betshoot",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "MISSING_ADAPTER — Catalogued candidate — no production adapter"
+        },
+        {
+          "source_id": "oddspedia",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "MISSING_ADAPTER — Catalogued — market-ish; no adapter; would be MARKET layer if wired"
+        },
+        {
+          "source_id": "sky-sport",
+          "parser_status": "HTTP_ERROR",
+          "ok": false,
+          "http_status": 404,
+          "fields": [],
+          "reason": "HTTP_404"
+        },
+        {
+          "source_id": "ansa",
+          "parser_status": "NO_EVENT",
+          "ok": false,
+          "http_status": 200,
+          "fields": [],
+          "reason": "RSS letto (77 item) ma nessuna voce cita entrambe le squadre"
+        },
+        {
+          "source_id": "abseits",
+          "parser_status": "BLOCKED",
+          "ok": false,
+          "http_status": 403,
+          "fields": [],
+          "reason": "Event-page blocked HTTP 403. No data from abseits used."
+        },
+        {
+          "source_id": "the-analyst",
+          "parser_status": "HTTP_ERROR",
+          "ok": false,
+          "http_status": 404,
+          "fields": [],
+          "reason": "HTTP 404 on event search page."
+        },
+        {
+          "source_id": "soccervital",
+          "parser_status": "NO_EVENT",
+          "ok": false,
+          "http_status": 200,
+          "fields": [],
+          "reason": "HTTP body does not contain both team names. Not event data."
+        },
+        {
+          "source_id": "soccervista",
+          "parser_status": "HTTP_ERROR",
+          "ok": false,
+          "http_status": 404,
+          "fields": [],
+          "reason": "HTTP 404 on event search page."
+        },
+        {
+          "source_id": "whoscored",
+          "parser_status": "BLOCKED",
+          "ok": false,
+          "http_status": 403,
+          "fields": [],
+          "reason": "Event-page blocked HTTP 403. No data from whoscored used."
+        },
+        {
+          "source_id": "soccerway",
+          "parser_status": "HTTP_ERROR",
+          "ok": false,
+          "http_status": 404,
+          "fields": [],
+          "reason": "HTTP 404 on event search page."
+        },
+        {
+          "source_id": "flashscore",
+          "parser_status": "HTTP_ERROR",
+          "ok": false,
+          "http_status": 404,
+          "fields": [],
+          "reason": "HTTP 404 on event search page."
+        },
+        {
+          "source_id": "directa",
+          "parser_status": "HTTP_ERROR",
+          "ok": false,
+          "http_status": 404,
+          "fields": [],
+          "reason": "HTTP 404 on event search page."
+        },
+        {
+          "source_id": "sofascore",
+          "parser_status": "BLOCKED",
+          "ok": false,
+          "http_status": 403,
+          "fields": [],
+          "reason": "Event-page blocked HTTP 403. No data from sofascore used."
+        },
+        {
+          "source_id": "uefa",
+          "parser_status": "NO_EVENT",
+          "ok": false,
+          "http_status": 200,
+          "fields": [],
+          "reason": "HTTP body does not contain both team names. Not event data."
+        },
+        {
+          "source_id": "understat",
+          "parser_status": "DENIED",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "No event-page URL template for this source."
+        },
+        {
+          "source_id": "fbref",
+          "parser_status": "BLOCKED",
+          "ok": false,
+          "http_status": 403,
+          "fields": [],
+          "reason": "Event-page blocked HTTP 403. No data from fbref used."
+        },
+        {
+          "source_id": "the-odds-api",
+          "parser_status": "MARKET_LAYER",
+          "ok": false,
+          "http_status": null,
+          "fields": [
+            "probability_market",
+            "odds"
+          ],
+          "reason": "MARKET_COMPARE_ONLY — odds never enter independent MODEL vector. Not a research SUCCESS."
+        },
+        {
+          "source_id": "club-football-match-data",
+          "parser_status": "SUCCESS",
+          "ok": true,
+          "http_status": null,
+          "fields": [
+            "home_gf_l5",
+            "away_gf_l5"
+          ],
+          "reason": "Bound 2203 prior rows (MatchDate < kickoff). Odds columns ignored. DATE_ONLY — available_at null."
+        },
+        {
+          "source_id": "football-data-co-uk",
+          "parser_status": "NO_EVENT",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "Archivio Football-Data presente, ma questa partita non e stata abbinata (squadre o competizione assenti dal dataset storico)."
+        },
+        {
+          "source_id": "clubelo",
+          "parser_status": "MISSING_FILE",
+          "ok": false,
+          "http_status": 502,
+          "fields": [],
+          "reason": "Nessun CSV ClubElo locale. Nessun Elo inventato."
+        },
+        {
+          "source_id": "open-meteo",
+          "parser_status": "OK",
+          "ok": true,
+          "http_status": 200,
+          "fields": [
+            "temp_c",
+            "precip_mm",
+            "precip_prob_pct",
+            "humidity_pct",
+            "wind_kmh"
+          ],
+          "reason": "osservazioni CONTEXT=5"
+        },
+        {
+          "source_id": "api-sports",
+          "parser_status": "SKIPPED",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "NO_FIXTURE_ID — cache lookup skipped (no invented id)"
+        }
+      ],
+      "observations": 18,
+      "real_event": 10,
+      "historical": 6,
+      "model_eligible": 0,
+      "categories": {
+        "form": true,
+        "team_stats": true,
+        "xg": false,
+        "injuries": false,
+        "lineup": false,
+        "referee": false,
+        "weather": true
+      },
+      "sample": [
+        {
+          "key": "away_gf_l5",
+          "value": 1.8,
+          "source": "club-football-match-data",
+          "kind": "HISTORICAL_PRIOR",
+          "available_at": null
+        },
+        {
+          "key": "home_gf_l5",
+          "value": 0.8,
+          "source": "club-football-match-data",
+          "kind": "HISTORICAL_PRIOR",
+          "available_at": null
+        },
+        {
+          "key": "wind_kmh",
+          "value": 21.2,
+          "source": "open-meteo",
+          "kind": "EVENT_RESEARCH",
+          "available_at": "2026-09-10T22:39:25.452Z"
+        },
+        {
+          "key": "humidity_pct",
+          "value": 50,
+          "source": "open-meteo",
+          "kind": "EVENT_RESEARCH",
+          "available_at": "2026-09-10T22:39:25.452Z"
+        },
+        {
+          "key": "precip_prob_pct",
+          "value": 0,
+          "source": "open-meteo",
+          "kind": "EVENT_RESEARCH",
+          "available_at": "2026-09-10T22:39:25.452Z"
+        },
+        {
+          "key": "precip_mm",
+          "value": 0,
+          "source": "open-meteo",
+          "kind": "EVENT_RESEARCH",
+          "available_at": "2026-09-10T22:39:25.452Z"
+        },
+        {
+          "key": "temp_c",
+          "value": 23,
+          "source": "open-meteo",
+          "kind": "EVENT_RESEARCH",
+          "available_at": "2026-09-10T22:39:25.452Z"
+        },
+        {
+          "key": "away_gf_l5",
+          "value": 1.8,
+          "source": "club-football-match-data",
+          "kind": "HISTORICAL_PRIOR",
+          "available_at": null
+        },
+        {
+          "key": "home_gf_l5",
+          "value": 0.8,
+          "source": "club-football-match-data",
+          "kind": "HISTORICAL_PRIOR",
+          "available_at": null
+        },
+        {
+          "key": "wind_kmh",
+          "value": 21.2,
+          "source": "open-meteo",
+          "kind": "EVENT_RESEARCH",
+          "available_at": "2026-09-10T22:36:34.970Z"
+        },
+        {
+          "key": "humidity_pct",
+          "value": 50,
+          "source": "open-meteo",
+          "kind": "EVENT_RESEARCH",
+          "available_at": "2026-09-10T22:36:34.970Z"
+        },
+        {
+          "key": "precip_prob_pct",
+          "value": 0,
+          "source": "open-meteo",
+          "kind": "EVENT_RESEARCH",
+          "available_at": "2026-09-10T22:36:34.970Z"
+        }
+      ]
+    },
+    {
+      "event_id": "8049c580cd743abbe1dfe44b",
+      "home": "Coventry City",
+      "away": "Brighton and Hove Albion",
+      "competition": "soccer_epl",
+      "kickoff_utc": "2026-09-13T13:00:00Z",
+      "identity": {
+        "home": "live:coventry-city",
+        "away": "brighton",
+        "confidence": "PROVISIONAL"
+      },
+      "sources": [
+        {
+          "source_id": "tennis-abstract",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "MISSING_ADAPTER — Tennis catalogue candidate — no production adapter"
+        },
+        {
+          "source_id": "tennis-explorer",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "MISSING_ADAPTER — Tennis catalogue candidate — no production adapter"
+        },
+        {
+          "source_id": "the-athletic",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "MISSING_ADAPTER — Paywalled — no scrape/bypass"
+        },
+        {
+          "source_id": "cies",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "MISSING_ADAPTER — Catalogued candidate — no production adapter"
+        },
+        {
+          "source_id": "soccer-association",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "MISSING_ADAPTER — Catalogued candidate — no production adapter"
+        },
+        {
+          "source_id": "opta",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "MISSING_ADAPTER — Commercial — no licensed adapter in lab"
+        },
+        {
+          "source_id": "ilveggente",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "MISSING_ADAPTER — Catalogued candidate — no production adapter"
+        },
+        {
+          "source_id": "sportytrader",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "MISSING_ADAPTER — Catalogued — tips/odds-adjacent; no adapter"
+        },
+        {
+          "source_id": "analysisportiva",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "MISSING_ADAPTER — Catalogued candidate — no production adapter"
+        },
+        {
+          "source_id": "click4soccer",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "MISSING_ADAPTER — Catalogued candidate — no production adapter"
+        },
+        {
+          "source_id": "betshoot",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "MISSING_ADAPTER — Catalogued candidate — no production adapter"
+        },
+        {
+          "source_id": "oddspedia",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "MISSING_ADAPTER — Catalogued — market-ish; no adapter; would be MARKET layer if wired"
+        },
+        {
+          "source_id": "sky-sport",
+          "parser_status": "HTTP_ERROR",
+          "ok": false,
+          "http_status": 404,
+          "fields": [],
+          "reason": "HTTP_404"
+        },
+        {
+          "source_id": "ansa",
+          "parser_status": "NO_EVENT",
+          "ok": false,
+          "http_status": 200,
+          "fields": [],
+          "reason": "RSS letto (77 item) ma nessuna voce cita entrambe le squadre"
+        },
+        {
+          "source_id": "abseits",
+          "parser_status": "BLOCKED",
+          "ok": false,
+          "http_status": 403,
+          "fields": [],
+          "reason": "Event-page blocked HTTP 403. No data from abseits used."
+        },
+        {
+          "source_id": "the-analyst",
+          "parser_status": "HTTP_ERROR",
+          "ok": false,
+          "http_status": 404,
+          "fields": [],
+          "reason": "HTTP 404 on event search page."
+        },
+        {
+          "source_id": "soccervital",
+          "parser_status": "NO_EVENT",
+          "ok": false,
+          "http_status": 200,
+          "fields": [],
+          "reason": "HTTP body does not contain both team names. Not event data."
+        },
+        {
+          "source_id": "soccervista",
+          "parser_status": "HTTP_ERROR",
+          "ok": false,
+          "http_status": 404,
+          "fields": [],
+          "reason": "HTTP 404 on event search page."
+        },
+        {
+          "source_id": "whoscored",
+          "parser_status": "BLOCKED",
+          "ok": false,
+          "http_status": 403,
+          "fields": [],
+          "reason": "Event-page blocked HTTP 403. No data from whoscored used."
+        },
+        {
+          "source_id": "soccerway",
+          "parser_status": "HTTP_ERROR",
+          "ok": false,
+          "http_status": 404,
+          "fields": [],
+          "reason": "HTTP 404 on event search page."
+        },
+        {
+          "source_id": "flashscore",
+          "parser_status": "HTTP_ERROR",
+          "ok": false,
+          "http_status": 404,
+          "fields": [],
+          "reason": "HTTP 404 on event search page."
+        },
+        {
+          "source_id": "directa",
+          "parser_status": "HTTP_ERROR",
+          "ok": false,
+          "http_status": 404,
+          "fields": [],
+          "reason": "HTTP 404 on event search page."
+        },
+        {
+          "source_id": "sofascore",
+          "parser_status": "BLOCKED",
+          "ok": false,
+          "http_status": 403,
+          "fields": [],
+          "reason": "Event-page blocked HTTP 403. No data from sofascore used."
+        },
+        {
+          "source_id": "uefa",
+          "parser_status": "NO_EVENT",
+          "ok": false,
+          "http_status": 200,
+          "fields": [],
+          "reason": "HTTP body does not contain both team names. Not event data."
+        },
+        {
+          "source_id": "understat",
+          "parser_status": "DENIED",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "No event-page URL template for this source."
+        },
+        {
+          "source_id": "fbref",
+          "parser_status": "BLOCKED",
+          "ok": false,
+          "http_status": 403,
+          "fields": [],
+          "reason": "Event-page blocked HTTP 403. No data from fbref used."
+        },
+        {
+          "source_id": "the-odds-api",
+          "parser_status": "MARKET_LAYER",
+          "ok": false,
+          "http_status": null,
+          "fields": [
+            "probability_market",
+            "odds"
+          ],
+          "reason": "MARKET_COMPARE_ONLY — odds never enter independent MODEL vector. Not a research SUCCESS."
+        },
+        {
+          "source_id": "club-football-match-data",
+          "parser_status": "SUCCESS",
+          "ok": true,
+          "http_status": null,
+          "fields": [
+            "home_gf_l5",
+            "away_gf_l5"
+          ],
+          "reason": "Bound 2220 prior rows (MatchDate < kickoff). Odds columns ignored. DATE_ONLY — available_at null."
+        },
+        {
+          "source_id": "football-data-co-uk",
+          "parser_status": "NO_EVENT",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "Archivio Football-Data presente, ma questa partita non e stata abbinata (squadre o competizione assenti dal dataset storico)."
+        },
+        {
+          "source_id": "clubelo",
+          "parser_status": "MISSING_FILE",
+          "ok": false,
+          "http_status": 502,
+          "fields": [],
+          "reason": "Nessun CSV ClubElo locale. Nessun Elo inventato."
+        },
+        {
+          "source_id": "open-meteo",
+          "parser_status": "OK",
+          "ok": true,
+          "http_status": 200,
+          "fields": [
+            "temp_c",
+            "precip_mm",
+            "precip_prob_pct",
+            "humidity_pct",
+            "wind_kmh"
+          ],
+          "reason": "osservazioni CONTEXT=5"
+        },
+        {
+          "source_id": "api-sports",
+          "parser_status": "SKIPPED",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "NO_FIXTURE_ID — cache lookup skipped (no invented id)"
+        }
+      ],
+      "observations": 18,
+      "real_event": 10,
+      "historical": 6,
+      "model_eligible": 0,
+      "categories": {
+        "form": true,
+        "team_stats": true,
+        "xg": false,
+        "injuries": false,
+        "lineup": false,
+        "referee": false,
+        "weather": true
+      },
+      "sample": [
+        {
+          "key": "away_gf_l5",
+          "value": 2,
+          "source": "club-football-match-data",
+          "kind": "HISTORICAL_PRIOR",
+          "available_at": null
+        },
+        {
+          "key": "home_gf_l5",
+          "value": 2.4,
+          "source": "club-football-match-data",
+          "kind": "HISTORICAL_PRIOR",
+          "available_at": null
+        },
+        {
+          "key": "wind_kmh",
+          "value": 9.7,
+          "source": "open-meteo",
+          "kind": "EVENT_RESEARCH",
+          "available_at": "2026-09-10T22:39:25.452Z"
+        },
+        {
+          "key": "humidity_pct",
+          "value": 71,
+          "source": "open-meteo",
+          "kind": "EVENT_RESEARCH",
+          "available_at": "2026-09-10T22:39:25.452Z"
+        },
+        {
+          "key": "precip_prob_pct",
+          "value": 3,
+          "source": "open-meteo",
+          "kind": "EVENT_RESEARCH",
+          "available_at": "2026-09-10T22:39:25.452Z"
+        },
+        {
+          "key": "precip_mm",
+          "value": 0,
+          "source": "open-meteo",
+          "kind": "EVENT_RESEARCH",
+          "available_at": "2026-09-10T22:39:25.452Z"
+        },
+        {
+          "key": "temp_c",
+          "value": 21.2,
+          "source": "open-meteo",
+          "kind": "EVENT_RESEARCH",
+          "available_at": "2026-09-10T22:39:25.452Z"
+        },
+        {
+          "key": "away_gf_l5",
+          "value": 2,
+          "source": "club-football-match-data",
+          "kind": "HISTORICAL_PRIOR",
+          "available_at": null
+        },
+        {
+          "key": "home_gf_l5",
+          "value": 2.4,
+          "source": "club-football-match-data",
+          "kind": "HISTORICAL_PRIOR",
+          "available_at": null
+        },
+        {
+          "key": "wind_kmh",
+          "value": 9.7,
+          "source": "open-meteo",
+          "kind": "EVENT_RESEARCH",
+          "available_at": "2026-09-10T22:36:34.970Z"
+        },
+        {
+          "key": "humidity_pct",
+          "value": 71,
+          "source": "open-meteo",
+          "kind": "EVENT_RESEARCH",
+          "available_at": "2026-09-10T22:36:34.970Z"
+        },
+        {
+          "key": "precip_prob_pct",
+          "value": 3,
+          "source": "open-meteo",
+          "kind": "EVENT_RESEARCH",
+          "available_at": "2026-09-10T22:36:34.970Z"
+        }
+      ]
+    },
+    {
+      "event_id": "fb1394914d8a650844bc6eca",
+      "home": "Venezia",
+      "away": "Fiorentina",
+      "competition": "soccer_italy_serie_a",
+      "kickoff_utc": "2026-09-11T18:45:00Z",
+      "identity": {
+        "home": "raw:venezia",
+        "away": "raw:fiorentina",
+        "confidence": "HIGH"
+      },
+      "sources": [
+        {
+          "source_id": "tennis-abstract",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "MISSING_ADAPTER — Tennis catalogue candidate — no production adapter"
+        },
+        {
+          "source_id": "tennis-explorer",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "MISSING_ADAPTER — Tennis catalogue candidate — no production adapter"
+        },
+        {
+          "source_id": "abseits",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "MISSING_ADAPTER — Catalogued candidate — no production adapter"
+        },
+        {
+          "source_id": "the-analyst",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "MISSING_ADAPTER — Catalogued candidate — no production adapter"
+        },
+        {
+          "source_id": "the-athletic",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "MISSING_ADAPTER — Paywalled — no scrape/bypass"
+        },
+        {
+          "source_id": "whoscored",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "MISSING_ADAPTER — Catalogued — no production adapter (policy review required)"
+        },
+        {
+          "source_id": "cies",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "MISSING_ADAPTER — Catalogued candidate — no production adapter"
+        },
+        {
+          "source_id": "soccer-association",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "MISSING_ADAPTER — Catalogued candidate — no production adapter"
+        },
+        {
+          "source_id": "opta",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "MISSING_ADAPTER — Commercial — no licensed adapter in lab"
+        },
+        {
+          "source_id": "ilveggente",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "MISSING_ADAPTER — Catalogued candidate — no production adapter"
+        },
+        {
+          "source_id": "sportytrader",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "MISSING_ADAPTER — Catalogued — tips/odds-adjacent; no adapter"
+        },
+        {
+          "source_id": "analysisportiva",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "MISSING_ADAPTER — Catalogued candidate — no production adapter"
+        },
+        {
+          "source_id": "ansa",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "MISSING_ADAPTER — News CONTEXT candidate — no adapter"
+        },
+        {
+          "source_id": "sky-sport",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "MISSING_ADAPTER — News CONTEXT candidate — no adapter"
+        },
+        {
+          "source_id": "click4soccer",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "MISSING_ADAPTER — Catalogued candidate — no production adapter"
+        },
+        {
+          "source_id": "betshoot",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "MISSING_ADAPTER — Catalogued candidate — no production adapter"
+        },
+        {
+          "source_id": "oddspedia",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "MISSING_ADAPTER — Catalogued — market-ish; no adapter; would be MARKET layer if wired"
+        },
+        {
+          "source_id": "soccervital",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "MISSING_ADAPTER — Catalogued candidate — no production adapter"
+        },
+        {
+          "source_id": "soccervista",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "MISSING_ADAPTER — Catalogued candidate — no production adapter"
+        },
+        {
+          "source_id": "soccerway",
+          "parser_status": "HTTP_ERROR",
+          "ok": false,
+          "http_status": 404,
+          "fields": [],
+          "reason": "HTTP 404 on event search page."
+        },
+        {
+          "source_id": "flashscore",
+          "parser_status": "HTTP_ERROR",
+          "ok": false,
+          "http_status": 404,
+          "fields": [],
+          "reason": "HTTP 404 on event search page."
+        },
+        {
+          "source_id": "directa",
+          "parser_status": "HTTP_ERROR",
+          "ok": false,
+          "http_status": 404,
+          "fields": [],
+          "reason": "HTTP 404 on event search page."
+        },
+        {
+          "source_id": "sofascore",
+          "parser_status": "BLOCKED",
+          "ok": false,
+          "http_status": 403,
+          "fields": [],
+          "reason": "Event-page blocked HTTP 403. No data from sofascore used."
+        },
+        {
+          "source_id": "uefa",
+          "parser_status": "NO_EVENT",
+          "ok": false,
+          "http_status": 200,
+          "fields": [],
+          "reason": "HTTP 200 but the page does not contain both team names. Not treated as event data."
+        },
+        {
+          "source_id": "understat",
+          "parser_status": "DENIED",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "No event-page URL template for this source."
+        },
+        {
+          "source_id": "fbref",
+          "parser_status": "BLOCKED",
+          "ok": false,
+          "http_status": 403,
+          "fields": [],
+          "reason": "Event-page blocked HTTP 403. No data from fbref used."
+        },
+        {
+          "source_id": "the-odds-api",
+          "parser_status": "MARKET_LAYER",
+          "ok": false,
+          "http_status": null,
+          "fields": [
+            "probability_market",
+            "odds"
+          ],
+          "reason": "MARKET_COMPARE_ONLY — odds never enter independent MODEL vector. Not a research SUCCESS."
+        },
+        {
+          "source_id": "club-football-match-data",
+          "parser_status": "SUCCESS",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "Archivio: 76 match precedenti casa, 228 trasferta, division=I1. Target escluso."
+        },
+        {
+          "source_id": "football-data-co-uk",
+          "parser_status": "OK",
+          "ok": true,
+          "http_status": null,
+          "fields": [
+            "form_priors",
+            "form_l3",
+            "form_l5",
+            "form_l10"
+          ],
+          "reason": "Archivio: 76 match precedenti casa, 228 trasferta, division=I1. Target escluso."
+        },
+        {
+          "source_id": "clubelo",
+          "parser_status": "MISSING_FILE",
+          "ok": false,
+          "http_status": 502,
+          "fields": [],
+          "reason": "Nessun CSV ClubElo locale. Nessun Elo inventato."
+        },
+        {
+          "source_id": "open-meteo",
+          "parser_status": "NO_COORDS_OR_EMPTY",
+          "ok": false,
+          "http_status": 200,
+          "fields": [
+            "weather"
+          ],
+          "reason": "weather"
+        },
+        {
+          "source_id": "api-sports",
+          "parser_status": "SKIPPED",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "NO_FIXTURE_ID — cache lookup skipped (no invented id)"
+        }
+      ],
+      "observations": 72,
+      "real_event": 1,
+      "historical": 71,
+      "model_eligible": 69,
+      "categories": {
+        "form": true,
+        "team_stats": true,
+        "xg": false,
+        "injuries": false,
+        "lineup": false,
+        "referee": false,
+        "weather": false
+      },
+      "sample": [
+        {
+          "key": "rss_mention",
+          "value": "Fiorentina a Venezia con Vanoli per cercare un nuovo inizio",
+          "source": "ansa",
+          "kind": "EVENT_RESEARCH",
+          "available_at": "Thu, 10 Sep 2026 18:37:01 +0200"
+        },
+        {
+          "key": "away_gf_l5",
+          "value": 0.6,
+          "source": "club-football-match-data",
+          "kind": "HISTORICAL_PRIOR",
+          "available_at": null
+        },
+        {
+          "key": "home_gf_l5",
+          "value": 1.2,
+          "source": "club-football-match-data",
+          "kind": "HISTORICAL_PRIOR",
+          "available_at": null
+        },
+        {
+          "key": "season_phase",
+          "value": 1,
+          "source": "football-data-co-uk",
+          "kind": "DERIVED",
+          "available_at": "2025-05-26T00:00:00.000Z"
+        },
+        {
+          "key": "h2h_draw_rate",
+          "value": 0.25,
+          "source": "football-data-co-uk",
+          "kind": "DERIVED",
+          "available_at": "2025-05-26T00:00:00.000Z"
+        },
+        {
+          "key": "h2h_home_win_rate",
+          "value": 0.5,
+          "source": "football-data-co-uk",
+          "kind": "DERIVED",
+          "available_at": "2025-05-26T00:00:00.000Z"
+        },
+        {
+          "key": "h2h_n",
+          "value": 4,
+          "source": "football-data-co-uk",
+          "kind": "DERIVED",
+          "available_at": "2025-05-26T00:00:00.000Z"
+        },
+        {
+          "key": "league_avg_gf",
+          "value": 1.3907894736842106,
+          "source": "football-data-co-uk",
+          "kind": "DERIVED",
+          "available_at": "2025-05-26T00:00:00.000Z"
+        },
+        {
+          "key": "home_advantage",
+          "value": 1,
+          "source": "football-data-co-uk",
+          "kind": "DERIVED",
+          "available_at": "2025-05-26T00:00:00.000Z"
+        },
+        {
+          "key": "away_rest_days",
+          "value": 473.9583333333333,
+          "source": "football-data-co-uk",
+          "kind": "DERIVED",
+          "available_at": "2025-05-26T00:00:00.000Z"
+        },
+        {
+          "key": "home_rest_days",
+          "value": 473.9583333333333,
+          "source": "football-data-co-uk",
+          "kind": "DERIVED",
+          "available_at": "2025-05-26T00:00:00.000Z"
+        },
+        {
+          "key": "strength_diff_pts",
+          "value": -0.9473684210526315,
+          "source": "football-data-co-uk",
+          "kind": "DERIVED",
+          "available_at": "2025-05-26T00:00:00.000Z"
+        }
+      ]
+    },
+    {
+      "event_id": "d1c4e3a8d13f56558fd0e966",
+      "home": "Genoa",
+      "away": "Frosinone",
+      "competition": "soccer_italy_serie_a",
+      "kickoff_utc": "2026-09-12T13:00:00Z",
+      "identity": {
+        "home": "raw:genoa",
+        "away": "raw:frosinone",
+        "confidence": "HIGH"
+      },
+      "sources": [
+        {
+          "source_id": "tennis-abstract",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "MISSING_ADAPTER — Tennis catalogue candidate — no production adapter"
+        },
+        {
+          "source_id": "tennis-explorer",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "MISSING_ADAPTER — Tennis catalogue candidate — no production adapter"
+        },
+        {
+          "source_id": "the-athletic",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "MISSING_ADAPTER — Paywalled — no scrape/bypass"
+        },
+        {
+          "source_id": "cies",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "MISSING_ADAPTER — Catalogued candidate — no production adapter"
+        },
+        {
+          "source_id": "soccer-association",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "MISSING_ADAPTER — Catalogued candidate — no production adapter"
+        },
+        {
+          "source_id": "opta",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "MISSING_ADAPTER — Commercial — no licensed adapter in lab"
+        },
+        {
+          "source_id": "ilveggente",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "MISSING_ADAPTER — Catalogued candidate — no production adapter"
+        },
+        {
+          "source_id": "sportytrader",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "MISSING_ADAPTER — Catalogued — tips/odds-adjacent; no adapter"
+        },
+        {
+          "source_id": "analysisportiva",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "MISSING_ADAPTER — Catalogued candidate — no production adapter"
+        },
+        {
+          "source_id": "click4soccer",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "MISSING_ADAPTER — Catalogued candidate — no production adapter"
+        },
+        {
+          "source_id": "betshoot",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "MISSING_ADAPTER — Catalogued candidate — no production adapter"
+        },
+        {
+          "source_id": "oddspedia",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "MISSING_ADAPTER — Catalogued — market-ish; no adapter; would be MARKET layer if wired"
+        },
+        {
+          "source_id": "sky-sport",
+          "parser_status": "HTTP_ERROR",
+          "ok": false,
+          "http_status": 404,
+          "fields": [],
+          "reason": "HTTP_404"
+        },
+        {
+          "source_id": "ansa",
+          "parser_status": "PARTIAL",
+          "ok": true,
+          "http_status": 200,
+          "fields": [
+            "rss_mention"
+          ],
+          "reason": "Voce RSS cita entrambe le squadre — CONTEXT only, non e un infortunio strutturato"
+        },
+        {
+          "source_id": "abseits",
+          "parser_status": "BLOCKED",
+          "ok": false,
+          "http_status": 403,
+          "fields": [],
+          "reason": "Event-page blocked HTTP 403. No data from abseits used."
+        },
+        {
+          "source_id": "the-analyst",
+          "parser_status": "HTTP_ERROR",
+          "ok": false,
+          "http_status": 404,
+          "fields": [],
+          "reason": "HTTP 404 on event search page."
+        },
+        {
+          "source_id": "soccervital",
+          "parser_status": "NO_EVENT",
+          "ok": false,
+          "http_status": 200,
+          "fields": [],
+          "reason": "HTTP body does not contain both team names. Not event data."
+        },
+        {
+          "source_id": "soccervista",
+          "parser_status": "HTTP_ERROR",
+          "ok": false,
+          "http_status": 404,
+          "fields": [],
+          "reason": "HTTP 404 on event search page."
+        },
+        {
+          "source_id": "whoscored",
+          "parser_status": "BLOCKED",
+          "ok": false,
+          "http_status": 403,
+          "fields": [],
+          "reason": "Event-page blocked HTTP 403. No data from whoscored used."
+        },
+        {
+          "source_id": "soccerway",
+          "parser_status": "HTTP_ERROR",
+          "ok": false,
+          "http_status": 404,
+          "fields": [],
+          "reason": "HTTP 404 on event search page."
+        },
+        {
+          "source_id": "flashscore",
+          "parser_status": "HTTP_ERROR",
+          "ok": false,
+          "http_status": 404,
+          "fields": [],
+          "reason": "HTTP 404 on event search page."
+        },
+        {
+          "source_id": "directa",
+          "parser_status": "HTTP_ERROR",
+          "ok": false,
+          "http_status": 404,
+          "fields": [],
+          "reason": "HTTP 404 on event search page."
+        },
+        {
+          "source_id": "sofascore",
+          "parser_status": "BLOCKED",
+          "ok": false,
+          "http_status": 403,
+          "fields": [],
+          "reason": "Event-page blocked HTTP 403. No data from sofascore used."
+        },
+        {
+          "source_id": "uefa",
+          "parser_status": "NO_EVENT",
+          "ok": false,
+          "http_status": 200,
+          "fields": [],
+          "reason": "HTTP body does not contain both team names. Not event data."
+        },
+        {
+          "source_id": "understat",
+          "parser_status": "DENIED",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "No event-page URL template for this source."
+        },
+        {
+          "source_id": "fbref",
+          "parser_status": "BLOCKED",
+          "ok": false,
+          "http_status": 403,
+          "fields": [],
+          "reason": "Event-page blocked HTTP 403. No data from fbref used."
+        },
+        {
+          "source_id": "the-odds-api",
+          "parser_status": "MARKET_LAYER",
+          "ok": false,
+          "http_status": null,
+          "fields": [
+            "probability_market",
+            "odds"
+          ],
+          "reason": "MARKET_COMPARE_ONLY — odds never enter independent MODEL vector. Not a research SUCCESS."
+        },
+        {
+          "source_id": "club-football-match-data",
+          "parser_status": "SUCCESS",
+          "ok": true,
+          "http_status": null,
+          "fields": [
+            "home_gf_l5",
+            "away_gf_l5"
+          ],
+          "reason": "Bound 1562 prior rows (MatchDate < kickoff). Odds columns ignored. DATE_ONLY — available_at null."
+        },
+        {
+          "source_id": "football-data-co-uk",
+          "parser_status": "OK",
+          "ok": true,
+          "http_status": null,
+          "fields": [
+            "form_priors",
+            "form_l3",
+            "form_l5",
+            "form_l10"
+          ],
+          "reason": "Archivio: 190 match precedenti casa, 38 trasferta, division=I1. Target escluso."
+        },
+        {
+          "source_id": "clubelo",
+          "parser_status": "MISSING_FILE",
+          "ok": false,
+          "http_status": 502,
+          "fields": [],
+          "reason": "Nessun CSV ClubElo locale. Nessun Elo inventato."
+        },
+        {
+          "source_id": "open-meteo",
+          "parser_status": "NO_COORDS_OR_EMPTY",
+          "ok": false,
+          "http_status": 200,
+          "fields": [
+            "weather"
+          ],
+          "reason": "weather"
+        },
+        {
+          "source_id": "api-sports",
+          "parser_status": "SKIPPED",
+          "ok": false,
+          "http_status": null,
+          "fields": [],
+          "reason": "NO_FIXTURE_ID — cache lookup skipped (no invented id)"
+        }
+      ],
+      "observations": 42,
+      "real_event": 1,
+      "historical": 41,
+      "model_eligible": 39,
+      "categories": {
+        "form": true,
+        "team_stats": true,
+        "xg": false,
+        "injuries": false,
+        "lineup": false,
+        "referee": false,
+        "weather": false
+      },
+      "sample": [
+        {
+          "key": "rss_mention",
+          "value": "Nel Genoa solo Havel sarà indisponibile per il Frosinone",
+          "source": "ansa",
+          "kind": "EVENT_RESEARCH",
+          "available_at": "Thu, 10 Sep 2026 18:10:28 +0200"
+        },
+        {
+          "key": "away_gf_l5",
+          "value": 2.4,
+          "source": "club-football-match-data",
+          "kind": "HISTORICAL_PRIOR",
+          "available_at": null
+        },
+        {
+          "key": "home_gf_l5",
+          "value": 0.2,
+          "source": "club-football-match-data",
+          "kind": "HISTORICAL_PRIOR",
+          "available_at": null
+        },
+        {
+          "key": "season_phase",
+          "value": 1,
+          "source": "football-data-co-uk",
+          "kind": "DERIVED",
+          "available_at": "2025-05-26T00:00:00.000Z"
+        },
+        {
+          "key": "h2h_draw_rate",
+          "value": 0.5,
+          "source": "football-data-co-uk",
+          "kind": "DERIVED",
+          "available_at": "2025-05-26T00:00:00.000Z"
+        },
+        {
+          "key": "h2h_home_win_rate",
+          "value": 0,
+          "source": "football-data-co-uk",
+          "kind": "DERIVED",
+          "available_at": "2025-05-26T00:00:00.000Z"
+        },
+        {
+          "key": "h2h_n",
+          "value": 2,
+          "source": "football-data-co-uk",
+          "kind": "DERIVED",
+          "available_at": "2025-05-26T00:00:00.000Z"
+        },
+        {
+          "key": "league_avg_gf",
+          "value": 1.3907894736842106,
+          "source": "football-data-co-uk",
+          "kind": "DERIVED",
+          "available_at": "2025-05-26T00:00:00.000Z"
+        },
+        {
+          "key": "home_advantage",
+          "value": 1,
+          "source": "football-data-co-uk",
+          "kind": "DERIVED",
+          "available_at": "2025-05-26T00:00:00.000Z"
+        },
+        {
+          "key": "away_rest_days",
+          "value": 838.71875,
+          "source": "football-data-co-uk",
+          "kind": "DERIVED",
+          "available_at": "2025-05-26T00:00:00.000Z"
+        },
+        {
+          "key": "home_rest_days",
+          "value": 475.8333333333333,
+          "source": "football-data-co-uk",
+          "kind": "DERIVED",
+          "available_at": "2025-05-26T00:00:00.000Z"
+        },
+        {
+          "key": "strength_diff_pts",
+          "value": 1.131578947368421,
+          "source": "football-data-co-uk",
+          "kind": "DERIVED",
+          "available_at": "2025-05-26T00:00:00.000Z"
+        }
+      ]
+    }
+  ]
+}

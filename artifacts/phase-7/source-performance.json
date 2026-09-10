@@ -1,0 +1,203 @@
+{
+  "at": "2026-09-10T22:39:25.452Z",
+  "by_source": {
+    "api-sports": {
+      "ok": 0,
+      "fail": 20,
+      "denied": 0,
+      "missing": 0
+    },
+    "open-meteo": {
+      "ok": 9,
+      "fail": 11,
+      "denied": 0,
+      "missing": 0
+    },
+    "clubelo": {
+      "ok": 0,
+      "fail": 20,
+      "denied": 0,
+      "missing": 0
+    },
+    "football-data-co-uk": {
+      "ok": 10,
+      "fail": 10,
+      "denied": 0,
+      "missing": 0
+    },
+    "club-football-match-data": {
+      "ok": 20,
+      "fail": 0,
+      "denied": 0,
+      "missing": 0
+    },
+    "the-odds-api": {
+      "ok": 20,
+      "fail": 0,
+      "denied": 0,
+      "missing": 0
+    },
+    "fbref": {
+      "ok": 0,
+      "fail": 20,
+      "denied": 0,
+      "missing": 0
+    },
+    "understat": {
+      "ok": 0,
+      "fail": 0,
+      "denied": 20,
+      "missing": 0
+    },
+    "uefa": {
+      "ok": 0,
+      "fail": 20,
+      "denied": 0,
+      "missing": 0
+    },
+    "sofascore": {
+      "ok": 0,
+      "fail": 20,
+      "denied": 0,
+      "missing": 0
+    },
+    "directa": {
+      "ok": 0,
+      "fail": 20,
+      "denied": 0,
+      "missing": 0
+    },
+    "flashscore": {
+      "ok": 0,
+      "fail": 20,
+      "denied": 0,
+      "missing": 0
+    },
+    "soccerway": {
+      "ok": 0,
+      "fail": 20,
+      "denied": 0,
+      "missing": 0
+    },
+    "whoscored": {
+      "ok": 0,
+      "fail": 20,
+      "denied": 0,
+      "missing": 0
+    },
+    "soccervista": {
+      "ok": 0,
+      "fail": 20,
+      "denied": 0,
+      "missing": 0
+    },
+    "soccervital": {
+      "ok": 0,
+      "fail": 20,
+      "denied": 0,
+      "missing": 0
+    },
+    "the-analyst": {
+      "ok": 0,
+      "fail": 20,
+      "denied": 0,
+      "missing": 0
+    },
+    "abseits": {
+      "ok": 0,
+      "fail": 20,
+      "denied": 0,
+      "missing": 0
+    },
+    "ansa": {
+      "ok": 3,
+      "fail": 17,
+      "denied": 0,
+      "missing": 0
+    },
+    "sky-sport": {
+      "ok": 0,
+      "fail": 20,
+      "denied": 0,
+      "missing": 0
+    },
+    "oddspedia": {
+      "ok": 0,
+      "fail": 0,
+      "denied": 0,
+      "missing": 20
+    },
+    "betshoot": {
+      "ok": 0,
+      "fail": 0,
+      "denied": 0,
+      "missing": 20
+    },
+    "click4soccer": {
+      "ok": 0,
+      "fail": 0,
+      "denied": 0,
+      "missing": 20
+    },
+    "analysisportiva": {
+      "ok": 0,
+      "fail": 0,
+      "denied": 0,
+      "missing": 20
+    },
+    "sportytrader": {
+      "ok": 0,
+      "fail": 0,
+      "denied": 0,
+      "missing": 20
+    },
+    "ilveggente": {
+      "ok": 0,
+      "fail": 0,
+      "denied": 0,
+      "missing": 20
+    },
+    "opta": {
+      "ok": 0,
+      "fail": 0,
+      "denied": 0,
+      "missing": 20
+    },
+    "soccer-association": {
+      "ok": 0,
+      "fail": 0,
+      "denied": 0,
+      "missing": 20
+    },
+    "cies": {
+      "ok": 0,
+      "fail": 0,
+      "denied": 0,
+      "missing": 20
+    },
+    "the-athletic": {
+      "ok": 0,
+      "fail": 0,
+      "denied": 0,
+      "missing": 20
+    },
+    "tennis-explorer": {
+      "ok": 0,
+      "fail": 0,
+      "denied": 0,
+      "missing": 20
+    },
+    "tennis-abstract": {
+      "ok": 0,
+      "fail": 0,
+      "denied": 0,
+      "missing": 20
+    }
+  },
+  "yield_by_source": {
+    "club-football-match-data": 81,
+    "football-data-co-uk": 1212,
+    "open-meteo": 85,
+    "ansa": 3
+  }
+}

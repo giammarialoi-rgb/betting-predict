@@ -53,6 +53,16 @@ export function eventPageUrls(sourceId: string, home: string, away: string): str
       return `https://www.flashscore.com/search/?q=${q}`;
     case "soccerway":
       return `https://int.soccerway.com/search/?q=${q}`;
+    case "whoscored":
+      return `https://www.whoscored.com/search/?q=${q}`;
+    case "soccervista":
+      return `https://www.soccervista.com/search?q=${q}`;
+    case "soccervital":
+      return `https://www.soccervital.com/?s=${q}`;
+    case "the-analyst":
+      return `https://theanalyst.com/eu/search?q=${q}`;
+    case "abseits":
+      return `https://www.abseits.at/search/${q}`;
     default:
       return "";
   }

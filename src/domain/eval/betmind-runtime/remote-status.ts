@@ -75,6 +75,12 @@ export type AnalysisSummary = {
   data_acquired_today: number | null;
   sources_blocked_today: number | null;
   sources_missing_adapter_today: number | null;
+  events_with_real_event_data?: number | null;
+  events_with_historical_data?: number | null;
+  real_observations?: number | null;
+  historical_observations?: number | null;
+  derived_observations?: number | null;
+  data_yield?: number | null;
   pipeline?: PipelineCounters3d;
 };
 
@@ -193,6 +199,12 @@ export function buildAnalysisSummaryFromLocal(
     data_acquired_today: pipeline.data_acquired_today,
     sources_blocked_today: pipeline.sources_blocked_today,
     sources_missing_adapter_today: pipeline.sources_missing_adapter_today,
+    events_with_real_event_data: pipeline.events_with_real_event_data,
+    events_with_historical_data: pipeline.events_with_historical_data,
+    real_observations: pipeline.real_observations,
+    historical_observations: pipeline.historical_observations,
+    derived_observations: pipeline.derived_observations,
+    data_yield: pipeline.data_yield,
     pipeline,
   };
 }

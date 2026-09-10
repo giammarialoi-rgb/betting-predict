@@ -178,7 +178,8 @@ export default function SourcesPage() {
               <div key={String(s.id)} className="flex flex-wrap justify-between gap-2 border-b border-[rgba(255,255,255,0.06)] py-2">
                 <span className="font-medium">{s.title ?? s.id}</span>
                 <span className="bm-muted">
-                  {String(s.status ?? "IDLE")} · found {s.events_found ?? 0} · blocked {s.blocked_count ?? 0} ·{" "}
+                  {String(s.status ?? "IDLE")} · osservazioni {s.observations_found ?? 0} · eventi{" "}
+                  {s.events_found ?? 0} · blocked {s.blocked_count ?? 0} ·{" "}
                   {s.last_event_label ?? "nessun evento reperito"}
                 </span>
               </div>

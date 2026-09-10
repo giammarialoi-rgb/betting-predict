@@ -176,15 +176,21 @@ function EventsInner() {
             {sport !== "ALL" ? ` · ${sport}` : ""} — nessun cap artificiale sulla lista.
           </p>
           <div className="mt-2 flex flex-wrap items-center gap-2 text-sm">
+            <Link href={hrefFor({ date: shiftDay(todayRome(), -1) })} className="bm-pill">
+              Ieri
+            </Link>
+            <Link href={hrefFor({ date: todayRome() })} className="bm-pill">
+              Oggi
+            </Link>
+            <Link href={hrefFor({ date: shiftDay(todayRome(), 1) })} className="bm-pill">
+              Domani
+            </Link>
             <Link href={hrefFor({ date: shiftDay(date, -1) })} className="bm-pill">
               ← Giorno precedente
             </Link>
             <span className="font-semibold">{date}</span>
             <Link href={hrefFor({ date: shiftDay(date, 1) })} className="bm-pill">
               Giorno successivo →
-            </Link>
-            <Link href={hrefFor({ date: todayRome() })} className="bm-pill">
-              Oggi
             </Link>
           </div>
         </div>

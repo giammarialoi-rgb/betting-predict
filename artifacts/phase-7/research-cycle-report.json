@@ -1,0 +1,91 @@
+{
+  "at": "2026-09-10T22:39:25.452Z",
+  "runtime": "phase-7-data-acquisition-v1",
+  "events_discovered": 445,
+  "events_researched": 20,
+  "events_with_real_data": 12,
+  "total_observations": 744,
+  "observations_by_source": {
+    "club-football-match-data": 81,
+    "football-data-co-uk": 1212,
+    "open-meteo": 85,
+    "ansa": 3
+  },
+  "observations_by_category": {
+    "forma": 1026,
+    "altro": 90,
+    "h2h": 54,
+    "attacco": 88,
+    "difesa": 35,
+    "meteo": 85,
+    "news": 3
+  },
+  "data_yield": 1.958,
+  "samples": [
+    {
+      "match": "Aston Villa vs Nottingham Forest",
+      "observations": 221,
+      "categories": {
+        "form": true,
+        "team_stats": true,
+        "xg": false,
+        "injuries": false,
+        "lineup": false,
+        "referee": false,
+        "weather": true
+      }
+    },
+    {
+      "match": "Liverpool vs Fulham",
+      "observations": 225,
+      "categories": {
+        "form": true,
+        "team_stats": true,
+        "xg": false,
+        "injuries": false,
+        "lineup": false,
+        "referee": false,
+        "weather": true
+      }
+    },
+    {
+      "match": "Tottenham Hotspur vs Everton",
+      "observations": 225,
+      "categories": {
+        "form": true,
+        "team_stats": true,
+        "xg": false,
+        "injuries": false,
+        "lineup": false,
+        "referee": false,
+        "weather": true
+      }
+    },
+    {
+      "match": "Sunderland vs Arsenal",
+      "observations": 18,
+      "categories": {
+        "form": true,
+        "team_stats": true,
+        "xg": false,
+        "injuries": false,
+        "lineup": false,
+        "referee": false,
+        "weather": true
+      }
+    },
+    {
+      "match": "Bournemouth vs Brentford",
+      "observations": 225,
+      "categories": {
+        "form": true,
+        "team_stats": true,
+        "xg": false,
+        "injuries": false,
+        "lineup": false,
+        "referee": false,
+        "weather": true
+      }
+    }
+  ]
+}
