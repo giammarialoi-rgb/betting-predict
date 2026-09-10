@@ -81,6 +81,19 @@ describe("Phase 3F source taxonomy", () => {
       }),
       "DISABLED_BY_POLICY",
     );
+    assert.equal(
+      classifyHumanSourceStatus({
+        source_id: "understat",
+        ok: true,
+        fetched: true,
+        phase: "OK",
+        http_status: 200,
+        adapter_kind: "TEST_PROBE",
+        fields_extracted: ["understat_xg_hint"],
+        reason: "SITE_PROBE (homepage, not match page)",
+      }),
+      "PARTIAL",
+    );
   });
 });
 

@@ -408,7 +408,9 @@ export default function EventDetailPage() {
                     <span className="font-medium">{r.title}</span>
                     <span className="text-xs bm-muted">
                       {r.human_status === "SUCCESS"
-                        ? "disponibile"
+                        ? "dati ottenuti"
+                        : r.human_status === "PARTIAL"
+                          ? "dati parziali (probe)"
                         : r.human_status === "BLOCKED"
                           ? r.http_status === 403
                             ? "accesso negato (403)"

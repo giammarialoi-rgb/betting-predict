@@ -44,6 +44,9 @@ export function classifyHumanSourceStatus(row: ResearchLike): HumanSourceStatus 
   if (parser === "ERROR" || parser === "PARSE_ERROR" || parser === "INVALID") return "PARSE_ERROR";
   if (http != null && http >= 400) return "HTTP_ERROR";
   if (phase === "UNAVAILABLE" && !row.fetched) return "NO_DATA";
+  if (adapter === "TEST_PROBE" || reason.includes("SITE_PROBE")) {
+    return fields.length > 0 ? "PARTIAL" : "NO_DATA";
+  }
   if (row.ok === true && row.fetched === true && fields.length > 0) {
     if (parser === "CACHE_PRESENT" || parser === "MARKET_LAYER" || parser === "OK" || parser === "CACHE_ONLY") {
       return "SUCCESS";
