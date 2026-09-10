@@ -4,6 +4,7 @@ import { permanentRoot044 } from "@/domain/eval/permanent-044/config";
 import {
   listCalendarEvents,
   todayCalendarDay,
+  matchesCalendarQuery,
 } from "@/domain/eval/betmind-runtime/calendar";
 import { loadRuntimeStatus } from "@/domain/eval/betmind-runtime/remote-status";
 
@@ -44,29 +45,21 @@ export async function GET(req: Request) {
   const remote = await loadRuntimeStatus();
   const obs = (remote.payload?.observatory ?? {}) as {
     calendar?: { date?: string; day?: string; events?: unknown[]; total?: number };
-    next_events?: Array<{ calendar_day?: string; sport?: string }>;
+    next_events?: unknown[];
   };
-  const all = Array.isArray(obs.calendar?.events)
-    ? obs.calendar.events
-    : Array.isArray(obs.next_events)
-      ? obs.next_events
+  const universe = Array.isArray(obs.next_events)
+    ? obs.next_events
+    : Array.isArray(obs.calendar?.events)
+      ? obs.calendar.events
       : [];
-  const want = (from ?? date) as string;
-  const events = all.filter((e) => {
-    const row = e as { calendar_day?: string; sport?: string };
-    if (from || to) {
-      const d = row.calendar_day ?? "";
-      if (from && d < from) return false;
-      if (to && d > to) return false;
-    } else if (row.calendar_day && row.calendar_day !== want) {
-      return false;
-    }
-    if (sport && sport.toUpperCase() !== "ALL") {
-      const s = String(row.sport ?? "").toUpperCase();
-      if (sport.toUpperCase() === "FOOTBALL" && s !== "FOOTBALL" && s !== "SOCCER") return false;
-    }
-    return true;
-  });
+  const events = universe.filter((e) =>
+    matchesCalendarQuery(e as { calendar_day?: string; kickoff_utc?: string; sport?: string }, {
+      date: from || to ? null : date,
+      from,
+      to,
+      sport,
+    }),
+  );
   return NextResponse.json({
     ok: true,
     source: "neon",
@@ -78,6 +71,6 @@ export async function GET(req: Request) {
     cap: false,
     events,
     real_money: false,
-    note: events.length === 0 ? "Neon calendar empty — Brain has not published this date yet" : undefined,
+    note: events.length === 0 ? "Neon calendar empty - Brain has not published this date yet" : undefined,
   });
 }

@@ -40,6 +40,29 @@ export function calendarDayKey(iso: string | null | undefined, timeZone = "Europ
   }).format(new Date(t));
 }
 
+export function eventCalendarDay(row: {
+  calendar_day?: string | null;
+  kickoff_utc?: string | null;
+}): string | null {
+  const d = row.calendar_day;
+  if (typeof d === "string" && /^\d{4}-\d{2}-\d{2}$/.test(d)) return d;
+  return calendarDayKey(row.kickoff_utc ?? null);
+}
+
+export function matchesCalendarQuery(
+  row: { calendar_day?: string | null; kickoff_utc?: string | null; sport?: string | null },
+  q: { date?: string | null; from?: string | null; to?: string | null; sport?: string | null },
+): boolean {
+  const day = eventCalendarDay(row);
+  const from = q.from ?? q.date ?? null;
+  const to = q.to ?? q.date ?? null;
+  if (from && (!day || day < from)) return false;
+  if (to && (!day || day > to)) return false;
+  const sportFilter = q.sport && q.sport.toUpperCase() !== "ALL" ? sportNorm(q.sport) : null;
+  if (sportFilter && sportNorm(String(row.sport ?? "")) !== sportFilter) return false;
+  return true;
+}
+
 function asRec(v: unknown): Record<string, unknown> | null {
   return v && typeof v === "object" ? (v as Record<string, unknown>) : null;
 }

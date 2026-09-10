@@ -248,7 +248,7 @@ export function buildRuntimePayloadFromLocal(root = permanentRoot044()): BetMind
     ? listCalendarEvents({ root, date: today, sport: "football" })
     : { day: today, total: 0, events: [] };
   const next_events = storePresent
-    ? listCalendarEvents({ root, from: today, sport: "ALL" }).events
+    ? listCalendarEvents({ root, sport: "ALL" }).events
     : [];
   const analysis = buildAnalysisSummaryFromLocal(root, next_events);
 

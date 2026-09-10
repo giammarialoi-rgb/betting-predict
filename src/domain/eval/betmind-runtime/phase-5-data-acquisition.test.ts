@@ -7,7 +7,12 @@ import { fetchEventPage } from "@/domain/eval/data-intelligence/research/event-p
 import { nextFallbackSource, fallbackChainFor } from "@/domain/eval/data-intelligence/research/source-engine";
 import { isProvisionalCanonicalId, resolveCanonicalEventIdentity } from "@/domain/eval/data-intelligence/research/event-identity";
 import { lookupHistoricalPriors } from "@/domain/eval/data-intelligence/research/historical-provider";
-import { listCalendarEvents, todayCalendarDay, shiftCalendarDay } from "@/domain/eval/betmind-runtime/calendar";
+import {
+  listCalendarEvents,
+  todayCalendarDay,
+  shiftCalendarDay,
+  matchesCalendarQuery,
+} from "@/domain/eval/betmind-runtime/calendar";
 import { RESEARCH_BUDGET_PER_CYCLE } from "@/domain/eval/data-intelligence/research/orchestrator";
 import { enqueueUpcomingEvents, pickResearchBatch, loadResearchQueue } from "@/domain/eval/data-intelligence/research/queue";
 import { scrapingAllowedForSource, assertScrapingDenied } from "@/domain/sources/scraping-policy";
@@ -158,6 +163,24 @@ describe("Phase 5 data acquisition", () => {
     );
     assert.match(src, /missing_keys\.length\s*>\s*45/);
     assert.match(src, /feature_coverage\s*<\s*0\.35/);
+  });
+
+  it("date filter uses kickoff when calendar_day is missing (Neon rows)", () => {
+    const villa = {
+      kickoff_utc: "2026-09-12T14:00:00.000Z",
+      sport: "soccer",
+      home_or_a: "Aston Villa",
+      away_or_b: "Nottingham Forest",
+    };
+    const other = {
+      kickoff_utc: "2026-09-20T18:45:00.000Z",
+      sport: "soccer",
+      home_or_a: "Marseille",
+      away_or_b: "Paris Saint Germain",
+    };
+    const q = { date: "2026-09-12", sport: "football" };
+    assert.equal(matchesCalendarQuery(villa, q), true);
+    assert.equal(matchesCalendarQuery(other, q), false);
   });
 
   it("today and shift stay ISO dates", () => {
