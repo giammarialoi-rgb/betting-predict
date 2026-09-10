@@ -28,6 +28,42 @@ export type DossierFeatureRow = {
   entered_model: boolean;
 };
 
+export type DossierResearchRow = {
+  source_id: string;
+  fetched: boolean;
+  ok: boolean;
+  phase: string;
+  fetched_at: string | null;
+  available_at: string | null;
+  observed_at: string | null;
+  reason: string | null;
+  url: string | null;
+  http_status: number | null;
+  parser_status: string | null;
+  fields_extracted: string[];
+  adapter_kind: string | null;
+  entered_model: false;
+};
+
+/** Answers the Phase 3D acceptance questions from persisted artifacts only. */
+export type DossierLineageAnswers = {
+  what_betmind_knew_before_kickoff: string;
+  sources_consulted: string[];
+  /** Catalogued but not fetched (MISSING_ADAPTER / POLICY_DENIED). */
+  catalogue_noted_not_fetched: string[];
+  source_information: Array<{ source_id: string; summary: string }>;
+  eligible_information: string[];
+  features_entered_model: string[];
+  model_version: string | null;
+  prediction_produced: string;
+  odds_entered_model: false;
+  information_missing: string[];
+  after_inference: string;
+  feature_vector_schema: string[];
+  edge_calculated: boolean;
+  confidence_defined: boolean;
+};
+
 export type AnalysisDossier = {
   event: {
     event_id: string;
@@ -62,17 +98,12 @@ export type AnalysisDossier = {
   };
   features: DossierFeatureRow[];
   features_note: string | null;
-  research: Array<{
-    source_id: string;
-    fetched: boolean;
-    ok: boolean;
-    phase: string;
-    fetched_at: string | null;
-    available_at: string | null;
-    reason: string | null;
-  }>;
+  research: DossierResearchRow[];
   prediction_id: string | null;
+  /** Legacy timestamp of prediction row — not "model inference completed". */
   analyzed_at: string | null;
+  prediction_persisted_at: string | null;
+  lineage: DossierLineageAnswers;
   real_money: false;
 };
 
@@ -211,18 +242,117 @@ export function buildAnalysisDossier(
     }
   }
 
-  const research = latestResearchBySource(eventId, labB).map((r) => ({
+  const research: DossierResearchRow[] = latestResearchBySource(eventId, labB).map((r) => ({
     source_id: r.source_id,
     fetched: r.fetched === true,
     ok: r.ok === true,
     phase: r.phase,
     fetched_at: r.fetched_at,
     available_at: r.available_at,
+    observed_at: r.observed_at ?? r.fetched_at ?? null,
     reason: r.reason,
+    url: r.url ?? null,
+    http_status: r.http_status ?? null,
+    parser_status: r.parser_status ?? null,
+    fields_extracted: r.fields_extracted ?? [],
+    adapter_kind: r.adapter_kind ?? null,
+    entered_model: false as const,
   }));
 
   const marketP =
     typeof decision?.market_probability === "number" ? (decision.market_probability as number) : null;
+
+  const entered = features.filter((f) => f.entered_model);
+  const eligibleNames = features.filter((f) => f.status === "ELIGIBLE").map((f) => f.name);
+  const missing: string[] = [];
+  if (!probability_model) missing.push("independent probability_model (null)");
+  if (entered.length === 0) missing.push("eligible independent features with values");
+  if (research.every((r) => !r.ok && r.phase !== "OK")) {
+    missing.push("successful independent research observations with available_at");
+  }
+  for (const f of features) {
+    if (f.value == null || f.status !== "ELIGIBLE") {
+      if (missing.length < 24) missing.push(`feature:${f.name} (${f.status})`);
+    }
+  }
+  const consulted = research.filter(
+    (r) =>
+      r.fetched === true ||
+      r.phase === "OK" ||
+      r.phase === "BLOCKED" ||
+      (r.adapter_kind === "CACHE_ONLY" && r.parser_status != null) ||
+      (r.adapter_kind === "PRODUCTION_ADAPTER" && r.fetched === true),
+  );
+  const catalogueNoted = research.filter(
+    (r) => r.phase === "MISSING_ADAPTER" || r.phase === "DENIED",
+  );
+  const conf =
+    typeof pred?.confidence_score === "number"
+      ? (pred.confidence_score as number)
+      : typeof decision?.confidence === "number"
+        ? (decision.confidence as number)
+        : null;
+  const edgeAbs =
+    typeof pred?.edge_absolute === "number"
+      ? (pred.edge_absolute as number)
+      : typeof decision?.estimated_edge === "number"
+        ? (decision.estimated_edge as number)
+        : null;
+  const modelVersion =
+    (pred?.model_version as string | null) ??
+    (decision?.model_version as string | null) ??
+    (brain.model_version as string | null) ??
+    null;
+  const persistedAt =
+    (pred?.timestamp as string | null) ??
+    (decision?.timestamp as string | null) ??
+    (reasoning?.at as string | null) ??
+    null;
+
+  const lineage: DossierLineageAnswers = {
+    what_betmind_knew_before_kickoff: probability_model
+      ? `Independent model HDA available; ${entered.length} features entered MODEL.`
+      : `No independent model probability. Feature bag size=${features.length}; entered_model=${entered.length}. Market compare may exist but is NOT model knowledge.`,
+    sources_consulted: consulted.map((r) => r.source_id),
+    source_information: research.map((r) => ({
+      source_id: r.source_id,
+      summary: [
+        `phase=${r.phase}`,
+        r.adapter_kind ? `adapter=${r.adapter_kind}` : null,
+        r.http_status != null ? `http=${r.http_status}` : null,
+        r.parser_status ? `parser=${r.parser_status}` : null,
+        r.fields_extracted.length ? `fields=${r.fields_extracted.join(",")}` : "fields=none",
+        r.available_at ? `available_at=${r.available_at}` : "available_at=null",
+        r.reason ?? "",
+      ]
+        .filter(Boolean)
+        .join("; "),
+    })),
+    catalogue_noted_not_fetched: catalogueNoted.map((r) => r.source_id),
+    eligible_information: eligibleNames,
+    features_entered_model: entered.map((f) => `${f.name}=${String(f.value)}`),
+    model_version: modelVersion,
+    prediction_produced: probability_model
+      ? `INDEPENDENT ${JSON.stringify(probability_model)}`
+      : pred
+        ? `PERSISTED_ROW_WITHOUT_INFERENCE reason_codes=${((pred.reason_codes as string[]) ?? []).slice(0, 8).join(",")}`
+        : "NO_PREDICTION_ROW",
+    odds_entered_model: false,
+    information_missing: missing.slice(0, 40),
+    after_inference: probability_model
+      ? decision
+        ? `Decision persisted: ${String(decision.decision)}`
+        : "Model inference present; decision row may be absent"
+      : decision
+        ? `No model inference. Decision persisted as ${String(decision.decision)} (often NO_BET / insufficient). Prediction row ${pred ? "present" : "absent"}.`
+        : "No independent inference; prediction/decision may still be persisted for audit.",
+    feature_vector_schema: Object.keys(
+      (reasoning?.feature_snapshot as Record<string, unknown> | undefined) ??
+        Object.fromEntries(features.map((f) => [f.name, f.value])),
+    ),
+    edge_calculated: edgeAbs != null && Number.isFinite(edgeAbs),
+    confidence_defined: conf != null && Number.isFinite(conf),
+  };
 
   return {
     event: {
@@ -238,19 +368,12 @@ export function buildAnalysisDossier(
       cycle_number: brain.cycles_completed ?? null,
       last_cycle_at: brain.last_cycle_at,
       last_successful_cycle_at: brain.last_successful_cycle_at,
-      model_version: String(
-        pred?.model_version ?? decision?.model_version ?? brain.model_version ?? "N/A",
-      ),
+      model_version: String(modelVersion ?? "N/A"),
     },
     independent_model: {
       probability: probability_model,
       model_version: (pred?.model_version as string | null) ?? null,
-      confidence:
-        typeof pred?.confidence_score === "number"
-          ? (pred.confidence_score as number)
-          : typeof decision?.confidence === "number"
-            ? (decision.confidence as number)
-            : null,
+      confidence: conf,
       feature_coverage:
         typeof reasoning?.feature_coverage === "number"
           ? (reasoning.feature_coverage as number)
@@ -262,7 +385,7 @@ export function buildAnalysisDossier(
       why: (reasoning?.why as Record<string, unknown> | null) ?? null,
       note: probability_model
         ? null
-        : "NO DATA AVAILABLE — probability_model assente (spesso INSUFFICIENT_DATA / feature sparse)",
+        : "NO DATA AVAILABLE — probability_model assente (spesso INSUFFICIENT_DATA / feature sparse). Non chiamare questo evento MODEL INFERENCE.",
     },
     market: {
       probability: probability_market,
@@ -273,14 +396,14 @@ export function buildAnalysisDossier(
     features_note:
       features.length === 0
         ? "NO DATA AVAILABLE — nessuno snapshot di reasoning/feature per questo evento"
-        : null,
+        : entered.length === 0
+          ? "Feature bag presente ma nessuna feature ELIGIBLE è entrata nel modello indipendente."
+          : null,
     research,
     prediction_id: (pred?.prediction_id as string | null) ?? null,
-    analyzed_at:
-      (pred?.timestamp as string | null) ??
-      (decision?.timestamp as string | null) ??
-      (reasoning?.at as string | null) ??
-      null,
+    analyzed_at: persistedAt,
+    prediction_persisted_at: persistedAt,
+    lineage,
     real_money: false,
   };
 }
@@ -294,9 +417,11 @@ export function compactDossierForMirror(d: AnalysisDossier): Record<string, unkn
     market: d.market,
     features: d.features.slice(0, 80),
     features_note: d.features_note,
-    research: d.research.slice(0, 30),
+    research: d.research.slice(0, 40),
     prediction_id: d.prediction_id,
     analyzed_at: d.analyzed_at,
+    prediction_persisted_at: d.prediction_persisted_at,
+    lineage: d.lineage,
     real_money: false,
   };
 }

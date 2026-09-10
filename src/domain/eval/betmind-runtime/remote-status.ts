@@ -21,6 +21,10 @@ import { computeMassiveStats049 } from "@/domain/eval/factory-049/stats";
 import { loadStore044 } from "@/domain/eval/permanent-044/store";
 import { permanentRoot044 } from "@/domain/eval/permanent-044/config";
 import { piRoot } from "@/domain/eval/predictive-intelligence/config";
+import {
+  computePipelineCounters3d,
+  type PipelineCounters3d,
+} from "@/domain/eval/betmind-runtime/pipeline-counters";
 
 export const RUNTIME_STATUS_ID = "default";
 /** After this age, remote status must not light ONLINE components. */
@@ -45,6 +49,7 @@ export type AnalysisSummary = {
   reason: string | null;
   events_in_store: number;
   events_discovered: number | null;
+  /** @deprecated Prefer predictions_persisted_events — was misread as model inference. */
   events_analyzed: number;
   predictions_produced: number;
   decisions_on_board: number;
@@ -55,6 +60,15 @@ export type AnalysisSummary = {
   buckets: ReturnType<typeof summarizeBoardBuckets>;
   no_events_available: boolean;
   no_events_reason: string | null;
+  /** Phase 3D honest pipeline counters */
+  events_with_research: number;
+  events_eligible: number;
+  model_inferences: number;
+  predictions_persisted_events: number;
+  insufficient_data: number;
+  no_independent_features: number;
+  no_independent_model: number;
+  pipeline?: PipelineCounters3d;
 };
 
 export type BetMindRuntimePayload = {
@@ -136,6 +150,8 @@ export function buildAnalysisSummaryFromLocal(
       ? coverage.odds_available / coverage.catalog_events
       : null;
 
+  const pipeline = computePipelineCounters3d(root);
+
   return {
     cycle_number: state.cycles_completed ?? 0,
     last_cycle_at: state.last_cycle_at,
@@ -144,11 +160,11 @@ export function buildAnalysisSummaryFromLocal(
     idle: String(state.status).toUpperCase() === "IDLE" || String(state.status).toUpperCase() === "STOPPED",
     reason: state.last_error,
     events_in_store: eventsInStore,
-    events_discovered: null,
+    events_discovered: pipeline.events_discovered,
     events_analyzed: analyzed,
     predictions_produced: predictions,
     decisions_on_board: nextEvents.length,
-    skipped: buckets.SKIPPED + buckets.UNAVAILABLE,
+    skipped: pipeline.skipped || buckets.SKIPPED + buckets.UNAVAILABLE,
     no_bet: noBet,
     model_version: String(state.model_version ?? BRAIN_MODEL_051),
     data_coverage: Number.isFinite(covPct) ? covPct : null,
@@ -157,6 +173,14 @@ export function buildAnalysisSummaryFromLocal(
     no_events_reason: noEvents
       ? `NO EVENTS AVAILABLE — last discovery/cycle at ${state.last_cycle_at ?? "never"}; store empty or no board rows`
       : null,
+    events_with_research: pipeline.events_with_research,
+    events_eligible: pipeline.events_eligible,
+    model_inferences: pipeline.model_inferences,
+    predictions_persisted_events: pipeline.predictions_persisted_events,
+    insufficient_data: pipeline.insufficient_data,
+    no_independent_features: pipeline.no_independent_features,
+    no_independent_model: pipeline.no_independent_model,
+    pipeline,
   };
 }
 
@@ -255,12 +279,18 @@ export function buildRuntimePayloadFromLocal(root = permanentRoot044()): BetMind
     };
   });
 
-  // Counter labels (unambiguous)
+  // Counter labels (unambiguous — Phase 3D)
   const analysisLabeled = {
     ...analysis,
     labels: {
-      events_in_store: "events_discovered_store",
-      events_analyzed: "events_with_predictions_store",
+      events_in_store: "events_discovered",
+      events_analyzed: "predictions_persisted_events_NOT_inference",
+      events_with_research: "events_with_research",
+      events_eligible: "events_eligible",
+      model_inferences: "model_inferences",
+      predictions_produced: "predictions_produced",
+      insufficient_data: "insufficient_data",
+      skipped: "skipped",
       decisions_on_board: "decision_board_window",
     },
   };
@@ -290,13 +320,22 @@ export function buildRuntimePayloadFromLocal(root = permanentRoot044()): BetMind
       mirror: "neon",
       host: hostname(),
       events_analyzed: analysis.events_analyzed,
-      events_with_predictions_store: analysis.events_analyzed,
+      events_with_predictions_store: analysis.predictions_persisted_events,
       events_discovered_store: analysis.events_in_store,
+      events_discovered: analysis.events_discovered ?? analysis.events_in_store,
+      events_with_research: analysis.events_with_research,
+      events_eligible: analysis.events_eligible,
+      model_inferences: analysis.model_inferences,
+      predictions_persisted_events: analysis.predictions_persisted_events,
+      insufficient_data: analysis.insufficient_data,
+      no_independent_features: analysis.no_independent_features,
+      no_independent_model: analysis.no_independent_model,
       predictions_produced: analysis.predictions_produced,
       decisions_on_board: analysis.decisions_on_board,
       decision_board_window: analysis.decisions_on_board,
       no_events_available: analysis.no_events_available,
       no_events_reason: analysis.no_events_reason,
+      legacy_analyzed_meaning: analysis.pipeline?.legacy_analyzed_meaning ?? null,
     },
     health053: base as unknown as Record<string, unknown>,
     analysis: analysisLabeled,

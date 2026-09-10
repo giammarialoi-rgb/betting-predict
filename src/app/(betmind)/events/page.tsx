@@ -119,8 +119,23 @@ function EventsInner() {
           <div className="bm-section-label">Eventi</div>
           <h1 className="text-2xl font-bold">Eventi</h1>
           <p className="mt-1 text-xs bm-muted">
-            Board reale da Lab B / mirror Neon · scoperti {String(analysis?.events_in_store ?? events.length)} ·
-            con previsioni {String(analysis?.events_analyzed ?? "—")}
+            Board reale · scoperti{" "}
+            {String(
+              (analysis as { events_discovered?: number } | null)?.events_discovered ??
+                analysis?.events_in_store ??
+                events.length,
+            )}{" "}
+            · inference{" "}
+            {String((analysis as { model_inferences?: number } | null)?.model_inferences ?? "—")} ·
+            previs. persistite{" "}
+            {String(
+              (analysis as { predictions_persisted_events?: number } | null)
+                ?.predictions_persisted_events ??
+                analysis?.events_analyzed ??
+                "—",
+            )}{" "}
+            · insufficienti{" "}
+            {String((analysis as { insufficient_data?: number } | null)?.insufficient_data ?? "—")}
           </p>
         </div>
         <div className="flex items-center gap-2 text-xs">

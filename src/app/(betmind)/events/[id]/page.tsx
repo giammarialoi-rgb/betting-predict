@@ -35,7 +35,29 @@ type DossierResearch = {
   phase: string;
   fetched_at: string | null;
   available_at: string | null;
+  observed_at?: string | null;
   reason: string | null;
+  url?: string | null;
+  http_status?: number | null;
+  parser_status?: string | null;
+  fields_extracted?: string[];
+  adapter_kind?: string | null;
+};
+
+type DossierLineage = {
+  what_betmind_knew_before_kickoff: string;
+  sources_consulted: string[];
+  source_information: Array<{ source_id: string; summary: string }>;
+  eligible_information: string[];
+  features_entered_model: string[];
+  model_version: string | null;
+  prediction_produced: string;
+  odds_entered_model: false;
+  information_missing: string[];
+  after_inference: string;
+  feature_vector_schema: string[];
+  edge_calculated: boolean;
+  confidence_defined: boolean;
 };
 
 type Detail = {
@@ -103,6 +125,8 @@ type Detail = {
     features_note: string | null;
     research: DossierResearch[];
     analyzed_at: string | null;
+    prediction_persisted_at?: string | null;
+    lineage?: DossierLineage | null;
   } | null;
   model_version: string | null;
   finished?: boolean;
@@ -268,7 +292,12 @@ export default function EventDetailPage() {
                       : "—"
                   }
                 />
-                <Metric label={t.analyzed_at} value={fmtWhen(String(dossier?.analyzed_at ?? ""))} />
+                <Metric
+                  label={t.prediction_persisted_at}
+                  value={fmtWhen(
+                    String(dossier?.prediction_persisted_at ?? dossier?.analyzed_at ?? ""),
+                  )}
+                />
               </div>
             </Card>
 
@@ -298,6 +327,65 @@ export default function EventDetailPage() {
             </Card>
           </div>
 
+          {dossier?.lineage && (
+            <Card title={t.lineage_title} glow>
+              <dl className="space-y-3 text-sm">
+                <div>
+                  <dt className="text-xs bm-muted">Cosa sapeva BetMind prima del calcio d’inizio?</dt>
+                  <dd className="mt-1">{dossier.lineage.what_betmind_knew_before_kickoff}</dd>
+                </div>
+                <div>
+                  <dt className="text-xs bm-muted">Fonti consultate</dt>
+                  <dd className="mt-1">
+                    {dossier.lineage.sources_consulted.length
+                      ? dossier.lineage.sources_consulted.join(", ")
+                      : "—"}
+                  </dd>
+                </div>
+                <div>
+                  <dt className="text-xs bm-muted">Feature entrate nel modello</dt>
+                  <dd className="mt-1">
+                    {dossier.lineage.features_entered_model.length
+                      ? dossier.lineage.features_entered_model.join(", ")
+                      : "nessuna"}
+                  </dd>
+                </div>
+                <div className="grid grid-cols-2 gap-2">
+                  <Metric
+                    label={t.model_version}
+                    value={String(dossier.lineage.model_version ?? "—")}
+                  />
+                  <Metric
+                    label={t.odds_in_model}
+                    value={dossier.lineage.odds_entered_model ? "SÌ" : "NO"}
+                  />
+                  <Metric
+                    label="EDGE calcolato"
+                    value={dossier.lineage.edge_calculated ? "sì" : "no"}
+                  />
+                  <Metric
+                    label="Confidence definita"
+                    value={dossier.lineage.confidence_defined ? "sì" : "no"}
+                  />
+                </div>
+                <div>
+                  <dt className="text-xs bm-muted">Previsione prodotta</dt>
+                  <dd className="mt-1 break-words text-xs">{dossier.lineage.prediction_produced}</dd>
+                </div>
+                <div>
+                  <dt className="text-xs bm-muted">Dopo l’inference</dt>
+                  <dd className="mt-1">{dossier.lineage.after_inference}</dd>
+                </div>
+                <div>
+                  <dt className="text-xs bm-muted">Informazioni mancanti (prime)</dt>
+                  <dd className="mt-1 text-xs bm-muted">
+                    {dossier.lineage.information_missing.slice(0, 12).join(" · ") || "—"}
+                  </dd>
+                </div>
+              </dl>
+            </Card>
+          )}
+
           <Card title={t.model_input_features}>
             {dossier?.features_note && (
               <p className="mb-3 text-sm bm-muted">{dossier.features_note}</p>
@@ -314,25 +402,22 @@ export default function EventDetailPage() {
                       <th className="py-1 pr-2">{t.feature_source}</th>
                       <th className="py-1 pr-2">{t.observed_at}</th>
                       <th className="py-1 pr-2">{t.available_at}</th>
-                      <th className="py-1">{t.status}</th>
+                      <th className="py-1 pr-2">{t.status}</th>
+                      <th className="py-1">{t.entered_model}</th>
                     </tr>
                   </thead>
                   <tbody>
                     {dossier!.features.map((f) => (
                       <tr key={`${f.name}-${f.source}`} className="border-t border-[var(--bm-border)]">
-                        <td className="py-1.5 pr-2 font-medium">
-                          {f.name}
-                          {f.entered_model ? (
-                            <span className="ml-1 text-[10px] bm-accent">→ modello</span>
-                          ) : null}
-                        </td>
+                        <td className="py-1.5 pr-2 font-medium">{f.name}</td>
                         <td className="py-1.5 pr-2">
                           {f.value == null ? "—" : String(f.value)}
                         </td>
                         <td className="py-1.5 pr-2">{f.source}</td>
                         <td className="py-1.5 pr-2">{fmtWhen(String(f.observed_at ?? ""))}</td>
                         <td className="py-1.5 pr-2">{fmtWhen(String(f.available_at ?? ""))}</td>
-                        <td className="py-1.5">{statusIt(f.status, t)}</td>
+                        <td className="py-1.5 pr-2">{statusIt(f.status, t)}</td>
+                        <td className="py-1.5">{f.entered_model ? "sì" : "no"}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -363,10 +448,21 @@ export default function EventDetailPage() {
                         <span className="text-[var(--bm-warn)]">⚠ {t.unavailable}</span>
                       )}
                       <span className="bm-muted">{r.phase}</span>
+                      {r.http_status != null && (
+                        <span className="bm-muted">HTTP {r.http_status}</span>
+                      )}
                       <span className="bm-muted">
                         {r.fetched_at ? fmtWhen(r.fetched_at) : "—"}
                       </span>
                     </span>
+                    {r.adapter_kind && (
+                      <p className="w-full text-[11px] bm-muted">adapter={r.adapter_kind}</p>
+                    )}
+                    {r.fields_extracted && r.fields_extracted.length > 0 && (
+                      <p className="w-full text-[11px] bm-muted">
+                        fields: {r.fields_extracted.join(", ")}
+                      </p>
+                    )}
                     {r.reason && (
                       <p className="w-full text-[11px] bm-muted">{r.reason}</p>
                     )}

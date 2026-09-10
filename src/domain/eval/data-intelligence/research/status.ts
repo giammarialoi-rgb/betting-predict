@@ -14,7 +14,8 @@ export type ResearchPhase =
   | "BLOCKED"
   | "DENIED"
   | "UNAVAILABLE"
-  | "OK";
+  | "OK"
+  | "MISSING_ADAPTER";
 
 export type ResearchStatusRow = {
   event_id: string;
@@ -29,6 +30,13 @@ export type ResearchStatusRow = {
   raw_ref: string | null;
   cycle_number: number | null;
   at: string;
+  /** Optional lineage fields (Phase 3D). */
+  url?: string | null;
+  http_status?: number | null;
+  parser_status?: string | null;
+  fields_extracted?: string[] | null;
+  adapter_kind?: string | null;
+  observed_at?: string | null;
 };
 
 export function researchStatusPath(root = permanentRoot044()): string {
@@ -46,7 +54,7 @@ export function appendResearchStatus(
 export function loadResearchStatusForEvent(
   eventId: string,
   root = permanentRoot044(),
-  limit = 40,
+  limit = 80,
 ): ResearchStatusRow[] {
   const p = researchStatusPath(root);
   if (!existsSync(p)) return [];
@@ -71,7 +79,7 @@ export function latestResearchBySource(
   eventId: string,
   root = permanentRoot044(),
 ): ResearchStatusRow[] {
-  const rows = loadResearchStatusForEvent(eventId, root, 200);
+  const rows = loadResearchStatusForEvent(eventId, root, 400);
   const by = new Map<string, ResearchStatusRow>();
   for (const r of rows) {
     if (!by.has(r.source_id)) by.set(r.source_id, r);

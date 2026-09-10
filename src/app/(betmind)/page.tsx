@@ -234,18 +234,55 @@ export default function BetMindHomePage() {
               <Metric label="Phase" value={phase} />
               <Metric label="Completed at" value={fmtWhen(lastCycle)} />
                   <Metric
-                    label="Eventi scoperti (store)"
-                    value={String(analysis?.events_in_store ?? "—")}
+                    label="Eventi scoperti"
+                    value={String(
+                      (analysis as { events_discovered?: number } | null)?.events_discovered ??
+                        analysis?.events_in_store ??
+                        "—",
+                    )}
                   />
                   <Metric
-                    label="Eventi con previsioni (store)"
-                    value={String(eventsAnalyzed ?? "—")}
+                    label="Eventi con ricerca"
+                    value={String(
+                      (analysis as { events_with_research?: number } | null)?.events_with_research ??
+                        "—",
+                    )}
                   />
                   <Metric
-                    label="Saltati / non disponibili"
+                    label="Eventi eleggibili"
+                    value={String(
+                      (analysis as { events_eligible?: number } | null)?.events_eligible ?? "—",
+                    )}
+                  />
+                  <Metric
+                    label="Inference modello"
+                    value={String(
+                      (analysis as { model_inferences?: number } | null)?.model_inferences ?? "—",
+                    )}
+                  />
+                  <Metric
+                    label="Previsioni prodotte"
+                    value={String(predictionsProduced ?? "—")}
+                  />
+                  <Metric
+                    label="Dati insufficienti"
+                    value={String(
+                      (analysis as { insufficient_data?: number } | null)?.insufficient_data ?? "—",
+                    )}
+                  />
+                  <Metric
+                    label="Saltati"
                     value={String(analysis?.skipped ?? "—")}
                   />
-                  <Metric label="Previsioni prodotte" value={String(predictionsProduced ?? "—")} />
+                  <Metric
+                    label="Previsioni persistite (eventi ≠ inference)"
+                    value={String(
+                      (analysis as { predictions_persisted_events?: number } | null)
+                        ?.predictions_persisted_events ??
+                        eventsAnalyzed ??
+                        "—",
+                    )}
+                  />
                   <Metric label="Board decisioni (finestra)" value={String(boardCount)} />
                   <Metric label="Nota" value={String(activity?.note ?? analysis?.reason ?? "—")} />
             </div>

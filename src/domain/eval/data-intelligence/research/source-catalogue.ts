@@ -1,0 +1,322 @@
+/**
+ * Configured research source catalogue — honest adapter inventory.
+ * Never pretend a scrape succeeded; MISSING_ADAPTER is explicit.
+ */
+
+export type SourceAdapterKind =
+  | "PRODUCTION_ADAPTER"
+  | "TEST_PROBE"
+  | "CACHE_ONLY"
+  | "POLICY_DENIED"
+  | "MISSING_ADAPTER";
+
+export type CatalogueSource = {
+  source_id: string;
+  title: string;
+  sport: "SOCCER" | "TENNIS" | "MULTI";
+  adapter: SourceAdapterKind;
+  /** Homepage / docs URL when known — not invented fetch success. */
+  url: string | null;
+  notes: string;
+  /** Odds / market-derived — never enters independent MODEL. */
+  market_layer: boolean;
+};
+
+/**
+ * Full catalogue from project + Phase 3D request.
+ * Adapters that exist today are marked; others MISSING_ADAPTER or POLICY_DENIED.
+ */
+export const RESEARCH_SOURCE_CATALOGUE: CatalogueSource[] = [
+  {
+    source_id: "api-sports",
+    title: "API-Sports",
+    sport: "SOCCER",
+    adapter: "CACHE_ONLY",
+    url: "https://v3.football.api-sports.io/",
+    notes: "Injuries/lineups from local cache only; no invented fixture_id",
+    market_layer: false,
+  },
+  {
+    source_id: "open-meteo",
+    title: "Open-Meteo",
+    sport: "MULTI",
+    adapter: "PRODUCTION_ADAPTER",
+    url: "https://archive-api.open-meteo.com/",
+    notes: "CONTEXT weather; needs stadium coords",
+    market_layer: false,
+  },
+  {
+    source_id: "football-data-co-uk",
+    title: "Football-Data.co.uk",
+    sport: "SOCCER",
+    adapter: "CACHE_ONLY",
+    url: "https://www.football-data.co.uk/",
+    notes: "Local matches.jsonl / historical — DATE_ONLY temporal precision",
+    market_layer: false,
+  },
+  {
+    source_id: "clubelo",
+    title: "ClubElo",
+    sport: "SOCCER",
+    adapter: "CACHE_ONLY",
+    url: "http://clubelo.com/",
+    notes: "Local CSV only; rating_date < match_date",
+    market_layer: false,
+  },
+  {
+    source_id: "the-odds-api",
+    title: "The Odds API",
+    sport: "MULTI",
+    adapter: "PRODUCTION_ADAPTER",
+    url: "https://the-odds-api.com/",
+    notes: "MARKET compare only — NEVER independent MODEL input",
+    market_layer: true,
+  },
+  {
+    source_id: "fbref",
+    title: "FBref",
+    sport: "SOCCER",
+    adapter: "TEST_PROBE",
+    url: "https://fbref.com/en/",
+    notes: "Gated BETMIND_TEST_SCRAPE probe; CONTEXT only",
+    market_layer: false,
+  },
+  {
+    source_id: "understat",
+    title: "Understat",
+    sport: "SOCCER",
+    adapter: "TEST_PROBE",
+    url: "https://understat.com/",
+    notes: "Gated probe; CONTEXT only",
+    market_layer: false,
+  },
+  {
+    source_id: "uefa",
+    title: "UEFA",
+    sport: "SOCCER",
+    adapter: "TEST_PROBE",
+    url: "https://www.uefa.com/",
+    notes: "Gated probe; CONTEXT only",
+    market_layer: false,
+  },
+  {
+    source_id: "sofascore",
+    title: "SofaScore",
+    sport: "MULTI",
+    adapter: "TEST_PROBE",
+    url: "https://www.sofascore.com/",
+    notes: "Gated probe often HTTP 403; no WAF bypass",
+    market_layer: false,
+  },
+  {
+    source_id: "directa",
+    title: "Diretta",
+    sport: "MULTI",
+    adapter: "POLICY_DENIED",
+    url: null,
+    notes: "DISABLED_BY_POLICY — no unauthorized scrape",
+    market_layer: false,
+  },
+  {
+    source_id: "flashscore",
+    title: "Flashscore",
+    sport: "MULTI",
+    adapter: "POLICY_DENIED",
+    url: null,
+    notes: "DISABLED_BY_POLICY",
+    market_layer: false,
+  },
+  {
+    source_id: "soccerway",
+    title: "Soccerway",
+    sport: "SOCCER",
+    adapter: "POLICY_DENIED",
+    url: null,
+    notes: "DISABLED_BY_POLICY",
+    market_layer: false,
+  },
+  {
+    source_id: "soccervista",
+    title: "SoccerVista",
+    sport: "SOCCER",
+    adapter: "MISSING_ADAPTER",
+    url: null,
+    notes: "Catalogued candidate — no production adapter",
+    market_layer: false,
+  },
+  {
+    source_id: "soccervital",
+    title: "SoccerVital",
+    sport: "SOCCER",
+    adapter: "MISSING_ADAPTER",
+    url: null,
+    notes: "Catalogued candidate — no production adapter",
+    market_layer: false,
+  },
+  {
+    source_id: "oddspedia",
+    title: "Oddspedia",
+    sport: "MULTI",
+    adapter: "MISSING_ADAPTER",
+    url: null,
+    notes: "Catalogued — market-ish; no adapter; would be MARKET layer if wired",
+    market_layer: true,
+  },
+  {
+    source_id: "betshoot",
+    title: "Betshoot",
+    sport: "MULTI",
+    adapter: "MISSING_ADAPTER",
+    url: null,
+    notes: "Catalogued candidate — no production adapter",
+    market_layer: false,
+  },
+  {
+    source_id: "click4soccer",
+    title: "Click4Soccer",
+    sport: "SOCCER",
+    adapter: "MISSING_ADAPTER",
+    url: null,
+    notes: "Catalogued candidate — no production adapter",
+    market_layer: false,
+  },
+  {
+    source_id: "sky-sport",
+    title: "Sky Sport",
+    sport: "MULTI",
+    adapter: "MISSING_ADAPTER",
+    url: null,
+    notes: "News CONTEXT candidate — no adapter",
+    market_layer: false,
+  },
+  {
+    source_id: "ansa",
+    title: "ANSA",
+    sport: "MULTI",
+    adapter: "MISSING_ADAPTER",
+    url: null,
+    notes: "News CONTEXT candidate — no adapter",
+    market_layer: false,
+  },
+  {
+    source_id: "analysisportiva",
+    title: "AnalysisPortiva",
+    sport: "SOCCER",
+    adapter: "MISSING_ADAPTER",
+    url: null,
+    notes: "Catalogued candidate — no production adapter",
+    market_layer: false,
+  },
+  {
+    source_id: "sportytrader",
+    title: "SportyTrader",
+    sport: "MULTI",
+    adapter: "MISSING_ADAPTER",
+    url: null,
+    notes: "Catalogued — tips/odds-adjacent; no adapter",
+    market_layer: true,
+  },
+  {
+    source_id: "ilveggente",
+    title: "IlVeggente",
+    sport: "SOCCER",
+    adapter: "MISSING_ADAPTER",
+    url: null,
+    notes: "Catalogued candidate — no production adapter",
+    market_layer: false,
+  },
+  {
+    source_id: "opta",
+    title: "Opta",
+    sport: "SOCCER",
+    adapter: "MISSING_ADAPTER",
+    url: null,
+    notes: "Commercial — no licensed adapter in lab",
+    market_layer: false,
+  },
+  {
+    source_id: "soccer-association",
+    title: "Soccer Association",
+    sport: "SOCCER",
+    adapter: "MISSING_ADAPTER",
+    url: null,
+    notes: "Catalogued candidate — no production adapter",
+    market_layer: false,
+  },
+  {
+    source_id: "cies",
+    title: "CIES Football Observatory",
+    sport: "SOCCER",
+    adapter: "MISSING_ADAPTER",
+    url: null,
+    notes: "Catalogued candidate — no production adapter",
+    market_layer: false,
+  },
+  {
+    source_id: "whoscored",
+    title: "WhoScored",
+    sport: "SOCCER",
+    adapter: "MISSING_ADAPTER",
+    url: null,
+    notes: "Catalogued — no production adapter (policy review required)",
+    market_layer: false,
+  },
+  {
+    source_id: "the-athletic",
+    title: "The Athletic",
+    sport: "MULTI",
+    adapter: "MISSING_ADAPTER",
+    url: null,
+    notes: "Paywalled — no scrape/bypass",
+    market_layer: false,
+  },
+  {
+    source_id: "the-analyst",
+    title: "The Analyst",
+    sport: "SOCCER",
+    adapter: "MISSING_ADAPTER",
+    url: null,
+    notes: "Catalogued candidate — no production adapter",
+    market_layer: false,
+  },
+  {
+    source_id: "abseits",
+    title: "Abseits",
+    sport: "SOCCER",
+    adapter: "MISSING_ADAPTER",
+    url: null,
+    notes: "Catalogued candidate — no production adapter",
+    market_layer: false,
+  },
+  {
+    source_id: "club-football-match-data",
+    title: "Club-Football-Match-Data",
+    sport: "SOCCER",
+    adapter: "CACHE_ONLY",
+    url: null,
+    notes: "Local GitHub clone / CSV when present — research dataset",
+    market_layer: false,
+  },
+  {
+    source_id: "tennis-explorer",
+    title: "Tennis Explorer",
+    sport: "TENNIS",
+    adapter: "MISSING_ADAPTER",
+    url: null,
+    notes: "Tennis catalogue candidate — no production adapter",
+    market_layer: false,
+  },
+  {
+    source_id: "tennis-abstract",
+    title: "Tennis Abstract",
+    sport: "TENNIS",
+    adapter: "MISSING_ADAPTER",
+    url: null,
+    notes: "Tennis catalogue candidate — no production adapter",
+    market_layer: false,
+  },
+];
+
+export function catalogueById(id: string): CatalogueSource | undefined {
+  return RESEARCH_SOURCE_CATALOGUE.find((s) => s.source_id === id);
+}
