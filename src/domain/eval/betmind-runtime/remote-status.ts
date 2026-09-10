@@ -494,6 +494,16 @@ export async function publishRuntimeStatus(
           payload = EXCLUDED.payload
     `;
     await persistCycleAndBoard(payload);
+    // Keep event dossiers in sync with the board so Vercel detail pages do not 404
+    try {
+      const { mirrorDossiersToNeon } = await import("@/domain/eval/betmind-runtime/dossier");
+      const root = permanentRoot044();
+      if (existsSync(join(root, "events.jsonl"))) {
+        await mirrorDossiersToNeon(root, { limit: 150 });
+      }
+    } catch {
+      /* dossier mirror optional — board publish must still succeed */
+    }
     const board = ((payload.observatory?.next_events as unknown[]) ?? []).length;
     return { ok: true, published_at: publishedAt, board };
   } catch (e) {

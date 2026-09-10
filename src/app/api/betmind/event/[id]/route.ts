@@ -5,6 +5,7 @@ import { permanentRoot044 } from "@/domain/eval/permanent-044/config";
 import { piRoot } from "@/domain/eval/predictive-intelligence/config";
 import {
   buildAnalysisDossier,
+  loadBoardEventNeon,
   loadDossierNeon,
 } from "@/domain/eval/betmind-runtime/dossier";
 
@@ -96,23 +97,69 @@ export async function GET(_req: Request, ctx: { params: Promise<{ id: string }> 
 
   if (!storePresent) {
     const remote = await loadDossierNeon(id);
-    if (!remote) {
+    if (remote) {
+      return NextResponse.json({
+        ...legacyShapeFromDossier(remote),
+        dossier: remote,
+        mirror_source: "neon",
+        api_calls_ui: 0 as const,
+        real_money: false as const,
+      });
+    }
+
+    // Board row alone is not a dossier — do not invent HDA/features/lineage.
+    const board = await loadBoardEventNeon(id);
+    if (board) {
+      const label = String(board.label ?? "");
+      const [homeGuess, awayGuess] = label.includes(" vs ")
+        ? label.split(" vs ").map((s) => s.trim())
+        : [null, null];
       return NextResponse.json(
         {
-          error: "not_found",
+          error: "dossier_not_mirrored",
           event_id: id,
-          reason: "NO DATA AVAILABLE — Lab B assente e nessun dossier su Neon",
+          reason:
+            "Event exists on betmind_board_events but betmind_analysis_dossiers has no row. Full dossier (HDA, features, lineage) requires Lab B mirror — not inventable from board lite fields.",
+          present: {
+            lab_b_disk: false,
+            board_event: true,
+            analysis_dossier: false,
+          },
+          missing: ["betmind_analysis_dossiers.payload"],
+          board_summary: {
+            event_id: id,
+            bucket: board.bucket ?? null,
+            label: board.label ?? null,
+            competition: board.competition ?? null,
+            kickoff_utc: board.kickoff_utc ?? null,
+            model_version: board.model_version ?? null,
+            decision: board.decision ?? null,
+            prediction_status: board.prediction_status ?? null,
+            feature_coverage: board.feature_coverage ?? null,
+            analyzed_at: board.analyzed_at ?? null,
+            home_or_a: homeGuess,
+            away_or_b: awayGuess,
+          },
         },
         { status: 404 },
       );
     }
-    return NextResponse.json({
-      ...legacyShapeFromDossier(remote),
-      dossier: remote,
-      mirror_source: "neon",
-      api_calls_ui: 0 as const,
-      real_money: false as const,
-    });
+
+    return NextResponse.json(
+      {
+        error: "not_found",
+        event_id: id,
+        reason:
+          "NO DATA AVAILABLE — Lab B assente, nessun dossier su Neon, nessun board event",
+        present: {
+          lab_b_disk: false,
+          board_event: false,
+          analysis_dossier: false,
+        },
+        missing: ["betmind_analysis_dossiers", "betmind_board_events"],
+      },
+      { status: 404 },
+    );
   }
 
   const event = findEvent(root, id);

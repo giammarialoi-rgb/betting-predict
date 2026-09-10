@@ -204,18 +204,10 @@ export async function runBrainCycle051(input: {
       /* research optional — cycle must not die */
     }
 
-    // Persist a few analysis dossiers to Neon for Vercel detail pages
+    // Mirror ANALYZED / independent dossiers to Neon for Vercel `/events/[id]`
     try {
-      const { buildAnalysisDossier, upsertDossierNeon } = await import(
-        "@/domain/eval/betmind-runtime/dossier"
-      );
-      const boardIds = latestDecisions(labB)
-        .slice(0, 25)
-        .map((d) => d.event_id);
-      for (const eid of boardIds) {
-        const d = buildAnalysisDossier(eid, labB);
-        if (d) await upsertDossierNeon(d);
-      }
+      const { mirrorDossiersToNeon } = await import("@/domain/eval/betmind-runtime/dossier");
+      await mirrorDossiersToNeon(labB, { limit: 150 });
     } catch {
       /* optional */
     }

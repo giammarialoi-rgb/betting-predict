@@ -164,8 +164,23 @@ export default function EventDetailPage() {
       setUpdating(true);
       try {
         const res = await fetch(`/api/betmind/event/${params.id}`, { cache: "no-store" });
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const json = (await res.json()) as Detail;
+        const json = (await res.json()) as Detail & {
+          error?: string;
+          reason?: string;
+          present?: Record<string, unknown>;
+          missing?: string[];
+          board_summary?: Record<string, unknown>;
+        };
+        if (!res.ok) {
+          const parts = [
+            json.reason ?? `HTTP ${res.status}`,
+            json.error ? `(${json.error})` : null,
+            Array.isArray(json.missing) && json.missing.length
+              ? `Missing: ${json.missing.join(", ")}`
+              : null,
+          ].filter(Boolean);
+          throw new Error(parts.join(" — "));
+        }
         if (alive) {
           setData(json);
           setErr(null);

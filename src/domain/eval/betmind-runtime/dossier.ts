@@ -502,3 +502,96 @@ export async function loadDossierNeon(eventId: string): Promise<AnalysisDossier 
     return null;
   }
 }
+
+/** Board row from Neon — identity check only; never silently treat as full dossier. */
+export async function loadBoardEventNeon(
+  eventId: string,
+): Promise<Record<string, unknown> | null> {
+  const url = process.env.DATABASE_URL;
+  if (!url) return null;
+  try {
+    const { neon } = await import("@neondatabase/serverless");
+    const sql = neon(url);
+    const rows = (await sql`
+      SELECT event_id, bucket, payload, published_at::text AS published_at
+      FROM betmind_board_events
+      WHERE event_id = ${eventId}
+      LIMIT 1
+    `) as Array<{
+      event_id: string;
+      bucket: string | null;
+      payload: Record<string, unknown> | string;
+      published_at: string;
+    }>;
+    const row = rows[0];
+    if (!row) return null;
+    const payload =
+      typeof row.payload === "string"
+        ? (JSON.parse(row.payload) as Record<string, unknown>)
+        : row.payload;
+    return {
+      ...payload,
+      event_id: row.event_id,
+      bucket: row.bucket ?? payload.bucket ?? null,
+      published_at: row.published_at,
+    };
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Mirror Lab B analysis dossiers to Neon for Vercel `/events/[id]`.
+ * Prefers ANALYZED / independent-inference events; never invents dossiers.
+ */
+export async function mirrorDossiersToNeon(
+  labB = permanentRoot044(),
+  opts: { limit?: number; eventIds?: string[] } = {},
+): Promise<{ attempted: number; upserted: number; skipped: number }> {
+  const limit = opts.limit ?? 150;
+  const ids: string[] = [];
+  const seen = new Set<string>();
+  const push = (id: string) => {
+    if (!id || seen.has(id)) return;
+    seen.add(id);
+    ids.push(id);
+  };
+
+  if (opts.eventIds?.length) {
+    for (const id of opts.eventIds) push(String(id));
+  } else {
+    const { buildLiteNextEvents } = await import("@/domain/eval/betmind-runtime/board");
+    const board = buildLiteNextEvents(labB, Date.now(), 200);
+    for (const row of board) {
+      if (String(row.bucket) === "ANALYZED") push(String(row.event_id));
+    }
+    for (const row of board) push(String(row.event_id));
+    const predTail = readJsonlTail(join(labB, "predictions.jsonl"), 800);
+    for (const r of predTail) {
+      const row = r as Record<string, unknown>;
+      const mv = String(row.model_version ?? "");
+      const indep =
+        row.probability_model &&
+        typeof row.probability_model === "object" &&
+        mv.includes("INDEPENDENT") &&
+        !mv.includes("NO_INDEPENDENT");
+      if (indep) push(String(row.event_id ?? ""));
+    }
+  }
+
+  let upserted = 0;
+  let skipped = 0;
+  let attempted = 0;
+  for (const eid of ids) {
+    if (upserted >= limit) break;
+    attempted += 1;
+    const d = buildAnalysisDossier(eid, labB);
+    if (!d) {
+      skipped += 1;
+      continue;
+    }
+    await upsertDossierNeon(d);
+    upserted += 1;
+  }
+  return { attempted, upserted, skipped };
+}
