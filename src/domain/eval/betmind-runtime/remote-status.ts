@@ -15,6 +15,7 @@ import {
   type BoardEventRow,
 } from "@/domain/eval/betmind-runtime/board";
 import { listCalendarEvents, todayCalendarDay } from "@/domain/eval/betmind-runtime/calendar";
+import { buildOperationalSourceEngine } from "@/domain/eval/data-intelligence/research/source-engine";
 import { loadCoverage055, loadCurrentActivity055, readActivityFeed055 } from "@/domain/eval/catalog-055/cycle";
 import { loadAutostartStatus055 } from "@/domain/eval/catalog-055/autostart";
 import { computeMassiveStats049 } from "@/domain/eval/factory-049/stats";
@@ -251,6 +252,7 @@ export function buildRuntimePayloadFromLocal(root = permanentRoot044()): BetMind
     ? listCalendarEvents({ root, sport: "ALL" }).events
     : [];
   const analysis = buildAnalysisSummaryFromLocal(root, next_events);
+  const source_engine = storePresent ? buildOperationalSourceEngine({ labBRoot: root }) : [];
 
   const coverage = loadCoverage055(root);
   const activity = loadCurrentActivity055(root) ?? loadCurrentWork053(root);
@@ -378,6 +380,7 @@ export function buildRuntimePayloadFromLocal(root = permanentRoot044()): BetMind
       current_work: activity ?? base.current_work,
       next_events,
       calendar,
+      source_engine,
       analysis,
       sport_diagnostics: coverage?.by_sport ?? null,
       coverage_047: coverage,

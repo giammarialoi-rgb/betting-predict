@@ -74,7 +74,17 @@ Gates unchanged: coverage >= 0.35, missing_keys <= 45.
 
 Phase 5 coverage: fallback, 200 homepage != event, 403 BLOCKED, identity, calendar 40 events, queue 80 / batch 24, odds firewall, no fake feature.
 
-## 10. Production
+## 10. Production (verified 2026-09-10)
+
+- Commits: 58643bf (engine), 9024517 (Neon date filter). Follow-up: source_engine on Neon + calendar dedupe.
+- Vercel: https://betting-predict.vercel.app — deploy success.
+- GET /api/health 200, /api/betmind/health 200, /api/events?date=2026-09-10 37 football events, date=2026-09-12 102 events, cap=false.
+- Aston Villa vs Nottingham Forest: INDEPENDENT_POISSON_v1 HOME 44.5 DRAW 27.4 AWAY 28.1. odds_entered_model=false.
+- Fenerbahce vs Roma: RESEARCHED, no independent percentages.
+- Brain: 1 worker pid 25892 + watchdog 23328. Cycle ~744. sources_attempted_today=13 (not 0).
+- Neon board published with 445 events.
+
+## 10b. Production notes
 
 See `artifacts/phase-5/production-verification.json` after push, deploy, and worker restart.
 

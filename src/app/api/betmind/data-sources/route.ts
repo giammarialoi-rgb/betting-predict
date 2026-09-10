@@ -7,6 +7,7 @@ import { buildSourceRegistry, clubEloCachePresent } from "@/domain/eval/data-int
 import { isTestScrapeEnabled } from "@/domain/sources/scraping-policy";
 import { buildOperationalSourceEngine } from "@/domain/eval/data-intelligence/research/source-engine";
 import { loadStore044 } from "@/domain/eval/permanent-044/store";
+import { loadRuntimeStatus } from "@/domain/eval/betmind-runtime/remote-status";
 
 export const dynamic = "force-dynamic";
 
@@ -24,9 +25,20 @@ export async function GET() {
   } catch {
     eventLabels = new Map();
   }
-  const operational = existsSync(root)
+  let operational = existsSync(root)
     ? buildOperationalSourceEngine({ labBRoot: root, eventLabels })
     : [];
+  if (operational.length === 0) {
+    try {
+      const remote = await loadRuntimeStatus();
+      const fromNeon = (remote.payload?.observatory as { source_engine?: unknown } | undefined)?.source_engine;
+      if (Array.isArray(fromNeon) && fromNeon.length > 0) {
+        operational = fromNeon as typeof operational;
+      }
+    } catch {
+      /* Neon mirror optional */
+    }
+  }
 
   if (existsSync(path)) {
     try {

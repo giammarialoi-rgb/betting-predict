@@ -104,9 +104,13 @@ export function listCalendarEvents(input: {
   const to = input.to ?? input.date ?? null;
 
   const rows: CalendarEventRow[] = [];
+  const seen = new Set<string>();
   for (const e of events) {
     const r = asRec(e);
     if (!r?.event_id) continue;
+    const id = String(r.event_id);
+    if (seen.has(id)) continue;
+    seen.add(id);
     const kickoff = (r.kickoff_utc as string | null) ?? null;
     const day = calendarDayKey(kickoff);
     if (from && day && day < from) continue;
@@ -115,7 +119,6 @@ export function listCalendarEvents(input: {
     const sport = sportNorm(String(r.sport ?? "UNKNOWN"));
     if (sportFilter && sport !== sportFilter) continue;
 
-    const id = String(r.event_id);
     const pred = latestPred.get(id);
     const independent = pred
       ? hasIndependentModel({
