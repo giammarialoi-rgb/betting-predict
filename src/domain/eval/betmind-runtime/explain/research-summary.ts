@@ -3,6 +3,7 @@
  * Never treat a prose blob as source of truth.
  */
 import { catalogueById } from "@/domain/eval/data-intelligence/research/source-catalogue";
+import { SOURCE_CAPABILITIES } from "@/domain/eval/data-intelligence/research/source-engine";
 import {
   FEATURE_GROUPS,
   classifyFeatureQuality,
@@ -55,6 +56,7 @@ export type ResearchSummary = {
     http_status: number | null;
     fetched_at: string | null;
     fields_extracted: string[];
+    sought_it: string;
     market_layer: boolean;
     reason_it: string;
     public_url: string | null;
@@ -126,6 +128,7 @@ export function buildResearchSummary(input: {
       http_status: r.http_status ?? null,
       fetched_at: r.fetched_at ?? null,
       fields_extracted: r.fields_extracted ?? [],
+      sought_it: (SOURCE_CAPABILITIES[r.source_id] ?? []).join(", ") || (cat?.notes ?? "dati evento"),
       market_layer: cat?.market_layer === true,
       reason_it: sourceFailureReasonIt(r),
       public_url: cat?.url ?? r.url ?? null,

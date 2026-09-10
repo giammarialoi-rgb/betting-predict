@@ -90,3 +90,61 @@ export function resolveCanonicalEventIdentity(input: {
 export function isProvisionalCanonicalId(id: string): boolean {
   return id.startsWith("live:");
 }
+
+function stripClubSuffix(name: string): string {
+  return name
+    .replace(/\b(fc|afc|cf|sc|club)\b/gi, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+export function resolveTeamIdentity(
+  name: string,
+  matches?: ReturnType<typeof loadPiMatches>,
+): ResolvedTeamIdentity {
+  const cleaned = stripClubSuffix(name) || name;
+  return teamFrom(name, resolveLiveTeamId(cleaned, matches ?? loadPiMatches()));
+}
+
+export function resolveCompetitionIdentity(name: string | null | undefined): {
+  source_name: string;
+  canonical_name: string | null;
+  canonical_id: string | null;
+  confidence: "HIGH" | "MEDIUM" | "PROVISIONAL";
+  resolution_method: string;
+} {
+  const source_name = String(name ?? "").trim();
+  const div = mapCompetitionToPiDivision(source_name);
+  if (div) {
+    return {
+      source_name,
+      canonical_name: div,
+      canonical_id: div,
+      confidence: "HIGH",
+      resolution_method: "division_map",
+    };
+  }
+  const slug = source_name
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+  return {
+    source_name,
+    canonical_name: null,
+    canonical_id: slug ? `live:${slug}` : null,
+    confidence: "PROVISIONAL",
+    resolution_method: "unresolved_slug",
+  };
+}
+
+export function resolveEventIdentity(input: {
+  home: string;
+  away: string;
+  competition?: string | null;
+  kickoff?: string | null;
+  labBRoot?: string;
+}): CanonicalEventIdentity {
+  return resolveCanonicalEventIdentity(input);
+}

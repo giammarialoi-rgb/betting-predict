@@ -4,6 +4,7 @@
  */
 import { FEATURE_GROUPS, qualityLabelIt, parseRollingFeature } from "@/domain/eval/betmind-runtime/explain/feature-dictionary";
 import type { ResearchSummary } from "@/domain/eval/betmind-runtime/explain/research-summary";
+import { buildAnalyzedTopics, type AnalyzedTopic } from "@/domain/eval/betmind-runtime/explain/analyzed-topics";
 
 export type PoissonInternals = {
   lambda_home: number;
@@ -33,6 +34,7 @@ export type HumanExplanation = {
   poisson: string | null;
   insufficient: string | null;
   category_checks: Array<{ label: string; found: boolean; note: string }>;
+  analyzed_topics: AnalyzedTopic[];
   facts_used: string[];
 };
 
@@ -147,7 +149,22 @@ export function buildHumanExplanation(input: {
     return base;
   });
   const used = usedLines;
+  const analyzed_topics = buildAnalyzedTopics({
+    entered_keys: s.model_inputs.map((f) => f.key),
+    excluded_keys: s.model_exclusions.map((f) => f.key),
+    research_fields: s.source_rows.flatMap((r) => r.fields_extracted ?? []),
+    temporal_excluded: s.source_rows.some((r) => r.human_status === "POST_KICKOFF"),
+  });
   const missing: string[] = [];
+  for (const t of analyzed_topics) {
+    if (t.light === "MISSING") {
+      if (t.id === "xg") missing.push("Non e stato possibile reperire un dato xG specifico per questa partita.");
+      else if (t.id === "injuries") missing.push("Non e stato possibile verificare gli infortuni da una fonte compatibile.");
+      else if (t.id === "lineups") missing.push("Le formazioni ufficiali non erano ancora disponibili.");
+      else if (t.id === "referee") missing.push("Il dato arbitro non e stato trovato.");
+      else if (t.id === "weather") missing.push("Non e stato possibile ottenere un meteo verificabile per questa sede.");
+    }
+  }
   for (const ex of s.model_exclusions) {
     if (ex.quality !== "MISSING") continue;
     if (
@@ -188,16 +205,11 @@ export function buildHumanExplanation(input: {
     facts.push("insufficient_independent=true");
   }
 
-  const category_checks = FEATURE_GROUPS.filter((g) => g.id !== "ALTRO").map((g) => {
-    const found = s.feature_groups_found.includes(g.id);
-    return {
-      label: g.label_it,
-      found,
-      note: found
-        ? "Presente tra gli input usati dal modello"
-        : "Cercato o previsto dal catalogo feature, ma non usato (dato assente o non ammissibile)",
-    };
-  });
+  const category_checks = analyzed_topics.map((t) => ({
+    label: t.label_it,
+    found: t.light === "USED" || t.light === "PARTIAL",
+    note: t.note_it,
+  }));
 
   let poisson: string | null = null;
   if (input.poisson && Number.isFinite(input.poisson.lambda_home) && Number.isFinite(input.poisson.lambda_away)) {
@@ -240,6 +252,7 @@ export function buildHumanExplanation(input: {
     poisson,
     insufficient,
     category_checks,
+    analyzed_topics,
     facts_used: facts,
   };
 }

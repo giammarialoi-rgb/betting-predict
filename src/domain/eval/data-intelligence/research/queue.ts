@@ -92,20 +92,66 @@ export function enqueueUpcomingEvents(input: {
   return next;
 }
 
-/** Soonest kickoff first; unresearched before already researched. */
+export type EventPriority = "P0" | "P1" | "P2" | "P3" | "P4";
+
+export function eventPriority(kickoffIso: string | null, nowMs: number): EventPriority {
+  const ko = kickoffIso ? Date.parse(kickoffIso) : NaN;
+  if (!Number.isFinite(ko)) return "P3";
+  const ms = ko - nowMs;
+  if (ms < 0) return "P4";
+  if (ms <= 60 * 60 * 1000) return "P0";
+  if (ms <= 6 * 60 * 60 * 1000) return "P1";
+  if (ms <= 24 * 60 * 60 * 1000) return "P2";
+  return "P3";
+}
+
+const PRIORITY_RANK: Record<EventPriority, number> = { P0: 0, P1: 1, P2: 2, P3: 3, P4: 4 };
+
+function isResearched(state: ResearchQueueState): boolean {
+  return state === "RESEARCHED" || state === "INFERENCE" || state === "FEATURED";
+}
+
+/** Near kickoff, researched events become stale and may be refreshed. */
+export function researchRefreshDue(item: ResearchQueueItem, nowMs: number): boolean {
+  if (!isResearched(item.state)) return false;
+  const p = eventPriority(item.kickoff_utc, nowMs);
+  const last = item.last_attempt_at ? Date.parse(item.last_attempt_at) : 0;
+  const age = nowMs - (Number.isFinite(last) ? last : 0);
+  if (p === "P0") return age >= 15 * 60 * 1000;
+  if (p === "P1") return age >= 60 * 60 * 1000;
+  if (p === "P2") return age >= 6 * 60 * 60 * 1000;
+  if (p === "P3") return age >= 24 * 60 * 60 * 1000;
+  return false;
+}
+
+/** Unresearched first (half of budget reserved), then stale near-kickoff refresh. Priority P0–P3. */
 export function pickResearchBatch(file: ResearchQueueFile, limit: number, nowMs: number): ResearchQueueItem[] {
-  return [...file.items]
-    .filter((i) => {
-      const ko = i.kickoff_utc ? Date.parse(i.kickoff_utc) : NaN;
-      return Number.isFinite(ko) && ko >= nowMs;
-    })
-    .sort((a, b) => {
-      const ra = a.state === "RESEARCHED" || a.state === "INFERENCE" || a.state === "FEATURED" ? 1 : 0;
-      const rb = b.state === "RESEARCHED" || b.state === "INFERENCE" || b.state === "FEATURED" ? 1 : 0;
-      if (ra !== rb) return ra - rb;
-      return Date.parse(a.kickoff_utc ?? "") - Date.parse(b.kickoff_utc ?? "");
-    })
-    .slice(0, limit);
+  const upcoming = [...file.items].filter((i) => {
+    const ko = i.kickoff_utc ? Date.parse(i.kickoff_utc) : NaN;
+    return Number.isFinite(ko) && ko >= nowMs;
+  });
+  const byPri = (a: ResearchQueueItem, b: ResearchQueueItem) => {
+    const pa = PRIORITY_RANK[eventPriority(a.kickoff_utc, nowMs)];
+    const pb = PRIORITY_RANK[eventPriority(b.kickoff_utc, nowMs)];
+    if (pa !== pb) return pa - pb;
+    return Date.parse(a.kickoff_utc ?? "") - Date.parse(b.kickoff_utc ?? "");
+  };
+  const unresearched = upcoming.filter((i) => !isResearched(i.state)).sort(byPri);
+  const refresh = upcoming.filter((i) => researchRefreshDue(i, nowMs)).sort(byPri);
+  const reserved = Math.max(1, Math.ceil(limit * 0.5));
+  const first = unresearched.slice(0, reserved);
+  const rest = limit - first.length;
+  const second = refresh.filter((i) => !first.some((f) => f.event_id === i.event_id)).slice(0, rest);
+  const leftover = unresearched.slice(first.length);
+  const seen = new Set<string>();
+  const out: ResearchQueueItem[] = [];
+  for (const i of [...first, ...second, ...leftover]) {
+    if (seen.has(i.event_id)) continue;
+    seen.add(i.event_id);
+    out.push(i);
+    if (out.length >= limit) break;
+  }
+  return out;
 }
 
 export function markQueueStates(

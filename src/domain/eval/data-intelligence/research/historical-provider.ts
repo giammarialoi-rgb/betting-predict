@@ -5,6 +5,7 @@
 import { existsSync } from "node:fs";
 import { inspectFootballDataArchive, type ArchiveLookup } from "@/domain/eval/data-intelligence/research/archive-lookup";
 import { CLUB_FOOTBALL_MATCHES_CSV } from "@/audit/club-football-match-data/paths";
+import { bindClubFootballEvent } from "@/domain/eval/data-intelligence/research/club-football-bind";
 
 export type HistoricalLookup = {
   provider: "football-data-co-uk" | "club-football-match-data" | "none";
@@ -44,12 +45,16 @@ export function lookupHistoricalPriors(input: {
     };
   }
 
+  const bind = bindClubFootballEvent({
+    home: input.home,
+    away: input.away,
+    kickoffIso: input.kickoffIso,
+  });
   return {
     provider: "club-football-match-data",
-    status: "NO_EVENT",
+    status: bind.status === "MISSING_FILE" ? "NO_EVENT" : bind.status,
     football_data,
     club_football_file_present: true,
-    reason:
-      "Club-Football-Match-Data file present but this event is not bound to parsed rows (no invented team match).",
+    reason: bind.reason,
   };
 }

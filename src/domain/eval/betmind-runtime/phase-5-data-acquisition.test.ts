@@ -153,7 +153,7 @@ describe("Phase 5 data acquisition", () => {
       competition: "UEFA Champions League",
       kickoffIso: "2026-09-17T19:00:00.000Z",
     });
-    assert.notEqual(h.status, "SUCCESS");
+    assert.notEqual(h.football_data.status, "SUCCESS");
   });
 
   it("model gates in predict-live remain 0.35 / 45", () => {

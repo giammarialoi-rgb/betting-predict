@@ -1,25 +1,25 @@
 ﻿/**
  * Per-event page fetch. Homepage HTTP 200 is never SUCCESS.
- * Team names must appear in the body or the result is NO_EVENT.
+ * SUCCESS requires EVENT_MATCHED plus at least one typed extracted field.
  * No WAF/CAPTCHA bypass. Ordinary GET only; 403 stays BLOCKED.
  */
 import { scrapeDecisionIsAllow, scrapingAllowedForSource } from "@/domain/sources/scraping-policy";
+import { extractEventHtml } from "@/domain/eval/data-intelligence/research/extract-html";
+import { readScrapeCache, writeScrapeCache } from "@/domain/eval/data-intelligence/research/scrape-cache";
+import type { SourceAttemptStatus } from "@/domain/eval/data-intelligence/research/source-attempt";
 
 export type EventPageFetch = {
   source_id: string;
   url: string;
   http_status: number | null;
-  status: "BLOCKED" | "HTTP_ERROR" | "NO_EVENT" | "PARTIAL" | "DENIED" | "RATE_LIMITED";
+  status: SourceAttemptStatus | "DENIED" | "HTTP_ERROR";
   fields_extracted: string[];
+  extracted_values?: Array<{ key: string; value: number | string; evidence: string }>;
   reason: string;
   fetched: boolean;
+  content_hash?: string | null;
+  event_matched?: boolean;
 };
-
-function mentions(body: string, name: string): boolean {
-  const n = name.trim();
-  if (n.length < 3) return false;
-  return body.toLowerCase().includes(n.toLowerCase());
-}
 
 /** Honest block detection — record BLOCKED, never solve or spoof. */
 function looksLikeChallengePage(body: string): boolean {
@@ -58,11 +58,28 @@ export function eventPageUrls(sourceId: string, home: string, away: string): str
   }
 }
 
+const FETCH_TIMEOUT_MS = 12_000;
+
+function abortSignal(): AbortSignal | undefined {
+  const anyAbort = AbortSignal as unknown as { timeout?: (ms: number) => AbortSignal };
+  if (typeof anyAbort.timeout === "function") return anyAbort.timeout(FETCH_TIMEOUT_MS);
+  return undefined;
+}
+
+function mapExtractStatus(
+  status: ReturnType<typeof extractEventHtml>["status"],
+): EventPageFetch["status"] {
+  if (status === "PARSE_ERROR") return "NO_DATA";
+  return status;
+}
+
 export async function fetchEventPage(input: {
   sourceId: string;
   home: string;
   away: string;
   fetchImpl?: typeof fetch;
+  cacheRoot?: string;
+  nowIso?: string;
 }): Promise<EventPageFetch> {
   const allow = scrapingAllowedForSource(input.sourceId);
   const url = eventPageUrls(input.sourceId, input.home, input.away);
@@ -89,15 +106,30 @@ export async function fetchEventPage(input: {
     };
   }
   try {
-    const fetchImpl = input.fetchImpl ?? globalThis.fetch.bind(globalThis);
-    const res = await fetchImpl(url, {
-      method: "GET",
-      headers: {
-        Accept: "text/html,*/*",
-        "User-Agent": "betmind-research/1.0 (+local; ordinary GET; no WAF bypass)",
-      },
+    const cached = readScrapeCache({
+      url,
+      sourceId: input.sourceId,
+      root: input.cacheRoot,
     });
-    const status = res.status;
+    let status: number;
+    let body: string;
+    if (cached && cached.http_status < 400) {
+      status = cached.http_status;
+      body = cached.body;
+    } else {
+      const fetchImpl = input.fetchImpl ?? globalThis.fetch.bind(globalThis);
+      const signal = abortSignal();
+      const res = await fetchImpl(url, {
+        method: "GET",
+        headers: {
+          Accept: "text/html,*/*",
+          "User-Agent": "betmind-research/1.0 (+local; ordinary GET; no WAF bypass)",
+        },
+        ...(signal ? { signal } : {}),
+      });
+      status = res.status;
+      body = await res.text();
+    }
     if (status === 403) {
       return {
         source_id: input.sourceId,
@@ -120,6 +152,17 @@ export async function fetchEventPage(input: {
         fetched: true,
       };
     }
+    if (status === 401) {
+      return {
+        source_id: input.sourceId,
+        url,
+        http_status: 401,
+        status: "AUTH_REQUIRED",
+        fields_extracted: [],
+        reason: `Authentication required HTTP 401. No bypass.`,
+        fetched: true,
+      };
+    }
     if (status >= 400) {
       return {
         source_id: input.sourceId,
@@ -131,7 +174,6 @@ export async function fetchEventPage(input: {
         fetched: true,
       };
     }
-    const body = await res.text();
     if (looksLikeChallengePage(body)) {
       return {
         source_id: input.sourceId,
@@ -143,39 +185,40 @@ export async function fetchEventPage(input: {
         fetched: true,
       };
     }
-    const homeOk = mentions(body, input.home);
-    const awayOk = mentions(body, input.away);
-    if (!homeOk || !awayOk) {
-      return {
-        source_id: input.sourceId,
+    const extracted = extractEventHtml({ html: body, home: input.home, away: input.away });
+    if (status < 400 && body.length > 0) {
+      writeScrapeCache({
         url,
         http_status: status,
-        status: "NO_EVENT",
-        fields_extracted: [],
-        reason: `HTTP ${status} but the page does not contain both team names. Not treated as event data.`,
-        fetched: true,
-      };
+        body,
+        content_hash: extracted.content_hash,
+        nowIso: input.nowIso,
+        root: input.cacheRoot,
+      });
     }
-    const hasXg = /xg|expected goals/i.test(body);
+    const fields = extracted.fields.map((f) => f.key);
     return {
       source_id: input.sourceId,
       url,
       http_status: status,
-      status: "PARTIAL",
-      fields_extracted: hasXg ? ["page_mentions_xg"] : ["page_mentions_both_teams"],
-      reason: hasXg
-        ? "Both teams mentioned and xG text present; no typed xG value extracted."
-        : "Both teams mentioned; no typed match statistics extracted.",
+      status: mapExtractStatus(extracted.status),
+      fields_extracted: fields,
+      extracted_values: extracted.fields,
+      reason: extracted.reason,
       fetched: true,
+      content_hash: extracted.content_hash,
+      event_matched: extracted.match === "EVENT_MATCHED",
     };
   } catch (e) {
+    const msg = e instanceof Error ? e.message : String(e);
+    const timedOut = /abort|timeout/i.test(msg);
     return {
       source_id: input.sourceId,
       url,
       http_status: null,
-      status: "HTTP_ERROR",
+      status: timedOut ? "TIMEOUT" : "NETWORK_ERROR",
       fields_extracted: [],
-      reason: e instanceof Error ? e.message : String(e),
+      reason: msg,
       fetched: false,
     };
   }

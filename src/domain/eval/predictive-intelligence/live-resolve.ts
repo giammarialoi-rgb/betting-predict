@@ -32,6 +32,7 @@ const COMPETITION_TO_DIVISION: Record<string, PiDivision> = {
  */
 const LIVE_NAME_TO_ID: Record<string, string> = {
   "nottingham forest": "nottingham-forest",
+  "nottingham forest fc": "nottingham-forest",
   "nottm forest": "nottingham-forest",
   "nott'm forest": "nottingham-forest",
   "aston villa": "aston-villa",

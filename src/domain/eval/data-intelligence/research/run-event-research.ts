@@ -480,40 +480,83 @@ export async function runEventResearchBatch(input: {
       }
     }
 
-    // 4b) Club-Football-Match-Data — cache presence only (no invented fetch)
+    // 4b) Club-Football-Match-Data — bound prior rows only (file presence is not SUCCESS)
     {
-      const hist = (
-        await import("@/domain/eval/data-intelligence/research/historical-provider")
-      ).lookupHistoricalPriors({
+      const { bindClubFootballEvent } = await import(
+        "@/domain/eval/data-intelligence/research/club-football-bind"
+      );
+      const bind = bindClubFootballEvent({
         home: ev.home_or_a,
         away: ev.away_or_b,
-        competition: ev.competition,
         kickoffIso: ev.kickoff_utc ?? nowIso,
-        labBRoot: root,
       });
-      const cfPresent = hist.club_football_file_present;
+      const cfOk = bind.status === "SUCCESS" || bind.status === "PARTIAL";
       appendResearchStatus(
         baseRow({
           event_id: ev.event_id,
           source_id: "club-football-match-data",
-          phase: "UNAVAILABLE",
-          ok: false,
-          fetched: cfPresent,
-          fetched_at: cfPresent ? nowIso : null,
+          phase: postKickoff ? "POST_KICKOFF" : cfOk ? "OK" : "UNAVAILABLE",
+          ok: cfOk && !postKickoff,
+          fetched: bind.file_present,
+          fetched_at: bind.file_present ? nowIso : null,
           available_at: null,
-          reason: hist.reason,
-          raw_ref: cfPresent ? "club-football-match-data" : null,
+          reason: (postKickoff ? `POST_KICKOFF. ${bind.reason}` : bind.reason) + postNote,
+          raw_ref: bind.file_present ? `prior_n=${bind.prior_n}` : null,
           cycle_number: input.cycleNumber,
           at: nowIso,
           url: null,
           adapter_kind: "CACHE_ONLY",
-          parser_status: hist.status,
-          fields_extracted: [],
+          parser_status: postKickoff ? "POST_KICKOFF" : bind.status,
+          fields_extracted: postKickoff ? [] : bind.fields_extracted,
         }),
         root,
       );
-      bump(result.by_source, "club-football-match-data", "fail");
-      result.research_failures += 1;
+      if (cfOk && !postKickoff) {
+        bump(result.by_source, "club-football-match-data", "ok");
+        result.research_fetches += 1;
+        const { appendResearchObservation } = await import(
+          "@/domain/eval/data-intelligence/research/observations-store"
+        );
+        if (bind.home_gf_l5 != null) {
+          appendResearchObservation(
+            {
+              event_id: ev.event_id,
+              feature_key: "home_gf_l5",
+              value: bind.home_gf_l5,
+              source: "club-football-match-data",
+              source_url: null,
+              observed_at: nowIso,
+              available_at: null,
+              extraction_method: "csv_prior_rows",
+              confidence: null,
+              status: "REAL",
+              enters_independent_model: false,
+            },
+            root,
+          );
+        }
+        if (bind.away_gf_l5 != null) {
+          appendResearchObservation(
+            {
+              event_id: ev.event_id,
+              feature_key: "away_gf_l5",
+              value: bind.away_gf_l5,
+              source: "club-football-match-data",
+              source_url: null,
+              observed_at: nowIso,
+              available_at: null,
+              extraction_method: "csv_prior_rows",
+              confidence: null,
+              status: "REAL",
+              enters_independent_model: false,
+            },
+            root,
+          );
+        }
+      } else {
+        bump(result.by_source, "club-football-match-data", "fail");
+        result.research_failures += 1;
+      }
     }
 
     // Odds API — market layer only (explicit: does not enter model)
@@ -558,27 +601,34 @@ export async function runEventResearchBatch(input: {
           sourceId: sid,
           home: ev.home_or_a,
           away: ev.away_or_b,
+          cacheRoot: root,
+          nowIso,
         });
+        const typed = page.fields_extracted.filter(
+          (f) => f !== "page_mentions_both_teams" && f !== "page_mentions_xg" && !f.startsWith("page_mentions_"),
+        );
         const phase =
-          page.status === "BLOCKED"
+          page.status === "BLOCKED" || page.status === "AUTH_REQUIRED"
             ? "BLOCKED"
-            : page.status === "DENIED"
+            : page.status === "DENIED" || page.status === "POLICY_DISABLED"
               ? "DENIED"
-              : page.status === "PARTIAL"
+              : page.status === "SUCCESS"
                 ? "OK"
-                : "UNAVAILABLE";
+                : page.status === "PARTIAL"
+                  ? "OK"
+                  : "UNAVAILABLE";
         appendResearchStatus(
           baseRow({
             event_id: ev.event_id,
             source_id: sid,
             phase,
-            ok: page.status === "PARTIAL",
+            ok: page.status === "SUCCESS",
             fetched: page.fetched,
             fetched_at: page.fetched ? nowIso : null,
             available_at: null,
             observed_at: page.fetched ? nowIso : null,
             reason: page.reason,
-            raw_ref: null,
+            raw_ref: page.content_hash ?? null,
             cycle_number: input.cycleNumber,
             at: nowIso,
             url: page.url || null,
@@ -589,18 +639,38 @@ export async function runEventResearchBatch(input: {
           }),
           root,
         );
-        if (page.status === "DENIED") {
+        if (page.status === "SUCCESS" && typed.length > 0) {
+          const { appendResearchObservation } = await import(
+            "@/domain/eval/data-intelligence/research/observations-store"
+          );
+          for (const field of page.extracted_values ?? []) {
+            if (typed.includes(field.key)) {
+              appendResearchObservation(
+                {
+                  event_id: ev.event_id,
+                  feature_key: `page_${field.key}`,
+                  value: field.value,
+                  source: sid,
+                  source_url: page.url || null,
+                  observed_at: nowIso,
+                  available_at: null,
+                  extraction_method: "html_extract",
+                  confidence: null,
+                  status: "CONTEXT",
+                  enters_independent_model: false,
+                  content_hash: page.content_hash ?? null,
+                },
+                root,
+              );
+            }
+          }
+        }
+        if (page.status === "DENIED" || page.status === "POLICY_DISABLED") {
           bump(result.by_source, sid, "denied");
           result.research_denied += 1;
-        } else if (
-          page.status === "PARTIAL" &&
-          page.fields_extracted.some((f) => f !== "page_mentions_both_teams" && f !== "page_mentions_xg")
-        ) {
+        } else if (page.status === "SUCCESS" && typed.length > 0) {
           bump(result.by_source, sid, "ok");
           result.research_fetches += 1;
-        } else if (page.status === "PARTIAL") {
-          bump(result.by_source, sid, "fail");
-          result.research_failures += 1;
         } else {
           bump(result.by_source, sid, "fail");
           result.research_failures += 1;

@@ -18,6 +18,9 @@ import { reconcileResearchRows, type FieldReconciliation } from "@/domain/eval/d
 import { RESEARCH_PLAN_TOPICS } from "@/domain/eval/data-intelligence/research/research-plan";
 import { predictPoissonIndependentDetailed } from "@/domain/eval/predictive-intelligence/models/poisson-independent";
 import { hasIndependentModel } from "@/domain/eval/permanent-044/prediction-precedence";
+import { computeDataQualityScore, type DataQualityResult } from "@/domain/eval/data-intelligence/research/data-quality";
+import { detectConflicts, type FeatureConflict } from "@/domain/eval/data-intelligence/research/conflict-engine";
+import { loadResearchObservationsForEvent } from "@/domain/eval/data-intelligence/research/observations-store";
 
 export type UiFeatureStatus =
   | "ELIGIBLE"
@@ -121,6 +124,8 @@ export type AnalysisDossier = {
   poisson?: { lambda_home: number; lambda_away: number } | null;
   reconciliation?: FieldReconciliation[];
   research_plan?: { topics: string[] };
+  data_quality?: DataQualityResult;
+  conflicts?: FeatureConflict[];
   real_money: false;
 };
 
@@ -539,6 +544,27 @@ export function buildAnalysisDossier(
 
   const reconciliation = reconcileResearchRows(research);
   const research_plan = { topics: RESEARCH_PLAN_TOPICS.map((t) => t.id) };
+  const obs = loadResearchObservationsForEvent(String(event.event_id ?? ""), labB);
+  const conflicts = detectConflicts(
+    obs.map((o) => ({ feature_key: o.feature_key, source: o.source, value: o.value })),
+  );
+  const fq = research_summary.feature_quality;
+  const data_quality = computeDataQualityScore({
+    real_features: fq.REAL,
+    derived_features: fq.DERIVED,
+    historical_prior_features: fq.HISTORICAL_PRIOR,
+    missing_features: fq.MISSING,
+    sources_success: research_summary.sources_successful,
+    sources_partial: research_summary.sources_partial,
+    sources_blocked: research_summary.sources_blocked,
+    independent_sources: new Set(
+      research_summary.source_rows
+        .filter((r) => r.human_status === "SUCCESS" || r.human_status === "PARTIAL")
+        .map((r) => r.source_id),
+    ).size,
+    conflicts: conflicts.length,
+    temporal_exclusions: research_summary.source_rows.filter((r) => r.human_status === "POST_KICKOFF").length,
+  });
 
   return {
     ...base,
@@ -548,6 +574,8 @@ export function buildAnalysisDossier(
     poisson,
     reconciliation,
     research_plan,
+    data_quality,
+    conflicts,
   };
 }
 
@@ -571,6 +599,8 @@ export function compactDossierForMirror(d: AnalysisDossier): Record<string, unkn
     poisson: d.poisson ?? null,
     reconciliation: d.reconciliation ?? [],
     research_plan: d.research_plan ?? null,
+    data_quality: d.data_quality ?? null,
+    conflicts: d.conflicts ?? [],
     real_money: false,
   };
 }

@@ -10,12 +10,14 @@ export type HumanSourceStatus =
   | "NO_EVENT"
   | "HTTP_ERROR"
   | "BLOCKED"
+  | "AUTH_REQUIRED"
   | "MISSING_ADAPTER"
   | "DISABLED_BY_POLICY"
   | "STALE"
   | "POST_KICKOFF"
   | "PARSE_ERROR"
-  | "RATE_LIMITED";
+  | "RATE_LIMITED"
+  | "DYNAMIC_CONTENT";
 
 export type ResearchLike = {
   source_id: string;
@@ -44,14 +46,31 @@ export function classifyHumanSourceStatus(row: ResearchLike): HumanSourceStatus 
   if (phase === "DENIED" || adapter === "POLICY_DENIED" || reason.includes("DISABLED_BY_POLICY")) {
     return "DISABLED_BY_POLICY";
   }
-  if (http === 429 || reason.includes("429") || reason.includes("RATE_LIMIT")) return "RATE_LIMITED";
-  if (http === 403 || phase === "BLOCKED" || reason.includes("HTTP_403")) return "BLOCKED";
-  if (parser === "NO_EVENT" || reason.includes("DOES NOT CONTAIN BOTH TEAM")) return "NO_EVENT";
+  if (http === 429 || reason.includes("429") || reason.includes("RATE_LIMIT") || parser === "RATE_LIMITED") {
+    return "RATE_LIMITED";
+  }
+  if (parser === "AUTH_REQUIRED" || http === 401) return "AUTH_REQUIRED";
+  if (http === 403 || phase === "BLOCKED" || reason.includes("HTTP_403") || parser === "BLOCKED") {
+    return "BLOCKED";
+  }
+  if (
+    parser === "NO_EVENT" ||
+    parser === "WRONG_EVENT" ||
+    parser === "AMBIGUOUS_EVENT" ||
+    reason.includes("DOES NOT CONTAIN BOTH TEAM")
+  ) {
+    return "NO_EVENT";
+  }
+  if (parser === "DYNAMIC_CONTENT_UNAVAILABLE") return "DYNAMIC_CONTENT";
+  if (parser === "TIMEOUT" || parser === "NETWORK_ERROR") return "HTTP_ERROR";
   if (parser === "ERROR" || parser === "PARSE_ERROR" || parser === "INVALID") return "PARSE_ERROR";
   if (http != null && http >= 400) return "HTTP_ERROR";
   if (phase === "UNAVAILABLE" && !row.fetched) return "NO_DATA";
+  const typed = fields.filter((f) => !String(f).startsWith("page_mentions"));
   if (adapter === "TEST_PROBE" || reason.includes("SITE_PROBE")) {
-    return fields.length > 0 ? "PARTIAL" : "NO_DATA";
+    if (parser === "SUCCESS" && typed.length > 0) return "SUCCESS";
+    if (fields.length > 0 || parser === "PARTIAL") return "PARTIAL";
+    return "NO_DATA";
   }
   if (row.ok === true && row.fetched === true && fields.length > 0) {
     if (parser === "CACHE_PRESENT" || parser === "MARKET_LAYER" || parser === "OK" || parser === "CACHE_ONLY") {
@@ -93,6 +112,10 @@ export function humanSourceStatusLabelIt(s: HumanSourceStatus): string {
       return "Risposta non interpretabile";
     case "RATE_LIMITED":
       return "Limite di richieste";
+    case "AUTH_REQUIRED":
+      return "Autenticazione richiesta";
+    case "DYNAMIC_CONTENT":
+      return "Contenuto dinamico non estratto";
   }
 }
 
@@ -166,6 +189,12 @@ export function sourceFailureReasonIt(row: ResearchLike): string {
   }
   if (status === "PARTIAL") {
     return `${sourceTitleIt(row.source_id)} ha restituito dati incompleti.`;
+  }
+  if (status === "AUTH_REQUIRED") {
+    return `${sourceTitleIt(row.source_id)} richiede autenticazione. Nessun accesso non autorizzato.`;
+  }
+  if (status === "DYNAMIC_CONTENT") {
+    return `${sourceTitleIt(row.source_id)} ha restituito una pagina dinamica senza dati estraibili.`;
   }
   return String(row.reason ?? "Nessun dettaglio aggiuntivo.");
 }

@@ -15,6 +15,9 @@ const CONTEXT_ONLY_SOURCES = new Set([
   "understat",
   "uefa",
   "sofascore",
+  "directa",
+  "flashscore",
+  "soccerway",
   "the-odds-api",
 ]);
 

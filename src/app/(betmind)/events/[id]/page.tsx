@@ -142,6 +142,8 @@ type Detail = {
         fetched: boolean;
         http_status: number | null;
         fetched_at: string | null;
+        fields_extracted?: string[];
+        sought_it?: string;
         market_layer: boolean;
         reason_it: string;
         public_url: string | null;
@@ -182,7 +184,10 @@ type Detail = {
       poisson: string | null;
       insufficient: string | null;
       category_checks: Array<{ label: string; found: boolean; note: string }>;
+      analyzed_topics?: Array<{ id: string; label_it: string; light: string; note_it: string }>;
     } | null;
+    data_quality?: { data_quality_score: number; note_it: string } | null;
+    conflicts?: Array<{ field: string; note_it: string; used_source: string | null }>;
     team_identity?: {
       home: {
         display_name: string;
@@ -389,6 +394,19 @@ export default function EventDetailPage() {
             </Card>
           )}
 
+          {dossier?.conflicts && dossier.conflicts.length > 0 && (
+            <Card title="Conflitti tra fonti">
+              <ul className="space-y-2 text-sm">
+                {dossier.conflicts.map((c) => (
+                  <li key={c.field}>
+                    <span className="font-medium">{c.field}</span>
+                    <p className="bm-muted">{c.note_it}</p>
+                  </li>
+                ))}
+              </ul>
+            </Card>
+          )}
+
           {dossier?.reconciliation && dossier.reconciliation.length > 0 && (
             <Card title="Riconciliazione tra fonti">
               <ul className="space-y-2 text-sm">
@@ -420,13 +438,28 @@ export default function EventDetailPage() {
           {hx && (
             <Card title="Cosa ha analizzato BetMind">
               <p className="mb-3 text-sm leading-relaxed">{hx.analyzed}</p>
+              {dossier?.data_quality ? (
+                <p className="mb-3 text-xs bm-muted">
+                  Qualita dati {Math.round(dossier.data_quality.data_quality_score * 100)}% —{" "}
+                  {dossier.data_quality.note_it}
+                </p>
+              ) : null}
               <ul className="space-y-1 text-sm">
-                {hx.category_checks.map((c) => (
-                  <li key={c.label}>
-                    {c.found ? "✓" : "✕"} {c.label}
-                    {!c.found ? <span className="bm-muted"> — {c.note}</span> : null}
-                  </li>
-                ))}
+                {(hx.analyzed_topics ?? hx.category_checks.map((c) => ({
+                  id: c.label,
+                  label_it: c.label,
+                  light: c.found ? "USED" : "MISSING",
+                  note_it: c.note,
+                }))).map((c) => {
+                  const glyph =
+                    c.light === "USED" ? "🟢" : c.light === "PARTIAL" ? "🟡" : c.light === "TEMPORAL" ? "🔴" : "⚪";
+                  return (
+                    <li key={c.id}>
+                      {glyph} {c.label_it}
+                      <span className="bm-muted"> — {c.note_it}</span>
+                    </li>
+                  );
+                })}
               </ul>
             </Card>
           )}
@@ -462,15 +495,16 @@ export default function EventDetailPage() {
           {rs && (
             <Card title="Fonti consultate">
               <p className="mb-3 text-sm leading-relaxed">{hx?.sources_summary}</p>
-              <ul className="space-y-2 text-sm">
+              <ul className="space-y-3 text-sm">
                 {rs.source_rows.map((r) => (
-                  <li key={r.source_id} className="flex flex-wrap items-center justify-between gap-2">
-                    <span className="font-medium">{r.title}</span>
-                    <span className="text-xs bm-muted">
-                      {r.human_status === "SUCCESS"
-                        ? "dati ottenuti"
-                        : r.human_status === "PARTIAL"
-                          ? "dati parziali (probe)"
+                  <li key={r.source_id}>
+                    <div className="flex flex-wrap items-center justify-between gap-2">
+                      <span className="font-medium">{r.title}</span>
+                      <span className="text-xs bm-muted">
+                        {r.human_status === "SUCCESS"
+                          ? "dati ottenuti"
+                          : r.human_status === "PARTIAL"
+                            ? "dati parziali"
                         : r.human_status === "BLOCKED"
                           ? r.http_status === 403
                             ? "accesso negato (403)"
@@ -488,7 +522,15 @@ export default function EventDetailPage() {
                                 : r.human_status === "HTTP_ERROR"
                                   ? `errore HTTP ${r.http_status ?? ""}`
                                   : r.human_status.toLowerCase()}
-                    </span>
+                      </span>
+                    </div>
+                    <p className="text-xs bm-muted">
+                      Cercava: {r.sought_it ?? "dati evento"}. Trovato:{" "}
+                      {(r.fields_extracted ?? []).length
+                        ? r.fields_extracted!.join(", ")
+                        : "nessun campo evento-specifico"}
+                      {r.fetched_at ? ` · ${fmtWhen(r.fetched_at)}` : ""}
+                    </p>
                   </li>
                 ))}
               </ul>

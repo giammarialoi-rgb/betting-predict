@@ -1,0 +1,2668 @@
+{
+  "at": "2026-09-10T15:02:35.345Z",
+  "research": {
+    "events_touched": 10,
+    "research_fetches": 16,
+    "research_failures": 94,
+    "research_denied": 10,
+    "missing_adapters": 190,
+    "by_source": {
+      "api-sports": {
+        "ok": 0,
+        "fail": 10,
+        "denied": 0,
+        "missing": 0
+      },
+      "open-meteo": {
+        "ok": 0,
+        "fail": 10,
+        "denied": 0,
+        "missing": 0
+      },
+      "clubelo": {
+        "ok": 0,
+        "fail": 10,
+        "denied": 0,
+        "missing": 0
+      },
+      "football-data-co-uk": {
+        "ok": 6,
+        "fail": 4,
+        "denied": 0,
+        "missing": 0
+      },
+      "club-football-match-data": {
+        "ok": 10,
+        "fail": 0,
+        "denied": 0,
+        "missing": 0
+      },
+      "the-odds-api": {
+        "ok": 10,
+        "fail": 0,
+        "denied": 0,
+        "missing": 0
+      },
+      "fbref": {
+        "ok": 0,
+        "fail": 10,
+        "denied": 0,
+        "missing": 0
+      },
+      "understat": {
+        "ok": 0,
+        "fail": 0,
+        "denied": 10,
+        "missing": 0
+      },
+      "uefa": {
+        "ok": 0,
+        "fail": 10,
+        "denied": 0,
+        "missing": 0
+      },
+      "sofascore": {
+        "ok": 0,
+        "fail": 10,
+        "denied": 0,
+        "missing": 0
+      },
+      "directa": {
+        "ok": 0,
+        "fail": 10,
+        "denied": 0,
+        "missing": 0
+      },
+      "flashscore": {
+        "ok": 0,
+        "fail": 10,
+        "denied": 0,
+        "missing": 0
+      },
+      "soccerway": {
+        "ok": 0,
+        "fail": 10,
+        "denied": 0,
+        "missing": 0
+      },
+      "soccervista": {
+        "ok": 0,
+        "fail": 0,
+        "denied": 0,
+        "missing": 10
+      },
+      "soccervital": {
+        "ok": 0,
+        "fail": 0,
+        "denied": 0,
+        "missing": 10
+      },
+      "oddspedia": {
+        "ok": 0,
+        "fail": 0,
+        "denied": 0,
+        "missing": 10
+      },
+      "betshoot": {
+        "ok": 0,
+        "fail": 0,
+        "denied": 0,
+        "missing": 10
+      },
+      "click4soccer": {
+        "ok": 0,
+        "fail": 0,
+        "denied": 0,
+        "missing": 10
+      },
+      "sky-sport": {
+        "ok": 0,
+        "fail": 0,
+        "denied": 0,
+        "missing": 10
+      },
+      "ansa": {
+        "ok": 0,
+        "fail": 0,
+        "denied": 0,
+        "missing": 10
+      },
+      "analysisportiva": {
+        "ok": 0,
+        "fail": 0,
+        "denied": 0,
+        "missing": 10
+      },
+      "sportytrader": {
+        "ok": 0,
+        "fail": 0,
+        "denied": 0,
+        "missing": 10
+      },
+      "ilveggente": {
+        "ok": 0,
+        "fail": 0,
+        "denied": 0,
+        "missing": 10
+      },
+      "opta": {
+        "ok": 0,
+        "fail": 0,
+        "denied": 0,
+        "missing": 10
+      },
+      "soccer-association": {
+        "ok": 0,
+        "fail": 0,
+        "denied": 0,
+        "missing": 10
+      },
+      "cies": {
+        "ok": 0,
+        "fail": 0,
+        "denied": 0,
+        "missing": 10
+      },
+      "whoscored": {
+        "ok": 0,
+        "fail": 0,
+        "denied": 0,
+        "missing": 10
+      },
+      "the-athletic": {
+        "ok": 0,
+        "fail": 0,
+        "denied": 0,
+        "missing": 10
+      },
+      "the-analyst": {
+        "ok": 0,
+        "fail": 0,
+        "denied": 0,
+        "missing": 10
+      },
+      "abseits": {
+        "ok": 0,
+        "fail": 0,
+        "denied": 0,
+        "missing": 10
+      },
+      "tennis-explorer": {
+        "ok": 0,
+        "fail": 0,
+        "denied": 0,
+        "missing": 10
+      },
+      "tennis-abstract": {
+        "ok": 0,
+        "fail": 0,
+        "denied": 0,
+        "missing": 10
+      }
+    },
+    "processed_ids": [
+      "b54ded61f9dc94423dfcb089",
+      "aa61ed76290f6bad175de6c1",
+      "6ad3005597157baf9d6cee11",
+      "7339035cbce8739a356589b4",
+      "95479bab3a9bf2e349a7825d",
+      "b125036643aab594cfc12125",
+      "b394c96ef1080986b753eefa",
+      "8049c580cd743abbe1dfe44b",
+      "ac1473cbec4e96b4370f8d8e",
+      "db97f3246dd3292ab0eff299"
+    ],
+    "budget": 10
+  },
+  "events": [
+    {
+      "event_id": "b54ded61f9dc94423dfcb089",
+      "home": "Aston Villa",
+      "away": "Nottingham Forest",
+      "competition": "soccer_epl",
+      "kickoff_utc": "2026-09-12T14:00:00Z",
+      "sources": [
+        {
+          "source_id": "tennis-abstract",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "tennis-explorer",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "abseits",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "the-analyst",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "the-athletic",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "whoscored",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "cies",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "soccer-association",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "opta",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "ilveggente",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "sportytrader",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "analysisportiva",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "ansa",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "sky-sport",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "click4soccer",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "betshoot",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "oddspedia",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "soccervital",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "soccervista",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "soccerway",
+          "parser_status": "HTTP_ERROR",
+          "ok": false,
+          "http_status": 404,
+          "fields": []
+        },
+        {
+          "source_id": "flashscore",
+          "parser_status": "HTTP_ERROR",
+          "ok": false,
+          "http_status": 404,
+          "fields": []
+        },
+        {
+          "source_id": "directa",
+          "parser_status": "HTTP_ERROR",
+          "ok": false,
+          "http_status": 404,
+          "fields": []
+        },
+        {
+          "source_id": "sofascore",
+          "parser_status": "BLOCKED",
+          "ok": false,
+          "http_status": 403,
+          "fields": []
+        },
+        {
+          "source_id": "uefa",
+          "parser_status": "AMBIGUOUS_EVENT",
+          "ok": false,
+          "http_status": 200,
+          "fields": []
+        },
+        {
+          "source_id": "understat",
+          "parser_status": "DENIED",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "fbref",
+          "parser_status": "NO_EVENT",
+          "ok": false,
+          "http_status": 200,
+          "fields": []
+        },
+        {
+          "source_id": "the-odds-api",
+          "parser_status": "MARKET_LAYER",
+          "ok": false,
+          "http_status": null,
+          "fields": [
+            "probability_market",
+            "odds"
+          ]
+        },
+        {
+          "source_id": "club-football-match-data",
+          "parser_status": "PARTIAL",
+          "ok": true,
+          "http_status": null,
+          "fields": [
+            "home_gf_l5"
+          ]
+        },
+        {
+          "source_id": "football-data-co-uk",
+          "parser_status": "OK",
+          "ok": true,
+          "http_status": null,
+          "fields": [
+            "form_priors",
+            "form_l3",
+            "form_l5",
+            "form_l10"
+          ]
+        },
+        {
+          "source_id": "clubelo",
+          "parser_status": "MISSING_FILE",
+          "ok": false,
+          "http_status": 502,
+          "fields": []
+        },
+        {
+          "source_id": "open-meteo",
+          "parser_status": "NO_COORDS_OR_EMPTY",
+          "ok": false,
+          "http_status": 200,
+          "fields": [
+            "weather"
+          ]
+        },
+        {
+          "source_id": "api-sports",
+          "parser_status": "SKIPPED",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        }
+      ],
+      "observations": 1
+    },
+    {
+      "event_id": "aa61ed76290f6bad175de6c1",
+      "home": "Liverpool",
+      "away": "Fulham",
+      "competition": "soccer_epl",
+      "kickoff_utc": "2026-09-12T14:00:00Z",
+      "sources": [
+        {
+          "source_id": "tennis-abstract",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "tennis-explorer",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "abseits",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "the-analyst",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "the-athletic",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "whoscored",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "cies",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "soccer-association",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "opta",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "ilveggente",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "sportytrader",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "analysisportiva",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "ansa",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "sky-sport",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "click4soccer",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "betshoot",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "oddspedia",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "soccervital",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "soccervista",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "soccerway",
+          "parser_status": "HTTP_ERROR",
+          "ok": false,
+          "http_status": 404,
+          "fields": []
+        },
+        {
+          "source_id": "flashscore",
+          "parser_status": "HTTP_ERROR",
+          "ok": false,
+          "http_status": 404,
+          "fields": []
+        },
+        {
+          "source_id": "directa",
+          "parser_status": "HTTP_ERROR",
+          "ok": false,
+          "http_status": 404,
+          "fields": []
+        },
+        {
+          "source_id": "sofascore",
+          "parser_status": "BLOCKED",
+          "ok": false,
+          "http_status": 403,
+          "fields": []
+        },
+        {
+          "source_id": "uefa",
+          "parser_status": "AMBIGUOUS_EVENT",
+          "ok": false,
+          "http_status": 200,
+          "fields": []
+        },
+        {
+          "source_id": "understat",
+          "parser_status": "DENIED",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "fbref",
+          "parser_status": "BLOCKED",
+          "ok": false,
+          "http_status": 403,
+          "fields": []
+        },
+        {
+          "source_id": "the-odds-api",
+          "parser_status": "MARKET_LAYER",
+          "ok": false,
+          "http_status": null,
+          "fields": [
+            "probability_market",
+            "odds"
+          ]
+        },
+        {
+          "source_id": "club-football-match-data",
+          "parser_status": "SUCCESS",
+          "ok": true,
+          "http_status": null,
+          "fields": [
+            "home_gf_l5",
+            "away_gf_l5"
+          ]
+        },
+        {
+          "source_id": "football-data-co-uk",
+          "parser_status": "OK",
+          "ok": true,
+          "http_status": null,
+          "fields": [
+            "form_priors",
+            "form_l3",
+            "form_l5",
+            "form_l10"
+          ]
+        },
+        {
+          "source_id": "clubelo",
+          "parser_status": "MISSING_FILE",
+          "ok": false,
+          "http_status": 502,
+          "fields": []
+        },
+        {
+          "source_id": "open-meteo",
+          "parser_status": "OK",
+          "ok": false,
+          "http_status": 200,
+          "fields": [
+            "weather"
+          ]
+        },
+        {
+          "source_id": "api-sports",
+          "parser_status": "SKIPPED",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        }
+      ],
+      "observations": 2
+    },
+    {
+      "event_id": "6ad3005597157baf9d6cee11",
+      "home": "Tottenham Hotspur",
+      "away": "Everton",
+      "competition": "soccer_epl",
+      "kickoff_utc": "2026-09-12T16:30:00Z",
+      "sources": [
+        {
+          "source_id": "tennis-abstract",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "tennis-explorer",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "abseits",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "the-analyst",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "the-athletic",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "whoscored",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "cies",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "soccer-association",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "opta",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "ilveggente",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "sportytrader",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "analysisportiva",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "ansa",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "sky-sport",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "click4soccer",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "betshoot",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "oddspedia",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "soccervital",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "soccervista",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "soccerway",
+          "parser_status": "HTTP_ERROR",
+          "ok": false,
+          "http_status": 404,
+          "fields": []
+        },
+        {
+          "source_id": "flashscore",
+          "parser_status": "HTTP_ERROR",
+          "ok": false,
+          "http_status": 404,
+          "fields": []
+        },
+        {
+          "source_id": "directa",
+          "parser_status": "HTTP_ERROR",
+          "ok": false,
+          "http_status": 404,
+          "fields": []
+        },
+        {
+          "source_id": "sofascore",
+          "parser_status": "BLOCKED",
+          "ok": false,
+          "http_status": 403,
+          "fields": []
+        },
+        {
+          "source_id": "uefa",
+          "parser_status": "AMBIGUOUS_EVENT",
+          "ok": false,
+          "http_status": 200,
+          "fields": []
+        },
+        {
+          "source_id": "understat",
+          "parser_status": "DENIED",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "fbref",
+          "parser_status": "BLOCKED",
+          "ok": false,
+          "http_status": 403,
+          "fields": []
+        },
+        {
+          "source_id": "the-odds-api",
+          "parser_status": "MARKET_LAYER",
+          "ok": false,
+          "http_status": null,
+          "fields": [
+            "probability_market",
+            "odds"
+          ]
+        },
+        {
+          "source_id": "club-football-match-data",
+          "parser_status": "SUCCESS",
+          "ok": true,
+          "http_status": null,
+          "fields": [
+            "home_gf_l5",
+            "away_gf_l5"
+          ]
+        },
+        {
+          "source_id": "football-data-co-uk",
+          "parser_status": "OK",
+          "ok": true,
+          "http_status": null,
+          "fields": [
+            "form_priors",
+            "form_l3",
+            "form_l5",
+            "form_l10"
+          ]
+        },
+        {
+          "source_id": "clubelo",
+          "parser_status": "MISSING_FILE",
+          "ok": false,
+          "http_status": 502,
+          "fields": []
+        },
+        {
+          "source_id": "open-meteo",
+          "parser_status": "OK",
+          "ok": false,
+          "http_status": 200,
+          "fields": [
+            "weather"
+          ]
+        },
+        {
+          "source_id": "api-sports",
+          "parser_status": "SKIPPED",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        }
+      ],
+      "observations": 2
+    },
+    {
+      "event_id": "7339035cbce8739a356589b4",
+      "home": "Sunderland",
+      "away": "Arsenal",
+      "competition": "soccer_epl",
+      "kickoff_utc": "2026-09-12T19:00:00Z",
+      "sources": [
+        {
+          "source_id": "tennis-abstract",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "tennis-explorer",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "abseits",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "the-analyst",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "the-athletic",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "whoscored",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "cies",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "soccer-association",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "opta",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "ilveggente",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "sportytrader",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "analysisportiva",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "ansa",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "sky-sport",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "click4soccer",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "betshoot",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "oddspedia",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "soccervital",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "soccervista",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "soccerway",
+          "parser_status": "HTTP_ERROR",
+          "ok": false,
+          "http_status": 404,
+          "fields": []
+        },
+        {
+          "source_id": "flashscore",
+          "parser_status": "HTTP_ERROR",
+          "ok": false,
+          "http_status": 404,
+          "fields": []
+        },
+        {
+          "source_id": "directa",
+          "parser_status": "HTTP_ERROR",
+          "ok": false,
+          "http_status": 404,
+          "fields": []
+        },
+        {
+          "source_id": "sofascore",
+          "parser_status": "BLOCKED",
+          "ok": false,
+          "http_status": 403,
+          "fields": []
+        },
+        {
+          "source_id": "uefa",
+          "parser_status": "AMBIGUOUS_EVENT",
+          "ok": false,
+          "http_status": 200,
+          "fields": []
+        },
+        {
+          "source_id": "understat",
+          "parser_status": "DENIED",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "fbref",
+          "parser_status": "BLOCKED",
+          "ok": false,
+          "http_status": 403,
+          "fields": []
+        },
+        {
+          "source_id": "the-odds-api",
+          "parser_status": "MARKET_LAYER",
+          "ok": false,
+          "http_status": null,
+          "fields": [
+            "probability_market",
+            "odds"
+          ]
+        },
+        {
+          "source_id": "club-football-match-data",
+          "parser_status": "SUCCESS",
+          "ok": true,
+          "http_status": null,
+          "fields": [
+            "home_gf_l5",
+            "away_gf_l5"
+          ]
+        },
+        {
+          "source_id": "football-data-co-uk",
+          "parser_status": "NO_EVENT",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "clubelo",
+          "parser_status": "MISSING_FILE",
+          "ok": false,
+          "http_status": 502,
+          "fields": []
+        },
+        {
+          "source_id": "open-meteo",
+          "parser_status": "NO_COORDS_OR_EMPTY",
+          "ok": false,
+          "http_status": 200,
+          "fields": [
+            "weather"
+          ]
+        },
+        {
+          "source_id": "api-sports",
+          "parser_status": "SKIPPED",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        }
+      ],
+      "observations": 2
+    },
+    {
+      "event_id": "95479bab3a9bf2e349a7825d",
+      "home": "Bournemouth",
+      "away": "Brentford",
+      "competition": "soccer_epl",
+      "kickoff_utc": "2026-09-12T14:00:00Z",
+      "sources": [
+        {
+          "source_id": "tennis-abstract",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "tennis-explorer",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "abseits",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "the-analyst",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "the-athletic",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "whoscored",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "cies",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "soccer-association",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "opta",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "ilveggente",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "sportytrader",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "analysisportiva",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "ansa",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "sky-sport",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "click4soccer",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "betshoot",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "oddspedia",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "soccervital",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "soccervista",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "soccerway",
+          "parser_status": "HTTP_ERROR",
+          "ok": false,
+          "http_status": 404,
+          "fields": []
+        },
+        {
+          "source_id": "flashscore",
+          "parser_status": "HTTP_ERROR",
+          "ok": false,
+          "http_status": 404,
+          "fields": []
+        },
+        {
+          "source_id": "directa",
+          "parser_status": "HTTP_ERROR",
+          "ok": false,
+          "http_status": 404,
+          "fields": []
+        },
+        {
+          "source_id": "sofascore",
+          "parser_status": "BLOCKED",
+          "ok": false,
+          "http_status": 403,
+          "fields": []
+        },
+        {
+          "source_id": "uefa",
+          "parser_status": "NO_EVENT",
+          "ok": false,
+          "http_status": 200,
+          "fields": []
+        },
+        {
+          "source_id": "understat",
+          "parser_status": "DENIED",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "fbref",
+          "parser_status": "BLOCKED",
+          "ok": false,
+          "http_status": 403,
+          "fields": []
+        },
+        {
+          "source_id": "the-odds-api",
+          "parser_status": "MARKET_LAYER",
+          "ok": false,
+          "http_status": null,
+          "fields": [
+            "probability_market",
+            "odds"
+          ]
+        },
+        {
+          "source_id": "club-football-match-data",
+          "parser_status": "SUCCESS",
+          "ok": true,
+          "http_status": null,
+          "fields": [
+            "home_gf_l5",
+            "away_gf_l5"
+          ]
+        },
+        {
+          "source_id": "football-data-co-uk",
+          "parser_status": "OK",
+          "ok": true,
+          "http_status": null,
+          "fields": [
+            "form_priors",
+            "form_l3",
+            "form_l5",
+            "form_l10"
+          ]
+        },
+        {
+          "source_id": "clubelo",
+          "parser_status": "MISSING_FILE",
+          "ok": false,
+          "http_status": 502,
+          "fields": []
+        },
+        {
+          "source_id": "open-meteo",
+          "parser_status": "NO_COORDS_OR_EMPTY",
+          "ok": false,
+          "http_status": 200,
+          "fields": [
+            "weather"
+          ]
+        },
+        {
+          "source_id": "api-sports",
+          "parser_status": "SKIPPED",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        }
+      ],
+      "observations": 2
+    },
+    {
+      "event_id": "b125036643aab594cfc12125",
+      "home": "Chelsea",
+      "away": "Hull City",
+      "competition": "soccer_epl",
+      "kickoff_utc": "2026-09-12T14:00:00Z",
+      "sources": [
+        {
+          "source_id": "tennis-abstract",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "tennis-explorer",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "abseits",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "the-analyst",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "the-athletic",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "whoscored",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "cies",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "soccer-association",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "opta",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "ilveggente",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "sportytrader",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "analysisportiva",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "ansa",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "sky-sport",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "click4soccer",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "betshoot",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "oddspedia",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "soccervital",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "soccervista",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "soccerway",
+          "parser_status": "HTTP_ERROR",
+          "ok": false,
+          "http_status": 404,
+          "fields": []
+        },
+        {
+          "source_id": "flashscore",
+          "parser_status": "HTTP_ERROR",
+          "ok": false,
+          "http_status": 404,
+          "fields": []
+        },
+        {
+          "source_id": "directa",
+          "parser_status": "HTTP_ERROR",
+          "ok": false,
+          "http_status": 404,
+          "fields": []
+        },
+        {
+          "source_id": "sofascore",
+          "parser_status": "BLOCKED",
+          "ok": false,
+          "http_status": 403,
+          "fields": []
+        },
+        {
+          "source_id": "uefa",
+          "parser_status": "AMBIGUOUS_EVENT",
+          "ok": false,
+          "http_status": 200,
+          "fields": []
+        },
+        {
+          "source_id": "understat",
+          "parser_status": "DENIED",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "fbref",
+          "parser_status": "BLOCKED",
+          "ok": false,
+          "http_status": 403,
+          "fields": []
+        },
+        {
+          "source_id": "the-odds-api",
+          "parser_status": "MARKET_LAYER",
+          "ok": false,
+          "http_status": null,
+          "fields": [
+            "probability_market",
+            "odds"
+          ]
+        },
+        {
+          "source_id": "club-football-match-data",
+          "parser_status": "SUCCESS",
+          "ok": true,
+          "http_status": null,
+          "fields": [
+            "home_gf_l5",
+            "away_gf_l5"
+          ]
+        },
+        {
+          "source_id": "football-data-co-uk",
+          "parser_status": "NO_EVENT",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "clubelo",
+          "parser_status": "MISSING_FILE",
+          "ok": false,
+          "http_status": 502,
+          "fields": []
+        },
+        {
+          "source_id": "open-meteo",
+          "parser_status": "OK",
+          "ok": false,
+          "http_status": 200,
+          "fields": [
+            "weather"
+          ]
+        },
+        {
+          "source_id": "api-sports",
+          "parser_status": "SKIPPED",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        }
+      ],
+      "observations": 2
+    },
+    {
+      "event_id": "b394c96ef1080986b753eefa",
+      "home": "Crystal Palace",
+      "away": "Ipswich Town",
+      "competition": "soccer_epl",
+      "kickoff_utc": "2026-09-12T14:00:00Z",
+      "sources": [
+        {
+          "source_id": "tennis-abstract",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "tennis-explorer",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "abseits",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "the-analyst",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "the-athletic",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "whoscored",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "cies",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "soccer-association",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "opta",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "ilveggente",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "sportytrader",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "analysisportiva",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "ansa",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "sky-sport",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "click4soccer",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "betshoot",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "oddspedia",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "soccervital",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "soccervista",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "soccerway",
+          "parser_status": "HTTP_ERROR",
+          "ok": false,
+          "http_status": 404,
+          "fields": []
+        },
+        {
+          "source_id": "flashscore",
+          "parser_status": "HTTP_ERROR",
+          "ok": false,
+          "http_status": 404,
+          "fields": []
+        },
+        {
+          "source_id": "directa",
+          "parser_status": "HTTP_ERROR",
+          "ok": false,
+          "http_status": 404,
+          "fields": []
+        },
+        {
+          "source_id": "sofascore",
+          "parser_status": "BLOCKED",
+          "ok": false,
+          "http_status": 403,
+          "fields": []
+        },
+        {
+          "source_id": "uefa",
+          "parser_status": "NO_EVENT",
+          "ok": false,
+          "http_status": 200,
+          "fields": []
+        },
+        {
+          "source_id": "understat",
+          "parser_status": "DENIED",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "fbref",
+          "parser_status": "BLOCKED",
+          "ok": false,
+          "http_status": 403,
+          "fields": []
+        },
+        {
+          "source_id": "the-odds-api",
+          "parser_status": "MARKET_LAYER",
+          "ok": false,
+          "http_status": null,
+          "fields": [
+            "probability_market",
+            "odds"
+          ]
+        },
+        {
+          "source_id": "club-football-match-data",
+          "parser_status": "SUCCESS",
+          "ok": true,
+          "http_status": null,
+          "fields": [
+            "home_gf_l5",
+            "away_gf_l5"
+          ]
+        },
+        {
+          "source_id": "football-data-co-uk",
+          "parser_status": "NO_EVENT",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "clubelo",
+          "parser_status": "MISSING_FILE",
+          "ok": false,
+          "http_status": 502,
+          "fields": []
+        },
+        {
+          "source_id": "open-meteo",
+          "parser_status": "NO_COORDS_OR_EMPTY",
+          "ok": false,
+          "http_status": 200,
+          "fields": [
+            "weather"
+          ]
+        },
+        {
+          "source_id": "api-sports",
+          "parser_status": "SKIPPED",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        }
+      ],
+      "observations": 2
+    },
+    {
+      "event_id": "8049c580cd743abbe1dfe44b",
+      "home": "Coventry City",
+      "away": "Brighton and Hove Albion",
+      "competition": "soccer_epl",
+      "kickoff_utc": "2026-09-13T13:00:00Z",
+      "sources": [
+        {
+          "source_id": "tennis-abstract",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "tennis-explorer",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "abseits",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "the-analyst",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "the-athletic",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "whoscored",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "cies",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "soccer-association",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "opta",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "ilveggente",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "sportytrader",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "analysisportiva",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "ansa",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "sky-sport",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "click4soccer",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "betshoot",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "oddspedia",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "soccervital",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "soccervista",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "soccerway",
+          "parser_status": "HTTP_ERROR",
+          "ok": false,
+          "http_status": 404,
+          "fields": []
+        },
+        {
+          "source_id": "flashscore",
+          "parser_status": "HTTP_ERROR",
+          "ok": false,
+          "http_status": 404,
+          "fields": []
+        },
+        {
+          "source_id": "directa",
+          "parser_status": "HTTP_ERROR",
+          "ok": false,
+          "http_status": 404,
+          "fields": []
+        },
+        {
+          "source_id": "sofascore",
+          "parser_status": "BLOCKED",
+          "ok": false,
+          "http_status": 403,
+          "fields": []
+        },
+        {
+          "source_id": "uefa",
+          "parser_status": "NO_EVENT",
+          "ok": false,
+          "http_status": 200,
+          "fields": []
+        },
+        {
+          "source_id": "understat",
+          "parser_status": "DENIED",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "fbref",
+          "parser_status": "BLOCKED",
+          "ok": false,
+          "http_status": 403,
+          "fields": []
+        },
+        {
+          "source_id": "the-odds-api",
+          "parser_status": "MARKET_LAYER",
+          "ok": false,
+          "http_status": null,
+          "fields": [
+            "probability_market",
+            "odds"
+          ]
+        },
+        {
+          "source_id": "club-football-match-data",
+          "parser_status": "SUCCESS",
+          "ok": true,
+          "http_status": null,
+          "fields": [
+            "home_gf_l5",
+            "away_gf_l5"
+          ]
+        },
+        {
+          "source_id": "football-data-co-uk",
+          "parser_status": "NO_EVENT",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "clubelo",
+          "parser_status": "MISSING_FILE",
+          "ok": false,
+          "http_status": 502,
+          "fields": []
+        },
+        {
+          "source_id": "open-meteo",
+          "parser_status": "NO_COORDS_OR_EMPTY",
+          "ok": false,
+          "http_status": 200,
+          "fields": [
+            "weather"
+          ]
+        },
+        {
+          "source_id": "api-sports",
+          "parser_status": "SKIPPED",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        }
+      ],
+      "observations": 2
+    },
+    {
+      "event_id": "ac1473cbec4e96b4370f8d8e",
+      "home": "Manchester United",
+      "away": "Manchester City",
+      "competition": "soccer_epl",
+      "kickoff_utc": "2026-09-13T15:30:00Z",
+      "sources": [
+        {
+          "source_id": "tennis-abstract",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "tennis-explorer",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "abseits",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "the-analyst",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "the-athletic",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "whoscored",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "cies",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "soccer-association",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "opta",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "ilveggente",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "sportytrader",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "analysisportiva",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "ansa",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "sky-sport",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "click4soccer",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "betshoot",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "oddspedia",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "soccervital",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "soccervista",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "soccerway",
+          "parser_status": "HTTP_ERROR",
+          "ok": false,
+          "http_status": 404,
+          "fields": []
+        },
+        {
+          "source_id": "flashscore",
+          "parser_status": "HTTP_ERROR",
+          "ok": false,
+          "http_status": 404,
+          "fields": []
+        },
+        {
+          "source_id": "directa",
+          "parser_status": "HTTP_ERROR",
+          "ok": false,
+          "http_status": 404,
+          "fields": []
+        },
+        {
+          "source_id": "sofascore",
+          "parser_status": "BLOCKED",
+          "ok": false,
+          "http_status": 403,
+          "fields": []
+        },
+        {
+          "source_id": "uefa",
+          "parser_status": "PARTIAL",
+          "ok": false,
+          "http_status": 200,
+          "fields": []
+        },
+        {
+          "source_id": "understat",
+          "parser_status": "DENIED",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "fbref",
+          "parser_status": "BLOCKED",
+          "ok": false,
+          "http_status": 403,
+          "fields": []
+        },
+        {
+          "source_id": "the-odds-api",
+          "parser_status": "MARKET_LAYER",
+          "ok": false,
+          "http_status": null,
+          "fields": [
+            "probability_market",
+            "odds"
+          ]
+        },
+        {
+          "source_id": "club-football-match-data",
+          "parser_status": "SUCCESS",
+          "ok": true,
+          "http_status": null,
+          "fields": [
+            "home_gf_l5",
+            "away_gf_l5"
+          ]
+        },
+        {
+          "source_id": "football-data-co-uk",
+          "parser_status": "OK",
+          "ok": true,
+          "http_status": null,
+          "fields": [
+            "form_priors",
+            "form_l3",
+            "form_l5",
+            "form_l10"
+          ]
+        },
+        {
+          "source_id": "clubelo",
+          "parser_status": "MISSING_FILE",
+          "ok": false,
+          "http_status": 502,
+          "fields": []
+        },
+        {
+          "source_id": "open-meteo",
+          "parser_status": "OK",
+          "ok": false,
+          "http_status": 200,
+          "fields": [
+            "weather"
+          ]
+        },
+        {
+          "source_id": "api-sports",
+          "parser_status": "SKIPPED",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        }
+      ],
+      "observations": 2
+    },
+    {
+      "event_id": "db97f3246dd3292ab0eff299",
+      "home": "Leeds United",
+      "away": "Newcastle United",
+      "competition": "soccer_epl",
+      "kickoff_utc": "2026-09-14T19:00:00Z",
+      "sources": [
+        {
+          "source_id": "tennis-abstract",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "tennis-explorer",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "abseits",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "the-analyst",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "the-athletic",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "whoscored",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "cies",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "soccer-association",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "opta",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "ilveggente",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "sportytrader",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "analysisportiva",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "ansa",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "sky-sport",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "click4soccer",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "betshoot",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "oddspedia",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "soccervital",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "soccervista",
+          "parser_status": "NOT_RUN",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "soccerway",
+          "parser_status": "HTTP_ERROR",
+          "ok": false,
+          "http_status": 404,
+          "fields": []
+        },
+        {
+          "source_id": "flashscore",
+          "parser_status": "HTTP_ERROR",
+          "ok": false,
+          "http_status": 404,
+          "fields": []
+        },
+        {
+          "source_id": "directa",
+          "parser_status": "HTTP_ERROR",
+          "ok": false,
+          "http_status": 404,
+          "fields": []
+        },
+        {
+          "source_id": "sofascore",
+          "parser_status": "BLOCKED",
+          "ok": false,
+          "http_status": 403,
+          "fields": []
+        },
+        {
+          "source_id": "uefa",
+          "parser_status": "NO_EVENT",
+          "ok": false,
+          "http_status": 200,
+          "fields": []
+        },
+        {
+          "source_id": "understat",
+          "parser_status": "DENIED",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        },
+        {
+          "source_id": "fbref",
+          "parser_status": "BLOCKED",
+          "ok": false,
+          "http_status": 403,
+          "fields": []
+        },
+        {
+          "source_id": "the-odds-api",
+          "parser_status": "MARKET_LAYER",
+          "ok": false,
+          "http_status": null,
+          "fields": [
+            "probability_market",
+            "odds"
+          ]
+        },
+        {
+          "source_id": "club-football-match-data",
+          "parser_status": "SUCCESS",
+          "ok": true,
+          "http_status": null,
+          "fields": [
+            "home_gf_l5",
+            "away_gf_l5"
+          ]
+        },
+        {
+          "source_id": "football-data-co-uk",
+          "parser_status": "OK",
+          "ok": true,
+          "http_status": null,
+          "fields": [
+            "form_priors",
+            "form_l3",
+            "form_l5",
+            "form_l10"
+          ]
+        },
+        {
+          "source_id": "clubelo",
+          "parser_status": "MISSING_FILE",
+          "ok": false,
+          "http_status": 502,
+          "fields": []
+        },
+        {
+          "source_id": "open-meteo",
+          "parser_status": "NO_COORDS_OR_EMPTY",
+          "ok": false,
+          "http_status": 200,
+          "fields": [
+            "weather"
+          ]
+        },
+        {
+          "source_id": "api-sports",
+          "parser_status": "SKIPPED",
+          "ok": false,
+          "http_status": null,
+          "fields": []
+        }
+      ],
+      "observations": 2
+    }
+  ]
+}
