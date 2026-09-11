@@ -137,6 +137,25 @@ export default function SourcesPage() {
                     </span>
                   </div>
                   <p>{blurb}</p>
+                  {(s as { http_status?: number }).http_status != null ||
+                  (s as { events_found?: number }).events_found != null ||
+                  (s as { method?: string }).method ? (
+                    <p className="bm-prose-muted">
+                      {(s as { method?: string }).method
+                        ? `Metodo: ${(s as { method?: string }).method}. `
+                        : ""}
+                      {(s as { http_status?: number }).http_status != null
+                        ? `HTTP ${(s as { http_status?: number }).http_status}. `
+                        : ""}
+                      {(s as { events_found?: number }).events_found != null
+                        ? `Yield eventi: ${(s as { events_found?: number }).events_found}. `
+                        : ""}
+                      {Array.isArray((s as { fields_extracted?: string[] }).fields_extracted) &&
+                      (s as { fields_extracted?: string[] }).fields_extracted!.length
+                        ? `Campi: ${(s as { fields_extracted?: string[] }).fields_extracted!.join(", ")}.`
+                        : ""}
+                    </p>
+                  ) : null}
                   <p className="bm-prose-muted">
                     {roleLabelIt(s.role)}. {temporalLabelIt(s.temporal_precision)}.
                     {s.enters_independent_model

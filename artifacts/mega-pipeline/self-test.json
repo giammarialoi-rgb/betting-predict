@@ -1,0 +1,120 @@
+{
+  "at": "2026-09-11T21:33:48.904Z",
+  "overall": "PARTIAL",
+  "checks": [
+    {
+      "id": "DATABASE",
+      "verdict": "PASS",
+      "detail": "Neon ping ok; mega tables ensured",
+      "detail_it": "Neon raggiungibile; tabelle operative mega assicurate."
+    },
+    {
+      "id": "NEON",
+      "verdict": "PASS",
+      "detail": "Neon project reachable",
+      "detail_it": "Progetto Neon raggiungibile."
+    },
+    {
+      "id": "WORKER",
+      "verdict": "PARTIAL",
+      "detail": "Lab B present; events=147 (worker PID not verified in this process)",
+      "detail_it": "Store Lab B presente; eventi=147. PID worker non verificato in questo processo."
+    },
+    {
+      "id": "DISCOVERY",
+      "verdict": "PASS",
+      "detail": "events_in_store=147",
+      "detail_it": "Eventi in store: 147."
+    },
+    {
+      "id": "SCRAPING",
+      "verdict": "PASS",
+      "detail": "Scrape lane permanently enabled; WAF bypass forbidden",
+      "detail_it": "Lane scrape sempre attiva; bypass WAF vietato."
+    },
+    {
+      "id": "SOURCE_REGISTRY",
+      "verdict": "PASS",
+      "detail": "active_fonti=17",
+      "detail_it": "Fonti attive in catalogo: 17."
+    },
+    {
+      "id": "SOURCE_PROBE",
+      "verdict": "PASS",
+      "detail": "ok_or_partial=15; blocked=1; total=17",
+      "detail_it": "Fonti con dati: 15; bloccate: 1; totali probe: 17."
+    },
+    {
+      "id": "EVENT_IDENTITY",
+      "verdict": "PASS",
+      "detail": "canonicalEventId044 + identity-match fail-closed present",
+      "detail_it": "Identita canonica e fail-closed presenti."
+    },
+    {
+      "id": "RESEARCH",
+      "verdict": "PARTIAL",
+      "detail": "Research queue / events present — depth depends on worker cycles",
+      "detail_it": "Coda research / eventi presenti — profondita dipende dai cicli worker."
+    },
+    {
+      "id": "FEATURE_PIPELINE",
+      "verdict": "PARTIAL",
+      "detail": "Feature observations exist in Neon/disk when research runs; not re-validated here",
+      "detail_it": "Pipeline feature presente; non rivalidata in questo self-test."
+    },
+    {
+      "id": "MODEL",
+      "verdict": "PARTIAL",
+      "detail": "predictions=0",
+      "detail_it": "Prediction in store: 0."
+    },
+    {
+      "id": "ODDS_FIREWALL",
+      "verdict": "PASS",
+      "detail": "Market layer separated; odds never enter independent MODEL path by policy",
+      "detail_it": "Layer mercato separato; le quote non entrano nel MODEL indipendente."
+    },
+    {
+      "id": "LIVE",
+      "verdict": "PARTIAL",
+      "detail": "Free live monitor (OpenLigaDB) available; Odds live needs THE_ODDS_API_KEY",
+      "detail_it": "Live gratuito OpenLigaDB disponibile; live Odds API richiede chiave."
+    },
+    {
+      "id": "RESULT_VERIFICATION",
+      "verdict": "PASS",
+      "detail": "settlements=60",
+      "detail_it": "Settlement in store: 60."
+    },
+    {
+      "id": "SETTLEMENT",
+      "verdict": "PASS",
+      "detail": "Free settle + Odds settle paths present",
+      "detail_it": "Percorsi free settle e Odds settle presenti."
+    },
+    {
+      "id": "LEARNING",
+      "verdict": "PARTIAL",
+      "detail": "Learning cases file present when settlements produced autopsies",
+      "detail_it": "File learning-cases presente quando i settlement producono autopsy."
+    },
+    {
+      "id": "MIRROR",
+      "verdict": "PARTIAL",
+      "detail": "Neon mirror tables used when DATABASE_URL set",
+      "detail_it": "Specchio Neon attivo se DATABASE_URL e impostata."
+    },
+    {
+      "id": "VERCEL",
+      "verdict": "PARTIAL",
+      "detail": "UI reads Neon mirror when Lab B FS absent — deploy verification is separate",
+      "detail_it": "UI legge Neon se manca il disco Lab B — verifica deploy separata."
+    },
+    {
+      "id": "SOURCE_RUNTIME_NEON",
+      "verdict": "PASS",
+      "detail": "source_runtime_rows=17",
+      "detail_it": "Righe source runtime su Neon: 17."
+    }
+  ]
+}
