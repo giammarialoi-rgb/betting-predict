@@ -42,6 +42,9 @@ export type PiMatchRow = {
   ay: number | null;
   hr: number | null;
   ar: number | null;
+  /** Post-match xG from Football-Data when the CSV column exists. DATE_ONLY prior. */
+  hxg?: number | null;
+  axg?: number | null;
   /** Pre-match / DATE_ONLY open odds (allowed for market baseline eval only). */
   odds_open: {
     B365: PiOddsTriple;

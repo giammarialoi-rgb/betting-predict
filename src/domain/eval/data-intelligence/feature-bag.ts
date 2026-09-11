@@ -25,6 +25,7 @@ const CONTEXT_ONLY_SOURCES = new Set([
   "gazzetta",
   "ansa",
   "sky-sport",
+  "espn",
 ]);
 
 /** Preferred primary source per feature when conflict. */

@@ -8,7 +8,10 @@ import { buildHumanExplanation } from "@/domain/eval/betmind-runtime/explain/ita
 import { buildResearchSummary } from "@/domain/eval/betmind-runtime/explain/research-summary";
 import { ANALYSIS_RUNTIME_VERSION } from "@/domain/eval/permanent-044/prediction-precedence";
 import { isEligibleForIndependentModel, classifyModelInput } from "@/domain/eval/data-intelligence/research/model-input-policy";
+import { parseEspnScoreboard, pickEspnEventForMatch } from "@/domain/eval/data-intelligence/research/espn-scoreboard";
+import { espnEventToPermanent } from "@/domain/eval/factory-049/discover-espn";
 import { sportsDbEventToPermanent } from "@/domain/eval/factory-049/discover-thesportsdb";
+import { normalizeFootballDataCsv } from "@/domain/eval/predictive-intelligence/dataset/normalize";
 
 describe("Phase 8 acquisition", () => {
   it("runtime is phase-8", () => {
@@ -142,6 +145,68 @@ describe("Phase 8 acquisition", () => {
       isEligibleForIndependentModel(classifyModelInput({ kind: "MARKET", source: "the-odds-api" })),
       false,
     );
+    assert.equal(
+      isEligibleForIndependentModel(classifyModelInput({ kind: "EVENT_RESEARCH", source: "espn" })),
+      false,
+    );
+  });
+
+  it("ESPN scoreboard parse keeps real ids and rejects the wrong pair", () => {
+    const json = {
+      leagues: [{ name: "English Premier League" }],
+      events: [
+        {
+          id: "401879285",
+          date: "2026-09-12T14:00Z",
+          status: { type: { state: "pre", completed: false } },
+          competitions: [
+            {
+              venue: { fullName: "Vitality Stadium", address: { city: "Bournemouth" } },
+              competitors: [
+                {
+                  homeAway: "home",
+                  form: "WDDLD",
+                  team: { id: "349", displayName: "AFC Bournemouth" },
+                  records: [{ type: "total", summary: "0-2-1" }],
+                },
+                {
+                  homeAway: "away",
+                  form: "LWDLW",
+                  team: { id: "337", displayName: "Brentford" },
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    };
+    const events = parseEspnScoreboard({
+      json,
+      slug: "eng.1",
+      competition: "English Premier League",
+      country: "England",
+    });
+    assert.equal(events.length, 1);
+    assert.equal(events[0]!.espn_event_id, "401879285");
+    assert.equal(events[0]!.home, "AFC Bournemouth");
+    assert.equal(pickEspnEventForMatch(events, "Sunderland", "Arsenal", "2026-09-12T19:00:00.000Z"), null);
+    const hit = pickEspnEventForMatch(events, "Bournemouth", "Brentford", "2026-09-12T14:00:00.000Z");
+    assert.ok(hit);
+    const pev = espnEventToPermanent(hit!, "2026-09-11T00:00:00.000Z");
+    assert.equal(pev.source, "espn");
+    assert.equal(pev.source_event_id, "401879285");
+    assert.equal(pev.espn_event_id, "401879285");
+  });
+
+  it("Football-Data HxG is parsed and is not an odds column", () => {
+    const csv =
+      "Div,Date,Time,HomeTeam,AwayTeam,FTHG,FTAG,FTR,HxG,AxG,B365H,B365D,B365A\n" +
+      "E0,21/08/2026,20:00,Arsenal,Coventry,3,0,H,1.88,0.41,1.4,4.5,8.0\n";
+    const { matches } = normalizeFootballDataCsv({ csvText: csv, season: "2627", league: "E0" });
+    assert.equal(matches.length, 1);
+    assert.equal(matches[0]!.hxg, 1.88);
+    assert.equal(matches[0]!.axg, 0.41);
+    assert.ok(matches[0]!.odds_open.B365.home != null);
   });
 
   it("Italian explanation uses observation sentences and separate market", () => {

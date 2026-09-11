@@ -39,6 +39,7 @@ async function tryFetch(url: string, fetchImpl: typeof fetch): Promise<PiDownloa
         Accept: "text/csv,text/plain,*/*",
       },
       redirect: "follow",
+      signal: AbortSignal.timeout(25_000),
     });
     const text = await res.text();
     const ok = res.ok && looksLikeCsv(text) && text.length > 500;

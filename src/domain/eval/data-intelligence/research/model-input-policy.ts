@@ -33,7 +33,8 @@ export function classifyModelInput(input: {
     input.source === "sky-sport" ||
     input.source === "bbc-sport" ||
     input.source === "gazzetta" ||
-    input.source === "open-meteo"
+    input.source === "open-meteo" ||
+    input.source === "espn"
   ) {
     return "CONTEXT";
   }

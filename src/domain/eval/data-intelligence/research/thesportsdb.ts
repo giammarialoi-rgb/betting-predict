@@ -154,6 +154,7 @@ export async function fetchSportsDbJson(
     const fetchImpl = deps?.fetchImpl ?? globalThis.fetch.bind(globalThis);
     const res = await fetchImpl(url, {
       headers: { Accept: "application/json", "User-Agent": "betmind-research/1.0 (ordinary GET; no WAF bypass)" },
+      signal: AbortSignal.timeout(20_000),
     });
     if (res.status === 403 || res.status === 401 || res.status === 429) {
       mem.set(url, { at: now, status: res.status, body: null });

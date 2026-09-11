@@ -176,7 +176,7 @@ export async function runEventResearchBatch(input: {
   ) => {
     result.observations_created += rows.length;
     for (const o of rows) {
-      if (o.kind === "EVENT_RESEARCH" || o.source === "open-meteo" || o.source === "ansa" || o.source === "sky-sport" || o.source === "bbc-sport" || o.source === "gazzetta" || o.source === "thesportsdb" || o.source === "wikipedia") {
+      if (o.kind === "EVENT_RESEARCH" || o.source === "open-meteo" || o.source === "ansa" || o.source === "sky-sport" || o.source === "bbc-sport" || o.source === "gazzetta" || o.source === "thesportsdb" || o.source === "wikipedia" || o.source === "espn") {
         result.real_event_observations += 1;
         eventsWithReal.add(eventId);
       } else if (o.kind === "DERIVED") {
@@ -216,6 +216,7 @@ export async function runEventResearchBatch(input: {
     "gazzetta",
     "thesportsdb",
     "wikipedia",
+    "espn",
   ]);
 
   // ClubElo once per batch (shared day as-of now) — avoid N× network
@@ -801,6 +802,141 @@ export async function runEventResearchBatch(input: {
       } else {
         bump(result.by_source, "wikipedia", "fail");
         result.research_failures += 1;
+      }
+    }
+
+    // ESPN public scoreboard — CONTEXT identity / venue / form
+    {
+      const {
+        fetchEspnScoreboard,
+        mapCompetitionToEspnSlug,
+        pickEspnEventForMatch,
+        espnEventObservations,
+        ESPN_LEAGUES,
+      } = await import("@/domain/eval/data-intelligence/research/espn-scoreboard");
+      const slug = mapCompetitionToEspnSlug(ev.competition);
+      const lg = ESPN_LEAGUES.find((l) => l.slug === slug);
+      const day = (ev.kickoff_utc ?? nowIso).slice(0, 10).replace(/-/g, "");
+      if (!slug || !lg) {
+        appendResearchStatus(
+          baseRow({
+            event_id: ev.event_id,
+            source_id: "espn",
+            phase: "UNAVAILABLE",
+            ok: false,
+            fetched: false,
+            fetched_at: null,
+            available_at: null,
+            reason: "NO_ESPN_LEAGUE_MAP — competition not in public scoreboard catalogue",
+            raw_ref: null,
+            cycle_number: input.cycleNumber,
+            at: nowIso,
+            url: "https://site.api.espn.com/apis/site/v2/sports/soccer/",
+            adapter_kind: "PRODUCTION_ADAPTER",
+            parser_status: "NO_DATA",
+            fields_extracted: [],
+          }),
+          root,
+        );
+        bump(result.by_source, "espn", "fail");
+        result.research_failures += 1;
+      } else {
+        const board = await fetchEspnScoreboard({
+          slug,
+          yyyymmdd: day,
+          competition: lg.competition,
+          country: lg.country,
+        });
+        const hit =
+          board.http_status != null && board.http_status < 400
+            ? pickEspnEventForMatch(board.events, ev.home_or_a, ev.away_or_b, ev.kickoff_utc)
+            : null;
+        if (board.http_status === 403 || board.http_status === 401) {
+          appendResearchStatus(
+            baseRow({
+              event_id: ev.event_id,
+              source_id: "espn",
+              phase: "BLOCKED",
+              ok: false,
+              fetched: true,
+              fetched_at: nowIso,
+              available_at: null,
+              reason: board.error ?? "BLOCKED",
+              raw_ref: null,
+              cycle_number: input.cycleNumber,
+              at: nowIso,
+              url: board.url,
+              adapter_kind: "PRODUCTION_ADAPTER",
+              http_status: board.http_status,
+              parser_status: "BLOCKED",
+              fields_extracted: [],
+            }),
+            root,
+          );
+          bump(result.by_source, "espn", "fail");
+          result.research_failures += 1;
+        } else if (!hit) {
+          appendResearchStatus(
+            baseRow({
+              event_id: ev.event_id,
+              source_id: "espn",
+              phase: "UNAVAILABLE",
+              ok: false,
+              fetched: board.http_status != null,
+              fetched_at: board.http_status != null ? nowIso : null,
+              available_at: null,
+              reason: board.error ?? `NO_EVENT — ${board.events.length} scoreboard rows, none matched`,
+              raw_ref: null,
+              cycle_number: input.cycleNumber,
+              at: nowIso,
+              url: board.url,
+              adapter_kind: "PRODUCTION_ADAPTER",
+              http_status: board.http_status,
+              parser_status: board.error ? "HTTP_ERROR" : "NO_EVENT",
+              fields_extracted: [],
+            }),
+            root,
+          );
+          bump(result.by_source, "espn", "fail");
+          result.research_failures += 1;
+        } else {
+          if (!ev.espn_event_id) ev.espn_event_id = hit.espn_event_id;
+          const { appendResearchObservation } = await import(
+            "@/domain/eval/data-intelligence/research/observations-store"
+          );
+          const rows = espnEventObservations({
+            eventId: ev.event_id,
+            hit,
+            nowIso,
+            url: board.url,
+          });
+          for (const o of rows) appendResearchObservation(o, root);
+          await noteObs(rows, ev.event_id);
+          appendResearchStatus(
+            baseRow({
+              event_id: ev.event_id,
+              source_id: "espn",
+              phase: "OK",
+              ok: true,
+              fetched: true,
+              fetched_at: nowIso,
+              available_at: nowIso,
+              observed_at: nowIso,
+              reason: `evento ESPN ${hit.espn_event_id} abbinato`,
+              raw_ref: hit.espn_event_id,
+              cycle_number: input.cycleNumber,
+              at: nowIso,
+              url: board.url,
+              adapter_kind: "PRODUCTION_ADAPTER",
+              http_status: board.http_status,
+              parser_status: "OK",
+              fields_extracted: rows.map((r) => r.feature_key),
+            }),
+            root,
+          );
+          bump(result.by_source, "espn", "ok");
+          result.research_fetches += 1;
+        }
       }
     }
 

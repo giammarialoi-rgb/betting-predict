@@ -109,6 +109,19 @@ export async function runMassive049Cycle(input: {
       /* free discovery optional — Odds path remains */
     }
     try {
+      const storeForEspn = loadStore044(labB);
+      const { runEspnDiscover } = await import("@/domain/eval/factory-049/discover-espn");
+      const espn = await runEspnDiscover({
+        store: storeForEspn,
+        nowIso,
+        fetchImpl: input.fetchImpl,
+      });
+      persistStoreEvents044(storeForEspn);
+      appendJournal044(labB, { kind: "espn_discover", at: nowIso, ...espn });
+    } catch {
+      /* ESPN scoreboard optional */
+    }
+    try {
       const { runEventResearchOrchestrator } = await import(
         "@/domain/eval/data-intelligence/research/orchestrator"
       );

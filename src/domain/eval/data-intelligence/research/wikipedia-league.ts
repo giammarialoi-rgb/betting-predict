@@ -168,6 +168,7 @@ export async function fetchWikipediaLeaguePage(input: {
     const fetchImpl = input.fetchImpl ?? globalThis.fetch.bind(globalThis);
     const res = await fetchImpl(page.url, {
       headers: { Accept: "text/html", "User-Agent": "betmind-research/1.0 (ordinary GET; Wikipedia REST)" },
+      signal: AbortSignal.timeout(20_000),
     });
     if (res.status === 403 || res.status === 401) {
       return {

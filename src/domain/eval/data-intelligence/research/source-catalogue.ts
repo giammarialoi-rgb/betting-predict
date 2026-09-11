@@ -235,6 +235,15 @@ export const RESEARCH_SOURCE_CATALOGUE: CatalogueSource[] = [
     market_layer: false,
   },
   {
+    source_id: "espn",
+    title: "ESPN Scoreboard",
+    sport: "SOCCER",
+    adapter: "PRODUCTION_ADAPTER",
+    url: "https://site.api.espn.com/apis/site/v2/sports/soccer/",
+    notes: "Public JSON scoreboard. Real ESPN event/team IDs only. Form/records CONTEXT at retrieved_at.",
+    market_layer: false,
+  },
+  {
     source_id: "analysisportiva",
     title: "AnalysisPortiva",
     sport: "SOCCER",

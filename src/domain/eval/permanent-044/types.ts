@@ -76,7 +76,8 @@ export type PermanentEvent044 = {
   /** Real API-Football fixture id when observed (TheSportsDB idAPIfootball). Never invented. */
   api_football_fixture_id?: string | null;
   thesportsdb_event_id?: string | null;
-  fixture_id?: number | null;
+  /** Real ESPN event id when observed. Never invented. */
+  espn_event_id?: string | null;
 };
 
 export type PermanentQuote044 = {
