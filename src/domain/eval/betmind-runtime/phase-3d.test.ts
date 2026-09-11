@@ -101,7 +101,9 @@ describe("Phase 3D pipeline counters", () => {
 describe("Phase 3D source catalogue", () => {
   it("marks missing adapters explicitly and never claims odds as model", () => {
     const missing = RESEARCH_SOURCE_CATALOGUE.filter((s) => s.adapter === "MISSING_ADAPTER");
-    assert.ok(missing.length >= 10, "expected many MISSING_ADAPTER rows");
+    assert.equal(missing.length, 0, "every catalogue source has an adapter or explicit policy/blocked stub");
+    const policy = RESEARCH_SOURCE_CATALOGUE.filter((s) => s.adapter === "POLICY_DENIED");
+    assert.ok(policy.length >= 10, "expected explicit POLICY_DENIED stubs");
     const odds = RESEARCH_SOURCE_CATALOGUE.find((s) => s.source_id === "the-odds-api");
     assert.equal(odds?.market_layer, true);
     const directa = RESEARCH_SOURCE_CATALOGUE.find((s) => s.source_id === "directa");

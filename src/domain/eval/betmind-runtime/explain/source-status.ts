@@ -171,6 +171,12 @@ export function sourceTitleIt(sourceId: string, catalogueTitle?: string | null):
     "club-football-match-data": "Club-Football-Match-Data",
     "tennis-explorer": "Tennis Explorer",
     "tennis-abstract": "Tennis Abstract",
+    diretta: "Diretta",
+    "opta-stats-perform": "Opta / Stats Perform",
+    "cies-football-observatory": "CIES Football Observatory",
+    tennisstats: "TennisStats",
+    tennisinsight: "TennisInsight",
+    "il-veggente": "Il Veggente",
   };
   return known[sourceId] ?? catalogueTitle ?? sourceId;
 }

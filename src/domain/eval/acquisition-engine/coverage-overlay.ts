@@ -8,6 +8,8 @@ import type { OverlaySourceCard } from "@/domain/eval/betmind-runtime/production
 import type { SourceEntry } from "@/domain/eval/data-intelligence/types";
 import type { AcquisitionCycleResult, SourceLaneResult } from "@/domain/eval/acquisition-engine/types";
 import { FREE_SOURCE_CATALOG } from "@/domain/eval/acquisition-engine/catalog";
+import { blockedEngineDef } from "@/domain/eval/acquisition-engine/sources/blocked";
+import { policyEngineDef } from "@/domain/eval/acquisition-engine/sources/policy";
 
 export function readLastAcquisitionCycle(cwd = process.cwd()): AcquisitionCycleResult | null {
   const path = join(cwd, "artifacts", "acquisition-engine", "last-cycle.json");
@@ -57,9 +59,11 @@ export function overlayRegistryWithAcquisitionCycle(
   for (const lane of cycle.lanes) {
     if (seen.has(lane.source_id)) continue;
     const def = FREE_SOURCE_CATALOG.find((s) => s.source_id === lane.source_id);
+    const blocked = blockedEngineDef(lane.source_id);
+    const policy = policyEngineDef(lane.source_id);
     out.push({
       id: lane.source_id,
-      title: def?.title_it ?? lane.source_id,
+      title: def?.title_it ?? blocked?.title_it ?? policy?.title_it ?? lane.source_id,
       priority: def?.market_layer ? "high" : "medium",
       role: def?.market_layer ? "MARKET_COMPARE" : "CONTEXT",
       temporal_precision: def?.live ? "STRICT_AS_OF" : "DATE_ONLY",

@@ -63,7 +63,7 @@ export async function runClubEloLane(input: {
     });
   }
 
-  const failoverDays = [day, shiftDay(day, 1)];
+  const failoverDays = [day, shiftDay(day, 1), shiftDay(day, 2), shiftDay(day, 3)];
   let lastHttp = fetched.http_status || 0;
   let lastUrl = fetched.url;
   let retries = 0;
@@ -78,7 +78,7 @@ export async function runClubEloLane(input: {
         sourceId: "clubelo",
         minIntervalMs: input.fetchImpl ? 0 : 500,
         fetchImpl: input.fetchImpl,
-        maxRetries: input.maxRetries ?? 1,
+        maxRetries: input.maxRetries ?? 2,
       });
       retries += got.retries;
       lastHttp = got.status;
@@ -105,16 +105,14 @@ export async function runClubEloLane(input: {
         ? "RATE_LIMITED"
         : blocked
           ? "BLOCKED"
-          : lastReason === "NETWORK_ERROR" || lastHttp === 0 || lastHttp >= 500
-            ? "NETWORK_ERROR"
-            : "NO_DATA",
+          : "NO_DATA",
     http_status: lastHttp || null,
     retries,
     reason: lastReason,
     reason_it:
       lastHttp === 403
         ? "ClubElo ha restituito HTTP 403. Nessun rating inventato."
-        : `ClubElo non disponibile (${lastReason}). Failover HTTP/HTTPS e giorni precedenti falliti. Nessun Elo inventato.`,
+        : `ClubElo non disponibile (${lastReason}). Failover HTTP/HTTPS e giorni precedenti esauriti. Nessun Elo inventato.`,
   });
 }
 

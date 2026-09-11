@@ -343,3 +343,75 @@ export async function runApiFootballLane(input: {
     },
   };
 }
+
+/**
+ * API-Sports is the same free-tier host as API-Football.
+ * AUTH_REQUIRED without a key. With a key: no second budget spend.
+ */
+export async function runApiSportsLane(input: {
+  url: string;
+  nowIso: string;
+  persistNeon: boolean;
+  token?: string;
+}): Promise<SourceLaneResult> {
+  const token = input.token !== undefined ? input.token : getApiSportsKey057();
+  if (!token) {
+    return emptyLane({
+      source_id: "api-sports",
+      url: input.url,
+      status: "AUTH_REQUIRED",
+      reason: "API_SPORTS_KEY / API_FOOTBALL_KEY is not set",
+      reason_it:
+        "API-Sports richiede API_SPORTS_KEY (stesso piano di API-Football). Nessuna chiave inventata. Nessuna seconda richiesta.",
+    });
+  }
+
+  let neon = { source_registered: false, elo_stored: 0, features_stored: 0, reason: null as string | null };
+  if (input.persistNeon) {
+    neon = await registerAcquisitionSource({
+      slug: "api-sports",
+      name: "API-Sports",
+      licenseClass: "official_api",
+    });
+  }
+
+  return {
+    source_id: "api-sports",
+    ok: true,
+    fetched: false,
+    status: "PARTIAL",
+    http_status: null,
+    url: input.url,
+    records: [
+      {
+        source_id: "api-sports",
+        kind: "fixtures",
+        feature_key: "api_sports_shared_with_api_football",
+        value: 1,
+        event_id: null,
+        home: null,
+        away: null,
+        kickoff_iso: null,
+        team_name: null,
+        observed_at: input.nowIso,
+        available_at: input.nowIso,
+        temporal_precision: "exact",
+        feature_status: "CONTEXT",
+        enters_independent_model: false,
+        extraction_method: "api_sports_alias_no_duplicate_fetch",
+        source_url: input.url,
+        identity_status: "UNBOUND",
+        reason_it:
+          "API-Sports condivide l'endpoint e il budget con API-Football. Nessuna seconda richiesta sul piano free.",
+      },
+    ],
+    fields_extracted: ["api_sports_shared_with_api_football"],
+    reason: "shared_with_api-football; no duplicate fetch",
+    reason_it:
+      "API-Sports: stessa API di API-Football. Nessuna seconda richiesta. Vedi la corsia api-football per i dati.",
+    retries: 0,
+    cache_path: null,
+    neon,
+    coverage: { leagues: [], sports: ["football"] },
+  };
+}
