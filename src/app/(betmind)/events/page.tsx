@@ -187,10 +187,9 @@ function EventsInner() {
           <div className="bm-section-label">Calendario</div>
           <h1 className="text-2xl font-bold">Eventi</h1>
           <p className="bm-prose-muted mt-1 max-w-xl">
-            {calendar?.total ?? events.length} partite per il {date}
+            {calendar?.total ?? events.length} partite del {date}
             {sport !== "ALL" ? ` · ${bucketLabelIt(sport)}` : ""}.
-            Lista reale, senza tetto artificiale. Ogni scheda mostra orario, stato e quote 1X2
-            vere oppure «Quote non disponibili».
+            Orario, stato e quote 1X2 se ci sono.
           </p>
           <div className="mt-2 flex flex-wrap items-center gap-2 text-sm">
             <Link href={hrefFor({ date: shiftDay(todayRome(), -1) })} className="bm-pill">
@@ -268,7 +267,7 @@ function EventsInner() {
       </div>
 
       <details className="bm-ops">
-        <summary>Filtri di pipeline (scoperta, ricerca, modello)</summary>
+        <summary>Altri filtri</summary>
         <div className="bm-tabrow mt-3">
           {BUCKET_TABS.map((b) => (
             <Link

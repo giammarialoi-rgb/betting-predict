@@ -376,16 +376,13 @@ export async function GET(_req: Request, ctx: { params: Promise<{ id: string }> 
 function analysisModesPayload(light: LightAnalysis | null, strongAvailable: boolean) {
   return {
     light: {
-      label_it: "Analisi light",
+      label_it: "Light",
       available: Boolean(light && light.markets.some((m) => m.status === "OK")),
     },
     strong: {
-      label_it: "Analisi forte",
+      label_it: "Forte",
       available: strongAvailable,
-      unavailable_it: strongAvailable
-        ? null
-        : (light?.strong_unavailable_it ??
-          "Analisi forte non disponibile: i gate del modello indipendente restano invariati."),
+      unavailable_it: strongAvailable ? null : (light?.strong_unavailable_it ?? "Forte non disponibile."),
     },
   };
 }

@@ -9,10 +9,12 @@ let lastRefresh: LastRefresh = { msg: null, err: null };
 
 export function RefreshEventsButton({
   compact = false,
+  hideStatus = false,
   onDone,
   onProgress,
 }: {
   compact?: boolean;
+  hideStatus?: boolean;
   onDone?: () => void;
   onProgress?: (note: string | null, err: string | null) => void;
 }) {
@@ -30,7 +32,7 @@ export function RefreshEventsButton({
 
   async function run() {
     setBusy(true);
-    remember({ msg: "Aggiorno calendario e analisi light dalle fonti già cablate…", err: null });
+    remember({ msg: "Aggiorno partite e percentuali…", err: null });
     try {
       const res = await fetch("/api/betmind/refresh-events", {
         method: "POST",
@@ -44,10 +46,11 @@ export function RefreshEventsButton({
         brain_online_claimed?: boolean;
         acquisition?: { note_it?: string; timed_out?: boolean };
       };
-      const parts = [body.progress_it, body.acquisition?.note_it].filter(Boolean);
-      if (body.brain_ran === true || body.brain_online_claimed === true) {
-        parts.push("Il cervello completo non è stato dichiarato ONLINE.");
-      }
+      const historyNote =
+        body && typeof body === "object" && "history" in body
+          ? String((body as { history?: { note_it?: string } }).history?.note_it ?? "")
+          : "";
+      const parts = [body.progress_it, historyNote].filter(Boolean);
       if (!res.ok || body.ok === false) {
         remember({ msg: null, err: parts.join(" ") || "Aggiornamento non riuscito." });
       } else {
@@ -75,12 +78,12 @@ export function RefreshEventsButton({
       >
         {busy ? "Aggiorno…" : "Aggiorna eventi"}
       </button>
-      {msg && (
+      {!hideStatus && msg && (
         <p className={compact ? "max-w-[16rem] text-right text-[10px] text-[var(--bm-muted)]" : "bm-prose-muted max-w-md text-xs"}>
           {msg}
         </p>
       )}
-      {err && (
+      {!hideStatus && err && (
         <p className={compact ? "max-w-[14rem] text-[10px] text-[var(--bm-danger)]" : "max-w-md text-xs text-[var(--bm-danger)]"}>
           {err}
         </p>

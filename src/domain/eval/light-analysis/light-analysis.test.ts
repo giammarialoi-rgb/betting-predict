@@ -18,7 +18,20 @@ import { shouldReplaceLightAnalysis } from "@/domain/eval/light-analysis/persist
 import { parseClubFootballHistory, parseFootballDataCoUkHistory } from "@/domain/eval/light-analysis/history";
 import { proseFromMarkets } from "@/domain/eval/light-analysis/prose";
 import { listMarketLeans } from "@/domain/eval/light-analysis/list-leans";
-import { LIGHT_INSUFFICIENT_IT, LIGHT_MIN_N, type HistoricalMatchRow } from "@/domain/eval/light-analysis/types";
+import {
+  LIGHT_INSUFFICIENT_IT,
+  LIGHT_MIN_N,
+  LIGHT_MISSING_UI,
+  type HistoricalMatchRow,
+} from "@/domain/eval/light-analysis/types";
+import { lightNamesMatch } from "@/domain/eval/light-analysis/aliases";
+import {
+  clearLightHistoryMemory,
+  loadLightHistory,
+  looksLikeFdoukCsv,
+  parseOpenFootballHistory,
+} from "@/domain/eval/light-analysis/fetch-history";
+import { leagueTitleIt } from "@/domain/eval/light-analysis/league-label";
 
 function row(
   home: string,
@@ -181,7 +194,7 @@ describe("compute light analysis", () => {
       skipAttach: true,
       strong_available: false,
     });
-    assert.equal(analysis.mode_label_it, "Analisi light");
+    assert.equal(analysis.mode_label_it, "Light");
     assert.equal(analysis.odds_entered_model, false);
     assert.equal(analysis.identity_fail_closed, true);
     assert.ok(lightHasEstimableMarket(analysis));
@@ -192,7 +205,7 @@ describe("compute light analysis", () => {
     assert.equal(fav.length, 3);
     assert.equal(analysis.favorite_1x2, "home");
     assert.ok(analysis.prose.some((l) => /over 2\.5|1X2|gol|angolo/i.test(l)));
-    assert.match(analysis.strong_unavailable_it ?? "", /Analisi forte non disponibile/);
+    assert.match(analysis.strong_unavailable_it ?? "", /Forte non disponibile/);
   });
 
   it("shows dato insufficiente when history cannot estimate a market", () => {
@@ -240,7 +253,7 @@ describe("compute light analysis", () => {
     });
     const lines = proseFromMarkets(markets);
     assert.ok(lines.some((l) => l.includes("over 2.5") || l.includes("1X2") || l.includes("gol")));
-    assert.ok(lines.every((l) => /n=\d+/.test(l) || /Frequenze 1X2/.test(l)));
+    assert.ok(lines.some((l) => /Favorito 1X2|over 2\.5|gol/i.test(l)));
   });
 });
 
@@ -269,10 +282,12 @@ describe("list market leans", () => {
     assert.equal(leans.find((l) => l.key === "o25")?.group, "ou");
   });
 
-  it("prints dato insufficiente when a lean has no sample", () => {
+  it("prints an em-dash when a lean has no sample, never dato insufficiente", () => {
     const leans = listMarketLeans([], null);
-    assert.ok(leans.every((l) => l.text === LIGHT_INSUFFICIENT_IT));
+    assert.ok(leans.every((l) => l.text === LIGHT_MISSING_UI));
+    assert.ok(leans.filter((l) => l.group !== "1x2").every((l) => l.hidden === true));
     assert.ok(leans.every((l) => l.favorite === false));
+    assert.ok(!leans.some((l) => l.text === LIGHT_INSUFFICIENT_IT));
   });
 });
 
@@ -312,5 +327,126 @@ describe("strong gates stay untouched", () => {
     const src = readFileSync(join(process.cwd(), "src/domain/eval/predictive-intelligence/predict-live.ts"), "utf8");
     assert.match(src, /missing_keys\.length > 45/);
     assert.match(src, /feature_coverage < 0\.35/);
+  });
+});
+
+describe("light-only aliases (strong identity stays fail-closed)", () => {
+  it("matches common ESPN / board vs football-data.co.uk labels", () => {
+    assert.equal(lightNamesMatch("Man United", "Manchester United"), true);
+    assert.equal(lightNamesMatch("Inter", "Internazionale"), true);
+    assert.equal(lightNamesMatch("Stade Rennais", "Rennes"), true);
+    assert.equal(lightNamesMatch("Olympique Marseille", "Marseille"), true);
+    assert.equal(lightNamesMatch("Ein Frankfurt", "Eintracht Frankfurt"), true);
+    assert.equal(lightNamesMatch("Schalke 04", "FC Schalke 04"), true);
+    assert.equal(lightNamesMatch("1. FC Union Berlin", "Union Berlin"), true);
+    assert.equal(lightNamesMatch("AZ Alkmaar", "Alkmaar"), true);
+  });
+
+  it("still blocks collision stems used by strong identity", () => {
+    assert.equal(lightNamesMatch("Villa", "Aston Villa"), false);
+    assert.equal(lightNamesMatch("United", "Manchester United"), false);
+    assert.equal(lightNamesMatch("City", "Manchester City"), false);
+    assert.equal(lightNamesMatch("Real", "Real Madrid"), false);
+  });
+});
+
+describe("light min-n floors", () => {
+  it("estimates 1X2 from 4 home-home rows", () => {
+    const homeHome = Array.from({ length: 4 }, () => row("Arsenal", "Burnley", "2024-01-01", 2, 0));
+    const markets = buildLightMarkets({
+      homeHome,
+      awayAway: [],
+      source_ids: ["football-data-co-uk"],
+    });
+    const home = markets.find((m) => m.market === "1x2" && m.selection === "HOME");
+    assert.equal(home?.status, "OK");
+    assert.equal(home?.probability, 1);
+    assert.equal(LIGHT_MIN_N, 4);
+  });
+
+  it("stays insufficient below 4", () => {
+    const r = rateFromFlags([true, true, false], LIGHT_MIN_N);
+    assert.equal(r.status, "INSUFFICIENT");
+    assert.equal(r.probability, null);
+  });
+});
+
+describe("history fetch / parse (mocked HTTP)", () => {
+  it("rejects HTML and accepts a real FDouk header", () => {
+    assert.equal(looksLikeFdoukCsv("<html><title>503</title></html>"), false);
+    assert.equal(
+      looksLikeFdoukCsv("Div,Date,HomeTeam,AwayTeam,FTHG,FTAG,FTR,HC,AC\n"),
+      true,
+    );
+  });
+
+  it("parses openfootball finished scores only", () => {
+    const json = JSON.stringify({
+      name: "Premier League",
+      matches: [
+        { date: "2025-08-15", team1: "Arsenal", team2: "Wolves", score: { ft: [2, 0] } },
+        { date: "2025-08-16", team1: "Chelsea", team2: "Fulham" },
+      ],
+    });
+    const rows = parseOpenFootballHistory(json, "E0");
+    assert.equal(rows.length, 1);
+    assert.equal(rows[0]!.home_goals, 2);
+    assert.equal(rows[0]!.source_id, "openfootball");
+  });
+
+  it("fetches CSVs over HTTP when disk history is empty", async () => {
+    clearLightHistoryMemory();
+    const csv = [
+      "Div,Date,HomeTeam,AwayTeam,FTHG,FTAG,FTR,HC,AC,B365H",
+      "E0,10/08/2024,Arsenal,Wolves,2,0,H,8,2,1.40",
+      "E0,17/08/2024,Arsenal,Everton,1,0,H,7,3,1.55",
+      "E0,24/08/2024,Arsenal,Brighton,3,1,H,6,4,1.60",
+      "E0,31/08/2024,Arsenal,Spurs,2,1,H,5,5,1.70",
+    ].join("\n");
+    const fetchImpl: typeof fetch = async (url) => {
+      const href = String(url);
+      if (href.includes("E0.csv")) {
+        return new Response(csv, { status: 200, headers: { "content-type": "text/csv" } });
+      }
+      if (href.includes("github")) {
+        return new Response(JSON.stringify({ name: "x", matches: [] }), { status: 200 });
+      }
+      return new Response("not found", { status: 404 });
+    };
+    const tmp = join(process.cwd(), "data", "light-analysis", `test-empty-${Date.now()}`);
+    const report = await loadLightHistory({
+      cwd: tmp,
+      force: true,
+      dayIso: "2026-09-11",
+      fetchImpl,
+      includeOpenFootball: false,
+      persistNeon: false,
+    });
+    assert.ok(report.rows.length >= 4);
+    assert.equal(report.cache, "http");
+    assert.ok(!JSON.stringify(report.rows).includes("1.40"));
+    const analysis = computeLightAnalysis({
+      event_id: "e-http",
+      home: "Arsenal",
+      away: "Chelsea",
+      kickoff_utc: "2026-09-11T15:00:00Z",
+      history: report.rows,
+      skipAttach: true,
+    });
+    assert.equal(lightHasEstimableMarket(analysis), true);
+    assert.equal(analysis.favorite_1x2, "home");
+  });
+});
+
+describe("league titles and favorite green helper", () => {
+  it("renders compact Italian league headers", () => {
+    assert.equal(leagueTitleIt("SOCCER_GERMANY_BUNDESLIGA"), "Germania: Bundesliga");
+    assert.equal(leagueTitleIt("soccer_france_ligue_one"), "Francia: Ligue 1");
+    assert.equal(leagueTitleIt("I1"), "Italia: Serie A");
+  });
+
+  it("keeps favoriteClassName green for the 1X2 lean", () => {
+    assert.equal(favoriteClassName("favorite"), "bm-fav");
+    assert.equal(favoriteClassName("muted"), "bm-muted-pct");
   });
 });

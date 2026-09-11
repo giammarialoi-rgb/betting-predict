@@ -10,7 +10,7 @@ export default async function AnalyzedPage() {
       initialEvents={events}
       initialNote={
         events.length === 0
-          ? "Nessun evento con analisi light o forte persistita. Premi «Aggiorna eventi» per ricalcolare dalle fonti già cablate."
+          ? "Premi «Aggiorna eventi» per calcolare le percentuali dalle partite già giocate."
           : null
       }
     />

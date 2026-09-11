@@ -1,10 +1,14 @@
 export {
   LIGHT_INSUFFICIENT_IT,
+  LIGHT_MISSING_UI,
   LIGHT_MIN_N,
   LIGHT_MIN_N_SOFT,
   LIGHT_MODE,
   STRONG_MODE,
 } from "@/domain/eval/light-analysis/types";
+export { lightNamesMatch } from "@/domain/eval/light-analysis/aliases";
+export { loadLightHistory, looksLikeFdoukCsv, parseOpenFootballHistory } from "@/domain/eval/light-analysis/fetch-history";
+export { leagueTitleIt } from "@/domain/eval/light-analysis/league-label";
 export type {
   AnalyzedListRow,
   HistoricalMatchRow,

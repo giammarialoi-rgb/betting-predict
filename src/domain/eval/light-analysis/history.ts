@@ -1,6 +1,9 @@
 /**
- * Load historical finished matches from disk caches we actually have.
- * Odds columns are ignored. Identity matching is fail-closed.
+ * Parse finished-match CSVs already on disk.
+ * Odds columns are ignored.
+ *
+ * Disk-only. On Vercel the Club-Football / football-data-co-uk folders are
+ * missing or empty — use `loadLightHistory` (HTTP + /tmp + Neon) instead.
  */
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";

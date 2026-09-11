@@ -31,11 +31,11 @@ export default async function EventDetailPage({
     light_analysis: light,
     analysis_modes: {
       light: {
-        label_it: "Analisi light",
+        label_it: "Light",
         available: light.markets.some((m) => m.status === "OK"),
       },
       strong: {
-        label_it: "Analisi forte",
+        label_it: "Forte",
         available: strong_available,
         unavailable_it: strong_available ? null : light.strong_unavailable_it,
       },

@@ -8,9 +8,9 @@ export type BmLocale = "it" | "en";
 export const DEFAULT_BM_LOCALE: BmLocale = "it";
 
 export const it = {
-  brand_tagline: "Analizza · Impara · Vinci",
-  control_center: "Centro di controllo",
-  paper_only: "Solo simulazione · REAL_MONEY=false",
+  brand_tagline: "Analizza. Impara. Vinci.",
+  control_center: "Cruscotto",
+  paper_only: "Solo simulazione",
   web_app: "App web",
   runtime: "Runtime",
   engine: "Motore",
@@ -27,15 +27,14 @@ export const it = {
   nav_events: "Eventi",
   nav_analyzed: "Analizzati",
   nav_live: "Live",
-  nav_learn: "Apprendimento",
+  nav_learn: "Esiti",
   nav_sources: "Fonti",
   nav_models: "Modelli",
   nav_bankroll: "Bankroll",
   nav_settings: "Altro",
   nav_research: "Ricerca",
 
-  home_subtitle:
-    "Cruscotto onesto. App web ≠ Runtime ≠ Motore predittivo. Solo carta · REAL_MONEY=false.",
+  home_subtitle: "Stato del sistema, senza fingere che il motore sia acceso se non lo è.",
   system_status: "Stato del sistema",
   operational_strip: "Striscia operativa",
   last_cycle: "Ultimo ciclo",
@@ -107,9 +106,9 @@ export const it = {
   all_events: "Tutti gli eventi",
 
   events_title: "Eventi",
-  events_subtitle: "Board reale da Lab B / mirror Neon",
-  learn_title: "Apprendimento",
-  learn_subtitle: "Ciclo di apprendimento dalle partite liquidate",
+  events_subtitle: "Partite del giorno, con orario e quote se ci sono.",
+  learn_title: "Esiti",
+  learn_subtitle: "Cosa è successo dopo le previsioni già fatte",
   performance_over_time: "Andamento nel tempo",
   error_categories: "Categorie di errore",
   model_versions: "Versioni modello",

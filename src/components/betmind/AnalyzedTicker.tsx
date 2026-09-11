@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { favoriteClassName } from "@/domain/eval/light-analysis/favorite";
+import { leagueTitleIt } from "@/domain/eval/light-analysis/league-label";
 import { listMarketLeans, type ListLean } from "@/domain/eval/light-analysis/list-leans";
 import type { AnalyzedListRow } from "@/domain/eval/light-analysis/types";
 import { fmtKick } from "@/components/betmind/ui";
@@ -18,13 +19,13 @@ function scoreCell(row: AnalyzedListRow): { home: string; away: string; preview:
   if (row.score_home != null && row.score_away != null) {
     return { home: String(row.score_home), away: String(row.score_away), preview: false };
   }
-  return { home: "—", away: "—", preview: true };
+  return { home: "", away: "", preview: true };
 }
 
 function groupByLeague(rows: AnalyzedListRow[]): Array<{ league: string; rows: AnalyzedListRow[] }> {
   const map = new Map<string, AnalyzedListRow[]>();
   for (const row of rows) {
-    const key = row.competition?.trim() || "Altre competizioni";
+    const key = leagueTitleIt(row.competition);
     const list = map.get(key) ?? [];
     list.push(row);
     map.set(key, list);
@@ -32,7 +33,8 @@ function groupByLeague(rows: AnalyzedListRow[]): Array<{ league: string; rows: A
   return [...map.entries()].map(([league, items]) => ({ league, rows: items }));
 }
 
-function LeanChip({ lean }: { lean: ListLean }) {
+function LeanChip({ lean, always }: { lean: ListLean; always?: boolean }) {
+  if (lean.hidden && !always) return null;
   return (
     <span className={lean.favorite ? favoriteClassName("favorite") : favoriteClassName("muted")}>
       <abbr title={lean.label_it}>{lean.label_it}</abbr> {lean.text}
@@ -43,7 +45,7 @@ function LeanChip({ lean }: { lean: ListLean }) {
 export function AnalyzedTicker({ events }: { events: AnalyzedListRow[] }) {
   const groups = groupByLeague(events);
   return (
-    <div className="bm-ticker" role="table" aria-label="Eventi analizzati">
+    <div className="bm-ticker" role="table" aria-label="Partite analizzate">
       {groups.map((g) => (
         <section key={g.league}>
           <header className="bm-ticker-league">
@@ -54,8 +56,7 @@ export function AnalyzedTicker({ events }: { events: AnalyzedListRow[] }) {
             const score = scoreCell(row);
             const leans = listMarketLeans(row.markets ?? [], row.favorite_1x2);
             const oneXTwo = leans.filter((l) => l.group === "1x2");
-            const extras = leans.filter((l) => l.group !== "1x2");
-            const prose = row.prose[0] ?? null;
+            const extras = leans.filter((l) => l.group !== "1x2" && !l.hidden);
             return (
               <Link
                 key={row.event_id}
@@ -70,11 +71,14 @@ export function AnalyzedTicker({ events }: { events: AnalyzedListRow[] }) {
                   <span>{row.home}</span>
                   <span>{row.away}</span>
                 </div>
-                <div className={`bm-ticker-score${score.preview ? " bm-ticker-score-preview" : ""}`} aria-label="risultato">
+                <div
+                  className={`bm-ticker-score${score.preview ? " bm-ticker-score-preview" : ""}`}
+                  aria-label="risultato"
+                >
                   {score.preview ? (
                     <>
-                      <strong>—</strong>
-                      <strong>—</strong>
+                      <strong />
+                      <strong />
                     </>
                   ) : (
                     <>
@@ -85,22 +89,19 @@ export function AnalyzedTicker({ events }: { events: AnalyzedListRow[] }) {
                 </div>
                 <div className="bm-ticker-1x2" aria-label="frequenze 1X2">
                   {oneXTwo.map((lean) => (
-                    <LeanChip key={lean.key} lean={lean} />
+                    <LeanChip key={lean.key} lean={lean} always />
                   ))}
                 </div>
                 <div className="bm-ticker-pcts">
                   {extras.map((lean) => (
                     <LeanChip key={lean.key} lean={lean} />
                   ))}
-                  <span className="bm-ticker-modes">
-                    {row.light ? <em>Analisi light</em> : null}
-                    {row.strong ? (
-                      <em className="bm-ticker-strong">Analisi forte</em>
-                    ) : (
-                      <em>Analisi forte n/d</em>
-                    )}
-                  </span>
-                  {prose ? <span className="bm-ticker-prose">{prose}</span> : null}
+                  {(row.light || row.strong) && (
+                    <span className="bm-ticker-modes">
+                      {row.light ? <em>Light</em> : null}
+                      {row.strong ? <em className="bm-ticker-strong">Forte</em> : null}
+                    </span>
+                  )}
                 </div>
               </Link>
             );

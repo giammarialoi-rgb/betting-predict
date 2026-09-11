@@ -10,7 +10,7 @@ import { loadBoardEventsFromNeon } from "@/domain/eval/betmind-runtime/remote-st
 import { localLabStorePresent } from "@/domain/eval/betmind-runtime/production-mirror";
 import { permanentRoot044 } from "@/domain/eval/permanent-044/config";
 import { computeLightAnalysis, lightHasEstimableMarket } from "@/domain/eval/light-analysis/compute";
-import { loadHistoricalMatches } from "@/domain/eval/light-analysis/history";
+import { loadLightHistory } from "@/domain/eval/light-analysis/fetch-history";
 import { persistLightAnalysis } from "@/domain/eval/light-analysis/persist";
 import type { RefreshEventsReport } from "@/domain/eval/light-analysis/types";
 
@@ -170,8 +170,7 @@ async function boundedAcquisition(nowIso: string, cwd: string): Promise<{
       timed_out: true,
       sources_ok: [],
       sources_failed: [],
-      note_it:
-        "Acquisizione fonti libere interrotta per tempo. Ricalcolo light dai dati già su disco/Neon. Il cervello completo non è partito — non è ONLINE.",
+      note_it: "Calendario: aggiornamento fonti interrotto per tempo. Lo storico risultati è a parte.",
     };
   }
   return {
@@ -181,8 +180,8 @@ async function boundedAcquisition(nowIso: string, cwd: string): Promise<{
     sources_failed: raced.failed,
     note_it:
       raced.ok.length > 0
-        ? `Fonti libere aggiornate: ${raced.ok.join(", ")}. RSS solo contesto; quote restano layer mercato.`
-        : "Nessuna fonte libera ha restituito dati nuovi. Light ricalcolata da storico già presente.",
+        ? "Calendario aggiornato."
+        : "Calendario invariato. Analisi ricalcolata dallo storico risultati.",
   };
 }
 
@@ -202,7 +201,7 @@ export async function refreshTodayEvents(input?: {
     timed_out: false,
     sources_ok: [],
     sources_failed: [],
-    note_it: "Acquisizione saltata — solo ricalcolo light dai dati già disponibili.",
+    note_it: "Solo ricalcolo analisi.",
   };
 
   if (input?.acquire !== false) {
@@ -216,13 +215,19 @@ export async function refreshTodayEvents(input?: {
         timed_out: false,
         sources_ok: [],
         sources_failed: [],
-        note_it: `Acquisizione non riuscita (${msg}). Light ricalcolata comunque dai dati già presenti.`,
+        note_it: `Calendario non aggiornato (${msg}).`,
       };
     }
   }
 
   const events = await listTodayEvents({ date, cwd });
-  const history = loadHistoricalMatches(cwd, true);
+  const historyReport = await loadLightHistory({
+    cwd,
+    force: input?.acquire !== false,
+    dayIso: date,
+    persistNeon: Boolean(process.env.DATABASE_URL),
+  });
+  const history = historyReport.rows;
   let light_ok = 0;
   let light_insufficient = 0;
   let attach_hits = 0;
@@ -244,6 +249,7 @@ export async function refreshTodayEvents(input?: {
         nowIso,
         history,
         strong_available: ev.strong_available,
+        skipAttach: true,
       });
       attach_hits += analysis.attach.filter((a) => a.ok).length;
       if (lightHasEstimableMarket(analysis) || analysis.strong_available) light_ok += 1;
@@ -265,8 +271,8 @@ export async function refreshTodayEvents(input?: {
 
   const progress_it =
     events.length === 0
-      ? "Nessun evento di oggi nello store/Neon. Niente di inventato."
-      : `Aggiornati ${event_ids.length}/${events.length} eventi · light con %: ${light_ok} · dato insufficiente: ${light_insufficient}.`;
+      ? "Nessuna partita di oggi in elenco."
+      : `Aggiornate ${event_ids.length} partite · ${light_ok} con percentuali.`;
 
   return {
     ok: errors.length === 0,
@@ -278,6 +284,12 @@ export async function refreshTodayEvents(input?: {
     light_insufficient,
     attach_hits,
     acquisition,
+    history: {
+      rows: historyReport.rows.length,
+      cache: historyReport.cache,
+      from_cache: historyReport.from_cache,
+      note_it: historyReport.note_it,
+    },
     brain_ran: false,
     snapshot_invalidated,
     errors,

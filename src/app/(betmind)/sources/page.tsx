@@ -82,9 +82,7 @@ export default function SourcesPage() {
           <div className="bm-section-label">Dati</div>
           <h1 className="mt-1 text-2xl font-bold">Fonti</h1>
           <p className="bm-prose-muted mt-2 max-w-xl">
-            Elenco leggibile delle fonti che BetMind consulta. Solo fonti cablate e raggiungibili:
-            OK, parziale, non raggiungibile, oppure nessuna info su questa partita.
-            Nessun adapter mancante, nessuno stub di policy, nessun bypass di WAF o CAPTCHA.
+            Stato reale delle fonti collegate: ok, parziale, non raggiungibile, o senza dati.
           </p>
         </div>
         <SnapshotBadge updating={updating} />

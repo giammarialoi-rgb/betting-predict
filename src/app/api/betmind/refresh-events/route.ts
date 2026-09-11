@@ -41,6 +41,12 @@ export async function POST(req: Request) {
           sources_failed: [],
           note_it: e instanceof Error ? e.message : String(e),
         },
+        history: {
+          rows: 0,
+          cache: "empty",
+          from_cache: false,
+          note_it: "Storico non caricato.",
+        },
         brain_ran: false as const,
         snapshot_invalidated: false,
         errors: [e instanceof Error ? e.message : String(e)],
