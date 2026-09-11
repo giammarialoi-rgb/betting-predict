@@ -31,14 +31,14 @@ export function buildEloSnapshotIdentityKey(input: {
 export function buildFeatureObservationIdentityKey(input: {
   eventId: string;
   featureKey: string;
-  availableAt: Date;
+  availableAt: Date | null;
   featureStatus: string;
   valueFingerprint: string;
 }): string {
   return [
     input.eventId,
     input.featureKey,
-    input.availableAt.toISOString(),
+    input.availableAt ? input.availableAt.toISOString() : "",
     input.featureStatus,
     input.valueFingerprint,
   ].join("|");

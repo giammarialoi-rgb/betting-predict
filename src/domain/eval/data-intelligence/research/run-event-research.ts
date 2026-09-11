@@ -16,6 +16,7 @@ import {
 } from "@/domain/eval/data-intelligence/research/status";
 import {
   RESEARCH_SOURCE_CATALOGUE,
+  catalogueAdapterKind,
   type CatalogueSource,
 } from "@/domain/eval/data-intelligence/research/source-catalogue";
 import type { PermanentEvent044 } from "@/domain/eval/permanent-044/types";
@@ -868,7 +869,7 @@ export async function runEventResearchBatch(input: {
             cycle_number: input.cycleNumber,
             at: nowIso,
             url: st.url,
-            adapter_kind: "TEST_PROBE",
+            adapter_kind: catalogueAdapterKind("understat") ?? "PRODUCTION_ADAPTER",
             http_status: st.http_status,
             parser_status: st.parser_status,
             fields_extracted: st.fields_extracted,

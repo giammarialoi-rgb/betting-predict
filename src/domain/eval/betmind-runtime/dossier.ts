@@ -21,6 +21,11 @@ import { hasIndependentModel } from "@/domain/eval/permanent-044/prediction-prec
 import { computeDataQualityScore, type DataQualityResult } from "@/domain/eval/data-intelligence/research/data-quality";
 import { detectConflicts, type FeatureConflict } from "@/domain/eval/data-intelligence/research/conflict-engine";
 import { loadResearchObservationsForEvent } from "@/domain/eval/data-intelligence/research/observations-store";
+import { catalogueAdapterKind } from "@/domain/eval/data-intelligence/research/source-catalogue";
+import {
+  publishUnderstatXgObservations,
+  researchObservationsFromDossierFeatures,
+} from "@/ingest/understat-feature-publish";
 import { overlayUnderstatXgOnFeatureData } from "@/domain/eval/data-intelligence/research/understat-league";
 
 export type UiFeatureStatus =
@@ -356,7 +361,10 @@ export function buildAnalysisDossier(
     http_status: r.http_status ?? null,
     parser_status: r.parser_status ?? null,
     fields_extracted: r.fields_extracted ?? [],
-    adapter_kind: r.adapter_kind ?? null,
+    adapter_kind:
+      r.source_id === "understat"
+        ? (catalogueAdapterKind("understat") ?? "PRODUCTION_ADAPTER")
+        : r.adapter_kind ?? null,
     entered_model: false as const,
   }));
 
@@ -665,6 +673,34 @@ export async function upsertDossierNeon(dossier: AnalysisDossier): Promise<void>
       SET published_at = EXCLUDED.published_at,
           payload = EXCLUDED.payload
     `;
+    try {
+      const understatResearch = dossier.research.find((r) => r.source_id === "understat");
+      await publishUnderstatXgObservations({
+        observations: researchObservationsFromDossierFeatures({
+          eventId: dossier.event.event_id,
+          features: dossier.features,
+          sourceUrl: understatResearch?.url ?? null,
+          observedAtFallback:
+            understatResearch?.observed_at ??
+            understatResearch?.fetched_at ??
+            dossier.cycle.last_cycle_at ??
+            new Date().toISOString(),
+        }),
+        event: {
+          event_id: dossier.event.event_id,
+          home: dossier.event.home,
+          away: dossier.event.away,
+          competition: dossier.event.competition,
+          kickoff_utc: dossier.event.kickoff_utc,
+          sport: dossier.event.sport,
+        },
+      });
+    } catch (pubErr) {
+      console.warn(
+        `[understat-neon] dossier feature publish failed event=${dossier.event.event_id}:`,
+        pubErr instanceof Error ? pubErr.message : pubErr,
+      );
+    }
   } catch (e) {
     console.warn(
       `[dossier-neon] upsert failed event=${dossier.event.event_id}:`,

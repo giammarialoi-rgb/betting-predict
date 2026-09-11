@@ -108,6 +108,9 @@ describe("Phase 3D source catalogue", () => {
     assert.equal(directa?.adapter, "TEST_PROBE");
     const flashscore = RESEARCH_SOURCE_CATALOGUE.find((s) => s.source_id === "flashscore");
     assert.equal(flashscore?.adapter, "TEST_PROBE");
+    const understat = RESEARCH_SOURCE_CATALOGUE.find((s) => s.source_id === "understat");
+    assert.equal(understat?.adapter, "PRODUCTION_ADAPTER");
+    assert.equal(understat?.market_layer, false);
   });
 });
 
@@ -204,6 +207,29 @@ describe("Phase 3D dossier lineage", () => {
       root,
     );
 
+    appendResearchStatus(
+      {
+        event_id: "ev-lineage",
+        source_id: "understat",
+        phase: "OK",
+        ok: true,
+        fetched: true,
+        fetched_at: "2026-09-09T23:34:00Z",
+        available_at: null,
+        reason: "Prior xG only. source=getLeagueData",
+        enters_independent_model: false,
+        raw_ref: "understat:99",
+        cycle_number: 624,
+        at: "2026-09-09T23:34:00Z",
+        url: "https://understat.com/getLeagueData/EPL/2026",
+        http_status: 200,
+        parser_status: "SUCCESS",
+        fields_extracted: ["home_xg_l5", "away_xg_prematch"],
+        adapter_kind: "TEST_PROBE",
+      },
+      root,
+    );
+
     const d = buildAnalysisDossier("ev-lineage", root);
     assert.ok(d);
     assert.equal(d!.lineage.odds_entered_model, false);
@@ -211,7 +237,8 @@ describe("Phase 3D dossier lineage", () => {
     assert.ok(d!.lineage.sources_consulted.includes("fbref"));
     assert.ok(Array.isArray(d!.lineage.catalogue_noted_not_fetched));
     assert.equal(d!.lineage.features_entered_model.length, 0);
-    assert.equal(d!.research[0]?.http_status, 403);
+    assert.equal(d!.research.find((r) => r.source_id === "fbref")?.http_status, 403);
+    assert.equal(d!.research.find((r) => r.source_id === "understat")?.adapter_kind, "PRODUCTION_ADAPTER");
     assert.equal(d!.independent_model.probability, null);
   });
 });

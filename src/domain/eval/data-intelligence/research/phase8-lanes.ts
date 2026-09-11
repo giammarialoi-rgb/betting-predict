@@ -17,6 +17,7 @@ import { upsertTeamIdentity } from "@/domain/eval/data-intelligence/research/ide
 import { researchUnderstatLeague } from "@/domain/eval/data-intelligence/research/understat-league";
 import { extractCalendarObservations } from "@/domain/eval/data-intelligence/research/calendar-observations";
 import { asOfAfterKickoff } from "@/domain/eval/data-intelligence/research/temporal";
+import { publishUnderstatXgObservations } from "@/ingest/understat-feature-publish";
 
 export type Phase8LaneStatus = {
   source_id: string;
@@ -281,6 +282,24 @@ export async function runUnderstatPhase8Lane(input: {
     },
   ];
   const observations = postKickoff ? [] : persist(lane.observations, root);
+  try {
+    await publishUnderstatXgObservations({
+      observations,
+      event: {
+        event_id: ev.event_id,
+        home: ev.home_or_a,
+        away: ev.away_or_b,
+        competition: ev.competition,
+        kickoff_utc: ev.kickoff_utc,
+        sport: ev.sport,
+      },
+    });
+  } catch (e) {
+    console.warn(
+      `[understat-neon] publish failed event=${ev.event_id}:`,
+      e instanceof Error ? e.message : e,
+    );
+  }
   return { observations, statuses };
 }
 

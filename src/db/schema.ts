@@ -365,13 +365,14 @@ export const featureObservations = pgTable(
     featureValueText: text("feature_value_text"),
     featureValueJson: jsonb("feature_value_json"),
     observedAt: timestamp("observed_at", { withTimezone: true }).notNull(),
-    availableAt: timestamp("available_at", { withTimezone: true }).notNull(),
+    /** Null when the publication clock is not demonstrated (CONTEXT / NOT_ELIGIBLE). */
+    availableAt: timestamp("available_at", { withTimezone: true }),
     ingestedAt: timestamp("ingested_at", { withTimezone: true }).notNull(),
     sourceId: uuid("source_id").references(() => dataSources.id),
     rawPayloadId: uuid("raw_payload_id").references(() => rawPayloads.id),
     temporalPrecision: text("temporal_precision").notNull().default("exact"),
     /**
-     * VALID | MISSING | FORBIDDEN | INSUFFICIENT_HISTORY | TEMPORAL_UNKNOWN
+     * VALID | MISSING | FORBIDDEN | INSUFFICIENT_HISTORY | TEMPORAL_UNKNOWN | NOT_ELIGIBLE
      */
     featureStatus: text("feature_status").notNull(),
     identityKey: text("identity_key").notNull(),
