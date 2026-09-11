@@ -123,3 +123,42 @@ export function bucketLabelIt(raw: string | null | undefined): string {
       return raw ? String(raw) : "—";
   }
 }
+
+/** Primary UI copy for a decision / prediction status. Never show raw codes as the headline. */
+export function decisionLabelIt(raw: string | null | undefined): string {
+  const u = String(raw ?? "").toUpperCase();
+  if (!u || u === "N/A" || u === "UNKNOWN") return "Non ancora valutata";
+  if (u.includes("INSUFFICIENT")) return "Dati insufficienti";
+  if (u === "NO_BET" || u.includes("NO_BET") || u === "HOLD") return "Nessuna scommessa";
+  if (u.includes("SKIP")) return "Saltata";
+  if (u.includes("UNAVAILABLE") || u.includes("TEMPORAL")) return "Non disponibile";
+  if (
+    u.includes("MODEL_INFERENCE") ||
+    u.includes("INDEPENDENT") ||
+    u === "ANALYZED" ||
+    u === "INDEPENDENT_MODEL"
+  ) {
+    return "Previsione indipendente";
+  }
+  if (u.includes("RESEARCHING")) return "In ricerca";
+  if (u.includes("RESEARCHED") || u === "FEATURED") return "Ricercata";
+  if (u.includes("QUEUED")) return "In coda";
+  if (u.includes("ELIGIBLE")) return "Ammissibile";
+  if (u.includes("DISCOVERED")) return "Scoperta";
+  return bucketLabelIt(raw);
+}
+
+export function selectionLabelIt(raw: string | null | undefined): string {
+  const u = String(raw ?? "").toUpperCase();
+  if (u === "HOME" || u === "H" || u === "1") return "Casa";
+  if (u === "DRAW" || u === "X" || u === "D") return "Pareggio";
+  if (u === "AWAY" || u === "A" || u === "2") return "Trasferta";
+  return raw ? String(raw) : "—";
+}
+
+export function marketLabelIt(raw: string | null | undefined): string {
+  const u = String(raw ?? "").toUpperCase().replace(/\s+/g, "_");
+  if (!u) return "Risultato 1X2";
+  if (u === "1X2" || u === "H2H" || u === "MATCH_ODDS" || u === "MATCH_RESULT") return "Risultato 1X2";
+  return raw ? String(raw) : "Risultato 1X2";
+}

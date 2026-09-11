@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useEffect, useMemo, useState } from "react";
 import {
   Card,
   EmptyState,
@@ -10,7 +11,6 @@ import {
   StatusDot,
   StatusPill,
   asRecord,
-  edgeLabel,
   fmtMoney,
   fmtN,
   fmtPct,
@@ -18,11 +18,60 @@ import {
   type BmState,
 } from "@/components/betmind/ui";
 import { useBetMindData } from "@/components/betmind/DataProvider";
+import { PredictionOddsCard } from "@/components/betmind/PredictionOddsCard";
 import {
   brainStatusIt,
   formatAgeIt,
   statusWordIt,
 } from "@/domain/eval/betmind-runtime/status-copy";
+
+function todayRome(): string {
+  return new Intl.DateTimeFormat("en-CA", {
+    timeZone: "Europe/Rome",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).format(new Date());
+}
+
+function mergePredictionRows(
+  calendar: Record<string, unknown>[],
+  board: unknown[],
+): Record<string, unknown>[] {
+  const byId = new Map<string, Record<string, unknown>>();
+  for (const raw of board) {
+    const e = asRecord(raw);
+    if (!e?.event_id) continue;
+    byId.set(String(e.event_id), e);
+  }
+  for (const e of calendar) {
+    const id = String(e.event_id ?? "");
+    if (!id) continue;
+    const prev = byId.get(id) ?? {};
+    byId.set(id, { ...prev, ...e });
+  }
+  const rows = [...byId.values()];
+  const rank = (e: Record<string, unknown>): number => {
+    const model = asRecord(e.probability_model);
+    const hasModel = Boolean(model && (model.HOME != null || model.DRAW != null || model.AWAY != null));
+    const hasOdds = e.odds_home != null && e.odds_draw != null && e.odds_away != null;
+    if (hasModel && hasOdds) return 0;
+    if (hasModel) return 1;
+    if (hasOdds) return 2;
+    return 3;
+  };
+  rows.sort((a, b) => {
+    const d = rank(a) - rank(b);
+    if (d !== 0) return d;
+    return String(a.kickoff_utc ?? "").localeCompare(String(b.kickoff_utc ?? ""));
+  });
+  const now = Date.now() - 3 * 3600_000;
+  const upcoming = rows.filter((e) => {
+    const t = Date.parse(String(e.kickoff_utc ?? ""));
+    return !Number.isFinite(t) || t >= now;
+  });
+  return (upcoming.length ? upcoming : rows).slice(0, 8);
+}
 
 function hasLivePrediction(firstEv: Record<string, unknown> | null): boolean {
   if (!firstEv) return false;
@@ -46,6 +95,7 @@ function runtimeState(strip: { brain: BmState; worker: BmState; dataPipeline: Bm
 
 export default function BetMindHomePage() {
   const { data, health, coverage, strip, error, updating, lastUpdate } = useBetMindData();
+  const [calendarEvents, setCalendarEvents] = useState<Record<string, unknown>[]>([]);
   const obs = asRecord(data?.observatory);
   const healthBody = asRecord(health) ?? asRecord(data?.health);
   const sys = asRecord(obs?.system) ?? asRecord(healthBody?.system);
@@ -60,7 +110,30 @@ export default function BetMindHomePage() {
     asRecord(healthBody?.current_work);
   const audit = asRecord(obs?.audit_056);
   const nextEvents = (obs?.next_events as unknown[]) ?? [];
-  const firstEv = asRecord(nextEvents[0]);
+  useEffect(() => {
+    let cancelled = false;
+    const q = new URLSearchParams();
+    q.set("date", todayRome());
+    q.set("sport", "ALL");
+    fetch(`/api/events?${q.toString()}`)
+      .then((r) => r.json())
+      .then((body) => {
+        if (cancelled) return;
+        const events = Array.isArray(body?.events) ? (body.events as Record<string, unknown>[]) : [];
+        setCalendarEvents(events);
+      })
+      .catch(() => {
+        if (!cancelled) setCalendarEvents([]);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [lastUpdate]);
+  const predictionRows = useMemo(
+    () => mergePredictionRows(calendarEvents, nextEvents),
+    [calendarEvents, nextEvents],
+  );
+  const firstEv = asRecord(predictionRows[0]) ?? asRecord(nextEvents[0]);
   const verdict = asRecord(data?.predictive?.final_verdict);
   const holdout = asRecord(asRecord(data?.predictive?.validation)?.holdout);
   const metrics = asRecord(holdout?.metrics) ?? asRecord(data?.predictive?.validation);
@@ -78,7 +151,6 @@ export default function BetMindHomePage() {
     detail?.mirror_stale === true || (data as { mirror_stale?: boolean } | null)?.mirror_stale === true;
   const mirrorAge = Number(detail?.mirror_age_ms ?? (data as { mirror_age_ms?: number } | null)?.mirror_age_ms);
   const lastKnownBrain = String(detail?.last_known_brain_status ?? detail?.brain_status ?? sys?.status ?? "");
-  const livePrediction = hasLivePrediction(firstEv) && strip.brain !== "OFFLINE";
   const rt = runtimeState(strip);
   const engine = strip.predictiveEngine;
 
@@ -174,22 +246,21 @@ export default function BetMindHomePage() {
           "Nessuna partita sul board. Niente di inventato.",
       ),
     );
-  } else if (!livePrediction) {
-    blockers.push("Ci sono eventi, ma la prima riga non ha una probabilità di modello indipendente.");
+  } else if (!predictionRows.some((e) => hasLivePrediction(e))) {
+    blockers.push("Ci sono eventi, ma nessuna riga ha ancora una probabilità di modello indipendente.");
   }
 
-  const noPredictionReason = noEvents
-    ? String(
-        analysis?.no_events_reason ??
-          "Nessuna partita disponibile — ultimo ciclo senza righe sul board.",
-      )
-    : strip.brain === "OFFLINE"
-      ? mirrorStale
-        ? `Cervello offline per Vercel (specchio scaduto). Ultimo stato noto: ${brainStatusIt(lastKnownBrain)}.`
-        : "Cervello offline. Va avviato sul PC (pnpm brain:start); il worker pubblica da solo su Neon."
-      : nextEvents.length === 0
-        ? "Il board di questo snapshot è vuoto."
-        : "La riga esiste ma mancano le probabilità di modello (dati insufficienti o non ancora analizzata).";
+  const noPredictionReason =
+    predictionRows.length === 0
+      ? noEvents
+        ? String(
+            analysis?.no_events_reason ??
+              "Nessuna partita disponibile — ultimo ciclo senza righe sul board.",
+          )
+        : nextEvents.length === 0 && calendarEvents.length === 0
+          ? "Nessuna partita in elenco per oggi. Niente di inventato."
+          : "Elenco eventi vuoto per questa finestra."
+      : "Le partite ci sono, ma senza previsione indipendente e senza quote osservate.";
 
   return (
     <div className="mx-auto flex max-w-6xl flex-col gap-4">
@@ -217,37 +288,64 @@ export default function BetMindHomePage() {
 
       <section className="bm-hero">
         <div className="flex flex-wrap items-center justify-between gap-2">
-          <div>
-            <div className="bm-section-label">Stato del sistema</div>
-            <h2 className="mt-1 text-lg font-semibold">Striscia operativa</h2>
-          </div>
+          <div className="bm-section-label">Stato</div>
           <div className="flex flex-wrap gap-2">
-            <StatusPill state={strip.webApp} label={`App web ${statusWordIt(strip.webApp)}`} />
+            <StatusPill state={strip.webApp} label={`App ${statusWordIt(strip.webApp)}`} />
             <StatusPill state={rt} label={`Runtime ${statusWordIt(rt)}`} />
             <StatusPill state={engine} label={`Motore ${statusWordIt(engine)}`} />
+            <Pill>Cervello {statusWordIt(strip.brain)}</Pill>
           </div>
-        </div>
-        <div className="bm-status-grid mt-4">
-          {statusRows.map((s) => (
-            <div key={s.name} className="bm-status-cell">
-              <div className="bm-section-label">{s.name}</div>
-              <strong className="inline-flex items-center gap-1.5">
-                <StatusDot state={s.state} />
-                {statusWordIt(s.state)}
-              </strong>
-              <p className="mt-1 truncate text-[11px] bm-muted">{s.detail}</p>
-            </div>
-          ))}
-        </div>
-        <div className="mt-3 flex flex-wrap gap-2">
-          <Pill>Cervello {statusWordIt(strip.brain)}</Pill>
-          <Pill>Ultimo ciclo #{cycleNum != null ? String(cycleNum) : "—"}</Pill>
-          <Pill>{fmtWhen(lastCycle)}</Pill>
         </div>
       </section>
 
-      <div className="grid gap-4 lg:grid-cols-3">
-        <Card title="Analisi" className="lg:col-span-2">
+      <section className="space-y-3">
+        <div className="flex flex-wrap items-end justify-between gap-2">
+          <div>
+            <div className="bm-section-label">Oggi</div>
+            <h2 className="mt-1 text-xl font-semibold tracking-tight">Previsioni</h2>
+            <p className="mt-1 text-xs bm-muted">
+              Modello indipendente e quote book restano strati separati. Le quote non entrano nel modello.
+            </p>
+          </div>
+          <Link href="/events" className="text-xs bm-accent underline">
+            Tutti gli eventi
+          </Link>
+        </div>
+        {predictionRows.length === 0 ? (
+          <EmptyState title="Nessuna previsione in elenco" reason={noPredictionReason} />
+        ) : (
+          <div className="grid gap-3">
+            {predictionRows.map((ev) => (
+              <PredictionOddsCard
+                key={String(ev.event_id)}
+                event={ev}
+                href={typeof ev.event_id === "string" ? `/events/${ev.event_id}` : undefined}
+              />
+            ))}
+          </div>
+        )}
+      </section>
+
+      <div className="bm-ops">
+        <details>
+          <summary>Contatori operativi e resa dati</summary>
+          <div className="bm-status-grid mt-4">
+            {statusRows.map((s) => (
+              <div key={s.name} className="bm-status-cell">
+                <div className="bm-section-label">{s.name}</div>
+                <strong className="inline-flex items-center gap-1.5">
+                  <StatusDot state={s.state} />
+                  {statusWordIt(s.state)}
+                </strong>
+                <p className="mt-1 truncate text-[11px] bm-muted">{s.detail}</p>
+              </div>
+            ))}
+          </div>
+          <div className="mt-3 flex flex-wrap gap-2">
+            <Pill>Ultimo ciclo #{cycleNum != null ? String(cycleNum) : "—"}</Pill>
+            <Pill>{fmtWhen(lastCycle)}</Pill>
+            <Pill>{String(modelName)}</Pill>
+          </div>
           {noEvents ? (
             <EmptyState
               title="NESSUN EVENTO DISPONIBILE"
@@ -257,298 +355,137 @@ export default function BetMindHomePage() {
               )}
             />
           ) : (
-            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
               <Metric
                 label="Ultimo ciclo"
                 value={cycleNum != null ? `#${String(cycleNum)}` : "—"}
                 accent
               />
               <Metric label="Ultimo aggiornamento" value={fmtWhen(lastCycle)} />
-                  <Metric
-                    label="Eventi scoperti"
-                    value={String(
-                      (analysis as { events_discovered?: number } | null)?.events_discovered ??
-                        analysis?.events_in_store ??
-                        "—",
-                    )}
-                  />
-                  <Metric
-                    label="Eventi in coda ricerca"
-                    value={String(
-                      (analysis as { events_queued?: number } | null)?.events_queued ?? "—",
-                    )}
-                  />
-                  <Metric
-                    label="Eventi ricercati"
-                    value={String(
-                      (analysis as { events_researched?: number } | null)?.events_researched ??
-                        (analysis as { events_with_research?: number } | null)?.events_with_research ??
-                        "—",
-                    )}
-                  />
-                  <Metric
-                    label="Eventi con ricerca"
-                    value={String(
-                      (analysis as { events_with_research?: number } | null)?.events_with_research ??
-                        "—",
-                    )}
-                  />
-                  <Metric
-                    label="Eventi eleggibili"
-                    value={String(
-                      (analysis as { events_eligible?: number } | null)?.events_eligible ?? "—",
-                    )}
-                  />
-                  <Metric
-                    label="Previsioni indipendenti"
-                    value={String(
-                      (analysis as { model_inferences?: number } | null)?.model_inferences ?? "—",
-                    )}
-                  />
-                  <Metric
-                    label="Previsioni prodotte"
-                    value={String(predictionsProduced ?? "—")}
-                  />
-                  <Metric
-                    label="Dati insufficienti"
-                    value={String(
-                      (analysis as { insufficient_data?: number } | null)?.insufficient_data ?? "—",
-                    )}
-                  />
-                  <Metric
-                    label="Fonti interrogate oggi"
-                    value={String(
-                      (analysis as { sources_attempted_today?: number } | null)?.sources_attempted_today ?? "—",
-                    )}
-                  />
-                  <Metric
-                    label="Dati acquisiti oggi"
-                    value={String(
-                      (analysis as { data_acquired_today?: number } | null)?.data_acquired_today ?? "—",
-                    )}
-                  />
-                  <Metric
-                    label="Eventi con dati reali"
-                    value={String(
-                      (analysis as { events_with_real_event_data?: number } | null)
-                        ?.events_with_real_event_data ?? "—",
-                    )}
-                  />
-                  <Metric
-                    label="Eventi con archivio storico"
-                    value={String(
-                      (analysis as { events_with_historical_data?: number } | null)
-                        ?.events_with_historical_data ?? "—",
-                    )}
-                  />
-                  <Metric
-                    label="Osservazioni reali"
-                    value={String(
-                      (analysis as { real_observations?: number } | null)?.real_observations ?? "—",
-                    )}
-                  />
-                  <Metric
-                    label="Osservazioni storiche"
-                    value={String(
-                      (analysis as { historical_observations?: number } | null)
-                        ?.historical_observations ?? "—",
-                    )}
-                  />
-                  <Metric
-                    label="Feature derivate"
-                    value={String(
-                      (analysis as { derived_observations?: number } | null)?.derived_observations ??
-                        "—",
-                    )}
-                  />
-                  <Metric
-                    label="Resa dati (osservazioni/tentativi)"
-                    value={String((analysis as { data_yield?: number } | null)?.data_yield ?? "—")}
-                  />
-                  <Metric
-                    label="Fonti bloccate oggi"
-                    value={String(
-                      (analysis as { sources_blocked_today?: number } | null)?.sources_blocked_today ?? "—",
-                    )}
-                  />
-                  <Metric
-                    label="Fonti senza adapter oggi"
-                    value={String(
-                      (analysis as { sources_missing_adapter_today?: number } | null)
-                        ?.sources_missing_adapter_today ?? "—",
-                    )}
-                  />
-                  <Metric
-                    label="Saltati"
-                    value={String(analysis?.skipped ?? "—")}
-                  />
-                  <Metric
-                    label="Previsioni persistite (eventi ≠ inference)"
-                    value={String(
-                      (analysis as { predictions_persisted_events?: number } | null)
-                        ?.predictions_persisted_events ??
-                        eventsAnalyzed ??
-                        "—",
-                    )}
-                  />
-                  <Metric label="Board decisioni (finestra)" value={String(boardCount)} />
-                  <Metric label="Nota" value={String(activity?.note ?? analysis?.reason ?? "—")} />
+              <Metric
+                label="Eventi scoperti"
+                value={String(
+                  (analysis as { events_discovered?: number } | null)?.events_discovered ??
+                    analysis?.events_in_store ??
+                    "—",
+                )}
+              />
+              <Metric
+                label="Eventi in coda ricerca"
+                value={String((analysis as { events_queued?: number } | null)?.events_queued ?? "—")}
+              />
+              <Metric
+                label="Eventi ricercati"
+                value={String(
+                  (analysis as { events_researched?: number } | null)?.events_researched ??
+                    (analysis as { events_with_research?: number } | null)?.events_with_research ??
+                    "—",
+                )}
+              />
+              <Metric
+                label="Eventi eleggibili"
+                value={String((analysis as { events_eligible?: number } | null)?.events_eligible ?? "—")}
+              />
+              <Metric
+                label="Previsioni indipendenti"
+                value={String((analysis as { model_inferences?: number } | null)?.model_inferences ?? "—")}
+              />
+              <Metric label="Previsioni prodotte" value={String(predictionsProduced ?? "—")} />
+              <Metric
+                label="Dati insufficienti"
+                value={String((analysis as { insufficient_data?: number } | null)?.insufficient_data ?? "—")}
+              />
+              <Metric
+                label="Fonti interrogate oggi"
+                value={String(
+                  (analysis as { sources_attempted_today?: number } | null)?.sources_attempted_today ?? "—",
+                )}
+              />
+              <Metric
+                label="Dati acquisiti oggi"
+                value={String((analysis as { data_acquired_today?: number } | null)?.data_acquired_today ?? "—")}
+              />
+              <Metric
+                label="Eventi con dati reali"
+                value={String(
+                  (analysis as { events_with_real_event_data?: number } | null)?.events_with_real_event_data ??
+                    "—",
+                )}
+              />
+              <Metric
+                label="Eventi con archivio storico"
+                value={String(
+                  (analysis as { events_with_historical_data?: number } | null)?.events_with_historical_data ??
+                    "—",
+                )}
+              />
+              <Metric
+                label="Osservazioni reali"
+                value={String((analysis as { real_observations?: number } | null)?.real_observations ?? "—")}
+              />
+              <Metric
+                label="Osservazioni storiche"
+                value={String(
+                  (analysis as { historical_observations?: number } | null)?.historical_observations ?? "—",
+                )}
+              />
+              <Metric
+                label="Feature derivate"
+                value={String((analysis as { derived_observations?: number } | null)?.derived_observations ?? "—")}
+              />
+              <Metric
+                label="Resa dati (osservazioni/tentativi)"
+                value={String((analysis as { data_yield?: number } | null)?.data_yield ?? "—")}
+              />
+              <Metric
+                label="Fonti bloccate oggi"
+                value={String(
+                  (analysis as { sources_blocked_today?: number } | null)?.sources_blocked_today ?? "—",
+                )}
+              />
+              <Metric
+                label="Fonti senza adapter oggi"
+                value={String(
+                  (analysis as { sources_missing_adapter_today?: number } | null)?.sources_missing_adapter_today ??
+                    "—",
+                )}
+              />
+              <Metric label="Saltati" value={String(analysis?.skipped ?? "—")} />
+              <Metric
+                label="Previsioni persistite (eventi ≠ inference)"
+                value={String(
+                  (analysis as { predictions_persisted_events?: number } | null)?.predictions_persisted_events ??
+                    eventsAnalyzed ??
+                    "—",
+                )}
+              />
+              <Metric label="Board decisioni (finestra)" value={String(boardCount)} />
+              <Metric label="Nota" value={String(activity?.note ?? analysis?.reason ?? "—")} />
+              <Metric label="Modello" value={modelName} accent />
+              <Metric
+                label="Indipendente"
+                value={
+                  verdict?.model_is_market_only === false ||
+                  String(verdict?.model_independent ?? "").includes("INDEPENDENT")
+                    ? "ATTIVO"
+                    : String(audit?.model_readiness ?? "SCONOSCIUTO")
+                }
+              />
+              <Metric
+                label="Copertura dati"
+                value={
+                  analysis?.data_coverage != null
+                    ? fmtPct(analysis.data_coverage as number)
+                    : coverage?.DATA_COVERAGE != null
+                      ? fmtPct(coverage.DATA_COVERAGE as number)
+                      : "—"
+                }
+              />
+              <Metric label="Soglia modello" value={String(verdict?.verdict ?? audit?.model_readiness ?? "—")} />
             </div>
           )}
-        </Card>
-        <Card title="Intelligenza predittiva">
-          <div className="grid grid-cols-1 gap-3">
-            <Metric label="Modello" value={modelName} accent />
-            <Metric
-              label="Indipendente"
-              value={
-                verdict?.model_is_market_only === false ||
-                String(verdict?.model_independent ?? "").includes("INDEPENDENT")
-                  ? "ATTIVO"
-                  : String(audit?.model_readiness ?? "SCONOSCIUTO")
-              }
-            />
-            <Metric
-              label="Copertura dati"
-              value={
-                analysis?.data_coverage != null
-                  ? fmtPct(analysis.data_coverage as number)
-                  : coverage?.DATA_COVERAGE != null
-                    ? fmtPct(coverage.DATA_COVERAGE as number)
-                    : "—"
-              }
-            />
-            <Metric label="Soglia modello" value={String(verdict?.verdict ?? audit?.model_readiness ?? "—")} />
-          </div>
-        </Card>
+        </details>
       </div>
-
-      <Card
-        title="Ultima previsione (board reale)"
-        right={
-          <Pill tone={livePrediction ? "accent" : "warn"}>
-            {livePrediction ? "RIGA REALE" : "NESSUNA RIGA MODELLO"}
-          </Pill>
-        }
-      >
-        <p className="mb-3 text-xs bm-muted">
-          MODELLO indipendente dalle quote. MERCATO / QUOTE solo per confronto, se presenti.
-        </p>
-        {!livePrediction ? (
-          <EmptyState title="NESSUNA PREVISIONE LIVE DISPONIBILE" reason={noPredictionReason} />
-        ) : (
-          <>
-            <div className="mb-3 flex flex-wrap gap-2">
-              <Pill tone="accent">Modello indipendente</Pill>
-              <Pill>{String(firstEv?.label ?? firstEv?.event_id)}</Pill>
-            </div>
-            <div className="bm-split">
-              <div className="bm-panel-model">
-                <div className="bm-section-label">Modello indipendente</div>
-                <div className="mt-2 grid grid-cols-3 gap-3">
-                  <Metric
-                    label="Casa"
-                    value={
-                      asRecord(firstEv?.probability_model)?.HOME != null
-                        ? `${fmtN(Number(asRecord(firstEv?.probability_model)?.HOME) * 100, 1)}%`
-                        : firstEv?.model_pct != null
-                          ? `${fmtN(firstEv.model_pct as number, 1)}%`
-                          : "—"
-                    }
-                    accent
-                  />
-                  <Metric
-                    label="Pareggio"
-                    value={
-                      asRecord(firstEv?.probability_model)?.DRAW != null
-                        ? `${fmtN(Number(asRecord(firstEv?.probability_model)?.DRAW) * 100, 1)}%`
-                        : "—"
-                    }
-                  />
-                  <Metric
-                    label="Trasferta"
-                    value={
-                      asRecord(firstEv?.probability_model)?.AWAY != null
-                        ? `${fmtN(Number(asRecord(firstEv?.probability_model)?.AWAY) * 100, 1)}%`
-                        : "—"
-                    }
-                  />
-                </div>
-              </div>
-              <div className="bm-panel-market">
-                <div className="bm-section-label">Mercato (separato)</div>
-                <div className="mt-2 grid grid-cols-2 gap-3">
-                  <Metric
-                    label="Prob. implicita"
-                    value={firstEv?.market_pct != null ? fmtN(firstEv.market_pct as number, 1) : "—"}
-                  />
-                  <Metric
-                    label="Quota osservata"
-                    value={firstEv?.odds != null ? fmtN(firstEv.odds as number, 2) : "—"}
-                  />
-                </div>
-              </div>
-            </div>
-            {String(firstEv?.edge_status ?? "") === "CALCULATED" ? (
-              <div className="mt-3 grid gap-3 sm:grid-cols-2">
-                <Metric label="Scarto vs mercato" value={edgeLabel(firstEv?.edge_status, firstEv?.edge)} />
-                <Metric label="Decisione" value={String(firstEv?.decision ?? "—")} />
-              </div>
-            ) : null}
-            <div className="mt-3 grid gap-3 sm:grid-cols-2">
-              <Metric label="Competizione" value={String(firstEv?.competition ?? "—")} />
-              <Metric label="Kickoff" value={fmtWhen(String(firstEv?.kickoff_utc ?? ""))} />
-            </div>
-            {typeof firstEv?.event_id === "string" && (
-              <Link href={`/events/${firstEv.event_id}`} className="bm-btn bm-btn-ghost mt-4 text-xs">
-                Vedi analisi completa
-              </Link>
-            )}
-          </>
-        )}
-      </Card>
-
-      <Card title="Ultime analisi" right={<Pill>{String(nextEvents.length)}</Pill>}>
-        {nextEvents.length === 0 ? (
-          <EmptyState
-            title="Nessun evento sul board"
-            reason={String(analysis?.no_events_reason ?? "next_events di questo snapshot è vuoto.")}
-          />
-        ) : (
-          <ul className="divide-y divide-[var(--bm-border)] text-sm">
-            {nextEvents.slice(0, 8).map((raw) => {
-              const e = asRecord(raw);
-              if (!e) return null;
-              const pm = asRecord(e.probability_model);
-              const home = String(e.home_or_a ?? "").trim();
-              const away = String(e.away_or_b ?? "").trim();
-              const title =
-                home && away ? `${home} vs ${away}` : String(e.label ?? e.event_id);
-              const pct = (v: unknown) =>
-                typeof v === "number" && Number.isFinite(v) ? `${fmtN(v * 100, 1)}%` : "—";
-              return (
-                <li key={String(e.event_id)} className="flex flex-wrap items-center justify-between gap-2 py-2">
-                  <div className="min-w-0">
-                    <div className="truncate font-medium">{title}</div>
-                    <div className="text-xs bm-muted">
-                      {String(e.competition ?? "—")} · {fmtWhen(String(e.kickoff_utc ?? ""))}
-                    </div>
-                    <div className="mt-1 text-xs">
-                      Casa {pct(pm?.HOME)} · Pareggio {pct(pm?.DRAW)} · Trasferta {pct(pm?.AWAY)}
-                    </div>
-                  </div>
-                  <Link href={`/events/${String(e.event_id)}`} className="text-xs bm-accent underline">
-                    Vedi analisi completa
-                  </Link>
-                </li>
-              );
-            })}
-          </ul>
-        )}
-        <Link href="/events" className="bm-btn bm-btn-ghost mt-3 text-xs">
-          Tutti gli eventi
-        </Link>
-      </Card>
 
       <Card title="Blocchi" glow={blockers.length > 0}>
         {blockers.length === 0 ? (

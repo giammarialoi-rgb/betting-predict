@@ -25,6 +25,7 @@
   min-height: 100dvh;
   font-family: var(--font-sora), system-ui, sans-serif;
   overflow-x: hidden;
+  display: flex;
 }
 
 .bm-card {
@@ -266,5 +267,122 @@
   }
   .bm-hero {
     padding: 0.95rem;
+  }
+}
+
+.bm-header {
+  z-index: 20;
+  flex-shrink: 0;
+}
+
+.bm-shell {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  flex-direction: column;
+}
+
+.bm-main {
+  flex: 1;
+}
+
+.bm-tabbar {
+  z-index: 30;
+}
+
+.bm-pred-card {
+  border: 1px solid var(--bm-border);
+  border-radius: var(--bm-radius);
+  background: var(--bm-surface);
+  padding: 1rem 1.05rem;
+}
+
+.bm-pred-card:hover {
+  border-color: rgba(29, 185, 84, 0.28);
+}
+
+.bm-ops details {
+  border: 1px solid var(--bm-border);
+  border-radius: var(--bm-radius);
+  background: var(--bm-surface);
+  padding: 0.85rem 1.05rem;
+}
+
+.bm-ops summary {
+  cursor: pointer;
+  list-style: none;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--bm-muted);
+}
+
+.bm-ops summary::-webkit-details-marker {
+  display: none;
+}
+
+.bm-ops summary::after {
+  content: "▾";
+  float: right;
+  color: var(--bm-muted);
+}
+
+.bm-ops details[open] summary::after {
+  content: "▴";
+}
+
+/* Mobile: lock chrome; only main scrolls. svh is stable while Safari URL bar moves. */
+@media (max-width: 1023px) {
+  html,
+  body {
+    height: 100svh;
+    max-height: 100svh;
+    overflow: hidden;
+    overscroll-behavior: none;
+  }
+
+  .bm-root {
+    height: 100svh;
+    max-height: 100svh;
+    min-height: 0;
+    overflow: hidden;
+    flex-direction: column;
+  }
+
+  .bm-shell {
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .bm-header {
+    position: relative;
+    background: #0a0a0a;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+
+  .bm-main {
+    min-height: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-y: contain;
+    padding-bottom: 1rem;
+  }
+
+  .bm-tabbar {
+    position: relative;
+    flex-shrink: 0;
+    background: #0a0a0a;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+}
+
+@media (min-width: 1024px) {
+  .bm-header {
+    position: sticky;
+    top: 0;
   }
 }

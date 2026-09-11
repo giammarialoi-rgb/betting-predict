@@ -14,7 +14,7 @@ import {
   sportBucket,
 } from "@/components/betmind/ui";
 import { useBetMindData } from "@/components/betmind/DataProvider";
-import { bucketLabelIt, formatAgeIt } from "@/domain/eval/betmind-runtime/status-copy";
+import { bucketLabelIt, decisionLabelIt, formatAgeIt } from "@/domain/eval/betmind-runtime/status-copy";
 
 type Ev = {
   event_id: string;
@@ -31,6 +31,13 @@ type Ev = {
   edge_status?: string;
   ev?: number | null;
   odds?: number | null;
+  odds_home?: number | null;
+  odds_draw?: number | null;
+  odds_away?: number | null;
+  bookmaker?: string | null;
+  odds_market?: string | null;
+  odds_compare_only?: boolean;
+  probability_market?: Record<string, number> | null;
   why?: string;
   selection?: string | null;
   result?: string | null;
@@ -286,41 +293,36 @@ function EventsInner() {
                       : e.label || e.event_id}
                   </div>
                   <div className="mt-1 flex flex-wrap gap-1">
-                    <Pill>{bucketLabelIt(bucketLabel) || "—"}</Pill>
+                    <Pill>{decisionLabelIt(String(e.decision ?? e.prediction_status ?? bucketLabel))}</Pill>
                     {(e.markets ?? []).slice(0, 2).map((m) => (
-                      <Pill key={m}>{m}</Pill>
+                      <Pill key={m}>{m === "1X2" ? "Risultato 1X2" : m}</Pill>
                     ))}
                     {e.result ? <Pill>{e.result}</Pill> : null}
                   </div>
+                  <div className="mt-2 grid grid-cols-2 gap-2 text-[11px]">
+                    <div>
+                      <div className="bm-muted">Modello</div>
+                      <div className="font-semibold">
+                        {e.probability_model &&
+                        (e.probability_model.HOME != null ||
+                          e.probability_model.DRAW != null ||
+                          e.probability_model.AWAY != null)
+                          ? `${e.probability_model.HOME != null ? fmtN(e.probability_model.HOME * 100, 0) : "—"} / ${e.probability_model.DRAW != null ? fmtN(e.probability_model.DRAW * 100, 0) : "—"} / ${e.probability_model.AWAY != null ? fmtN(e.probability_model.AWAY * 100, 0) : "—"}`
+                          : decisionLabelIt(String(e.decision ?? e.prediction_status ?? bucketLabel))}
+                      </div>
+                    </div>
+                    <div>
+                      <div className="bm-muted">Quote{e.bookmaker ? ` · ${e.bookmaker}` : ""}</div>
+                      <div className="font-semibold">
+                        {e.odds_home != null && e.odds_draw != null && e.odds_away != null
+                          ? `${fmtN(e.odds_home, 2)} / ${fmtN(e.odds_draw, 2)} / ${fmtN(e.odds_away, 2)}`
+                          : "Quote non disponibili"}
+                      </div>
+                    </div>
+                  </div>
                   {(row.bucket === "SKIPPED" || row.bucket === "UNAVAILABLE") && row.why ? (
-                    <p className="mt-1 truncate text-[11px] bm-muted">Skip: {row.why}</p>
+                    <p className="mt-1 truncate text-[11px] bm-muted">{decisionLabelIt(String(row.why))}</p>
                   ) : null}
-                </div>
-                <div className="hidden text-xs lg:grid lg:grid-cols-3 lg:gap-3">
-                  <div>
-                    <div className="bm-muted">Casa</div>
-                    <div className="font-semibold bm-accent">
-                      {e.probability_model?.HOME != null
-                        ? `${fmtN(e.probability_model.HOME * 100, 1)}%`
-                        : "—"}
-                    </div>
-                  </div>
-                  <div>
-                    <div className="bm-muted">Pareggio</div>
-                    <div className="font-semibold">
-                      {e.probability_model?.DRAW != null
-                        ? `${fmtN(e.probability_model.DRAW * 100, 1)}%`
-                        : "—"}
-                    </div>
-                  </div>
-                  <div>
-                    <div className="bm-muted">Trasferta</div>
-                    <div className="font-semibold">
-                      {e.probability_model?.AWAY != null
-                        ? `${fmtN(e.probability_model.AWAY * 100, 1)}%`
-                        : "—"}
-                    </div>
-                  </div>
                 </div>
                 <div className="text-right">
                   <span className="text-[10px] bm-accent">Vedi analisi completa</span>

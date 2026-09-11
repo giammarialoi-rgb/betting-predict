@@ -10,6 +10,7 @@ import type { SourceEntry } from "@/domain/eval/data-intelligence/types";
 
 export {
   brainStatusIt,
+  decisionLabelIt,
   formatAgeIt,
   operationalStatusIt,
   statusWordIt,

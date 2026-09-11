@@ -41,8 +41,8 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="it" className={`${sora.variable} h-full antialiased`}>
-      <body className="min-h-full flex flex-col bg-[var(--bm-bg,#0a0a0a)] text-white">
+    <html lang="it" className={`${sora.variable} antialiased`}>
+      <body className="min-h-full bg-[var(--bm-bg,#0a0a0a)] text-white">
         {children}
       </body>
     </html>

@@ -52,7 +52,7 @@ export function AppShell({
   ] as const;
 
   return (
-    <div className="bm-root flex min-h-dvh" lang={locale}>
+    <div className="bm-root" lang={locale}>
       <aside className="hidden w-60 shrink-0 flex-col border-r border-[var(--bm-border)] bg-[var(--bm-surface-2)] lg:flex">
         <div
           className="flex items-center gap-3 border-b border-[var(--bm-border)] px-4 py-4"
@@ -131,9 +131,9 @@ export function AppShell({
         </div>
       </aside>
 
-      <div className="flex min-w-0 flex-1 flex-col">
+      <div className="bm-shell">
         <header
-          className="sticky top-0 z-20 flex items-center justify-between gap-3 border-b border-[var(--bm-border)] bg-[rgba(10,10,10,0.94)] px-4 py-3 backdrop-blur lg:px-6"
+          className="bm-header flex items-center justify-between gap-3 border-b border-[var(--bm-border)] bg-[#0a0a0a] px-4 py-3 lg:bg-[rgba(10,10,10,0.94)] lg:px-6 lg:backdrop-blur"
           style={{ paddingTop: "calc(0.75rem + var(--bm-safe-top))" }}
         >
           <div className="flex min-w-0 items-center gap-3 lg:hidden">
@@ -178,12 +178,12 @@ export function AppShell({
           </div>
         </header>
 
-        <main className="flex-1 px-4 py-4 pb-[calc(var(--bm-nav-h)+var(--bm-safe-bottom)+1rem)] lg:px-6 lg:pb-6">
+        <main className="bm-main px-4 py-4 lg:px-6 lg:pb-6">
           {children}
         </main>
 
         <nav
-          className="fixed inset-x-0 bottom-0 z-30 flex border-t border-[var(--bm-border)] bg-[rgba(10,10,10,0.96)] backdrop-blur lg:hidden"
+          className="bm-tabbar flex border-t border-[var(--bm-border)] bg-[#0a0a0a] lg:hidden"
           style={{ paddingBottom: "var(--bm-safe-bottom)" }}
           aria-label="Navigazione"
         >

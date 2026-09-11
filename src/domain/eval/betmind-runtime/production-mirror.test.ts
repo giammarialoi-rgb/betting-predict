@@ -7,6 +7,7 @@ import type { SourceEntry } from "@/domain/eval/data-intelligence/types";
 import {
   brainStatusIt,
   collectNeonUniverse,
+  decisionLabelIt,
   filterNeonUniverse,
   formatAgeIt,
   localLabStorePresent,
@@ -47,6 +48,9 @@ describe("production mirror honesty", () => {
     assert.match(brainStatusIt("STALE_MIRROR"), /Specchio Neon scaduto/);
     assert.equal(statusWordIt("OFFLINE"), "Offline");
     assert.equal(statusWordIt("RUNNING"), "Online");
+    assert.equal(decisionLabelIt("INSUFFICIENT_DATA"), "Dati insufficienti");
+    assert.equal(decisionLabelIt("MODEL_INFERENCE"), "Previsione indipendente");
+    assert.equal(decisionLabelIt("NO_BET"), "Nessuna scommessa");
   });
 
   it("stale components stay OFFLINE — never fake ONLINE from last-known RUNNING", () => {
