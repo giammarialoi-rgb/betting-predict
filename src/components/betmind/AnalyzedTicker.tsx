@@ -33,7 +33,7 @@ function groupByLeague(rows: AnalyzedListRow[]): Array<{ league: string; rows: A
 }
 
 function oneXTwoPct(row: AnalyzedListRow, sel: "HOME" | "DRAW" | "AWAY"): string {
-  const m = row.markets.find((x) => x.market === "1x2" && x.selection === sel);
+  const m = (row.markets ?? []).find((x) => x.market === "1x2" && x.selection === sel);
   if (!m || m.probability == null) return "dato insufficiente";
   return fmtPct(m.probability);
 }
