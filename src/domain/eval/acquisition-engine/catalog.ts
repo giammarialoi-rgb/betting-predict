@@ -103,6 +103,26 @@ export const CLUBELO_FAILOVER_TEMPLATES = [
   (day: string) => `https://api.clubelo.com/${day}`,
 ] as const;
 
+/** Understat public getLeagueData slugs (page XHR, not a WAF bypass). */
+export const UNDERSTAT_LEAGUES = [
+  { slug: "EPL", label: "Premier League" },
+  { slug: "Serie_A", label: "Serie A" },
+  { slug: "La_Liga", label: "La Liga" },
+  { slug: "Bundesliga", label: "Bundesliga" },
+  { slug: "Ligue_1", label: "Ligue 1" },
+] as const;
+
+/** Official Open-Meteo ping (documented Emirates coords — API health, not an invented match). */
+export const OPEN_METEO_PING_URL =
+  "https://api.open-meteo.com/v1/forecast?latitude=51.5549&longitude=-0.1084&current_weather=true";
+
+/** European season start year (July–June). Matches understat-league.europeanSeasonYear. */
+export function understatSeasonYear(dayIso: string): number {
+  const y = Number(dayIso.slice(0, 4));
+  const m = Number(dayIso.slice(5, 7));
+  return m >= 7 ? y : y - 1;
+}
+
 export const FREE_SOURCE_CATALOG: FreeSourceDef[] = [
   {
     source_id: "clubelo",
@@ -287,6 +307,110 @@ export const FREE_SOURCE_CATALOG: FreeSourceDef[] = [
     market_layer: true,
     live: true,
   },
+  {
+    source_id: "understat",
+    title: "Understat",
+    title_it: "Understat",
+    license_class: "public_endpoint",
+    kind: "research_dataset",
+    url: "https://understat.com/getLeagueData/EPL/2026",
+    rate_limit_ms: 2_000,
+    notes: "Public getLeagueData XHR (X-Requested-With). Rolling L5 xG CONTEXT only; available_at unknown so not MODEL.",
+    notes_it: "getLeagueData pubblico (XHR della pagina). xG L5 solo contesto; available_at sconosciuto.",
+    market_layer: false,
+    live: true,
+  },
+  {
+    source_id: "open-meteo",
+    title: "Open-Meteo",
+    title_it: "Open-Meteo",
+    license_class: "official_api",
+    kind: "meta",
+    url: OPEN_METEO_PING_URL,
+    rate_limit_ms: 1_000,
+    notes: "Official forecast/archive API. No key. CONTEXT weather only when stadium coords are known.",
+    notes_it: "API ufficiale senza chiave. Meteo CONTEXT solo con coordinate stadio note. Nessuna temperatura inventata.",
+    market_layer: false,
+    live: true,
+  },
+  {
+    source_id: "sky-sport",
+    title: "Sky Sport RSS",
+    title_it: "Sky Sport RSS",
+    license_class: "public_endpoint",
+    kind: "news",
+    url: "https://www.sky.it/sport/calcio/rss.xml",
+    rate_limit_ms: 2_000,
+    notes: "Public RSS family. Known fallbacks 404 — NO_DATA if every URL fails. CONTEXT only. No homepage scrape.",
+    notes_it: "Famiglia RSS. I fallback noti danno 404: NO_DATA se tutti falliscono. Solo contesto. Nessuno scrape homepage.",
+    market_layer: false,
+    live: true,
+  },
+  {
+    source_id: "api-sports",
+    title: "API-Sports",
+    title_it: "API-Sports",
+    license_class: "official_api",
+    kind: "fixtures",
+    url: "https://v3.football.api-sports.io/fixtures",
+    rate_limit_ms: 7_000,
+    notes: "Same free-tier as API-Football. AUTH_REQUIRED without API_SPORTS_KEY. No duplicate fetch when the api-football lane already spends the budget.",
+    notes_it: "Stesso piano di API-Football. Senza chiave: AUTH_REQUIRED. Nessuna seconda richiesta sul budget free.",
+    market_layer: false,
+    live: true,
+  },
+  {
+    source_id: "club-football-match-data",
+    title: "Club-Football-Match-Data",
+    title_it: "Club-Football-Match-Data",
+    license_class: "dataset",
+    kind: "research_dataset",
+    url: "https://github.com/xgabora/Club-Football-Match-Data",
+    rate_limit_ms: 0,
+    notes: "CACHE_ONLY local clone. DATE_ONLY. Odds columns MARKET/UI only. NO_DATA if clone missing — never invented.",
+    notes_it: "Corpus locale CACHE_ONLY. DATE_ONLY. Quote solo mercato/UI. NO_DATA se il clone manca. Nessuna riga inventata.",
+    market_layer: false,
+    live: false,
+  },
+  {
+    source_id: "sofascore",
+    title: "SofaScore",
+    title_it: "SofaScore",
+    license_class: "website",
+    kind: "catalog",
+    url: "https://www.sofascore.com/",
+    rate_limit_ms: 0,
+    notes: "BLOCKED audit adapter. HTTP 403 / WAF. No fetch. No bypass.",
+    notes_it: "Adapter di audit BLOCKED. HTTP 403 / WAF. Nessun fetch. Nessun bypass.",
+    market_layer: false,
+    live: false,
+  },
+  {
+    source_id: "fbref",
+    title: "FBref",
+    title_it: "FBref",
+    license_class: "website",
+    kind: "catalog",
+    url: "https://fbref.com/en/",
+    rate_limit_ms: 0,
+    notes: "BLOCKED audit adapter. HTTP 403 / WAF. No fetch. No bypass.",
+    notes_it: "Adapter di audit BLOCKED. HTTP 403 / WAF. Nessun fetch. Nessun bypass.",
+    market_layer: false,
+    live: false,
+  },
+  {
+    source_id: "whoscored",
+    title: "WhoScored",
+    title_it: "WhoScored",
+    license_class: "website",
+    kind: "catalog",
+    url: "https://www.whoscored.com/",
+    rate_limit_ms: 0,
+    notes: "BLOCKED audit adapter. HTTP 403 / WAF. No fetch. No bypass.",
+    notes_it: "Adapter di audit BLOCKED. HTTP 403 / WAF. Nessun fetch. Nessun bypass.",
+    market_layer: false,
+    live: false,
+  },
 ];
 
 export function freeSourceById(id: string): FreeSourceDef | undefined {
@@ -415,6 +539,37 @@ export function discoverFreeSourceJobs(nowIso = new Date().toISOString()): Acqui
       url: "https://api.the-odds-api.com/v4/sports/soccer_epl/odds",
       label: "the-odds-api:soccer_epl",
       league: "soccer_epl",
+    },
+    {
+      source_id: "understat",
+      kind: "research_dataset",
+      url: `https://understat.com/getLeagueData/EPL/${understatSeasonYear(day)}`,
+      label: `understat:EPL:${understatSeasonYear(day)}`,
+      league: "EPL",
+    },
+    {
+      source_id: "open-meteo",
+      kind: "meta",
+      url: OPEN_METEO_PING_URL,
+      label: "open-meteo:forecast-ping",
+    },
+    {
+      source_id: "sky-sport",
+      kind: "news",
+      url: "https://www.sky.it/sport/calcio/rss.xml",
+      label: "sky-sport:rss",
+    },
+    {
+      source_id: "api-sports",
+      kind: "fixtures",
+      url: "https://v3.football.api-sports.io/fixtures?next=15",
+      label: "api-sports:shared-lane",
+    },
+    {
+      source_id: "club-football-match-data",
+      kind: "research_dataset",
+      url: "https://github.com/xgabora/Club-Football-Match-Data",
+      label: "club-football-match-data:cache",
     },
   ];
 }

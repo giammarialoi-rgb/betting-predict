@@ -83,7 +83,7 @@ async function main() {
           data_sources_slugs: FREE_SOURCE_CATALOG.map((s) => s.source_id),
           elo_snapshots: "ClubElo ratings (bounded, provenance official_clubelo) when CSV parsed — never invented",
           feature_observations: "only when an event UUID is supplied — this verify does not invent events",
-          sql: "SELECT slug, name, license_class FROM data_sources WHERE slug IN ('clubelo','openligadb','thesportsdb','statsbomb','espn','openfootball','bbc-sport');",
+          sql: "SELECT slug, name, license_class FROM data_sources WHERE slug IN ('clubelo','openligadb','thesportsdb','statsbomb','espn','openfootball','bbc-sport','understat','open-meteo','sky-sport');",
         }
       : { note: "DATABASE_URL not set — disk cache only. Set DATABASE_URL to register data_sources." },
     coverage: result.coverage,
@@ -112,6 +112,21 @@ async function main() {
       records: result.records,
       neon_sources: result.neon_sources,
     },
+    source_table: result.lanes.map((l) => ({
+      source_id: l.source_id,
+      adapter: l.source_id,
+      status: l.status,
+      ok: l.ok,
+      outcome:
+        l.status === "OK" || l.status === "PARTIAL"
+          ? "ok"
+          : l.status === "BLOCKED"
+            ? "blocked"
+            : l.status === "AUTH_REQUIRED"
+              ? "auth"
+              : "failed",
+      reason_it: l.reason_it,
+    })),
     lanes: result.lanes.map((l) => ({
       source_id: l.source_id,
       ok: l.ok,

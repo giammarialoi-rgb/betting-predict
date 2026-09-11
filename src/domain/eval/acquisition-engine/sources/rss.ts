@@ -7,7 +7,7 @@ import { registerAcquisitionSource } from "@/domain/eval/acquisition-engine/pers
 import { freeSourceById } from "@/domain/eval/acquisition-engine/catalog";
 import type { SourceLaneResult } from "@/domain/eval/acquisition-engine/types";
 
-const RSS_ENGINE_IDS = ["ansa", "bbc-sport", "guardian-football", "gazzetta"] as const;
+const RSS_ENGINE_IDS = ["ansa", "bbc-sport", "guardian-football", "gazzetta", "sky-sport"] as const;
 
 export function isRssEngineSource(id: string): id is (typeof RSS_ENGINE_IDS)[number] {
   return (RSS_ENGINE_IDS as readonly string[]).includes(id);

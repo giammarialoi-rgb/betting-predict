@@ -125,6 +125,9 @@ export type AcquisitionFixtures = {
   apiFootballJson?: string;
   apiFootballOddsJson?: string;
   oddsApiJson?: string;
+  understatJson?: string;
+  openMeteoJson?: string;
+  clubFootballCsv?: string;
 };
 
 export type AcquisitionCycleResult = {

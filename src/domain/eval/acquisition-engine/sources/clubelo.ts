@@ -63,7 +63,7 @@ export async function runClubEloLane(input: {
     });
   }
 
-  const failoverDays = [day, shiftDay(day, 1)];
+  const failoverDays = [day, shiftDay(day, 1), shiftDay(day, 2), shiftDay(day, 3)];
   let lastHttp = fetched.http_status || 0;
   let lastUrl = fetched.url;
   let retries = 0;
@@ -78,7 +78,7 @@ export async function runClubEloLane(input: {
         sourceId: "clubelo",
         minIntervalMs: input.fetchImpl ? 0 : 500,
         fetchImpl: input.fetchImpl,
-        maxRetries: input.maxRetries ?? 1,
+        maxRetries: input.maxRetries ?? 2,
       });
       retries += got.retries;
       lastHttp = got.status;

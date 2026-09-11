@@ -6,7 +6,7 @@
  */
 import { mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
-import { discoverFreeSourceJobs } from "@/domain/eval/acquisition-engine/catalog";
+import { discoverEngineJobs } from "@/domain/eval/acquisition-engine/jobs";
 import { blockedProtectedAudit } from "@/domain/eval/acquisition-engine/blocked-audit";
 import { runClubEloLane } from "@/domain/eval/acquisition-engine/sources/clubelo";
 import { runOpenLigaDbLane } from "@/domain/eval/acquisition-engine/sources/openligadb";
@@ -17,8 +17,13 @@ import { runFootballDataCoUkLane } from "@/domain/eval/acquisition-engine/source
 import { isRssEngineSource, runPublicRssLane } from "@/domain/eval/acquisition-engine/sources/rss";
 import { runEspnLane } from "@/domain/eval/acquisition-engine/sources/espn";
 import { runOpenFootballLane } from "@/domain/eval/acquisition-engine/sources/openfootball";
-import { runApiFootballLane } from "@/domain/eval/acquisition-engine/sources/api-football";
+import { runApiFootballLane, runApiSportsLane } from "@/domain/eval/acquisition-engine/sources/api-football";
 import { runOddsApiLane } from "@/domain/eval/acquisition-engine/sources/odds-api";
+import { runUnderstatLane } from "@/domain/eval/acquisition-engine/sources/understat";
+import { runOpenMeteoLane } from "@/domain/eval/acquisition-engine/sources/open-meteo";
+import { runClubFootballMatchDataLane } from "@/domain/eval/acquisition-engine/sources/club-football-match-data";
+import { isBlockedEngineSource, runBlockedLane } from "@/domain/eval/acquisition-engine/sources/blocked";
+import { isPolicyEngineSource, runPolicyLane } from "@/domain/eval/acquisition-engine/sources/policy";
 import { emptyLane } from "@/domain/eval/acquisition-engine/blocked-audit";
 import type {
   AcquisitionCycleInput,
@@ -151,6 +156,41 @@ export async function runAcquisitionJob(
           labEvents: input.labEvents,
           maxRetries: input.maxRetries,
         });
+      case "understat":
+        return await runUnderstatLane({
+          url: job.url,
+          nowIso,
+          cwd,
+          persistNeon,
+          jsonText: fixtures.understatJson,
+          fetchImpl: input.fetchImpl,
+          labEvents: input.labEvents,
+          maxRetries: input.maxRetries,
+        });
+      case "open-meteo":
+        return await runOpenMeteoLane({
+          url: job.url,
+          nowIso,
+          persistNeon,
+          jsonText: fixtures.openMeteoJson,
+          fetchImpl: input.fetchImpl,
+          labEvents: input.labEvents,
+          maxRetries: input.maxRetries,
+        });
+      case "club-football-match-data":
+        return await runClubFootballMatchDataLane({
+          url: job.url,
+          nowIso,
+          persistNeon,
+          csvText: fixtures.clubFootballCsv,
+          labEvents: input.labEvents,
+        });
+      case "api-sports":
+        return await runApiSportsLane({
+          url: job.url,
+          nowIso,
+          persistNeon,
+        });
       default:
         if (isRssEngineSource(job.source_id)) {
           return await runPublicRssLane({
@@ -161,6 +201,12 @@ export async function runAcquisitionJob(
             xmlText: fixtures.rssXml,
             fetchImpl: input.fetchImpl,
           });
+        }
+        if (isBlockedEngineSource(job.source_id)) {
+          return runBlockedLane({ sourceId: job.source_id, url: job.url });
+        }
+        if (isPolicyEngineSource(job.source_id)) {
+          return runPolicyLane({ sourceId: job.source_id, url: job.url });
         }
         return emptyLane({
           source_id: job.source_id,
@@ -186,7 +232,7 @@ export async function runAcquisitionEngineCycle(
 ): Promise<AcquisitionCycleResult> {
   const nowIso = input.nowIso ?? new Date().toISOString();
   const cwd = input.cwd ?? process.cwd();
-  const jobs = discoverFreeSourceJobs(nowIso);
+  const jobs = discoverEngineJobs(nowIso);
   const lanes: SourceLaneResult[] = [];
 
   for (const job of jobs) {
@@ -196,7 +242,11 @@ export async function runAcquisitionEngineCycle(
 
   const blocked_audit = blockedProtectedAudit();
   const sources_ok = lanes.filter((l) => l.ok).length;
-  const sources_blocked = lanes.filter((l) => l.status === "BLOCKED").length + blocked_audit.length;
+  const blockedIds = [
+    ...lanes.filter((l) => l.status === "BLOCKED").map((l) => l.source_id),
+    ...blocked_audit.map((b) => b.source_id),
+  ];
+  const sources_blocked = new Set(blockedIds).size;
   const sources_failed = lanes.filter((l) => !l.ok).length;
   const records = lanes.reduce((n, l) => n + l.records.length, 0);
   const neon_sources = [
@@ -221,10 +271,7 @@ export async function runAcquisitionEngineCycle(
       sources_ok: lanes.filter((l) => l.ok).map((l) => l.source_id),
       sources_failed: lanes.filter((l) => !l.ok).map((l) => l.source_id),
       sources_auth_required: lanes.filter((l) => l.status === "AUTH_REQUIRED").map((l) => l.source_id),
-      sources_blocked: [
-        ...lanes.filter((l) => l.status === "BLOCKED").map((l) => l.source_id),
-        ...blocked_audit.map((b) => b.source_id),
-      ],
+      sources_blocked: [...new Set(blockedIds)],
       leagues,
       sports,
       market_quotes,

@@ -4,9 +4,15 @@ import { mkdtempSync, readFileSync, existsSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { CLUBELO_FIXTURE_CSV } from "@/providers/clubelo/adapter";
-import { runAcquisitionEngineCycle } from "@/domain/eval/acquisition-engine/engine";
+import { runAcquisitionEngineCycle, runAcquisitionJob } from "@/domain/eval/acquisition-engine/engine";
 import { discoverFreeSourceJobs, FREE_SOURCE_CATALOG, BLOCKED_PROTECTED_SOURCES, OPENLIGA_LEAGUES, THESPORTSDB_LEAGUES, FDOUK_DIVISIONS } from "@/domain/eval/acquisition-engine/catalog";
+import { discoverEngineJobs } from "@/domain/eval/acquisition-engine/jobs";
 import { blockedProtectedAudit } from "@/domain/eval/acquisition-engine/blocked-audit";
+import { firstClassSourceIds } from "@/domain/eval/acquisition-engine/first-class";
+import { isBlockedEngineSource } from "@/domain/eval/acquisition-engine/sources/blocked";
+import { isPolicyEngineSource } from "@/domain/eval/acquisition-engine/sources/policy";
+import { parseUnderstatEngineMatches } from "@/domain/eval/acquisition-engine/sources/understat";
+import { countClubFootballRows } from "@/domain/eval/acquisition-engine/sources/club-football-match-data";
 import { parseOpenLigaMatches } from "@/domain/eval/acquisition-engine/sources/openligadb";
 import { parseTheSportsDbEvents } from "@/domain/eval/acquisition-engine/sources/thesportsdb";
 import { parseStatsBombCompetitions } from "@/domain/eval/acquisition-engine/sources/statsbomb";
@@ -111,6 +117,42 @@ const OPENFOOTBALL_FIXTURE = JSON.stringify({
   ],
 });
 
+const UNDERSTAT_FIXTURE = JSON.stringify({
+  dates: [
+    {
+      id: "u-prior",
+      datetime: "2026-09-01 15:00:00",
+      h: { title: "Liverpool", id: "1" },
+      a: { title: "Bournemouth", id: "2" },
+      xG: { h: 1.8, a: 0.6 },
+      isResult: true,
+    },
+    {
+      id: "u-prior-2",
+      datetime: "2026-09-06 15:00:00",
+      h: { title: "Chelsea", id: "3" },
+      a: { title: "Liverpool", id: "1" },
+      xG: { h: 0.9, a: 1.4 },
+      isResult: true,
+    },
+  ],
+});
+
+const OPEN_METEO_FIXTURE = JSON.stringify({
+  current_weather: { temperature: 14.2 },
+  hourly: {
+    time: ["2026-09-13T14:00"],
+    temperature_2m: [14.2],
+    precipitation: [0],
+    windspeed_10m: [8],
+  },
+});
+
+const CLUB_FOOTBALL_FIXTURE = `Date,Home,Away,HomeGoals,AwayGoals,OddHome,OddDraw,OddAway
+01/09/2026,Liverpool,Bournemouth,2,0,1.40,4.50,8.00
+06/09/2026,Chelsea,Liverpool,1,2,2.10,3.40,3.50
+`;
+
 const ODDS_API_FIXTURE = JSON.stringify([
   {
     id: "odd-1",
@@ -149,6 +191,9 @@ const CYCLE_FIXTURES = {
   rssXml: RSS_FIXTURE,
   espnJson: ESPN_FIXTURE,
   openFootballJson: OPENFOOTBALL_FIXTURE,
+  understatJson: UNDERSTAT_FIXTURE,
+  openMeteoJson: OPEN_METEO_FIXTURE,
+  clubFootballCsv: CLUB_FOOTBALL_FIXTURE,
 };
 
 describe("always-on free acquisition engine", () => {
@@ -184,6 +229,10 @@ describe("always-on free acquisition engine", () => {
     assert.ok(ids.includes("gazzetta"));
     assert.ok(ids.includes("api-football"));
     assert.ok(ids.includes("the-odds-api"));
+    assert.ok(ids.includes("understat"));
+    assert.ok(ids.includes("open-meteo"));
+    assert.ok(ids.includes("sky-sport"));
+    assert.ok(ids.includes("club-football-match-data"));
     assert.equal(jobs.some((j) => /sofascore|fbref|whoscored/i.test(j.url)), false);
     assert.match(jobs.find((j) => j.source_id === "clubelo")!.url, /api\.clubelo\.com\/2026-09-11/);
     assert.ok(OPENLIGA_LEAGUES.length >= 4);
@@ -254,6 +303,22 @@ describe("always-on free acquisition engine", () => {
     assert.equal(byId["api-football"].status, "AUTH_REQUIRED");
     assert.equal(byId["the-odds-api"].status, "AUTH_REQUIRED");
     assert.match(byId["the-odds-api"].reason_it, /THE_ODDS_API_KEY|chiave/i);
+    assert.equal(byId["api-sports"].status, "AUTH_REQUIRED");
+
+    assert.equal(byId.understat.ok, true);
+    assert.equal(byId.understat.records.find((r) => r.feature_key === "understat_matches_parsed")?.feature_status, "NOT_ELIGIBLE");
+    assert.equal(byId.understat.records.every((r) => r.enters_independent_model === false), true);
+    assert.equal(byId["open-meteo"].ok, true);
+    assert.equal(byId["sky-sport"].ok, true);
+    assert.equal(byId["club-football-match-data"].ok, true);
+    assert.match(byId["club-football-match-data"].reason, /odds_columns_ignored/);
+    assert.equal(byId.sofascore.status, "BLOCKED");
+    assert.equal(byId.fbref.status, "BLOCKED");
+    assert.equal(byId.whoscored.status, "BLOCKED");
+    assert.equal(byId.opta.status, "AUTH_REQUIRED");
+    assert.equal(byId["the-athletic"].status, "AUTH_REQUIRED");
+    assert.equal(byId.oddspedia.status, "NO_DATA");
+    assert.match(byId.oddspedia.reason_it, /scrape|quota/i);
 
     assert.ok(result.sources_ok >= 8);
     assert.ok(result.coverage.sources_ok.includes("espn"));
@@ -377,7 +442,7 @@ describe("always-on free acquisition engine", () => {
   });
 
   it("registers real free sources in catalogue (not mock)", () => {
-    for (const id of ["clubelo", "openligadb", "thesportsdb", "statsbomb", "football-data-org", "espn", "openfootball", "bbc-sport"]) {
+    for (const id of ["clubelo", "openligadb", "thesportsdb", "statsbomb", "football-data-org", "espn", "openfootball", "bbc-sport", "understat", "open-meteo", "sky-sport"]) {
       const cat = catalogueById(id);
       assert.ok(cat, id);
       assert.notEqual(cat!.adapter, "MISSING_ADAPTER");
@@ -459,5 +524,84 @@ describe("always-on free acquisition engine", () => {
     assert.match(quotes, /"selection":"HOME"/);
     assert.match(quotes, /"price":1\.4/);
     assert.match(quotes, /e-liv-bou/);
+  });
+
+  it("covers every first-class catalog slug with an adapter (never UNKNOWN_SOURCE)", async () => {
+    const ids = firstClassSourceIds();
+    assert.ok(ids.includes("understat"));
+    assert.ok(ids.includes("diretta"));
+    assert.ok(ids.includes("tennisstats"));
+    const jobs = discoverEngineJobs("2026-09-11T12:00:00.000Z");
+    const jobIds = new Set(jobs.map((j) => j.source_id));
+    for (const id of ids) {
+      assert.ok(jobIds.has(id), `discoverEngineJobs missing ${id}`);
+    }
+    let fetches = 0;
+    for (const id of ids) {
+      const job = jobs.find((j) => j.source_id === id)!;
+      const lane = await runAcquisitionJob(job, {
+        nowIso: "2026-09-11T12:00:00.000Z",
+        cwd: tmpCwd(),
+        persistNeon: false,
+        fixtures: CYCLE_FIXTURES,
+        fetchImpl: async () => {
+          fetches += 1;
+          return new Response("no", { status: 401 });
+        },
+      });
+      assert.notEqual(lane.reason, "UNKNOWN_SOURCE", id);
+      assert.notEqual(lane.status, "SKIPPED", id);
+      if (isBlockedEngineSource(id)) {
+        assert.equal(lane.status, "BLOCKED", id);
+        assert.equal(lane.fetched, false, id);
+      }
+      if (isPolicyEngineSource(id)) {
+        assert.ok(lane.status === "NO_DATA" || lane.status === "AUTH_REQUIRED", id);
+        assert.equal(lane.fetched, false, id);
+      }
+    }
+    assert.equal(fetches, 0, "blocked/policy/fixture lanes must not hit the network in this test");
+  });
+
+  it("blocked adapters never fetch SofaScore/FBref/WhoScored", async () => {
+    let calls = 0;
+    const result = await runAcquisitionEngineCycle({
+      nowIso: "2026-09-11T12:00:00.000Z",
+      cwd: tmpCwd(),
+      persistNeon: false,
+      fixtures: CYCLE_FIXTURES,
+      fetchImpl: async (url) => {
+        calls += 1;
+        if (/sofascore|fbref|whoscored/i.test(String(url))) {
+          throw new Error("must not fetch protected hosts");
+        }
+        return new Response("no", { status: 401 });
+      },
+    });
+    for (const id of ["sofascore", "fbref", "whoscored", "directa", "diretta"]) {
+      const lane = result.lanes.find((l) => l.source_id === id);
+      assert.ok(lane, id);
+      assert.equal(lane!.status, "BLOCKED");
+      assert.equal(lane!.fetched, false);
+    }
+    assert.equal(parseUnderstatEngineMatches(UNDERSTAT_FIXTURE).length, 2);
+    assert.equal(countClubFootballRows(CLUB_FOOTBALL_FIXTURE).odds_columns_ignored >= 3, true);
+    void calls;
+  });
+
+  it("ClubElo failover stays NO_DATA when every attempt fails — never invents Elo", async () => {
+    const result = await runAcquisitionEngineCycle({
+      nowIso: "2026-09-11T12:00:00.000Z",
+      cwd: tmpCwd(),
+      persistNeon: false,
+      maxRetries: 1,
+      fixtures: { ...CYCLE_FIXTURES, clubeloCsv: undefined },
+      fetchImpl: async () => new Response("down", { status: 503 }),
+    });
+    const clubelo = result.lanes.find((l) => l.source_id === "clubelo")!;
+    assert.equal(clubelo.ok, false);
+    assert.ok(clubelo.status === "NETWORK_ERROR" || clubelo.status === "NO_DATA");
+    assert.equal(clubelo.records.some((r) => r.feature_key === "home_elo" && typeof r.value === "number"), false);
+    assert.match(clubelo.reason_it, /inventato/i);
   });
 });
