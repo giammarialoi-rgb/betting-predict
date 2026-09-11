@@ -95,7 +95,7 @@ export function operationalStatusIt(raw: string | null | undefined): string {
     case "EMPTY":
       return "Nessun dato";
     case "MISSING_ADAPTER":
-      return "Adapter assente";
+      return "Non disponibile";
     case "UNAVAILABLE":
     case "OFFLINE":
       return "Non disponibile";
@@ -152,11 +152,16 @@ export function sourceTitleIt(sourceId: string, catalogueTitle?: string | null):
     openligadb: "OpenLigaDB",
     thesportsdb: "TheSportsDB",
     espn: "ESPN Scoreboard (non ufficiale)",
+    "espn-soccer-news": "ESPN Soccer News",
     openfootball: "OpenFootball",
     "bbc-sport": "BBC Sport",
     "guardian-football": "The Guardian Football",
     gazzetta: "Gazzetta dello Sport",
     ansa: "ANSA",
+    "sky-sports": "Sky Sports",
+    "corriere-sport": "Corriere dello Sport",
+    "il-messaggero": "Il Messaggero",
+    tuttosport: "Tuttosport",
     statsbomb: "StatsBomb Open Data",
     "football-data-org": "football-data.org",
     "api-football": "API-Football",

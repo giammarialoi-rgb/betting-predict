@@ -8,7 +8,7 @@ import { join } from "node:path";
 import { acquisitionGet } from "@/domain/eval/acquisition-engine/http";
 import { emptyLane } from "@/domain/eval/acquisition-engine/blocked-audit";
 import { persistCompareOnlyQuotes, registerAcquisitionSource } from "@/domain/eval/acquisition-engine/persist";
-import { matchEventPair } from "@/domain/eval/data-intelligence/research/identity-match";
+import { matchEventPair, pickUniqueDatedPair } from "@/domain/eval/data-intelligence/research/identity-match";
 import { ESPN_SCOREBOARDS, espnScoreboardUrl } from "@/domain/eval/acquisition-engine/catalog";
 import type {
   AcquisitionCycleInput,
@@ -201,8 +201,8 @@ export async function runEspnLane(input: {
   let quotesStored = 0;
   for (const ev of input.labEvents ?? []) {
     const hits = events.filter((e) => e.home && e.away && matchEventPair(ev.home, ev.away, e.home, e.away).matched);
-    if (hits.length !== 1) continue;
-    const e = hits[0]!;
+    const e = pickUniqueDatedPair(hits, (row) => row.date, ev.kickoff_utc);
+    if (!e) continue;
     records.push({
       source_id: "espn",
       kind: "fixtures",

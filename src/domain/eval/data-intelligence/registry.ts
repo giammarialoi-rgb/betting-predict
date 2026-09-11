@@ -13,27 +13,10 @@ export function buildSourceRegistry(input?: {
   testScrapeEnabled?: boolean;
 }): SourceEntry[] {
   const fdRows = input?.footballDataRows ?? 0;
-  const clubelo = Boolean(input?.clubeloCachePresent);
-  const oddsApi = input?.oddsApiConfigured ?? Boolean(process.env.THE_ODDS_API_KEY);
-  const apiSports = input?.apiSportsConfigured ?? Boolean(process.env.API_SPORTS_KEY);
   const meteo = input?.openMeteoOk !== false;
-
-  const scrapeEntry = (
-    id: string,
-    title: string,
-    priority: "high" | "medium" | "low",
-  ): SourceEntry => ({
-    id,
-    title,
-    priority,
-    role: "CONTEXT",
-    temporal_precision: "UNKNOWN",
-    status: "RESEARCH_TEST",
-    reason:
-      "Scraping always on — ordinary HTTP GET; CONTEXT only; 403/CAPTCHA recorded as BLOCKED; no WAF bypass",
-    enters_independent_model: false,
-    legal_status: "research_test",
-  });
+  void input?.clubeloCachePresent;
+  void input?.oddsApiConfigured;
+  void input?.apiSportsConfigured;
 
   return [
     {
@@ -53,32 +36,6 @@ export function buildSourceRegistry(input?: {
       legal_status: "public",
     },
     {
-      id: "the-odds-api",
-      title: "The Odds API / Lab B quotes",
-      priority: "high",
-      role: "MARKET_COMPARE",
-      temporal_precision: "STRICT_AS_OF",
-      status: oddsApi ? "ACTIVE" : "UNAVAILABLE",
-      reason: oddsApi
-        ? "Live quotes for MARKET baseline + market-intelligence COMPARE_ONLY"
-        : "THE_ODDS_API_KEY not configured; Lab B quote history may still exist on disk",
-      enters_independent_model: false,
-      legal_status: "licensed",
-    },
-    {
-      id: "clubelo",
-      title: "ClubElo",
-      priority: "medium",
-      role: "MODEL_FEATURE",
-      temporal_precision: "DATE_ONLY",
-      status: clubelo ? "ACTIVE_ASOF" : "UNAVAILABLE",
-      reason: clubelo
-        ? "Local CSV cache present; rating_date < match_date gate"
-        : "No local ClubElo cache — will not fetch during audit; features UNAVAILABLE",
-      enters_independent_model: clubelo,
-      legal_status: "public",
-    },
-    {
       id: "open-meteo",
       title: "Open-Meteo",
       priority: "medium",
@@ -88,19 +45,6 @@ export function buildSourceRegistry(input?: {
       reason: "Official archive API; CONTEXT weather; not MODEL input in this phase",
       enters_independent_model: false,
       legal_status: "public",
-    },
-    {
-      id: "api-sports",
-      title: "API-Sports v3",
-      priority: "high",
-      role: "MODEL_FEATURE",
-      temporal_precision: "STRICT_AS_OF",
-      status: apiSports ? "FOUNDATION" : "PLAN_LIMITED",
-      reason: apiSports
-        ? "Injuries/lineups MODEL only when available_at demonstrable; else NOT_ELIGIBLE"
-        : "API_SPORTS_KEY missing; injuries/lineups UNAVAILABLE",
-      enters_independent_model: true,
-      legal_status: "licensed",
     },
     {
       id: "openligadb",
@@ -191,46 +135,81 @@ export function buildSourceRegistry(input?: {
       legal_status: "public",
     },
     {
-      id: "football-data-org",
-      title: "football-data.org",
-      priority: "high",
+      id: "ansa",
+      title: "ANSA Calcio RSS",
+      priority: "low",
       role: "CONTEXT",
-      temporal_precision: "STRICT_AS_OF",
-      status: process.env.FOOTBALL_DATA_ORG_TOKEN ? "FOUNDATION" : "PLAN_LIMITED",
-      reason: process.env.FOOTBALL_DATA_ORG_TOKEN
-        ? "Token free presente. Rate limit rispettato."
-        : "FOOTBALL_DATA_ORG_TOKEN assente — AUTH_REQUIRED. Nessun token inventato.",
+      temporal_precision: "UNKNOWN",
+      status: "FOUNDATION",
+      reason: "RSS pubblico ANSA calcio. Solo contesto; nessun infortunio inventato dai titoli.",
       enters_independent_model: false,
-      legal_status: "licensed",
-    },
-    scrapeEntry("fbref", "FBRef", "medium"),
-    scrapeEntry("understat", "Understat", "medium"),
-    scrapeEntry("uefa", "UEFA statistics", "high"),
-    scrapeEntry("sofascore", "SofaScore", "low"),
-    scrapeEntry("directa", "Diretta", "low"),
-    scrapeEntry("flashscore", "Flashscore", "low"),
-    scrapeEntry("soccerway", "Soccerway", "low"),
-    {
-      id: "sportradar-news",
-      title: "Sportradar News",
-      priority: "low",
-      role: "DISABLED",
-      temporal_precision: "N/A",
-      status: "DISABLED_BY_POLICY",
-      reason: "Commercial / not licensed in this lab",
-      enters_independent_model: false,
-      legal_status: "forbidden",
+      legal_status: "public",
     },
     {
-      id: "thestatsapi",
-      title: "TheStatsAPI",
-      priority: "low",
-      role: "DISABLED",
-      temporal_precision: "N/A",
-      status: "CANDIDATE",
-      reason: "Commercial candidate; not wired",
+      id: "understat",
+      title: "Understat",
+      priority: "medium",
+      role: "CONTEXT",
+      temporal_precision: "UNKNOWN",
+      status: "FOUNDATION",
+      reason: "getLeagueData pubblico (XHR). xG L5 solo contesto; available_at sconosciuto.",
       enters_independent_model: false,
-      legal_status: "unknown",
+      legal_status: "public",
+    },
+    {
+      id: "sky-sports",
+      title: "Sky Sports Calcio RSS",
+      priority: "low",
+      role: "CONTEXT",
+      temporal_precision: "UNKNOWN",
+      status: "FOUNDATION",
+      reason: "RSS pubblico Sky Sports UK. Solo contesto; nessun infortunio inventato dai titoli.",
+      enters_independent_model: false,
+      legal_status: "public",
+    },
+    {
+      id: "espn-soccer-news",
+      title: "ESPN Soccer News RSS",
+      priority: "low",
+      role: "CONTEXT",
+      temporal_precision: "UNKNOWN",
+      status: "FOUNDATION",
+      reason: "RSS pubblico ESPN soccer. Solo contesto.",
+      enters_independent_model: false,
+      legal_status: "public",
+    },
+    {
+      id: "corriere-sport",
+      title: "Corriere dello Sport RSS",
+      priority: "low",
+      role: "CONTEXT",
+      temporal_precision: "UNKNOWN",
+      status: "FOUNDATION",
+      reason: "RSS pubblico Corriere dello Sport. Solo contesto.",
+      enters_independent_model: false,
+      legal_status: "public",
+    },
+    {
+      id: "il-messaggero",
+      title: "Il Messaggero Sport RSS",
+      priority: "low",
+      role: "CONTEXT",
+      temporal_precision: "UNKNOWN",
+      status: "FOUNDATION",
+      reason: "RSS pubblico Il Messaggero sport. Solo contesto.",
+      enters_independent_model: false,
+      legal_status: "public",
+    },
+    {
+      id: "club-football-match-data",
+      title: "Club-Football-Match-Data",
+      priority: "medium",
+      role: "CONTEXT",
+      temporal_precision: "DATE_ONLY",
+      status: "TEMPORALLY_CAUTIOUS",
+      reason: "Corpus locale CACHE_ONLY. DATE_ONLY. Quote solo mercato/UI. NO_DATA se il clone manca.",
+      enters_independent_model: false,
+      legal_status: "public",
     },
   ];
 }

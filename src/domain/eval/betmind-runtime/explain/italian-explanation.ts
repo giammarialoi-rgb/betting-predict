@@ -191,7 +191,17 @@ export function buildHumanExplanation(input: {
     }
   }
 
-  const sources_summary = `BetMind ha consultato ${s.sources_attempted} fonti. ${s.sources_successful} hanno restituito dati, ${s.sources_partial} in modo parziale. ${s.sources_blocked} erano inaccessibili. ${s.sources_no_event} non contenevano la partita. ${s.sources_missing_adapter} non hanno ancora un adapter. Le quote, se presenti, restano nel layer di mercato e non entrano nel modello.`;
+  const unreachable = s.sources_blocked + s.sources_http_error;
+  const noInfo = s.sources_no_event + s.sources_no_data;
+  const sources_summary = [
+    `BetMind ha consultato ${s.sources_attempted} fonti.`,
+    `${s.sources_successful} hanno restituito dati, ${s.sources_partial} in modo parziale.`,
+    unreachable ? `${unreachable} non erano raggiungibili.` : null,
+    noInfo ? `${noInfo} non avevano informazioni su questa partita.` : null,
+    "Le quote, se presenti, restano nel layer di mercato e non entrano nel modello.",
+  ]
+    .filter(Boolean)
+    .join(" ");
   facts.push("sources_summary_counts");
   facts.push(`live_research=${liveOk}`);
   facts.push(`historical_priors=${o.historical_prior_features}`);

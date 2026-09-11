@@ -19,6 +19,7 @@ import {
   overlayRegistryWithAcquisitionCycle,
   readLastAcquisitionCycle,
 } from "@/domain/eval/acquisition-engine/coverage-overlay";
+import { isActiveFontiSource, isPrunedFontiSource } from "@/domain/eval/acquisition-engine/active-fonti";
 
 export const dynamic = "force-dynamic";
 
@@ -102,6 +103,14 @@ export async function GET() {
       ? registryFromDisk.note
       : "Lab B source-registry.json assente su questo host — registro in memoria. Overlay Neon assente o senza dati.";
 
+  const fontiOperational = operational.filter((s) => {
+    const id = String((s as { source_id?: string; id?: string }).source_id ?? (s as { id?: string }).id ?? "");
+    if (!id || isPrunedFontiSource(id) || !isActiveFontiSource(id)) return false;
+    if ((s as { missing_adapter?: boolean }).missing_adapter) return false;
+    if (String((s as { status?: string }).status ?? "") === "MISSING_ADAPTER") return false;
+    return true;
+  });
+
   return NextResponse.json({
     ok: true,
     source,
@@ -112,6 +121,6 @@ export async function GET() {
     scrape_enters_model: false,
     note,
     sources,
-    operational,
+    operational: fontiOperational,
   });
 }

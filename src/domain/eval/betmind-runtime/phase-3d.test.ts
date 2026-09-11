@@ -101,15 +101,13 @@ describe("Phase 3D pipeline counters", () => {
 describe("Phase 3D source catalogue", () => {
   it("marks missing adapters explicitly and never claims odds as model", () => {
     const missing = RESEARCH_SOURCE_CATALOGUE.filter((s) => s.adapter === "MISSING_ADAPTER");
-    assert.equal(missing.length, 0, "every catalogue source has an adapter or explicit policy/blocked stub");
+    assert.equal(missing.length, 0, "active Fonti catalogue has no missing adapters");
     const policy = RESEARCH_SOURCE_CATALOGUE.filter((s) => s.adapter === "POLICY_DENIED");
-    assert.ok(policy.length >= 10, "expected explicit POLICY_DENIED stubs");
-    const odds = RESEARCH_SOURCE_CATALOGUE.find((s) => s.source_id === "the-odds-api");
-    assert.equal(odds?.market_layer, true);
-    const directa = RESEARCH_SOURCE_CATALOGUE.find((s) => s.source_id === "directa");
-    assert.equal(directa?.adapter, "TEST_PROBE");
-    const flashscore = RESEARCH_SOURCE_CATALOGUE.find((s) => s.source_id === "flashscore");
-    assert.equal(flashscore?.adapter, "TEST_PROBE");
+    assert.equal(policy.length, 0, "policy stubs are not consulted Fonti");
+    assert.equal(RESEARCH_SOURCE_CATALOGUE.find((s) => s.source_id === "the-odds-api"), undefined);
+    assert.equal(RESEARCH_SOURCE_CATALOGUE.find((s) => s.source_id === "directa"), undefined);
+    assert.equal(RESEARCH_SOURCE_CATALOGUE.find((s) => s.source_id === "flashscore"), undefined);
+    assert.equal(RESEARCH_SOURCE_CATALOGUE.find((s) => s.source_id === "tennis-abstract"), undefined);
     const understat = RESEARCH_SOURCE_CATALOGUE.find((s) => s.source_id === "understat");
     assert.equal(understat?.adapter, "PRODUCTION_ADAPTER");
     assert.equal(understat?.market_layer, false);
@@ -236,7 +234,8 @@ describe("Phase 3D dossier lineage", () => {
     assert.ok(d);
     assert.equal(d!.lineage.odds_entered_model, false);
     assert.ok(d!.lineage.what_betmind_knew_before_kickoff.includes("No independent"));
-    assert.ok(d!.lineage.sources_consulted.includes("fbref"));
+    assert.equal(d!.lineage.sources_consulted.includes("fbref"), false);
+    assert.ok(d!.lineage.sources_consulted.includes("understat"));
     assert.ok(Array.isArray(d!.lineage.catalogue_noted_not_fetched));
     assert.equal(d!.lineage.features_entered_model.length, 0);
     assert.equal(d!.research.find((r) => r.source_id === "fbref")?.http_status, 403);

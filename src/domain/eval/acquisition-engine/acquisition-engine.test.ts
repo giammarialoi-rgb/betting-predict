@@ -5,10 +5,11 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { CLUBELO_FIXTURE_CSV } from "@/providers/clubelo/adapter";
 import { runAcquisitionEngineCycle, runAcquisitionJob } from "@/domain/eval/acquisition-engine/engine";
-import { discoverFreeSourceJobs, FREE_SOURCE_CATALOG, BLOCKED_PROTECTED_SOURCES, OPENLIGA_LEAGUES, THESPORTSDB_LEAGUES, FDOUK_DIVISIONS } from "@/domain/eval/acquisition-engine/catalog";
+import { discoverFreeSourceJobs, FREE_SOURCE_CATALOG, BLOCKED_PROTECTED_SOURCES, OPENLIGA_LEAGUES, THESPORTSDB_LEAGUES, FDOUK_DIVISIONS, ESPN_SCOREBOARDS, OPENFOOTBALL_PACKS } from "@/domain/eval/acquisition-engine/catalog";
 import { discoverEngineJobs } from "@/domain/eval/acquisition-engine/jobs";
 import { blockedProtectedAudit } from "@/domain/eval/acquisition-engine/blocked-audit";
 import { firstClassSourceIds } from "@/domain/eval/acquisition-engine/first-class";
+import { ACTIVE_FONTI_SOURCE_IDS, PRUNED_FONTI_SOURCE_IDS, isActiveFontiSource } from "@/domain/eval/acquisition-engine/active-fonti";
 import { isBlockedEngineSource } from "@/domain/eval/acquisition-engine/sources/blocked";
 import { isPolicyEngineSource } from "@/domain/eval/acquisition-engine/sources/policy";
 import { parseUnderstatEngineMatches } from "@/domain/eval/acquisition-engine/sources/understat";
@@ -22,7 +23,7 @@ import { parseOpenFootballPack } from "@/domain/eval/acquisition-engine/sources/
 import { parseOddsApiEvents } from "@/domain/eval/acquisition-engine/sources/odds-api";
 import { parseApiFootballOdds } from "@/domain/eval/acquisition-engine/sources/api-football";
 import { pickUniqueTeam } from "@/domain/eval/data-intelligence/research/identity-match";
-import { catalogueById } from "@/domain/eval/data-intelligence/research/source-catalogue";
+import { catalogueById, RESEARCH_SOURCE_CATALOGUE } from "@/domain/eval/data-intelligence/research/source-catalogue";
 import { assertNoMarketInputsInPredictionContext } from "@/domain/eval/predictive-intelligence/features/asof";
 import { isEligibleForIndependentModel, classifyModelInput } from "@/domain/eval/data-intelligence/research/model-input-policy";
 import { RetryableError, PermanentError, classifyHttpStatus } from "@/ingest/retry";
@@ -227,17 +228,29 @@ describe("always-on free acquisition engine", () => {
     assert.ok(ids.includes("bbc-sport"));
     assert.ok(ids.includes("guardian-football"));
     assert.ok(ids.includes("gazzetta"));
-    assert.ok(ids.includes("api-football"));
-    assert.ok(ids.includes("the-odds-api"));
+    assert.ok(ids.includes("sky-sports"));
+    assert.ok(ids.includes("espn-soccer-news"));
+    assert.ok(ids.includes("corriere-sport"));
+    assert.ok(ids.includes("il-messaggero"));
     assert.ok(ids.includes("understat"));
     assert.ok(ids.includes("open-meteo"));
-    assert.ok(ids.includes("sky-sport"));
     assert.ok(ids.includes("club-football-match-data"));
+    assert.equal(ids.includes("api-football"), false);
+    assert.equal(ids.includes("the-odds-api"), false);
+    assert.equal(ids.includes("api-sports"), false);
+    assert.equal(ids.includes("football-data-org"), false);
+    assert.equal(ids.includes("sky-sport"), false);
+    assert.equal(ids.includes("tennis-abstract"), false);
     assert.equal(jobs.some((j) => /sofascore|fbref|whoscored/i.test(j.url)), false);
     assert.match(jobs.find((j) => j.source_id === "clubelo")!.url, /api\.clubelo\.com\/2026-09-11/);
-    assert.ok(OPENLIGA_LEAGUES.length >= 4);
+    assert.ok(OPENLIGA_LEAGUES.length >= 9);
     assert.ok(THESPORTSDB_LEAGUES.length >= 5);
-    assert.ok(FDOUK_DIVISIONS.length >= 13);
+    assert.ok(FDOUK_DIVISIONS.some((d) => d.code === "B1"));
+    assert.ok(FDOUK_DIVISIONS.some((d) => d.code === "T1"));
+    assert.ok(FDOUK_DIVISIONS.some((d) => d.code === "G1"));
+    assert.ok(ESPN_SCOREBOARDS.some((b) => b.slug === "uefa.champions"));
+    assert.ok(ESPN_SCOREBOARDS.some((b) => b.slug === "ita.1"));
+    assert.ok(OPENFOOTBALL_PACKS.length >= 9);
   });
 
   it("parses ClubElo + OpenLigaDB + TheSportsDB + StatsBomb fixtures continue-on-fail", async () => {
@@ -298,31 +311,30 @@ describe("always-on free acquisition engine", () => {
     assert.equal(byId.espn.ok, true);
     assert.equal(byId.openfootball.ok, true);
     assert.equal(byId.openfootball.records[0]?.feature_status, "NOT_ELIGIBLE");
-    assert.equal(byId["football-data-org"].status, "AUTH_REQUIRED");
-    assert.match(byId["football-data-org"].reason_it, /token/i);
-    assert.equal(byId["api-football"].status, "AUTH_REQUIRED");
-    assert.equal(byId["the-odds-api"].status, "AUTH_REQUIRED");
-    assert.match(byId["the-odds-api"].reason_it, /THE_ODDS_API_KEY|chiave/i);
-    assert.equal(byId["api-sports"].status, "AUTH_REQUIRED");
+    assert.equal(byId["football-data-org"], undefined);
+    assert.equal(byId["api-football"], undefined);
+    assert.equal(byId["the-odds-api"], undefined);
+    assert.equal(byId["api-sports"], undefined);
 
     assert.equal(byId.understat.ok, true);
     assert.equal(byId.understat.records.find((r) => r.feature_key === "understat_matches_parsed")?.feature_status, "NOT_ELIGIBLE");
     assert.equal(byId.understat.records.every((r) => r.enters_independent_model === false), true);
     assert.equal(byId["open-meteo"].ok, true);
-    assert.equal(byId["sky-sport"].ok, true);
+    assert.equal(byId["sky-sports"].ok, true);
+    assert.equal(byId["espn-soccer-news"].ok, true);
+    assert.equal(byId["corriere-sport"].ok, true);
+    assert.equal(byId["il-messaggero"].ok, true);
     assert.equal(byId["club-football-match-data"].ok, true);
     assert.match(byId["club-football-match-data"].reason, /odds_columns_ignored/);
-    assert.equal(byId.sofascore.status, "BLOCKED");
-    assert.equal(byId.fbref.status, "BLOCKED");
-    assert.equal(byId.whoscored.status, "BLOCKED");
-    assert.equal(byId.opta.status, "AUTH_REQUIRED");
-    assert.equal(byId["the-athletic"].status, "AUTH_REQUIRED");
-    assert.equal(byId.oddspedia.status, "NO_DATA");
-    assert.match(byId.oddspedia.reason_it, /scrape|quota/i);
+    assert.equal(byId.sofascore, undefined);
+    assert.equal(byId.fbref, undefined);
+    assert.equal(byId.whoscored, undefined);
+    assert.equal(byId.opta, undefined);
+    assert.equal(byId.oddspedia, undefined);
 
     assert.ok(result.sources_ok >= 8);
     assert.ok(result.coverage.sources_ok.includes("espn"));
-    assert.ok(result.coverage.sources_auth_required.includes("football-data-org"));
+    assert.equal(result.coverage.sources_auth_required.includes("football-data-org"), false);
     assert.ok(result.lanes.every((l) => l.records.every((r) => r.enters_independent_model === false)));
     assert.equal(FREE_SOURCE_CATALOG.some((s) => /mock/i.test(s.source_id)), false);
   });
@@ -442,12 +454,15 @@ describe("always-on free acquisition engine", () => {
   });
 
   it("registers real free sources in catalogue (not mock)", () => {
-    for (const id of ["clubelo", "openligadb", "thesportsdb", "statsbomb", "football-data-org", "espn", "openfootball", "bbc-sport", "understat", "open-meteo", "sky-sport"]) {
+    for (const id of ["openligadb", "thesportsdb", "statsbomb", "espn", "openfootball", "bbc-sport", "understat", "open-meteo", "sky-sports"]) {
       const cat = catalogueById(id);
       assert.ok(cat, id);
       assert.notEqual(cat!.adapter, "MISSING_ADAPTER");
+      assert.ok(isActiveFontiSource(id));
     }
-    assert.equal(catalogueById("the-odds-api")!.market_layer, true);
+    assert.equal(catalogueById("clubelo"), undefined);
+    assert.equal(catalogueById("the-odds-api"), undefined);
+    assert.equal(catalogueById("tennis-abstract"), undefined);
     assert.ok(FREE_SOURCE_CATALOG.every((s) => s.license_class !== "unknown"));
     assert.ok(FREE_SOURCE_CATALOG.every((s) => !/mock/i.test(s.source_id)));
     assert.equal(parseOpenLigaMatches(OPENLIGA_FIXTURE).length, 2);
@@ -529,8 +544,10 @@ describe("always-on free acquisition engine", () => {
   it("covers every first-class catalog slug with an adapter (never UNKNOWN_SOURCE)", async () => {
     const ids = firstClassSourceIds();
     assert.ok(ids.includes("understat"));
-    assert.ok(ids.includes("diretta"));
-    assert.ok(ids.includes("tennisstats"));
+    assert.ok(ids.includes("sky-sports"));
+    assert.equal(ids.includes("diretta"), false);
+    assert.equal(ids.includes("tennisstats"), false);
+    assert.equal(ids.includes("tennis-abstract"), false);
     const jobs = discoverEngineJobs("2026-09-11T12:00:00.000Z");
     const jobIds = new Set(jobs.map((j) => j.source_id));
     for (const id of ids) {
@@ -560,7 +577,35 @@ describe("always-on free acquisition engine", () => {
         assert.equal(lane.fetched, false, id);
       }
     }
-    assert.equal(fetches, 0, "blocked/policy/fixture lanes must not hit the network in this test");
+    assert.equal(fetches, 0, "fixture lanes must not hit the network in this test");
+  });
+
+  it("active Fonti has zero missing adapters and no pruned stubs", () => {
+    assert.equal(RESEARCH_SOURCE_CATALOGUE.filter((s) => s.adapter === "MISSING_ADAPTER").length, 0);
+    assert.equal(RESEARCH_SOURCE_CATALOGUE.filter((s) => s.adapter === "POLICY_DENIED").length, 0);
+    assert.ok(ACTIVE_FONTI_SOURCE_IDS.length >= 10);
+    assert.ok(ACTIVE_FONTI_SOURCE_IDS.length <= 20);
+    for (const s of RESEARCH_SOURCE_CATALOGUE) {
+      assert.ok(isActiveFontiSource(s.source_id), s.source_id);
+    }
+    const jobs = discoverEngineJobs("2026-09-11T12:00:00.000Z");
+    for (const id of PRUNED_FONTI_SOURCE_IDS) {
+      assert.equal(jobs.some((j) => j.source_id === id), false, id);
+      assert.equal(catalogueById(id), undefined, id);
+    }
+  });
+
+  it("token lanes stay AUTH_REQUIRED when keys are absent — still callable, not Fonti", async () => {
+    const org = await runAcquisitionJob(
+      { source_id: "football-data-org", kind: "fixtures", url: "https://api.football-data.org/v4/matches", label: "org" },
+      { nowIso: "2026-09-11T12:00:00.000Z", cwd: tmpCwd(), persistNeon: false, fetchImpl: async () => new Response("no", { status: 401 }) },
+    );
+    assert.equal(org.status, "AUTH_REQUIRED");
+    const odds = await runAcquisitionJob(
+      { source_id: "the-odds-api", kind: "market", url: "https://api.the-odds-api.com/v4/sports/soccer_epl/odds", label: "odds" },
+      { nowIso: "2026-09-11T12:00:00.000Z", cwd: tmpCwd(), persistNeon: false, fetchImpl: async () => new Response("no", { status: 401 }) },
+    );
+    assert.equal(odds.status, "AUTH_REQUIRED");
   });
 
   it("blocked adapters never fetch SofaScore/FBref/WhoScored", async () => {
@@ -578,12 +623,12 @@ describe("always-on free acquisition engine", () => {
         return new Response("no", { status: 401 });
       },
     });
-    for (const id of ["sofascore", "fbref", "whoscored", "directa", "diretta"]) {
+    for (const id of ["sofascore", "fbref", "whoscored", "directa", "diretta", "tennis-abstract"]) {
       const lane = result.lanes.find((l) => l.source_id === id);
-      assert.ok(lane, id);
-      assert.equal(lane!.status, "BLOCKED");
-      assert.equal(lane!.fetched, false);
+      assert.equal(lane, undefined, id);
     }
+    const audit = blockedProtectedAudit();
+    assert.equal(audit.length, 3);
     assert.equal(parseUnderstatEngineMatches(UNDERSTAT_FIXTURE).length, 2);
     assert.equal(countClubFootballRows(CLUB_FOOTBALL_FIXTURE).odds_columns_ignored >= 3, true);
     void calls;

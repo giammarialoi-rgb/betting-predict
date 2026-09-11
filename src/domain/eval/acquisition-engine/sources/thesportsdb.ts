@@ -5,7 +5,7 @@ import { mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { acquisitionGet } from "@/domain/eval/acquisition-engine/http";
 import { emptyLane } from "@/domain/eval/acquisition-engine/blocked-audit";
-import { matchEventPair } from "@/domain/eval/data-intelligence/research/identity-match";
+import { matchEventPair, pickUniqueDatedPair } from "@/domain/eval/data-intelligence/research/identity-match";
 import { registerAcquisitionSource } from "@/domain/eval/acquisition-engine/persist";
 import { THESPORTSDB_LEAGUES, theSportsDbNextUrl } from "@/domain/eval/acquisition-engine/catalog";
 import type {
@@ -134,8 +134,8 @@ export async function runTheSportsDbLane(input: {
       if (!e.strHomeTeam || !e.strAwayTeam) return false;
       return matchEventPair(ev.home, ev.away, e.strHomeTeam, e.strAwayTeam).matched;
     });
-    if (hits.length !== 1) continue;
-    const e = hits[0]!;
+    const e = pickUniqueDatedPair(hits, (row) => row.dateEvent, ev.kickoff_utc);
+    if (!e) continue;
     records.push({
       source_id: "thesportsdb",
       kind: "meta",

@@ -2,8 +2,9 @@
  * Structured research summary — text is generated FROM this object.
  * Never treat a prose blob as source of truth.
  */
-import { catalogueById } from "@/domain/eval/data-intelligence/research/source-catalogue";
+import { catalogueById, isConsultedFontiSource } from "@/domain/eval/data-intelligence/research/source-catalogue";
 import { SOURCE_CAPABILITIES } from "@/domain/eval/data-intelligence/research/source-engine";
+import { isPrunedFontiSource } from "@/domain/eval/acquisition-engine/active-fonti";
 import {
   FEATURE_GROUPS,
   classifyFeatureQuality,
@@ -116,7 +117,16 @@ export function buildResearchSummary(input: {
   has_independent_inference: boolean;
   event_identified_at?: string | null;
 }): ResearchSummary {
-  const source_rows = input.research.map((r) => {
+  const source_rows = input.research
+    .filter((r) => {
+      if (isPrunedFontiSource(r.source_id) || !isConsultedFontiSource(r.source_id)) return false;
+      const adapter = String(r.adapter_kind ?? "").toUpperCase();
+      const phase = String(r.phase ?? "").toUpperCase();
+      if (adapter === "MISSING_ADAPTER" || phase === "MISSING_ADAPTER") return false;
+      if (adapter === "POLICY_DENIED" || phase === "DENIED") return false;
+      return true;
+    })
+    .map((r) => {
     const cat = catalogueById(r.source_id);
     const human_status = classifyHumanSourceStatus(r);
     return {

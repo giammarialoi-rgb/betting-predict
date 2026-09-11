@@ -109,7 +109,7 @@ export function humanSourceStatusLabelIt(s: HumanSourceStatus): string {
     case "BLOCKED":
       return "Accesso negato dal sito";
     case "MISSING_ADAPTER":
-      return "Adapter non implementato";
+      return "Nessuna info su questa partita";
     case "DISABLED_BY_POLICY":
       return "Disabilitato per policy";
     case "STALE":
@@ -136,6 +136,7 @@ export function sourceTitleIt(sourceId: string, catalogueTitle?: string | null):
     openligadb: "OpenLigaDB",
     thesportsdb: "TheSportsDB",
     espn: "ESPN Scoreboard (non ufficiale)",
+    "espn-soccer-news": "ESPN Soccer News",
     openfootball: "OpenFootball",
     "bbc-sport": "BBC Sport",
     "guardian-football": "The Guardian Football",
@@ -157,7 +158,11 @@ export function sourceTitleIt(sourceId: string, catalogueTitle?: string | null):
     betshoot: "Betshoot",
     click4soccer: "Click4Soccer",
     "sky-sport": "Sky Sport",
+    "sky-sports": "Sky Sports",
     ansa: "ANSA",
+    "corriere-sport": "Corriere dello Sport",
+    "il-messaggero": "Il Messaggero",
+    tuttosport: "Tuttosport",
     analysisportiva: "AnalysisPortiva",
     sportytrader: "SportyTrader",
     ilveggente: "IlVeggente",
@@ -194,7 +199,7 @@ export function sourceFailureReasonIt(row: ResearchLike): string {
     return `${sourceTitleIt(row.source_id)} non era disponibile (HTTP ${http ?? "?"}).`;
   }
   if (status === "MISSING_ADAPTER") {
-    return `${sourceTitleIt(row.source_id)} e nel catalogo ma non ha un adapter di produzione.`;
+    return `Il sistema non consulta ${sourceTitleIt(row.source_id)} per questa partita.`;
   }
   if (status === "DISABLED_BY_POLICY") {
     return `${sourceTitleIt(row.source_id)} e disabilitato per policy: nessun scrape non autorizzato.`;

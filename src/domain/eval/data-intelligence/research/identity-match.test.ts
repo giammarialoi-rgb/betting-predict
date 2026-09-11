@@ -11,6 +11,7 @@ import {
   assignEventSide,
   matchEventPair,
   matchTeamNames,
+  pickUniqueDatedPair,
   pickUniqueTeam,
 } from "@/domain/eval/data-intelligence/research/identity-match";
 import { rollingPriorXg, researchUnderstatLeague, parseUnderstatLeagueJson } from "@/domain/eval/data-intelligence/research/understat-league";
@@ -268,5 +269,19 @@ describe("identity matching — Italian audit + gates", () => {
   it("normalize still does not invent provider ids", () => {
     assert.equal(normalizeTeamName("Man Utd"), normalizeTeamName("Manchester United FC"));
     assert.ok(identityKey("CA Osasuna"));
+  });
+
+  it("pickUniqueDatedPair keeps duplicates of the same day and fails closed across days", () => {
+    const rows = [
+      { date: "2026-09-12T14:00:00Z", home: "Liverpool" },
+      { date: "2026-09-12T14:00:00Z", home: "Liverpool" },
+      { date: "2026-09-20T14:00:00Z", home: "Liverpool" },
+    ];
+    const sameDay = pickUniqueDatedPair(rows, (r) => r.date, "2026-09-12T16:30:00Z");
+    assert.equal(sameDay?.date?.startsWith("2026-09-12"), true);
+    const wrongDay = pickUniqueDatedPair(rows, (r) => r.date, "2026-09-13T16:30:00Z");
+    assert.equal(wrongDay, null);
+    const ambiguous = pickUniqueDatedPair(rows, (r) => r.date, null);
+    assert.equal(ambiguous, null);
   });
 });

@@ -83,7 +83,7 @@ async function main() {
           data_sources_slugs: FREE_SOURCE_CATALOG.map((s) => s.source_id),
           elo_snapshots: "ClubElo ratings (bounded, provenance official_clubelo) when CSV parsed — never invented",
           feature_observations: "only when an event UUID is supplied — this verify does not invent events",
-          sql: "SELECT slug, name, license_class FROM data_sources WHERE slug IN ('clubelo','openligadb','thesportsdb','statsbomb','espn','openfootball','bbc-sport','understat','open-meteo','sky-sport');",
+          sql: "SELECT slug, name, license_class FROM data_sources WHERE slug IN ('openligadb','thesportsdb','statsbomb','espn','openfootball','bbc-sport','understat','open-meteo','sky-sports');",
         }
       : { note: "DATABASE_URL not set — disk cache only. Set DATABASE_URL to register data_sources." },
     coverage: result.coverage,

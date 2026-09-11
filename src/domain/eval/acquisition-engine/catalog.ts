@@ -4,6 +4,7 @@
  */
 import type { AcquisitionJob, AcquisitionKind } from "@/domain/eval/acquisition-engine/types";
 import type { LicenseClass } from "@/domain/alignment-ids";
+import { tokenEnvPresent } from "@/domain/eval/acquisition-engine/active-fonti";
 
 export type FreeSourceDef = {
   source_id: string;
@@ -18,6 +19,10 @@ export type FreeSourceDef = {
   market_layer: boolean;
   live: boolean;
   unofficial?: boolean;
+  /** Product Fonti board. Default true. */
+  fonti_active?: boolean;
+  /** Skip engine discovery unless this env var is a non-empty token. */
+  requires_token?: string;
 };
 
 export const BLOCKED_PROTECTED_SOURCES = [
@@ -44,12 +49,17 @@ export const BLOCKED_PROTECTED_SOURCES = [
   },
 ] as const;
 
-/** OpenLigaDB public shortcuts verified with ordinary GET (no key). */
+/** OpenLigaDB public shortcuts verified with ordinary GET (no key). Empty arrays are not listed. */
 export const OPENLIGA_LEAGUES = [
   { shortcut: "bl1", label: "1. Bundesliga" },
   { shortcut: "bl2", label: "2. Bundesliga" },
   { shortcut: "bl3", label: "3. Liga" },
   { shortcut: "dfb", label: "DFB-Pokal" },
+  { shortcut: "fbl1", label: "Frauen-Bundesliga" },
+  { shortcut: "ucl", label: "UEFA Champions League" },
+  { shortcut: "ch1", label: "Swiss Super League" },
+  { shortcut: "la1", label: "La Liga" },
+  { shortcut: "pl", label: "Premier League" },
 ] as const;
 
 /** TheSportsDB free test-key soccer leagues (key=3). */
@@ -59,6 +69,10 @@ export const THESPORTSDB_LEAGUES = [
   { id: "4335", label: "Spanish La Liga" },
   { id: "4331", label: "German Bundesliga" },
   { id: "4334", label: "French Ligue 1" },
+  { id: "4337", label: "Dutch Eredivisie" },
+  { id: "4346", label: "Portuguese Primeira Liga" },
+  { id: "4480", label: "English Championship" },
+  { id: "4481", label: "Italian Serie B" },
 ] as const;
 
 /** football-data.co.uk free CSVs. Odds columns stay MARKET layer. */
@@ -76,6 +90,9 @@ export const FDOUK_DIVISIONS = [
   { code: "N1", label: "Eredivisie" },
   { code: "P1", label: "Primeira Liga" },
   { code: "SC0", label: "Scottish Premiership" },
+  { code: "B1", label: "Belgian Pro League" },
+  { code: "T1", label: "Turkish Super Lig" },
+  { code: "G1", label: "Greek Super League" },
 ] as const;
 
 /** ESPN unofficial site JSON — allowlisted only after a real 200 without CAPTCHA. */
@@ -85,7 +102,15 @@ export const ESPN_SCOREBOARDS = [
   { slug: "ger.1", sport: "soccer", label: "Bundesliga" },
   { slug: "esp.1", sport: "soccer", label: "La Liga" },
   { slug: "fra.1", sport: "soccer", label: "Ligue 1" },
-  { slug: "nba", sport: "basketball", label: "NBA" },
+  { slug: "uefa.champions", sport: "soccer", label: "UEFA Champions League" },
+  { slug: "uefa.europa", sport: "soccer", label: "UEFA Europa League" },
+  { slug: "ned.1", sport: "soccer", label: "Eredivisie" },
+  { slug: "por.1", sport: "soccer", label: "Primeira Liga" },
+  { slug: "eng.2", sport: "soccer", label: "Championship" },
+  { slug: "ita.2", sport: "soccer", label: "Serie B" },
+  { slug: "bel.1", sport: "soccer", label: "Belgian Pro League" },
+  { slug: "tur.1", sport: "soccer", label: "Turkish Super Lig" },
+  { slug: "sco.1", sport: "soccer", label: "Scottish Premiership" },
 ] as const;
 
 export const OPENFOOTBALL_PACKS = [
@@ -94,6 +119,10 @@ export const OPENFOOTBALL_PACKS = [
   { path: "2025-26/es.1.json", label: "La Liga 2025/26" },
   { path: "2025-26/de.1.json", label: "Bundesliga 2025/26" },
   { path: "2025-26/fr.1.json", label: "Ligue 1 2025/26" },
+  { path: "2025-26/nl.1.json", label: "Eredivisie 2025/26" },
+  { path: "2025-26/pt.1.json", label: "Primeira Liga 2025/26" },
+  { path: "2025-26/en.2.json", label: "Championship 2025/26" },
+  { path: "2025-26/it.2.json", label: "Serie B 2025/26" },
 ] as const;
 
 export const FOOTBALL_DATA_ORG_COMPETITIONS = ["PL", "SA", "BL1", "PD", "FL1"] as const;
@@ -132,10 +161,11 @@ export const FREE_SOURCE_CATALOG: FreeSourceDef[] = [
     kind: "ratings",
     url: "http://api.clubelo.com/",
     rate_limit_ms: 500,
-    notes: "Public daily CSV (api.clubelo.com/YYYY-MM-DD). HTTPS + previous-day failover. No fake Elo.",
-    notes_it: "CSV pubblico giornaliero. Failover HTTPS e giorni precedenti. Nessun Elo inventato.",
+    notes: "Public daily CSV (api.clubelo.com/YYYY-MM-DD). HTTPS + previous-day failover. No fake Elo. Fonti-inactive while live GETs return 502.",
+    notes_it: "CSV pubblico giornaliero. Failover HTTPS e giorni precedenti. Nessun Elo inventato. Non in Fonti attive se il fetch live fallisce (HTTP 502).",
     market_layer: false,
     live: true,
+    fonti_active: false,
   },
   {
     source_id: "openligadb",
@@ -145,8 +175,8 @@ export const FREE_SOURCE_CATALOG: FreeSourceDef[] = [
     kind: "fixtures",
     url: "https://api.openligadb.de/getmatchdata/bl1",
     rate_limit_ms: 1_000,
-    notes: "Free German football API: Bundesliga, 2. Bundesliga, 3. Liga, DFB-Pokal. No key.",
-    notes_it: "API gratuita: Bundesliga, 2. Bundesliga, 3. Liga, DFB-Pokal. Nessuna chiave.",
+    notes: "Free German + verified community comps (BL1/2/3, DFB, Frauen-BL, UCL, Swiss SL, La Liga, PL). No key.",
+    notes_it: "API gratuita: Bundesliga, 2.BL, 3.Liga, DFB, Frauen-BL, UCL, Super League CH, La Liga, Premier League. Nessuna chiave.",
     market_layer: false,
     live: true,
   },
@@ -158,8 +188,8 @@ export const FREE_SOURCE_CATALOG: FreeSourceDef[] = [
     kind: "meta",
     url: "https://www.thesportsdb.com/api/v1/json/3/eventsnextleague.php?id=4328",
     rate_limit_ms: 1_500,
-    notes: "Free test key 3 — EPL, Serie A, La Liga, Bundesliga, Ligue 1. CONTEXT meta only.",
-    notes_it: "Chiave test gratuita. Cinque campionati europei. Solo contesto, non modello indipendente.",
+    notes: "Free test key 3 — EU5 plus Eredivisie, Primeira Liga, Championship, Serie B. CONTEXT meta only.",
+    notes_it: "Chiave test gratuita. Campionati europei extra. Solo contesto, non modello indipendente.",
     market_layer: false,
     live: true,
   },
@@ -184,10 +214,12 @@ export const FREE_SOURCE_CATALOG: FreeSourceDef[] = [
     kind: "fixtures",
     url: "https://api.football-data.org/v4/matches",
     rate_limit_ms: 7_000,
-    notes: "Free tier with FOOTBALL_DATA_ORG_TOKEN (PL,SA,BL1,PD,FL1). AUTH_REQUIRED without token.",
-    notes_it: "Piano gratuito con token. Senza token resta AUTH_REQUIRED. Nessun token inventato.",
+    notes: "Free tier with FOOTBALL_DATA_ORG_TOKEN (PL,SA,BL1,PD,FL1). AUTH_REQUIRED without token. Not on Fonti unless token is set.",
+    notes_it: "Piano gratuito con token. Senza token resta AUTH_REQUIRED e fuori da Fonti attive. Nessun token inventato.",
     market_layer: false,
     live: true,
+    fonti_active: false,
+    requires_token: "FOOTBALL_DATA_ORG_TOKEN",
   },
   {
     source_id: "football-data-co-uk",
@@ -197,7 +229,7 @@ export const FREE_SOURCE_CATALOG: FreeSourceDef[] = [
     kind: "results",
     url: "https://www.football-data.co.uk/mmz4281/",
     rate_limit_ms: 2_000,
-    notes: "Free CSVs E0/E1/I1/I2/SP1/SP2/D1/D2/F1/F2/N1/P1/SC0. Scores DATE_ONLY. Odds columns MARKET/UI only — never MODEL.",
+    notes: "Free CSVs E0/E1/I1/I2/SP1/SP2/D1/D2/F1/F2/N1/P1/SC0/B1/T1/G1. Scores DATE_ONLY. Odds columns MARKET/UI only — never MODEL.",
     notes_it: "CSV campionati europei. Risultati DATE_ONLY. Le quote restano layer di mercato/UI.",
     market_layer: false,
     live: false,
@@ -262,8 +294,8 @@ export const FREE_SOURCE_CATALOG: FreeSourceDef[] = [
     kind: "fixtures",
     url: "https://site.api.espn.com/apis/site/v2/sports/soccer/eng.1/scoreboard",
     rate_limit_ms: 1_000,
-    notes: "Unofficial/unstable site JSON. Cached. No CAPTCHA. Not an official ESPN product API.",
-    notes_it: "JSON pubblico non ufficiale/instabile. In cache. Nessun CAPTCHA. Non e un'API ufficiale.",
+    notes: "Unofficial/unstable site JSON. Cached. No CAPTCHA. Not an official ESPN product API. EU5 + UCL/UEL + NL/PT/ENG2/ITA2/BEL/TUR/SCO.",
+    notes_it: "JSON pubblico non ufficiale/instabile. In cache. Nessun CAPTCHA. Non e un'API ufficiale. Piu campionati dopo HTTP 200 reale.",
     market_layer: false,
     live: true,
     unofficial: true,
@@ -276,8 +308,8 @@ export const FREE_SOURCE_CATALOG: FreeSourceDef[] = [
     kind: "research_dataset",
     url: "https://raw.githubusercontent.com/openfootball/football.json/master/2025-26/en.1.json",
     rate_limit_ms: 800,
-    notes: "Public GitHub season JSON. Historical/research. DATE_ONLY. Not live.",
-    notes_it: "JSON stagionale pubblico su GitHub. Storico/ricerca. DATE_ONLY. Non live.",
+    notes: "Public GitHub season JSON. Historical/research. DATE_ONLY. Not live. EU5 + NL/PT/ENG2/ITA2 2025-26.",
+    notes_it: "JSON stagionale pubblico su GitHub. Storico/ricerca. DATE_ONLY. Non live. Piu campionati 2025/26.",
     market_layer: false,
     live: false,
   },
@@ -289,10 +321,12 @@ export const FREE_SOURCE_CATALOG: FreeSourceDef[] = [
     kind: "fixtures",
     url: "https://v3.football.api-sports.io/fixtures",
     rate_limit_ms: 7_000,
-    notes: "Free tier 100 req/day if API_SPORTS_KEY / API_FOOTBALL_KEY is set. Fixtures + one cached /odds?date= (MARKET/UI). AUTH_REQUIRED otherwise.",
-    notes_it: "Piano free 100 req/giorno con chiave gia in env. Quote solo layer mercato/UI. Senza chiave: AUTH_REQUIRED.",
+    notes: "Free tier 100 req/day if API_SPORTS_KEY / API_FOOTBALL_KEY is set. Fixtures + one cached /odds?date= (MARKET/UI). AUTH_REQUIRED otherwise. Not on Fonti without key.",
+    notes_it: "Piano free 100 req/giorno con chiave gia in env. Quote solo layer mercato/UI. Senza chiave: fuori da Fonti attive.",
     market_layer: false,
     live: true,
+    fonti_active: false,
+    requires_token: "API_SPORTS_KEY",
   },
   {
     source_id: "the-odds-api",
@@ -302,10 +336,12 @@ export const FREE_SOURCE_CATALOG: FreeSourceDef[] = [
     kind: "market",
     url: "https://api.the-odds-api.com/v4/sports/soccer_epl/odds",
     rate_limit_ms: 8_000,
-    notes: "MARKET/UI layer only if THE_ODDS_API_KEY is set. Never independent MODEL. AUTH_REQUIRED without key.",
-    notes_it: "Solo layer mercato/UI con chiave. Mai modello indipendente. Senza chiave: AUTH_REQUIRED.",
+    notes: "MARKET/UI layer only if THE_ODDS_API_KEY is set. Never independent MODEL. AUTH_REQUIRED without key. Not on Fonti without key.",
+    notes_it: "Solo layer mercato/UI con chiave. Mai modello indipendente. Senza chiave: fuori da Fonti attive.",
     market_layer: true,
     live: true,
+    fonti_active: false,
+    requires_token: "THE_ODDS_API_KEY",
   },
   {
     source_id: "understat",
@@ -334,15 +370,54 @@ export const FREE_SOURCE_CATALOG: FreeSourceDef[] = [
     live: true,
   },
   {
-    source_id: "sky-sport",
-    title: "Sky Sport RSS",
-    title_it: "Sky Sport RSS",
+    source_id: "sky-sports",
+    title: "Sky Sports Football RSS",
+    title_it: "Sky Sports Calcio RSS",
     license_class: "public_endpoint",
     kind: "news",
-    url: "https://www.sky.it/sport/calcio/rss.xml",
+    url: "https://www.skysports.com/rss/12040",
     rate_limit_ms: 2_000,
-    notes: "Public RSS family. Known fallbacks 404 — NO_DATA if every URL fails. CONTEXT only. No homepage scrape.",
-    notes_it: "Famiglia RSS. I fallback noti danno 404: NO_DATA se tutti falliscono. Solo contesto. Nessuno scrape homepage.",
+    notes: "Public Sky Sports UK football RSS (HTTP 200). CONTEXT only. Italian Sky Sport /rss/calcio.xml is 404 — not listed.",
+    notes_it: "RSS pubblico Sky Sports UK. Solo contesto. Il feed italiano Sky Sport non esiste (404): non e in Fonti.",
+    market_layer: false,
+    live: true,
+  },
+  {
+    source_id: "espn-soccer-news",
+    title: "ESPN Soccer News RSS",
+    title_it: "ESPN Soccer News RSS",
+    license_class: "public_endpoint",
+    kind: "news",
+    url: "https://www.espn.com/espn/rss/soccer/news",
+    rate_limit_ms: 2_000,
+    notes: "Public ESPN soccer news RSS. CONTEXT only; never invents injuries from headlines.",
+    notes_it: "RSS pubblico ESPN soccer. Solo contesto; nessun infortunio inventato dai titoli.",
+    market_layer: false,
+    live: true,
+  },
+  {
+    source_id: "corriere-sport",
+    title: "Corriere dello Sport RSS",
+    title_it: "Corriere dello Sport RSS",
+    license_class: "public_endpoint",
+    kind: "news",
+    url: "https://www.corrieredellosport.it/rss/calcio",
+    rate_limit_ms: 2_000,
+    notes: "Public Corriere dello Sport calcio RSS. CONTEXT only.",
+    notes_it: "RSS pubblico Corriere dello Sport. Solo contesto.",
+    market_layer: false,
+    live: true,
+  },
+  {
+    source_id: "il-messaggero",
+    title: "Il Messaggero Sport RSS",
+    title_it: "Il Messaggero Sport RSS",
+    license_class: "public_endpoint",
+    kind: "news",
+    url: "https://www.ilmessaggero.it/rss/sport.xml",
+    rate_limit_ms: 2_000,
+    notes: "Public Il Messaggero sport RSS. CONTEXT only. Replaces empty Tuttosport calcio channel.",
+    notes_it: "RSS pubblico Il Messaggero sport. Solo contesto. Il feed Tuttosport calcio e un canale vuoto: non e in Fonti.",
     market_layer: false,
     live: true,
   },
@@ -354,10 +429,12 @@ export const FREE_SOURCE_CATALOG: FreeSourceDef[] = [
     kind: "fixtures",
     url: "https://v3.football.api-sports.io/fixtures",
     rate_limit_ms: 7_000,
-    notes: "Same free-tier as API-Football. AUTH_REQUIRED without API_SPORTS_KEY. No duplicate fetch when the api-football lane already spends the budget.",
-    notes_it: "Stesso piano di API-Football. Senza chiave: AUTH_REQUIRED. Nessuna seconda richiesta sul budget free.",
+    notes: "Same free-tier as API-Football. Not on Fonti without API_SPORTS_KEY. No duplicate fetch when api-football already spends the budget.",
+    notes_it: "Stesso piano di API-Football. Senza chiave: fuori da Fonti attive. Nessuna seconda richiesta sul budget free.",
     market_layer: false,
     live: true,
+    fonti_active: false,
+    requires_token: "API_SPORTS_KEY",
   },
   {
     source_id: "club-football-match-data",
@@ -369,45 +446,6 @@ export const FREE_SOURCE_CATALOG: FreeSourceDef[] = [
     rate_limit_ms: 0,
     notes: "CACHE_ONLY local clone. DATE_ONLY. Odds columns MARKET/UI only. NO_DATA if clone missing — never invented.",
     notes_it: "Corpus locale CACHE_ONLY. DATE_ONLY. Quote solo mercato/UI. NO_DATA se il clone manca. Nessuna riga inventata.",
-    market_layer: false,
-    live: false,
-  },
-  {
-    source_id: "sofascore",
-    title: "SofaScore",
-    title_it: "SofaScore",
-    license_class: "website",
-    kind: "catalog",
-    url: "https://www.sofascore.com/",
-    rate_limit_ms: 0,
-    notes: "BLOCKED audit adapter. HTTP 403 / WAF. No fetch. No bypass.",
-    notes_it: "Adapter di audit BLOCKED. HTTP 403 / WAF. Nessun fetch. Nessun bypass.",
-    market_layer: false,
-    live: false,
-  },
-  {
-    source_id: "fbref",
-    title: "FBref",
-    title_it: "FBref",
-    license_class: "website",
-    kind: "catalog",
-    url: "https://fbref.com/en/",
-    rate_limit_ms: 0,
-    notes: "BLOCKED audit adapter. HTTP 403 / WAF. No fetch. No bypass.",
-    notes_it: "Adapter di audit BLOCKED. HTTP 403 / WAF. Nessun fetch. Nessun bypass.",
-    market_layer: false,
-    live: false,
-  },
-  {
-    source_id: "whoscored",
-    title: "WhoScored",
-    title_it: "WhoScored",
-    license_class: "website",
-    kind: "catalog",
-    url: "https://www.whoscored.com/",
-    rate_limit_ms: 0,
-    notes: "BLOCKED audit adapter. HTTP 403 / WAF. No fetch. No bypass.",
-    notes_it: "Adapter di audit BLOCKED. HTTP 403 / WAF. Nessun fetch. Nessun bypass.",
     market_layer: false,
     live: false,
   },
@@ -430,10 +468,19 @@ export function footballDataCoUkCsvUrl(season: string, division: string): string
 }
 
 export function espnScoreboardUrl(board: (typeof ESPN_SCOREBOARDS)[number]): string {
-  if (board.sport === "basketball") {
-    return `https://site.api.espn.com/apis/site/v2/sports/basketball/${board.slug}/scoreboard`;
-  }
   return `https://site.api.espn.com/apis/site/v2/sports/soccer/${board.slug}/scoreboard`;
+}
+
+function apiSportsTokenPresent(): boolean {
+  return tokenEnvPresent("API_SPORTS_KEY") || tokenEnvPresent("API_FOOTBALL_KEY");
+}
+
+function shouldDiscoverSource(id: string): boolean {
+  const def = freeSourceById(id);
+  if (!def) return false;
+  if (id === "api-football" || id === "api-sports") return apiSportsTokenPresent();
+  if (def.requires_token && !tokenEnvPresent(def.requires_token)) return false;
+  return true;
 }
 
 export function openFootballUrl(packPath: string): string {
@@ -449,13 +496,39 @@ export function footballDataOrgMatchesUrl(): string {
 export function discoverFreeSourceJobs(nowIso = new Date().toISOString()): AcquisitionJob[] {
   const day = nowIso.slice(0, 10);
   const season = currentFootballDataSeasonCode(day);
-  return [
+  const jobs: AcquisitionJob[] = [
     {
       source_id: "clubelo",
       kind: "ratings",
       url: `http://api.clubelo.com/${day}`,
       label: `clubelo:${day}`,
     },
+    {
+      source_id: "sky-sports",
+      kind: "news",
+      url: "https://www.skysports.com/rss/12040",
+      label: "sky-sports:rss",
+    },
+    {
+      source_id: "espn-soccer-news",
+      kind: "news",
+      url: "https://www.espn.com/espn/rss/soccer/news",
+      label: "espn-soccer-news:rss",
+    },
+    {
+      source_id: "corriere-sport",
+      kind: "news",
+      url: "https://www.corrieredellosport.it/rss/calcio",
+      label: "corriere-sport:rss",
+    },
+    {
+      source_id: "il-messaggero",
+      kind: "news",
+      url: "https://www.ilmessaggero.it/rss/sport.xml",
+      label: "il-messaggero:rss",
+    },
+  ];
+  const rest: AcquisitionJob[] = [
     {
       source_id: "openligadb",
       kind: "fixtures",
@@ -554,12 +627,6 @@ export function discoverFreeSourceJobs(nowIso = new Date().toISOString()): Acqui
       label: "open-meteo:forecast-ping",
     },
     {
-      source_id: "sky-sport",
-      kind: "news",
-      url: "https://www.sky.it/sport/calcio/rss.xml",
-      label: "sky-sport:rss",
-    },
-    {
       source_id: "api-sports",
       kind: "fixtures",
       url: "https://v3.football.api-sports.io/fixtures?next=15",
@@ -572,6 +639,7 @@ export function discoverFreeSourceJobs(nowIso = new Date().toISOString()): Acqui
       label: "club-football-match-data:cache",
     },
   ];
+  return [...jobs, ...rest].filter((j) => shouldDiscoverSource(j.source_id));
 }
 
 /** football-data.co.uk season folder: 2526 for 2025-08 … 2026-07. */

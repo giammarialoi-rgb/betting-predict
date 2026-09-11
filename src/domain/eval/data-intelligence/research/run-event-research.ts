@@ -1,6 +1,6 @@
 /**
  * Event research for brain cycles.
- * Executes real adapters/probes where they exist; records MISSING_ADAPTER / DENIED honestly.
+ * Executes wired public adapters. WAF/policy stubs are not consulted.
  * Never invents available_at; scrape / market never enters independent MODEL.
  */
 import { permanentRoot044 } from "@/domain/eval/permanent-044/config";
@@ -17,7 +17,6 @@ import {
 import {
   RESEARCH_SOURCE_CATALOGUE,
   catalogueAdapterKind,
-  type CatalogueSource,
 } from "@/domain/eval/data-intelligence/research/source-catalogue";
 import type { PermanentEvent044 } from "@/domain/eval/permanent-044/types";
 import { inspectClubEloForEvent } from "@/domain/eval/data-intelligence/research/clubelo-lookup";
@@ -33,10 +32,13 @@ import {
   runUnderstatPhase8Lane,
   runCalendarPhase8Lane,
 } from "@/domain/eval/data-intelligence/research/phase8-lanes";
-import { sourceOnCooldown, markSourceBlocked } from "@/domain/eval/data-intelligence/research/source-cooldown";
+import { markSourceBlocked } from "@/domain/eval/data-intelligence/research/source-cooldown";
 import { newsObservationFromRss } from "@/domain/eval/data-intelligence/research/news-classify";
 import { upsertTeamIdentity } from "@/domain/eval/data-intelligence/research/identity-registry";
 import { resolveEventIdentity } from "@/domain/eval/data-intelligence/research/event-identity";
+import { attachAcquisitionCacheToEvent } from "@/domain/eval/data-intelligence/research/attach-acquisition-cache";
+import { RSS_FEEDS, type RssSourceId } from "@/domain/eval/data-intelligence/research/rss-news";
+import { ACTIVE_FONTI_SOURCE_IDS } from "@/domain/eval/acquisition-engine/active-fonti";
 
 export type ResearchCycleResult = {
   events_touched: number;
@@ -58,7 +60,9 @@ function bump(
   by: ResearchCycleResult["by_source"],
   source: string,
   kind: "ok" | "fail" | "denied" | "missing",
+  recorded?: Set<string>,
 ): void {
+  recorded?.add(source);
   if (!by[source]) by[source] = { ok: 0, fail: 0, denied: 0, missing: 0 };
   by[source]![kind] += 1;
 }
@@ -79,70 +83,9 @@ function baseRow(
   };
 }
 
-function recordMissingOrDenied(
-  ev: PermanentEvent044,
-  cat: CatalogueSource,
-  cycleNumber: number | null,
-  nowIso: string,
-  root: string,
-  result: ResearchCycleResult,
-): void {
-  if (cat.adapter === "MISSING_ADAPTER") {
-    appendResearchStatus(
-      baseRow({
-        event_id: ev.event_id,
-        source_id: cat.source_id,
-        phase: "MISSING_ADAPTER",
-        ok: false,
-        fetched: false,
-        fetched_at: null,
-        available_at: null,
-        reason: `MISSING_ADAPTER — ${cat.notes}`,
-        raw_ref: null,
-        cycle_number: cycleNumber,
-        at: nowIso,
-        url: cat.url,
-        adapter_kind: cat.adapter,
-        http_status: null,
-        parser_status: "NOT_RUN",
-        fields_extracted: [],
-      }),
-      root,
-    );
-    bump(result.by_source, cat.source_id, "missing");
-    result.missing_adapters += 1;
-    return;
-  }
-  if (cat.adapter === "POLICY_DENIED") {
-    appendResearchStatus(
-      baseRow({
-        event_id: ev.event_id,
-        source_id: cat.source_id,
-        phase: "DENIED",
-        ok: false,
-        fetched: false,
-        fetched_at: null,
-        available_at: null,
-        reason: `DISABLED_BY_POLICY — ${cat.notes}`,
-        raw_ref: null,
-        cycle_number: cycleNumber,
-        at: nowIso,
-        url: cat.url,
-        adapter_kind: cat.adapter,
-        http_status: null,
-        parser_status: "DENIED",
-        fields_extracted: [],
-      }),
-      root,
-    );
-    bump(result.by_source, cat.source_id, "denied");
-    result.research_denied += 1;
-  }
-}
-
 /**
- * Research a capped set of events. Cache-only API-Sports; Open-Meteo network;
- * ordinary GET scrape probes always on (403/CAPTCHA stay BLOCKED); catalogue stubs for the rest.
+ * Research a capped set of events. Wired public adapters only.
+ * WAF/policy stubs are not consulted. Odds stay market-layer.
  */
 export async function runEventResearchBatch(input: {
   events: PermanentEvent044[];
@@ -150,9 +93,10 @@ export async function runEventResearchBatch(input: {
   nowIso?: string;
   labBRoot?: string;
   maxEvents?: number;
+  /** When true, do not probe WAF sites. Default false — those sources are pruned from Fonti. */
   allowScrapeProbes?: boolean;
   asOf?: string;
-  /** When true (default), record MISSING_ADAPTER / POLICY rows for full catalogue once per event. */
+  /** Unused: policy stubs are no longer recorded as consulted Fonti. */
   recordFullCatalogue?: boolean;
 }): Promise<ResearchCycleResult> {
   const root = input.labBRoot ?? permanentRoot044();
@@ -187,7 +131,15 @@ export async function runEventResearchBatch(input: {
   ) => {
     result.observations_created += rows.length;
     for (const o of rows) {
-      if (o.kind === "EVENT_RESEARCH" || o.source === "open-meteo" || o.source === "ansa" || o.source === "sky-sport") {
+      if (
+        o.kind === "EVENT_RESEARCH" ||
+        o.source === "open-meteo" ||
+        o.source === "ansa" ||
+        o.source === "sky-sports" ||
+        o.source === "espn-soccer-news" ||
+        o.source === "corriere-sport" ||
+        o.source === "il-messaggero"
+      ) {
         result.real_event_observations += 1;
         eventsWithReal.add(eventId);
       } else if (o.kind === "DERIVED") {
@@ -201,29 +153,6 @@ export async function runEventResearchBatch(input: {
       }
     }
   };
-
-  const executed = new Set([
-    "api-sports",
-    "open-meteo",
-    "fbref",
-    "understat",
-    "uefa",
-    "sofascore",
-    "directa",
-    "flashscore",
-        "soccerway",
-        "whoscored",
-        "soccervista",
-        "soccervital",
-        "the-analyst",
-        "abseits",
-        "clubelo",
-    "football-data-co-uk",
-    "club-football-match-data",
-        "the-odds-api",
-    "ansa",
-    "sky-sport",
-  ]);
 
   let fixtureByEvent = new Map<string, FixtureResolveResult>();
   try {
@@ -254,6 +183,7 @@ export async function runEventResearchBatch(input: {
     const kickoff = ev.kickoff_utc ?? nowIso;
     const asOf = input.asOf ?? nowIso;
     const postKickoff = asOfAfterKickoff(asOf, ev.kickoff_utc);
+    const recordedThisEvent = new Set<string>();
     try {
       persistEventResearchPlan(buildEventResearchPlan(ev, root), root);
     } catch {
@@ -326,10 +256,10 @@ export async function runEventResearchBatch(input: {
           root,
         );
         if (st.ok) {
-          bump(result.by_source, st.source_id, "ok");
+          bump(result.by_source, st.source_id, "ok", recordedThisEvent);
           result.research_fetches += 1;
         } else {
-          bump(result.by_source, st.source_id, "fail");
+          bump(result.by_source, st.source_id, "fail", recordedThisEvent);
           result.research_failures += 1;
         }
       }
@@ -371,7 +301,7 @@ export async function runEventResearchBatch(input: {
           }),
           root,
         );
-        bump(result.by_source, "open-meteo", "fail");
+        bump(result.by_source, "open-meteo", "fail", recordedThisEvent);
         result.research_failures += 1;
       } else {
         appendResearchStatus(
@@ -399,7 +329,7 @@ export async function runEventResearchBatch(input: {
           root,
         );
         if (eligible.length > 0) {
-          bump(result.by_source, "open-meteo", "ok");
+          bump(result.by_source, "open-meteo", "ok", recordedThisEvent);
           result.research_fetches += 1;
           const { appendResearchObservation } = await import(
             "@/domain/eval/data-intelligence/research/observations-store"
@@ -426,7 +356,7 @@ export async function runEventResearchBatch(input: {
           }
           await noteObs(persisted, ev.event_id);
         } else {
-          bump(result.by_source, "open-meteo", "fail");
+          bump(result.by_source, "open-meteo", "fail", recordedThisEvent);
           result.research_failures += 1;
         }
       }
@@ -451,7 +381,7 @@ export async function runEventResearchBatch(input: {
         }),
         root,
       );
-      bump(result.by_source, "open-meteo", "fail");
+      bump(result.by_source, "open-meteo", "fail", recordedThisEvent);
       result.research_failures += 1;
     }
 
@@ -496,7 +426,7 @@ export async function runEventResearchBatch(input: {
         root,
       );
       if (eloOk && !blockedTemporal) {
-        bump(result.by_source, "clubelo", "ok");
+        bump(result.by_source, "clubelo", "ok", recordedThisEvent);
         result.research_fetches += 1;
         const { appendResearchObservation } = await import(
           "@/domain/eval/data-intelligence/research/observations-store"
@@ -540,7 +470,7 @@ export async function runEventResearchBatch(input: {
         }
         await noteObs(eloRows, ev.event_id);
       } else {
-        bump(result.by_source, "clubelo", "fail");
+        bump(result.by_source, "clubelo", "fail", recordedThisEvent);
         result.research_failures += 1;
       }
     }
@@ -587,7 +517,7 @@ export async function runEventResearchBatch(input: {
         root,
       );
       if (fdOk && !postKickoff) {
-        bump(result.by_source, "football-data-co-uk", "ok");
+        bump(result.by_source, "football-data-co-uk", "ok", recordedThisEvent);
         result.research_fetches += 1;
         const { extractFootballDataObservations } = await import(
           "@/domain/eval/data-intelligence/research/extract-archive-observations"
@@ -609,7 +539,7 @@ export async function runEventResearchBatch(input: {
         const cal = runCalendarPhase8Lane({ ev, nowIso, asOf, root });
         await noteObs(cal.observations, ev.event_id);
       } else {
-        bump(result.by_source, "football-data-co-uk", "fail");
+        bump(result.by_source, "football-data-co-uk", "fail", recordedThisEvent);
         result.research_failures += 1;
       }
     }
@@ -646,7 +576,7 @@ export async function runEventResearchBatch(input: {
         root,
       );
       if (cfOk && !postKickoff) {
-        bump(result.by_source, "club-football-match-data", "ok");
+        bump(result.by_source, "club-football-match-data", "ok", recordedThisEvent);
         result.research_fetches += 1;
         const { appendResearchObservation } = await import(
           "@/domain/eval/data-intelligence/research/observations-store"
@@ -690,160 +620,47 @@ export async function runEventResearchBatch(input: {
         }
         await noteObs(cfRows, ev.event_id);
       } else {
-        bump(result.by_source, "club-football-match-data", "fail");
+        bump(result.by_source, "club-football-match-data", "fail", recordedThisEvent);
         result.research_failures += 1;
       }
     }
 
-    // Odds API — market layer only (explicit: does not enter model)
-    appendResearchStatus(
-      baseRow({
-        event_id: ev.event_id,
-        source_id: "the-odds-api",
-        phase: "OK",
-        ok: false,
-        fetched: true,
-        fetched_at: nowIso,
-        available_at: null,
-        reason: "MARKET_COMPARE_ONLY — odds never enter independent MODEL vector. Not a research SUCCESS.",
-        raw_ref: "lab_b_quotes",
-        cycle_number: input.cycleNumber,
-        at: nowIso,
-        url: "https://the-odds-api.com/",
-        adapter_kind: "PRODUCTION_ADAPTER",
-        parser_status: "MARKET_LAYER",
-        fields_extracted: ["probability_market", "odds"],
-      }),
-      root,
-    );
-    bump(result.by_source, "the-odds-api", "ok");
-    // Do NOT count as research_fetches for independent research — market layer
+    // Odds stay MARKET/UI. Token APIs without keys are not consulted Fonti.
 
-    // Event-page probes (never homepage). One ordinary GET per source per event.
-    if (input.allowScrapeProbes !== false) {
-      const { fetchEventPage } = await import(
-        "@/domain/eval/data-intelligence/research/event-page-fetch"
-      );
-      for (const sid of [
-        "fbref",
-        "uefa",
-        "sofascore",
-        "directa",
-        "flashscore",
-        "soccerway",
-        "whoscored",
-        "soccervista",
-        "soccervital",
-        "the-analyst",
-        "abseits",
-      ] as const) {
-        if (sourceOnCooldown(sid)) {
-          appendResearchStatus(
-            baseRow({
-              event_id: ev.event_id,
-              source_id: sid,
-              phase: "BLOCKED",
-              ok: false,
-              fetched: false,
-              fetched_at: null,
-              available_at: null,
-              reason: "COOLDOWN after repeated HTTP 403/429 — skipped this cycle, other sources continue",
-              raw_ref: null,
-              cycle_number: input.cycleNumber,
-              at: nowIso,
-              url: null,
-              parser_status: "HTTP_403",
-              fields_extracted: [],
-              adapter_kind: "TEST_PROBE",
-            }),
-            root,
-          );
-          bump(result.by_source, sid, "fail");
-          result.research_failures += 1;
-          continue;
-        }
-        const page = await fetchEventPage({
-          sourceId: sid,
-          home: ev.home_or_a,
-          away: ev.away_or_b,
-          cacheRoot: root,
-          nowIso,
-          competition: ev.competition,
-        });
-        const typed = page.fields_extracted.filter(
-          (f) => f !== "page_mentions_both_teams" && f !== "page_mentions_xg" && !f.startsWith("page_mentions_"),
-        );
-        if (page.http_status === 403 || page.http_status === 429 || page.status === "BLOCKED") {
-          markSourceBlocked(sid, page.http_status ?? 403);
-        }
-        const phase =
-          page.status === "BLOCKED" || page.status === "AUTH_REQUIRED"
-            ? "BLOCKED"
-            : page.status === "DENIED" || page.status === "POLICY_DISABLED"
-              ? "DENIED"
-              : page.status === "SUCCESS"
-                ? "OK"
-                : page.status === "PARTIAL"
-                  ? "OK"
-                  : "UNAVAILABLE";
+    // WAF/CAPTCHA sites are not consulted. Attach public acquisition cache instead.
+    {
+      const attached = attachAcquisitionCacheToEvent({
+        home: ev.home_or_a,
+        away: ev.away_or_b,
+        kickoffIso: ev.kickoff_utc,
+      });
+      for (const hit of attached) {
         appendResearchStatus(
           baseRow({
             event_id: ev.event_id,
-            source_id: sid,
-            phase,
-            ok: page.status === "SUCCESS",
-            fetched: page.fetched,
-            fetched_at: page.fetched ? nowIso : null,
-            available_at: null,
-            observed_at: page.fetched ? nowIso : null,
-            reason: page.reason,
-            raw_ref: page.content_hash ?? null,
+            source_id: hit.source_id,
+            phase: hit.ok ? "OK" : "UNAVAILABLE",
+            ok: hit.ok,
+            fetched: hit.fetched,
+            fetched_at: hit.fetched ? nowIso : null,
+            available_at: hit.ok ? nowIso : null,
+            observed_at: hit.ok ? nowIso : null,
+            reason: hit.reason,
+            raw_ref: null,
             cycle_number: input.cycleNumber,
             at: nowIso,
-            url: page.url || null,
-            http_status: page.http_status,
-            parser_status: page.status,
-            fields_extracted: page.fields_extracted,
-            adapter_kind: "TEST_PROBE",
+            url: hit.url,
+            adapter_kind: "PRODUCTION_ADAPTER",
+            parser_status: hit.parser_status,
+            fields_extracted: hit.fields,
           }),
           root,
         );
-        if (page.status === "SUCCESS" && typed.length > 0) {
-          const { appendResearchObservation } = await import(
-            "@/domain/eval/data-intelligence/research/observations-store"
-          );
-          const scrapeRows = [];
-          for (const field of page.extracted_values ?? []) {
-            if (typed.includes(field.key)) {
-              const row = {
-                event_id: ev.event_id,
-                feature_key: `page_${field.key}`,
-                value: field.value,
-                source: sid,
-                source_url: page.url || null,
-                observed_at: nowIso,
-                available_at: null,
-                extraction_method: "html_extract",
-                confidence: null,
-                status: "CONTEXT" as const,
-                kind: "CONTEXT" as const,
-                enters_independent_model: false,
-                content_hash: page.content_hash ?? null,
-              };
-              appendResearchObservation(row, root);
-              scrapeRows.push(row);
-            }
-          }
-          await noteObs(scrapeRows, ev.event_id);
-        }
-        if (page.status === "DENIED" || page.status === "POLICY_DISABLED") {
-          bump(result.by_source, sid, "denied");
-          result.research_denied += 1;
-        } else if (page.status === "SUCCESS" && typed.length > 0) {
-          bump(result.by_source, sid, "ok");
+        if (hit.ok) {
+          bump(result.by_source, hit.source_id, "ok", recordedThisEvent);
           result.research_fetches += 1;
         } else {
-          bump(result.by_source, sid, "fail");
+          bump(result.by_source, hit.source_id, "fail", recordedThisEvent);
           result.research_failures += 1;
         }
       }
@@ -877,23 +694,23 @@ export async function runEventResearchBatch(input: {
           root,
         );
         if (st.ok) {
-          bump(result.by_source, "understat", "ok");
+          bump(result.by_source, "understat", "ok", recordedThisEvent);
           result.research_fetches += 1;
         } else if (st.parser_status === "DENIED") {
-          bump(result.by_source, "understat", "denied");
+          bump(result.by_source, "understat", "denied", recordedThisEvent);
           result.research_denied += 1;
         } else {
-          bump(result.by_source, "understat", "fail");
+          bump(result.by_source, "understat", "fail", recordedThisEvent);
           result.research_failures += 1;
         }
       }
       await noteObs(us.observations, ev.event_id);
     }
 
-    // Public RSS (ANSA / Sky) — CONTEXT mention only
+    // Public RSS — CONTEXT mention only (both teams, identity tokens)
     {
       const { matchRssToEvent } = await import("@/domain/eval/data-intelligence/research/rss-news");
-      for (const sid of ["ansa", "sky-sport"] as const) {
+      for (const sid of Object.keys(RSS_FEEDS) as RssSourceId[]) {
         const rss = await matchRssToEvent({ sourceId: sid, home: ev.home_or_a, away: ev.away_or_b });
         const phase =
           rss.status === "BLOCKED"
@@ -926,7 +743,7 @@ export async function runEventResearchBatch(input: {
           root,
         );
         if (rss.status === "PARTIAL" && rss.matched_title) {
-          bump(result.by_source, sid, "ok");
+          bump(result.by_source, sid, "ok", recordedThisEvent);
           result.research_fetches += 1;
           const { appendResearchObservation } = await import(
             "@/domain/eval/data-intelligence/research/observations-store"
@@ -957,23 +774,40 @@ export async function runEventResearchBatch(input: {
           appendResearchObservation(row, root);
           await noteObs([row], ev.event_id);
         } else if (rss.status === "BLOCKED") {
-          bump(result.by_source, sid, "fail");
+          bump(result.by_source, sid, "fail", recordedThisEvent);
           result.research_failures += 1;
         } else {
-          bump(result.by_source, sid, "fail");
+          bump(result.by_source, sid, "fail", recordedThisEvent);
           result.research_failures += 1;
         }
       }
     }
 
-    // Full catalogue stubs (MISSING_ADAPTER) once per event
-    if (input.recordFullCatalogue !== false) {
-      for (const cat of RESEARCH_SOURCE_CATALOGUE) {
-        if (executed.has(cat.source_id)) continue;
-        if (cat.adapter === "MISSING_ADAPTER" || cat.adapter === "POLICY_DENIED") {
-          recordMissingOrDenied(ev, cat, input.cycleNumber, nowIso, root, result);
-        }
-      }
+    for (const id of ACTIVE_FONTI_SOURCE_IDS) {
+      if (recordedThisEvent.has(id)) continue;
+      const cat = RESEARCH_SOURCE_CATALOGUE.find((s) => s.source_id === id);
+      appendResearchStatus(
+        baseRow({
+          event_id: ev.event_id,
+          source_id: id,
+          phase: "UNAVAILABLE",
+          ok: false,
+          fetched: false,
+          fetched_at: null,
+          available_at: null,
+          reason: "Fonte cablata, senza abbinamento per questa partita (identità fail-closed).",
+          raw_ref: null,
+          cycle_number: input.cycleNumber,
+          at: nowIso,
+          url: cat?.url ?? null,
+          adapter_kind: cat?.adapter ?? "PRODUCTION_ADAPTER",
+          parser_status: "NO_DATA",
+          fields_extracted: [],
+        }),
+        root,
+      );
+      bump(result.by_source, id, "fail", recordedThisEvent);
+      result.research_failures += 1;
     }
   }
 

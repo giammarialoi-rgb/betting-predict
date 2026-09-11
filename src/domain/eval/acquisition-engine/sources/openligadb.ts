@@ -5,7 +5,7 @@ import { mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { acquisitionGet } from "@/domain/eval/acquisition-engine/http";
 import { emptyLane } from "@/domain/eval/acquisition-engine/blocked-audit";
-import { matchEventPair, pickUniqueTeam } from "@/domain/eval/data-intelligence/research/identity-match";
+import { matchEventPair, pickUniqueDatedPair, pickUniqueTeam } from "@/domain/eval/data-intelligence/research/identity-match";
 import { registerAcquisitionSource } from "@/domain/eval/acquisition-engine/persist";
 import { OPENLIGA_LEAGUES, openLigaMatchUrl } from "@/domain/eval/acquisition-engine/catalog";
 import type {
@@ -139,7 +139,8 @@ export async function runOpenLigaDbLane(input: {
       if (!h || !a) return false;
       return matchEventPair(ev.home, ev.away, h, a).matched;
     });
-    if (pairHits.length !== 1) {
+    const picked = pickUniqueDatedPair(pairHits, (row) => kickoffIso(row), ev.kickoff_utc);
+    if (!picked) {
       const homePick = pickUniqueTeam(ev.home, teamNames);
       if (!homePick.matched && (homePick.status === "SHORT_NAME_BLOCKED" || homePick.status === "AMBIGUOUS")) {
         records.push({
@@ -165,7 +166,7 @@ export async function runOpenLigaDbLane(input: {
       }
       continue;
     }
-    const m = pairHits[0]!;
+    const m = picked;
     const kick = kickoffIso(m);
     const finished = Boolean(m.matchIsFinished);
     records.push({

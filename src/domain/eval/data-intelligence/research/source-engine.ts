@@ -75,8 +75,11 @@ export const SOURCE_CAPABILITIES: Record<string, SourceCapability[]> = {
   whoscored: ["statistics", "xg"],
   opta: ["statistics", "xg"],
   "the-analyst": ["xg", "team_stats"],
-  "sky-sport": ["news"],
+  "sky-sports": ["news"],
   ansa: ["news"],
+  "espn-soccer-news": ["news"],
+  "corriere-sport": ["news"],
+  "il-messaggero": ["news"],
 };
 
 function loadRecentStatus(root: string, maxLines = 8000): ResearchStatusRow[] {
@@ -164,7 +167,7 @@ export function buildOperationalSourceEngine(input?: {
     const success_rate = n === 0 ? null : events_found / n;
     let status: SourceEngineEntry["status"] = "IDLE";
     if (missing_adapter) status = "MISSING_ADAPTER";
-    else if (policy_disabled) status = "MISSING_ADAPTER";
+    else if (policy_disabled) status = "IDLE";
     else if (blocked_count > 0 && events_found === 0 && n > 0) status = "BLOCKED";
     else if (events_found > 0) status = success_rate != null && success_rate < 0.2 ? "DEGRADED" : "ACTIVE";
     else if (no_event_count > 0) status = "NO_EVENT";

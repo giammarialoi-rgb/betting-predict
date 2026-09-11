@@ -1,20 +1,27 @@
 /**
- * Union of first-class source slugs: engine catalog, research catalogue,
- * sources catalog, blocked-audit allowlist. Intelligence 500+ candidates are not included.
+ * First-class product slugs: engine allowlist that is actually discovered
+ * plus the active Fonti board. Intelligence 500+ candidates, WAF sites,
+ * and policy stubs are not first-class.
  */
-import { BLOCKED_PROTECTED_SOURCES, FREE_SOURCE_CATALOG } from "@/domain/eval/acquisition-engine/catalog";
-import { BLOCKED_ENGINE_SOURCES } from "@/domain/eval/acquisition-engine/sources/blocked";
-import { POLICY_ENGINE_SOURCES } from "@/domain/eval/acquisition-engine/sources/policy";
+import { FREE_SOURCE_CATALOG } from "@/domain/eval/acquisition-engine/catalog";
+import { ACTIVE_FONTI_SOURCE_IDS, tokenEnvPresent } from "@/domain/eval/acquisition-engine/active-fonti";
 import { RESEARCH_SOURCE_CATALOGUE } from "@/domain/eval/data-intelligence/research/source-catalogue";
-import { listSources } from "@/domain/sources/catalog";
+
+function apiSportsTokenPresent(): boolean {
+  return tokenEnvPresent("API_SPORTS_KEY") || tokenEnvPresent("API_FOOTBALL_KEY");
+}
 
 export function firstClassSourceIds(): string[] {
   const ids = new Set<string>();
-  for (const s of FREE_SOURCE_CATALOG) ids.add(s.source_id);
-  for (const s of BLOCKED_PROTECTED_SOURCES) ids.add(s.source_id);
-  for (const s of BLOCKED_ENGINE_SOURCES) ids.add(s.source_id);
-  for (const s of POLICY_ENGINE_SOURCES) ids.add(s.source_id);
+  for (const id of ACTIVE_FONTI_SOURCE_IDS) ids.add(id);
   for (const s of RESEARCH_SOURCE_CATALOGUE) ids.add(s.source_id);
-  for (const s of listSources()) ids.add(s.id);
+  for (const s of FREE_SOURCE_CATALOG) {
+    if (s.source_id === "api-football" || s.source_id === "api-sports") {
+      if (!apiSportsTokenPresent()) continue;
+    } else if (s.requires_token && !tokenEnvPresent(s.requires_token)) {
+      continue;
+    }
+    ids.add(s.source_id);
+  }
   return [...ids].sort();
 }
