@@ -105,16 +105,14 @@ export async function runClubEloLane(input: {
         ? "RATE_LIMITED"
         : blocked
           ? "BLOCKED"
-          : lastReason === "NETWORK_ERROR" || lastHttp === 0 || lastHttp >= 500
-            ? "NETWORK_ERROR"
-            : "NO_DATA",
+          : "NO_DATA",
     http_status: lastHttp || null,
     retries,
     reason: lastReason,
     reason_it:
       lastHttp === 403
         ? "ClubElo ha restituito HTTP 403. Nessun rating inventato."
-        : `ClubElo non disponibile (${lastReason}). Failover HTTP/HTTPS e giorni precedenti falliti. Nessun Elo inventato.`,
+        : `ClubElo non disponibile (${lastReason}). Failover HTTP/HTTPS e giorni precedenti esauriti. Nessun Elo inventato.`,
   });
 }
 

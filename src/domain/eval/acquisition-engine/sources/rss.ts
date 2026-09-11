@@ -38,17 +38,22 @@ export async function runPublicRssLane(input: {
     xmlText: input.xmlText,
   });
 
-  if (loaded.error || loaded.http === 403) {
+  if (loaded.error || loaded.http === 403 || (loaded.http != null && loaded.http >= 400)) {
+    const http = loaded.http;
+    const status =
+      http === 403 ? "BLOCKED" : http === 404 ? "NO_DATA" : "NETWORK_ERROR";
     return emptyLane({
       source_id: input.sourceId,
       url: loaded.url,
-      status: loaded.http === 403 ? "BLOCKED" : "NETWORK_ERROR",
-      http_status: loaded.http,
-      reason: loaded.error ?? `HTTP_${loaded.http}`,
+      status,
+      http_status: http,
+      reason: loaded.error ?? `HTTP_${http}`,
       reason_it:
-        loaded.http === 403
+        http === 403
           ? `${def?.title_it ?? input.sourceId} ha restituito HTTP 403. Nessuna notizia utilizzata.`
-          : `Feed RSS ${def?.title_it ?? input.sourceId} non disponibile. Nessun infortunio inventato.`,
+          : http === 404
+            ? `Feed RSS ${def?.title_it ?? input.sourceId} non trovato (HTTP 404). Nessuno scrape della homepage. Nessun infortunio inventato.`
+            : `Feed RSS ${def?.title_it ?? input.sourceId} non disponibile. Nessun infortunio inventato.`,
     });
   }
 
