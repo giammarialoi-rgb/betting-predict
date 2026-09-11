@@ -25,6 +25,8 @@ import {
 import { buildEventDiContext } from "@/domain/eval/data-intelligence/context";
 import { loadApiSportsPrematchFromCacheSync } from "@/domain/eval/data-intelligence/adapters/api-sports-prematch";
 import { getSourceEventIdentity } from "@/domain/eval/data-intelligence/research/source-identity-cache";
+import { loadResearchObservationsForEvent } from "@/domain/eval/data-intelligence/research/observations-store";
+import { overlayUnderstatXgOnFeatureData } from "@/domain/eval/data-intelligence/research/understat-league";
 import { buildDailyRankings044 } from "@/domain/eval/permanent-044/ranking";
 import { buildTimelineSnapshots044 } from "@/domain/eval/permanent-044/timeline";
 import { whyThisPrediction044 } from "@/domain/eval/permanent-044/why-prediction";
@@ -186,6 +188,14 @@ export function analyzeAllLabB045(input: {
       diObservations,
       decisionTime: asOf,
     });
+    if (independent.feature_data?.length) {
+      independent.feature_data = overlayUnderstatXgOnFeatureData({
+        featureData: independent.feature_data,
+        observations: loadResearchObservationsForEvent(ev.event_id, input.store.root, 400),
+        eventId: ev.event_id,
+        featureTime: asOf,
+      });
+    }
 
     // CRITICAL: never assign market probs to probability_model
     const modelP = independent.ok ? independent.probability_model : null;

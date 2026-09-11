@@ -26,6 +26,10 @@ export type ResearchObservation = {
   status: "REAL" | "CONTEXT" | "MISSING" | "INVALID" | "EXCLUDED_TEMPORALLY";
   kind?: ResearchObservationKind;
   derived_from?: string[];
+  /** Real provider event id when observed — never invented. */
+  source_event_id?: string | null;
+  /** Canonical BetMind event this observation was derived for. */
+  target_event_id?: string | null;
   /** True only when the independent PI engine already consumes this key. */
   enters_independent_model: boolean;
   content_hash?: string | null;

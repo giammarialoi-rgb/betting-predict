@@ -4,7 +4,13 @@ import { readFileSync } from "node:fs";
 import { namesEqual, normalizeTeamName, resolveCompetitionMatrix } from "@/domain/eval/data-intelligence/research/identity-normalize";
 import { resolveTeamIdentity } from "@/domain/eval/data-intelligence/research/event-identity";
 import { resolveApiSportsFixture } from "@/domain/eval/data-intelligence/research/api-sports-fixture";
-import { parseUnderstatDatesData, rollingPriorXg } from "@/domain/eval/data-intelligence/research/understat-league";
+import {
+  parseUnderstatDatesData,
+  parseUnderstatLeagueJson,
+  rollingPriorXg,
+  researchUnderstatLeague,
+  overlayUnderstatXgOnFeatureData,
+} from "@/domain/eval/data-intelligence/research/understat-league";
 import { classifyNewsText } from "@/domain/eval/data-intelligence/research/news-classify";
 import { computeDataQualityScore } from "@/domain/eval/data-intelligence/research/data-quality";
 import { isEligibleForIndependentModel, classifyModelInput } from "@/domain/eval/data-intelligence/research/model-input-policy";
@@ -91,6 +97,163 @@ describe("Phase 8 event intelligence", () => {
     assert.equal(roll.target?.id, "9");
     assert.equal(roll.home_xg_l5, 1.8);
     assert.notEqual(roll.home_xg_l5, 9.9);
+  });
+
+  it("parses getLeagueData JSON and never treats missing xG as zero", () => {
+    const payload = {
+      teams: {},
+      players: [],
+      dates: [
+        {
+          id: "1",
+          isResult: true,
+          datetime: "2026-08-20 15:00:00",
+          h: { id: "71", title: "Aston Villa" },
+          a: { id: "73", title: "Bournemouth" },
+          xG: { h: "1.2", a: "0.4" },
+        },
+        {
+          id: "2",
+          isResult: true,
+          datetime: "2026-08-27 15:00:00",
+          h: { id: "65", title: "Nottingham Forest" },
+          a: { id: "87", title: "Liverpool" },
+          xG: { h: 0.8, a: 2.1 },
+        },
+        {
+          id: "9",
+          isResult: false,
+          datetime: "2026-09-13 15:00:00",
+          h: { id: "71", title: "Aston Villa" },
+          a: { id: "65", title: "Nottingham Forest" },
+          xG: { h: null, a: null },
+        },
+      ],
+    };
+    const matches = parseUnderstatLeagueJson(JSON.stringify(payload));
+    assert.equal(matches.length, 3);
+    const upcoming = matches.find((m) => m.id === "9")!;
+    assert.equal(upcoming.home_xg, null);
+    assert.equal(upcoming.away_xg, null);
+    const roll = rollingPriorXg({
+      matches,
+      home: "Aston Villa",
+      away: "Nottingham Forest",
+      kickoffIso: "2026-09-13T14:00:00.000Z",
+    });
+    assert.equal(roll.target?.id, "9");
+    assert.equal(roll.home_xg_l5, 1.2);
+    assert.equal(roll.away_xg_l5, 0.8);
+    assert.equal(roll.home_xga_l5, 0.4);
+  });
+
+  it("fetches getLeagueData with X-Requested-With and persists provenance, not model entry", async () => {
+    const json = JSON.stringify({
+      dates: [
+        {
+          id: "11",
+          isResult: true,
+          datetime: "2026-08-22 15:00:00",
+          h: { id: "71", title: "Aston Villa" },
+          a: { id: "73", title: "Bournemouth" },
+          xG: { h: "1.5", a: "0.7" },
+        },
+        {
+          id: "12",
+          isResult: true,
+          datetime: "2026-08-29 15:00:00",
+          h: { id: "87", title: "Liverpool" },
+          a: { id: "71", title: "Aston Villa" },
+          xG: { h: "2.0", a: "1.1" },
+        },
+        {
+          id: "13",
+          isResult: true,
+          datetime: "2026-08-23 15:00:00",
+          h: { id: "65", title: "Nottingham Forest" },
+          a: { id: "83", title: "Arsenal" },
+          xG: { h: "0.9", a: "1.6" },
+        },
+        {
+          id: "99",
+          isResult: false,
+          datetime: "2026-09-13 15:00:00",
+          h: { id: "71", title: "Aston Villa" },
+          a: { id: "65", title: "Nottingham Forest" },
+          xG: { h: "9.9", a: "9.9" },
+        },
+      ],
+    });
+    let xhr = false;
+    const fetchImpl: typeof fetch = async (_url, init) => {
+      const headers = new Headers(init?.headers);
+      if (headers.get("X-Requested-With") === "XMLHttpRequest") xhr = true;
+      return new Response(json, { status: 200, headers: { "Content-Type": "text/javascript" } });
+    };
+    const lane = await researchUnderstatLeague({
+      eventId: "test-villa-forest-xg",
+      home: "Aston Villa",
+      away: "Nottingham Forest",
+      competition: "soccer_epl",
+      kickoffIso: "2026-09-13T14:00:00.000Z",
+      nowIso: "2026-09-11T08:00:00.000Z",
+      fetchImpl,
+    });
+    assert.equal(xhr, true);
+    assert.ok(lane.status === "SUCCESS" || lane.status === "PARTIAL");
+    assert.ok(lane.observations.length >= 4);
+    assert.equal(lane.match_id, "99");
+    const homeXg = lane.observations.find((o) => o.feature_key === "home_xg_prematch");
+    assert.ok(homeXg && typeof homeXg.value === "number");
+    assert.notEqual(homeXg!.value, 9.9);
+    assert.equal(homeXg!.enters_independent_model, false);
+    assert.equal(homeXg!.available_at, null);
+    assert.equal(homeXg!.source_event_id, "99");
+    assert.equal(homeXg!.target_event_id, "test-villa-forest-xg");
+    assert.ok(homeXg!.derived_from?.includes("excluded_target=true"));
+    assert.ok(homeXg!.derived_from?.some((d) => d.startsWith("home_prior:")));
+  });
+
+  it("overlays Understat xG into the feature bag without entering the independent model", () => {
+    const overlaid = overlayUnderstatXgOnFeatureData({
+      featureData: [
+        {
+          key: "home_xg_prematch",
+          source: "none",
+          available_at: null,
+          feature_time: "2026-09-11T08:00:00.000Z",
+          value: null,
+          quality: null,
+          status: "UNAVAILABLE",
+          temporal_precision: "UNKNOWN",
+          entered_model: false,
+        },
+      ],
+      observations: [
+        {
+          event_id: "e1",
+          feature_key: "home_xg_prematch",
+          value: 1.42,
+          source: "understat",
+          source_url: "https://understat.com/getLeagueData/EPL/2026",
+          observed_at: "2026-09-11T08:00:00.000Z",
+          available_at: null,
+          extraction_method: "understat_getLeagueData_prior_only",
+          confidence: null,
+          status: "REAL",
+          kind: "HISTORICAL_PRIOR",
+          derived_from: ["understat_getLeagueData", "excluded_target=true"],
+          enters_independent_model: false,
+        },
+      ],
+      eventId: "e1",
+      featureTime: "2026-09-11T08:00:00.000Z",
+    });
+    const row = overlaid.find((d) => d.key === "home_xg_prematch")!;
+    assert.equal(row.value, 1.42);
+    assert.equal(row.source, "understat");
+    assert.equal(row.status, "NOT_ELIGIBLE");
+    assert.equal(row.entered_model, false);
   });
 
   it("classifies news without turning it into a model input", () => {
