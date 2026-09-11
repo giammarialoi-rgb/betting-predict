@@ -64,7 +64,7 @@ export function AppShell({
             <div className="text-base font-bold tracking-tight">
               Bet<span className="bm-accent">Mind</span>
             </div>
-            <div className="text-[10px] uppercase tracking-[0.18em] text-[var(--bm-muted)]">
+            <div className="text-[11px] tracking-wide text-[var(--bm-muted)]">
               {t.control_center}
             </div>
           </div>

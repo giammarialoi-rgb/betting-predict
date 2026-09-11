@@ -9,12 +9,12 @@ import {
   type BmState,
 } from "@/components/betmind/ui";
 import { useBetMindData } from "@/components/betmind/DataProvider";
-import { sourceTitleIt } from "@/domain/eval/betmind-runtime/explain/source-status";
 import {
   operationalStatusIt,
   roleLabelIt,
   sourceBlurbIt,
   sourceStatusKind,
+  sourceTitleIt,
   temporalLabelIt,
 } from "@/domain/eval/betmind-runtime/status-copy";
 
@@ -108,8 +108,12 @@ export default function SourcesPage() {
 
       {!ordered.length ? (
         <EmptyState
-          title="Nessun elenco fonti"
-          reason="L’API non ha restituito un registro. Niente di inventato: o lo specchio Neon è vuoto, o il runtime non ha ancora pubblicato le fonti."
+          title={lastUpdate || error ? "Nessun elenco fonti" : "Caricamento"}
+          reason={
+            lastUpdate || error
+              ? "L’API non ha restituito un registro. Niente di inventato: o lo specchio Neon è vuoto, o il runtime non ha ancora pubblicato le fonti."
+              : "Sto chiedendo il registro fonti. Nessuno stato ONLINE inventato mentre aspettiamo."
+          }
         />
       ) : (
         <div className="grid gap-3">

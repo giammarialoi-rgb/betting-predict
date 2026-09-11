@@ -143,6 +143,31 @@ export function roleLabelIt(raw: string | null | undefined): string {
   return raw ? String(raw) : "—";
 }
 
+export function sourceTitleIt(sourceId: string, catalogueTitle?: string | null): string {
+  const known: Record<string, string> = {
+    "api-sports": "API-Sports",
+    "open-meteo": "Open-Meteo",
+    "football-data-co-uk": "Football-Data",
+    clubelo: "ClubElo",
+    openligadb: "OpenLigaDB",
+    thesportsdb: "TheSportsDB",
+    espn: "ESPN Scoreboard (non ufficiale)",
+    openfootball: "OpenFootball",
+    "bbc-sport": "BBC Sport",
+    "guardian-football": "The Guardian Football",
+    gazzetta: "Gazzetta dello Sport",
+    ansa: "ANSA",
+    statsbomb: "StatsBomb Open Data",
+    "football-data-org": "football-data.org",
+    "api-football": "API-Football",
+    "the-odds-api": "The Odds API",
+    fbref: "FBref",
+    understat: "Understat",
+    sofascore: "SofaScore",
+  };
+  return known[sourceId] ?? catalogueTitle ?? sourceId;
+}
+
 export function temporalLabelIt(raw: string | null | undefined): string {
   const u = String(raw ?? "").toUpperCase();
   if (u === "STRICT_AS_OF") return "Orario preciso (as-of)";

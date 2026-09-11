@@ -6,6 +6,7 @@ import {
   roleLabelIt,
   sourceBlurbIt,
   sourceStatusKind,
+  sourceTitleIt,
   temporalLabelIt,
 } from "@/domain/eval/betmind-runtime/status-copy";
 
@@ -47,5 +48,8 @@ describe("status-copy Italian honesty", () => {
     assert.equal(eventStatusIt("FT"), "Terminata");
     assert.equal(roleLabelIt("MARKET_COMPARE"), "Quote di mercato, solo confronto");
     assert.equal(temporalLabelIt("DATE_ONLY"), "Solo data, non orario esatto");
+    assert.equal(sourceTitleIt("espn"), "ESPN Scoreboard (non ufficiale)");
+    assert.equal(sourceTitleIt("gazzetta"), "Gazzetta dello Sport");
+    assert.equal(sourceTitleIt("openfootball"), "OpenFootball");
   });
 });
