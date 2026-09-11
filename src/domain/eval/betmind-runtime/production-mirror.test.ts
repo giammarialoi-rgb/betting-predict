@@ -45,7 +45,7 @@ describe("production mirror honesty", () => {
   });
 
   it("does not show STALE_MIRROR as the primary Italian phrase", () => {
-    assert.match(brainStatusIt("STALE_MIRROR"), /Specchio Neon scaduto/);
+    assert.match(brainStatusIt("STALE_MIRROR"), /Specchio filesystem scaduto/);
     assert.equal(statusWordIt("OFFLINE"), "Offline");
     assert.equal(statusWordIt("RUNNING"), "Online");
     assert.equal(decisionLabelIt("INSUFFICIENT_DATA"), "Dati insufficienti");
@@ -95,7 +95,7 @@ describe("production mirror honesty", () => {
         date: "2026-09-11",
         sport: "football",
       }),
-      /Nessuno specchio Neon/,
+      /Nessuno specchio filesystem/,
     );
     assert.match(
       neonEventsEmptyReason({

@@ -107,7 +107,7 @@ export async function GET(_req: Request, ctx: { params: Promise<{ id: string }> 
         dossier: remote,
         light_analysis: lightBundle.light,
         analysis_modes: analysisModesPayload(lightBundle.light, Boolean(remote.independent_model.probability)),
-        mirror_source: "neon",
+        mirror_source: "filesystem",
         api_calls_ui: 0 as const,
         real_money: false as const,
       });
@@ -121,7 +121,7 @@ export async function GET(_req: Request, ctx: { params: Promise<{ id: string }> 
         light_analysis: lightBundle.light,
         analysis_modes: analysisModesPayload(lightBundle.light, lightBundle.strong_available),
         dossier: null,
-        mirror_source: board ? "neon_board_light" : "light",
+        mirror_source: board ? "filesystem_board_light" : "light",
         api_calls_ui: 0 as const,
         real_money: false as const,
       });

@@ -14,6 +14,7 @@ import { loadRuntimeStatus } from "@/domain/eval/betmind-runtime/remote-status";
 import { localLabStorePresent, staleMirrorComponents } from "@/domain/eval/betmind-runtime/production-mirror";
 import { readJsonlTail } from "@/domain/eval/betmind-runtime/board";
 import { permanentRoot044 } from "@/domain/eval/permanent-044/config";
+import { storageBanner } from "@/domain/storage";
 import { piRoot } from "@/domain/eval/predictive-intelligence/config";
 import {
   invalidateBetMindSnapshotCache,
@@ -178,6 +179,7 @@ export async function GET() {
       learning_cases: learningFromPi.length ? learningFromPi : learningFromStore,
       recent_settlements: readJsonlTail(join(root, "settlements.jsonl"), 30),
       recent_autopsies: readJsonlTail(join(root, "autopsies.jsonl"), 30),
+      storage: storageBanner(),
     };
 
     writeSnapshotCache(body, now);

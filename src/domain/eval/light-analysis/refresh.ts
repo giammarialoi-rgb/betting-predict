@@ -142,7 +142,7 @@ async function boundedAcquisition(nowIso: string, cwd: string): Promise<{
         const lane = await runAcquisitionJob(job, {
           nowIso,
           cwd,
-          persistNeon: Boolean(process.env.DATABASE_URL),
+          persistNeon: false,
           persistLabB: lab.persistLabB,
           labBRoot: lab.labBRoot,
           labEvents: lab.labEvents,
@@ -225,7 +225,7 @@ export async function refreshTodayEvents(input?: {
     cwd,
     force: input?.acquire !== false,
     dayIso: date,
-    persistNeon: Boolean(process.env.DATABASE_URL),
+    persistNeon: false,
   });
   const history = historyReport.rows;
   let light_ok = 0;

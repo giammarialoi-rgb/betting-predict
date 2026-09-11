@@ -38,7 +38,7 @@ export async function runAcquisitionJob(
 ): Promise<SourceLaneResult> {
   const nowIso = input.nowIso ?? new Date().toISOString();
   const cwd = input.cwd ?? process.cwd();
-  const persistNeon = input.persistNeon === true && Boolean(process.env.DATABASE_URL);
+  const persistNeon = false;
   const persistLabB = input.persistLabB === true;
   const labBRoot = input.labBRoot;
   const fixtures = input.fixtures ?? {};

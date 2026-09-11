@@ -1,5 +1,5 @@
 /**
- * One-shot: publish local Lab B runtime status to Neon for Vercel health/snapshot.
+ * One-shot: publish local Lab B runtime status to the filesystem mirror.
  * Usage: pnpm runtime:publish
  */
 import { config } from "dotenv";

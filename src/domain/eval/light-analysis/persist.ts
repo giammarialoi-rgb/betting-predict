@@ -1,7 +1,6 @@
 /**
- * Persist light analyses to disk and Neon operational table.
- * CREATE TABLE IF NOT EXISTS — same pattern as betmind_analysis_dossiers.
- * Not a Drizzle schema migration.
+ * Persist light analyses to disk (data/ + Lab B).
+ * NEON NON UTILIZZATO — no operational table, no DATABASE_URL fallback.
  */
 import { appendFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
@@ -76,46 +75,13 @@ export function persistLightAnalysisDisk(row: LightAnalysis, cwd = process.cwd()
   }
 }
 
-async function sqlClient() {
-  const url = process.env.DATABASE_URL;
-  if (!url) return null;
-  const { neon } = await import("@neondatabase/serverless");
-  return neon(url);
-}
-
 export async function ensureLightAnalysisTable(): Promise<boolean> {
-  const sql = await sqlClient();
-  if (!sql) return false;
-  await sql`
-    CREATE TABLE IF NOT EXISTS betmind_light_analyses (
-      event_id text PRIMARY KEY,
-      published_at timestamptz NOT NULL DEFAULT now(),
-      payload jsonb NOT NULL
-    )
-  `;
-  return true;
+  return false;
 }
 
-export async function upsertLightAnalysisNeon(row: LightAnalysis): Promise<boolean> {
-  const sql = await sqlClient();
-  if (!sql) return false;
-  try {
-    await ensureLightAnalysisTable();
-    await sql`
-      INSERT INTO betmind_light_analyses (event_id, published_at, payload)
-      VALUES (${row.event_id}, ${row.analyzed_at}::timestamptz, ${JSON.stringify(row)}::jsonb)
-      ON CONFLICT (event_id) DO UPDATE
-      SET published_at = EXCLUDED.published_at,
-          payload = EXCLUDED.payload
-    `;
-    return true;
-  } catch (e) {
-    console.warn(
-      `[light-analysis] neon upsert failed event=${row.event_id}:`,
-      e instanceof Error ? e.message : e,
-    );
-    return false;
-  }
+/** Neon writes are banned. Kept as a no-op so call sites compile. */
+export async function upsertLightAnalysisNeon(_row: LightAnalysis): Promise<boolean> {
+  return false;
 }
 
 function hasOkMarket(row: LightAnalysis): boolean {
@@ -139,56 +105,20 @@ export async function persistLightAnalysis(row: LightAnalysis, cwd = process.cwd
     return;
   }
   persistLightAnalysisDisk(row, cwd);
-  await upsertLightAnalysisNeon(row);
 }
 
-function asAnalysis(payload: unknown): LightAnalysis | null {
-  if (!payload) return null;
-  const row = typeof payload === "string" ? (JSON.parse(payload) as LightAnalysis) : (payload as LightAnalysis);
-  if (!row?.event_id || !Array.isArray(row.markets)) return null;
-  return row;
-}
-
-export async function loadLightAnalysisNeon(eventId: string): Promise<LightAnalysis | null> {
-  const sql = await sqlClient();
-  if (!sql) return null;
-  try {
-    const rows = (await sql`
-      SELECT payload FROM betmind_light_analyses WHERE event_id = ${eventId} LIMIT 1
-    `) as Array<{ payload: unknown }>;
-    return asAnalysis(rows[0]?.payload);
-  } catch {
-    return null;
-  }
+export async function loadLightAnalysisNeon(_eventId: string): Promise<LightAnalysis | null> {
+  return null;
 }
 
 export async function loadLightAnalysesNeon(): Promise<LightAnalysis[]> {
-  const sql = await sqlClient();
-  if (!sql) return [];
-  try {
-    const rows = (await sql`
-      SELECT payload FROM betmind_light_analyses
-    `) as Array<{ payload: unknown }>;
-    return rows.map((r) => asAnalysis(r.payload)).filter((r): r is LightAnalysis => r != null);
-  } catch {
-    return [];
-  }
+  return [];
 }
 
 export async function loadLightAnalysis(eventId: string, cwd = process.cwd()): Promise<LightAnalysis | null> {
-  return loadLightAnalysisFromDisk(eventId, cwd) ?? (await loadLightAnalysisNeon(eventId));
+  return loadLightAnalysisFromDisk(eventId, cwd);
 }
 
 export async function loadAllLightAnalyses(cwd = process.cwd()): Promise<LightAnalysis[]> {
-  const byId = new Map<string, LightAnalysis>();
-  for (const row of loadLightAnalysesFromDisk(cwd)) {
-    byId.set(row.event_id, row);
-  }
-  for (const row of await loadLightAnalysesNeon()) {
-    const prev = byId.get(row.event_id);
-    if (!prev || String(row.analyzed_at) >= String(prev.analyzed_at)) {
-      byId.set(row.event_id, row);
-    }
-  }
-  return [...byId.values()];
+  return loadLightAnalysesFromDisk(cwd);
 }

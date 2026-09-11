@@ -11,7 +11,7 @@ config({ path: ".env.local" });
 config({ path: ".env" });
 
 async function main() {
-  const persistNeon = Boolean(process.env.DATABASE_URL);
+  const persistNeon = false;
   const lab = labEventsForAcquisition();
   const result = await runAcquisitionEngineCycle({ persistNeon, ...lab });
   console.log(
