@@ -1,0 +1,76 @@
+{
+  "at": "2026-09-11T21:32:03.653Z",
+  "neon_tables": {
+    "ok": true,
+    "error": null
+  },
+  "source_probes": 17,
+  "sources_ok": 15,
+  "sources_blocked": 1,
+  "discover": {
+    "sources_tried": [
+      "openligadb",
+      "thesportsdb",
+      "espn"
+    ],
+    "fixtures_seen": 147,
+    "events_inserted": 147,
+    "events_updated": 0,
+    "duplicates": 0,
+    "identity_uncertain": 0,
+    "by_source": {
+      "openligadb": {
+        "seen": 111,
+        "inserted": 111,
+        "blocked": false,
+        "http": 200
+      },
+      "thesportsdb": {
+        "seen": 9,
+        "inserted": 9,
+        "blocked": false,
+        "http": 200
+      },
+      "espn": {
+        "seen": 27,
+        "inserted": 27,
+        "blocked": false,
+        "http": 200
+      }
+    },
+    "sample_event_ids": [
+      "mega_5fe552168672a34c055e",
+      "mega_620bf1cddb903bc5582b",
+      "mega_c40a188b97f25c0e0fc7",
+      "mega_5ab8d7467aef445fb227",
+      "mega_05f4c4ba4a1674a1dad1",
+      "mega_e90b432835cd9c86ad2a",
+      "mega_3cd37f61eaae78fdae07",
+      "mega_8df3db7377fbd58f22d8",
+      "mega_4a2cd624a4c5dd220da9",
+      "mega_c209be25dfc2da80293d",
+      "mega_87a9c39290ebd1c266bc",
+      "mega_3c3e2ca867e137170578"
+    ]
+  },
+  "live": {
+    "updated": 73,
+    "finished": 60,
+    "live": 13
+  },
+  "settle": {
+    "sources_tried": [
+      "openligadb",
+      "espn"
+    ],
+    "candidates": 79,
+    "settled": 60,
+    "prediction_cases_updated": 0,
+    "learning_cases": 0,
+    "by_source": {
+      "openligadb": 60
+    },
+    "unresolved": 19
+  },
+  "prediction_cases_created": 0
+}

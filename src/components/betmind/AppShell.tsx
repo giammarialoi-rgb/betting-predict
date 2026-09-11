@@ -37,6 +37,7 @@ export function AppShell({
     { href: "/events", label: t.nav_events },
     { href: "/analyzed", label: t.nav_analyzed },
     { href: "/live", label: t.nav_live },
+    { href: "/conclusi", label: t.nav_conclusi },
     { href: "/learn", label: t.nav_learn },
     { href: "/sources", label: t.nav_sources },
     { href: "/models", label: t.nav_models },
@@ -48,9 +49,9 @@ export function AppShell({
   const MOBILE_NAV = [
     { href: "/", label: t.nav_home, icon: "⌂" },
     { href: "/events", label: t.nav_events, icon: "◎" },
-    { href: "/analyzed", label: t.nav_analyzed, icon: "▣" },
+    { href: "/live", label: t.nav_live, icon: "●" },
+    { href: "/conclusi", label: t.nav_conclusi, icon: "✓" },
     { href: "/sources", label: t.nav_sources, icon: "▦" },
-    { href: "/settings", label: t.nav_settings, icon: "☰" },
   ] as const;
 
   return (

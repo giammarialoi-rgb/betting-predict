@@ -13,6 +13,7 @@ import {
   operationalHasNeonSignal,
   overlayRegistryWithOperational,
   type OperationalOverlay,
+  type OverlaySourceCard,
 } from "@/domain/eval/betmind-runtime/production-mirror";
 import type { SourceEntry } from "@/domain/eval/data-intelligence/types";
 import {
@@ -20,6 +21,7 @@ import {
   readLastAcquisitionCycle,
 } from "@/domain/eval/acquisition-engine/coverage-overlay";
 import { isActiveFontiSource, isPrunedFontiSource } from "@/domain/eval/acquisition-engine/active-fonti";
+import { listSourceRuntimeFromNeon } from "@/domain/eval/mega-pipeline/neon-runtime";
 
 export const dynamic = "force-dynamic";
 
@@ -80,28 +82,60 @@ export async function GET() {
         testScrapeEnabled: testScrape,
       });
 
-  const sources = overlayRegistryWithAcquisitionCycle(
+  let sources: OverlaySourceCard[] = overlayRegistryWithAcquisitionCycle(
     overlayRegistryWithOperational(
       registry,
       operational as OperationalOverlay[],
     ),
     readLastAcquisitionCycle(process.cwd()),
   );
+
+  /** Observed HTTP / yield from mega source_runtime (truth over catalog ACTIVE). */
+  let source_runtime: Array<Record<string, unknown>> = [];
+  try {
+    source_runtime = await listSourceRuntimeFromNeon();
+    if (source_runtime.length) {
+      const byId = new Map(source_runtime.map((r) => [String(r.source_id), r]));
+      sources = sources.map((s) => {
+        const hit = byId.get(s.id);
+        if (!hit) return s;
+        return {
+          ...s,
+          status: String(hit.status ?? s.status),
+          reason: String(hit.note_it ?? hit.note ?? s.reason ?? ""),
+          last_attempt: hit.observed_at ? String(hit.observed_at) : s.last_attempt,
+          last_success: hit.last_success_at ? String(hit.last_success_at) : s.last_success,
+          http_status: hit.http_status != null ? Number(hit.http_status) : undefined,
+          events_found: hit.events_found != null ? Number(hit.events_found) : undefined,
+          fields_extracted: Array.isArray(hit.fields_extracted)
+            ? (hit.fields_extracted as string[])
+            : undefined,
+          method: hit.method ? String(hit.method) : undefined,
+          role_observed: hit.role ? String(hit.role) : undefined,
+        } as OverlaySourceCard;
+      });
+    }
+  } catch {
+    source_runtime = [];
+  }
+
   const neonSignal = operationalSource === "neon" && operationalHasNeonSignal(operational);
   const source =
     registryFromDisk && localLabStorePresent(root)
       ? "disk"
-      : neonSignal
+      : neonSignal || source_runtime.length > 0
         ? "neon"
         : registryFromDisk
           ? "disk"
           : "memory";
 
-  const note = neonSignal
-    ? "Stato fonti dallo specchio Neon (rendimento reale). Il catalogo nomi è di registro; i numeri non sono inventati."
-    : registryFromDisk
-      ? registryFromDisk.note
-      : "Lab B source-registry.json assente su questo host — registro in memoria. Overlay Neon assente o senza dati.";
+  const note = source_runtime.length
+    ? "Stato fonti da probe runtime Neon (HTTP reale + yield). HTTP 200 senza dati = NO_DATA, non SUCCESS."
+    : neonSignal
+      ? "Stato fonti dallo specchio Neon (rendimento reale). Il catalogo nomi è di registro; i numeri non sono inventati."
+      : registryFromDisk
+        ? registryFromDisk.note
+        : "Lab B source-registry.json assente su questo host — registro in memoria. Overlay Neon assente o senza dati.";
 
   const fontiOperational = operational.filter((s) => {
     const id = String((s as { source_id?: string; id?: string }).source_id ?? (s as { id?: string }).id ?? "");
@@ -122,5 +156,6 @@ export async function GET() {
     note,
     sources,
     operational: fontiOperational,
+    source_runtime,
   });
 }

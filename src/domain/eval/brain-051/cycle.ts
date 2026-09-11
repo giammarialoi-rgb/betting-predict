@@ -178,18 +178,52 @@ export async function runBrainCycle051(input: {
       /* catalog module optional */
     }
 
+    // Mega pipeline: free discover (all fixtures) + live + free settle — no Odds key required
+    try {
+      const { runMegaPipelineCycle } = await import("@/domain/eval/mega-pipeline/cycle");
+      const mega = await runMegaPipelineCycle({
+        labBRoot: labB,
+        nowIso,
+        fetchImpl: input.fetchImpl,
+        persistNeon: Boolean(process.env.DATABASE_URL),
+        probe: false,
+        discover: true,
+        live: true,
+        settle: true,
+      });
+      appendActivity051(
+        labB,
+        "MEGA_PIPELINE",
+        `inserted=${mega.discover.events_inserted} settle=${mega.settle.settled} live=${mega.live.live} sources_ok=${mega.sources_ok}`,
+      );
+      appendBrainLog051(
+        labB,
+        `mega_pipeline inserted=${mega.discover.events_inserted} seen=${mega.discover.fixtures_seen} settled=${mega.settle.settled} live=${mega.live.live} blocked=${mega.sources_blocked}`,
+      );
+    } catch (e) {
+      appendBrainLog051(
+        labB,
+        `mega_pipeline_fail ${e instanceof Error ? e.message : String(e)}`,
+      );
+    }
+
     // Always-on free acquisition engine (continue-on-fail; no WAF bypass)
     try {
       const { runAcquisitionEngineCycle } = await import(
         "@/domain/eval/acquisition-engine/engine"
       );
-      const store = loadStore044(labB);
+      const storeAcq = loadStore044(labB);
+      const upcoming = storeAcq.events.filter((e) => {
+        if (!e.kickoff_utc) return true;
+        const t = Date.parse(e.kickoff_utc);
+        return !Number.isFinite(t) || t >= nowMs - 6 * 3600_000;
+      });
       const acq = await runAcquisitionEngineCycle({
         nowIso,
         persistNeon: Boolean(process.env.DATABASE_URL),
         persistLabB: true,
         labBRoot: labB,
-        labEvents: store.events.slice(-80).map((e) => ({
+        labEvents: upcoming.map((e) => ({
           event_id: e.event_id,
           home: e.home_or_a,
           away: e.away_or_b,
