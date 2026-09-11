@@ -8,6 +8,8 @@ import {
   featureManifestP0Summary,
 } from "@/domain/eval/data-intelligence/feature-manifest";
 import { isTestScrapeEnabled } from "@/domain/sources/scraping-policy";
+import { loadRuntimeStatus } from "@/domain/eval/betmind-runtime/remote-status";
+import { localLabStorePresent } from "@/domain/eval/betmind-runtime/production-mirror";
 
 export const dynamic = "force-dynamic";
 
@@ -30,12 +32,14 @@ export async function GET() {
   const summary = featureManifestP0Summary();
 
   if (!coverage && !availability) {
+    const remote = localLabStorePresent(root) ? null : await loadRuntimeStatus();
+    const analysis = remote?.payload?.analysis;
     return NextResponse.json({
       ok: true,
-      source: "memory",
+      source: analysis?.data_coverage != null ? "neon" : "memory",
       real_money: false,
       test_scrape_enabled: testScrape,
-      DATA_COVERAGE: null,
+      DATA_COVERAGE: analysis?.data_coverage ?? null,
       SOURCE_COUNT: null,
       SOURCE_AGREEMENT: null,
       TIMESTAMP_QUALITY: null,
@@ -43,8 +47,11 @@ export async function GET() {
       FEATURES_STUB: summary.by_readiness.STUB,
       FEATURES_MISSING: summary.by_readiness.MISSING,
       feature_manifest_p0: FEATURE_MANIFEST_P0,
-      note: "No Lab B coverage reports on this host — P0 manifest only",
-      coverage: null,
+      note:
+        analysis?.data_coverage != null
+          ? "Copertura dallo specchio Neon (analysis.data_coverage). Report Lab B assente su questo host."
+          : "Nessun report di copertura Lab B su questo host — solo manifesto P0",
+      coverage: analysis ? { DATA_COVERAGE: analysis.data_coverage } : null,
       feature_availability: null,
     });
   }

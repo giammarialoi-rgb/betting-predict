@@ -12,6 +12,7 @@ import {
   type BmState,
 } from "@/components/betmind/ui";
 import { useBetMindData } from "@/components/betmind/DataProvider";
+import { operationalStatusIt } from "@/domain/eval/betmind-runtime/status-copy";
 
 function sourceState(status: string | undefined): BmState {
   const s = String(status ?? "UNKNOWN").toUpperCase();
@@ -49,10 +50,10 @@ export default function SourcesPage() {
     <div className="mx-auto flex max-w-4xl flex-col gap-4">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <div className="bm-section-label">Data</div>
-          <h1 className="mt-1 text-2xl font-bold">Sources</h1>
+          <div className="bm-section-label">Dati</div>
+          <h1 className="mt-1 text-2xl font-bold">Fonti</h1>
           <p className="mt-1 text-sm bm-muted">
-            Honest registry — no invented coverage or last-update clocks.
+            Registro onesto. Se Neon ha un rendimento reale, quello ha la precedenza sulle schede in memoria.
           </p>
         </div>
         <SnapshotBadge updating={updating} />
@@ -64,14 +65,23 @@ export default function SourcesPage() {
         </Card>
       )}
 
-      <Card title="Registry metadata">
+      <Card title="Metadati registro">
         <div className="flex flex-wrap gap-2 text-xs">
-          <Pill>Payload {String(sources?.source ?? "—")}</Pill>
-          <Pill>Updated {fmtWhen(sources?.at ?? lastUpdate)}</Pill>
-          <Pill tone={sources?.scrape_enters_model ? "danger" : "accent"}>
-            scrape→model {String(sources?.scrape_enters_model ?? false)}
+          <Pill>
+            Origine{" "}
+            {sources?.source === "neon"
+              ? "specchio Neon"
+              : sources?.source === "disk"
+                ? "disco Lab B"
+                : sources?.source === "memory"
+                  ? "registro in memoria"
+                  : String(sources?.source ?? "—")}
           </Pill>
-          <Pill>TEST_SCRAPE {String(sources?.test_scrape_enabled ?? false)}</Pill>
+          <Pill>Aggiornato {fmtWhen(sources?.at ?? lastUpdate)}</Pill>
+          <Pill tone={sources?.scrape_enters_model ? "danger" : "accent"}>
+            scrape → modello {String(sources?.scrape_enters_model ?? false)}
+          </Pill>
+          <Pill>Test scrape {String(sources?.test_scrape_enabled ?? false)}</Pill>
         </div>
         {sources?.note && <p className="mt-3 text-sm bm-muted">{sources.note}</p>}
         {coverage?.note && <p className="mt-2 text-sm bm-muted">{coverage.note}</p>}
@@ -86,8 +96,8 @@ export default function SourcesPage() {
 
       {!ordered.length ? (
         <EmptyState
-          title="NO SOURCE REGISTRY"
-          reason="data-sources API returned no sources array."
+          title="Nessun registro fonti"
+          reason="L’API data-sources non ha restituito un elenco."
         />
       ) : (
         <div className="grid gap-3">
@@ -95,11 +105,14 @@ export default function SourcesPage() {
             if (!s) return null;
             const st = sourceState(s.status);
             const fallback =
-              sources?.source === "memory"
-                ? "In-memory registry (Lab B JSON absent)"
-                : s.status === "UNAVAILABLE" || s.status === "DISABLED_BY_POLICY"
-                  ? "Unavailable / policy disabled"
-                  : null;
+              s.overlay === "neon_operational" &&
+              (Number(s.events_found ?? 0) > 0 || Boolean(s.last_success))
+                ? "Stato dallo specchio Neon (rendimento reale)"
+                : sources?.source === "memory"
+                  ? "Registro in memoria (JSON Lab B assente su Vercel)"
+                  : s.status === "UNAVAILABLE" || s.status === "DISABLED_BY_POLICY"
+                    ? "Non disponibile / disabilitata da policy"
+                    : null;
             return (
               <Card key={s.id}>
                 <div className="flex flex-wrap items-start justify-between gap-2">
@@ -109,32 +122,32 @@ export default function SourcesPage() {
                   </div>
                   <span className="bm-pill inline-flex items-center gap-1.5">
                     <StatusDot state={st} />
-                    {String(s.status ?? "UNKNOWN")}
+                    {operationalStatusIt(s.status)}
                   </span>
                 </div>
                 <dl className="mt-3 grid gap-2 text-sm sm:grid-cols-2">
                   <div>
-                    <dt className="bm-metric-label">Role</dt>
+                    <dt className="bm-metric-label">Ruolo</dt>
                     <dd>{s.role ?? "—"}</dd>
                   </div>
                   <div>
-                    <dt className="bm-metric-label">Temporal</dt>
+                    <dt className="bm-metric-label">Precisione temporale</dt>
                     <dd>{s.temporal_precision ?? "—"}</dd>
                   </div>
                   <div>
-                    <dt className="bm-metric-label">Enters independent model</dt>
+                    <dt className="bm-metric-label">Entra nel modello indipendente</dt>
                     <dd>{String(s.enters_independent_model ?? false)}</dd>
                   </div>
                   <div>
-                    <dt className="bm-metric-label">Last attempt</dt>
+                    <dt className="bm-metric-label">Ultimo tentativo</dt>
                     <dd>{fmtWhen(s.last_attempt ?? null)}</dd>
                   </div>
                   <div>
-                    <dt className="bm-metric-label">Last success</dt>
+                    <dt className="bm-metric-label">Ultimo successo</dt>
                     <dd>{fmtWhen(s.last_success ?? null)}</dd>
                   </div>
                   <div>
-                    <dt className="bm-metric-label">Last failure</dt>
+                    <dt className="bm-metric-label">Ultimo errore</dt>
                     <dd>{fmtWhen(s.last_failure ?? null)}</dd>
                   </div>
                   <div>
@@ -142,17 +155,17 @@ export default function SourcesPage() {
                     <dd>{s.last_event_label ?? "nessun evento reperito"}</dd>
                   </div>
                   <div>
-                    <dt className="bm-metric-label">Blocked / NO_EVENT</dt>
+                    <dt className="bm-metric-label">Bloccati / senza evento</dt>
                     <dd>
                       {s.blocked_count ?? 0} / {s.no_event_count ?? 0}
                     </dd>
                   </div>
                   <div>
-                    <dt className="bm-metric-label">Capabilities</dt>
+                    <dt className="bm-metric-label">Capacità</dt>
                     <dd className="bm-muted">{(s.capabilities ?? []).join(", ") || "—"}</dd>
                   </div>
                   <div className="sm:col-span-2">
-                    <dt className="bm-metric-label">Reason / coverage note</dt>
+                    <dt className="bm-metric-label">Motivo / nota copertura</dt>
                     <dd className="bm-muted">{s.reason ?? "—"}</dd>
                   </div>
                   {fallback && (
@@ -188,7 +201,7 @@ export default function SourcesPage() {
                 {operational.map((s) => (
                   <tr key={String(s.id)} className="border-t border-[rgba(255,255,255,0.06)]">
                     <td className="py-2 pr-3 font-medium">{s.title ?? s.id}</td>
-                    <td className="py-2 pr-3">{String(s.status ?? "IDLE")}</td>
+                    <td className="py-2 pr-3">{operationalStatusIt(String(s.status ?? "IDLE"))}</td>
                     <td className="py-2 pr-3">{s.events_found ?? 0}</td>
                     <td className="py-2 pr-3">{s.observations_found ?? 0}</td>
                     <td className="py-2 text-xs bm-muted">

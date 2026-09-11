@@ -11,6 +11,10 @@ import {
   type BoardEventRow,
   type EventBucket,
 } from "@/domain/eval/betmind-runtime/board";
+import {
+  compareMarketProbability,
+  indexLatestCompleteBook1x2,
+} from "@/domain/eval/betmind-runtime/compare-odds";
 
 export type CalendarBucket =
   | "DISCOVERED"
@@ -96,6 +100,8 @@ export function listCalendarEvents(input: {
     const ts = String(r.timestamp ?? "");
     if (!prev || ts >= String(prev.timestamp ?? "")) latestPred.set(id, r);
   }
+  const quoteTail = readJsonlTail(join(input.root, "quotes.jsonl"), 30_000);
+  const bookByEvent = indexLatestCompleteBook1x2(quoteTail as Array<Record<string, unknown>>);
   const queue = loadResearchQueue(input.root);
   const qBy = new Map(queue.items.map((i) => [i.event_id, i]));
 
@@ -141,6 +147,10 @@ export function listCalendarEvents(input: {
       independent && pred?.probability_model && typeof pred.probability_model === "object"
         ? (pred.probability_model as Record<string, number>)
         : null;
+    const book = bookByEvent.get(id) ?? null;
+    const probability_market = compareMarketProbability(pred?.probability_market);
+    const marketPct =
+      probability_market?.HOME != null ? probability_market.HOME * 100 : null;
 
     rows.push({
       event_id: id,
@@ -151,16 +161,24 @@ export function listCalendarEvents(input: {
       minutes_to_kickoff: null,
       near_t1h: false,
       status: String(r.status ?? "SCHEDULED"),
-      markets: [],
+      markets: book ? ["1X2"] : [],
       prediction_status: independent ? "INDEPENDENT_MODEL" : calendar_bucket,
       lock_status: "N/A",
       selection: null,
       confidence: null,
       model_pct: modelP?.HOME != null ? modelP.HOME * 100 : null,
-      market_pct: null,
+      market_pct: marketPct,
       edge: null,
       ev: null,
       odds: null,
+      odds_home: book?.odds_home ?? null,
+      odds_draw: book?.odds_draw ?? null,
+      odds_away: book?.odds_away ?? null,
+      bookmaker: book?.bookmaker ?? null,
+      odds_market: book ? "1X2" : null,
+      odds_collected_at: book?.collected_at_utc ?? null,
+      odds_compare_only: true,
+      probability_market,
       decision: independent ? "MODEL_INFERENCE" : calendar_bucket,
       stake: 0,
       why: independent ? "INDEPENDENT_POISSON" : calendar_bucket,

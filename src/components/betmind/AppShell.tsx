@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
 import { StatusDot, type BmState } from "@/components/betmind/ui";
 import { useBmLocale } from "@/components/betmind/useBmLocale";
+import { statusWordIt } from "@/domain/eval/betmind-runtime/status-copy";
 
 function navActive(pathname: string, href: string): boolean {
   const base = href.split("?")[0]!;
@@ -51,7 +52,7 @@ export function AppShell({
   ] as const;
 
   return (
-    <div className="bm-root flex min-h-dvh" lang={locale}>
+    <div className="bm-root" lang={locale}>
       <aside className="hidden w-60 shrink-0 flex-col border-r border-[var(--bm-border)] bg-[var(--bm-surface-2)] lg:flex">
         <div
           className="flex items-center gap-3 border-b border-[var(--bm-border)] px-4 py-4"
@@ -92,21 +93,21 @@ export function AppShell({
               <span className="bm-muted">{t.web_app}</span>
               <span className="inline-flex items-center gap-1.5 font-semibold">
                 <StatusDot state={webOnline ? "ONLINE" : "OFFLINE"} />
-                {webOnline ? t.online : t.offline}
+                {webOnline ? "Online" : "Offline"}
               </span>
             </div>
             <div className="flex items-center justify-between gap-2">
               <span className="bm-muted">{t.runtime}</span>
               <span className="inline-flex items-center gap-1.5 font-semibold">
                 <StatusDot state={runtimeState} />
-                {runtimeState}
+                {statusWordIt(runtimeState)}
               </span>
             </div>
             <div className="flex items-center justify-between gap-2">
               <span className="bm-muted">{t.engine}</span>
               <span className="inline-flex items-center gap-1.5 font-semibold">
                 <StatusDot state={engineState} />
-                {engineState}
+                {statusWordIt(engineState)}
               </span>
             </div>
             <div className="flex items-center gap-2 pt-1">
@@ -130,9 +131,9 @@ export function AppShell({
         </div>
       </aside>
 
-      <div className="flex min-w-0 flex-1 flex-col">
+      <div className="bm-shell">
         <header
-          className="sticky top-0 z-20 flex items-center justify-between gap-3 border-b border-[var(--bm-border)] bg-[rgba(10,10,10,0.94)] px-4 py-3 backdrop-blur lg:px-6"
+          className="bm-header flex items-center justify-between gap-3 border-b border-[var(--bm-border)] bg-[#0a0a0a] px-4 py-3 lg:bg-[rgba(10,10,10,0.94)] lg:px-6 lg:backdrop-blur"
           style={{ paddingTop: "calc(0.75rem + var(--bm-safe-top))" }}
         >
           <div className="flex min-w-0 items-center gap-3 lg:hidden">
@@ -145,10 +146,12 @@ export function AppShell({
           <div className="hidden text-sm tracking-[0.12em] text-[var(--bm-muted)] lg:block">
             {t.brand_tagline}
           </div>
-          <div className="flex shrink-0 items-center gap-2">
-            <span className="bm-pill hidden sm:inline-flex">
-              <StatusDot state={webOnline ? "ONLINE" : "OFFLINE"} />
-              WEB {webOnline ? t.online : t.offline}
+          <div className="flex min-w-0 shrink-0 items-center gap-2">
+            <span className="hidden sm:inline-flex">
+              <span className="bm-pill">
+                <StatusDot state={webOnline ? "ONLINE" : "OFFLINE"} />
+                App web {webOnline ? "online" : "offline"}
+              </span>
             </span>
             <span
               className={`bm-pill ${
@@ -160,29 +163,31 @@ export function AppShell({
               }`}
             >
               <StatusDot state={runtimeState} />
-              {t.runtime} {runtimeState}
+              {t.runtime} {statusWordIt(runtimeState)}
             </span>
-            <span
-              className={`bm-pill hidden md:inline-flex ${
-                engineState === "ONLINE"
-                  ? "bm-pill-accent"
-                  : engineState === "OFFLINE"
-                    ? "bm-pill-danger"
-                    : "bm-pill-warn"
-              }`}
-            >
-              <StatusDot state={engineState} />
-              {t.engine} {engineState}
+            <span className="hidden md:inline-flex">
+              <span
+                className={`bm-pill ${
+                  engineState === "ONLINE"
+                    ? "bm-pill-accent"
+                    : engineState === "OFFLINE"
+                      ? "bm-pill-danger"
+                      : "bm-pill-warn"
+                }`}
+              >
+                <StatusDot state={engineState} />
+                {t.engine} {statusWordIt(engineState)}
+              </span>
             </span>
           </div>
         </header>
 
-        <main className="flex-1 px-4 py-4 pb-[calc(var(--bm-nav-h)+var(--bm-safe-bottom)+1rem)] lg:px-6 lg:pb-6">
+        <main className="bm-main px-4 py-4 lg:px-6 lg:pb-6">
           {children}
         </main>
 
         <nav
-          className="fixed inset-x-0 bottom-0 z-30 flex border-t border-[var(--bm-border)] bg-[rgba(10,10,10,0.96)] backdrop-blur lg:hidden"
+          className="bm-tabbar flex border-t border-[var(--bm-border)] bg-[#0a0a0a] lg:hidden"
           style={{ paddingBottom: "var(--bm-safe-bottom)" }}
           aria-label="Navigazione"
         >

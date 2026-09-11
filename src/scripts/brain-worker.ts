@@ -44,7 +44,7 @@ async function main() {
   saveBrainState051(root, state);
   appendBrainLog051(
     root,
-    `worker_start pid=${process.pid} analysis_runtime_version=${ANALYSIS_RUNTIME_VERSION}`,
+    `worker_start pid=${process.pid} analysis_runtime_version=${ANALYSIS_RUNTIME_VERSION} neon_mirror=${process.env.DATABASE_URL ? "enabled" : "disabled"}`,
   );
   writeRichHeartbeat054(root, {
     pid: process.pid,
@@ -68,6 +68,24 @@ async function main() {
   };
   process.on("SIGINT", shutdown);
   process.on("SIGTERM", shutdown);
+
+  const heartbeatMs = 45_000;
+  const hbTimer = setInterval(() => {
+    void import("@/domain/eval/betmind-runtime/remote-status")
+      .then((m) => m.schedulePublishRuntimeStatus(heartbeatMs))
+      .catch((e) => {
+        appendBrainLog051(
+          root,
+          `runtime_heartbeat_timer ${e instanceof Error ? e.message : String(e)}`,
+        );
+      });
+  }, heartbeatMs);
+  hbTimer.unref?.();
+  void import("@/domain/eval/betmind-runtime/remote-status")
+    .then((m) => m.schedulePublishRuntimeStatus(0))
+    .catch(() => {
+      /* optional */
+    });
 
   try {
     while (!stopping) {
@@ -159,10 +177,16 @@ async function main() {
           last_update: new Date().toISOString(),
           note: `priority=${result.priority}`,
         });
+        void import("@/domain/eval/betmind-runtime/remote-status")
+          .then((m) => m.schedulePublishRuntimeStatus(heartbeatMs))
+          .catch(() => {
+            /* optional Neon touch */
+          });
         await new Promise((r) => setTimeout(r, 10_000));
       }
     }
   } finally {
+    clearInterval(hbTimer);
     state = loadBrainState051(root);
     saveBrainState051(root, { ...state, status: "STOPPED", worker_pid: null });
     releasePidLock054(lockPath);
