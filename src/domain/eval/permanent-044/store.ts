@@ -100,6 +100,14 @@ export function loadStore044(root = permanentRoot044()): Store044 {
   };
 }
 
+/** Rewrite events.jsonl from in-memory records (identity merges / real provider IDs). */
+export function persistStoreEvents044(store: Store044): void {
+  const p = join(store.root, "events.jsonl");
+  mkdirSync(dirname(p), { recursive: true });
+  const body = store.events.map((e) => `${JSON.stringify(e)}\n`).join("");
+  writeFileSync(p, body, "utf8");
+}
+
 export function appendEvent044(store: Store044, ev: PermanentEvent044): "ok" | "dup" {
   if (store.eventFingerprints.has(ev.fingerprint)) return "dup";
   if (store.eventIds.has(ev.event_id)) return "dup";

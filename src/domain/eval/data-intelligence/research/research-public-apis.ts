@@ -18,6 +18,7 @@ import {
 import {
   fetchWikipediaLeaguePage,
   standingForTeam,
+  stadiumForTeam,
 } from "@/domain/eval/data-intelligence/research/wikipedia-league";
 
 export type PublicApiResearch = {
@@ -282,14 +283,11 @@ export async function researchPublicApisForEvent(input: {
   }
 
   const div = mapCompetitionToPiDivision(ev.competition);
-  const wikiKey = div ?? "E0";
-  let wikiPage = wikiCache.get(wikiKey);
+  const wikiKey = div ?? "";
+  let wikiPage = wikiKey ? wikiCache.get(wikiKey) : undefined;
   if (!wikiPage && (div === "E0" || div === "I1" || div === "SP1" || div === "D1" || div === "F1")) {
     wikiPage = await fetchWikipediaLeaguePage({ division: div, nowIso: input.nowIso });
     wikiCache.set(wikiKey, wikiPage);
-  } else if (!wikiPage && !div) {
-    wikiPage = await fetchWikipediaLeaguePage({ division: "E0", nowIso: input.nowIso });
-    wikiCache.set("E0", wikiPage);
   }
 
   let wikipedia: PublicApiResearch["wikipedia"];
@@ -316,12 +314,14 @@ export async function researchPublicApisForEvent(input: {
   } else {
     const home = standingForTeam(wikiPage.standings, ev.home_or_a);
     const away = standingForTeam(wikiPage.standings, ev.away_or_b);
+    const homeStad = stadiumForTeam(wikiPage.stadiums, ev.home_or_a);
+    const awayStad = stadiumForTeam(wikiPage.stadiums, ev.away_or_b);
     const fields: string[] = [];
-    if (home?.pts != null) {
+    const pushWiki = (feature_key: string, value: string | number) => {
       observations.push({
         event_id: ev.event_id,
-        feature_key: "home_wiki_pts",
-        value: home.pts,
+        feature_key,
+        value,
         source: "wikipedia",
         source_url: wikiPage.url,
         observed_at: input.nowIso,
@@ -332,59 +332,21 @@ export async function researchPublicApisForEvent(input: {
         kind: "EVENT_RESEARCH",
         enters_independent_model: false,
       });
-      fields.push("home_wiki_pts");
-    }
-    if (home?.rank != null) {
-      observations.push({
-        event_id: ev.event_id,
-        feature_key: "home_wiki_rank",
-        value: home.rank,
-        source: "wikipedia",
-        source_url: wikiPage.url,
-        observed_at: input.nowIso,
-        available_at: wikiPage.retrieved_at,
-        extraction_method: "wikipedia_league_table",
-        confidence: null,
-        status: "CONTEXT",
-        kind: "EVENT_RESEARCH",
-        enters_independent_model: false,
-      });
-      fields.push("home_wiki_rank");
-    }
-    if (away?.pts != null) {
-      observations.push({
-        event_id: ev.event_id,
-        feature_key: "away_wiki_pts",
-        value: away.pts,
-        source: "wikipedia",
-        source_url: wikiPage.url,
-        observed_at: input.nowIso,
-        available_at: wikiPage.retrieved_at,
-        extraction_method: "wikipedia_league_table",
-        confidence: null,
-        status: "CONTEXT",
-        kind: "EVENT_RESEARCH",
-        enters_independent_model: false,
-      });
-      fields.push("away_wiki_pts");
-    }
-    if (away?.rank != null) {
-      observations.push({
-        event_id: ev.event_id,
-        feature_key: "away_wiki_rank",
-        value: away.rank,
-        source: "wikipedia",
-        source_url: wikiPage.url,
-        observed_at: input.nowIso,
-        available_at: wikiPage.retrieved_at,
-        extraction_method: "wikipedia_league_table",
-        confidence: null,
-        status: "CONTEXT",
-        kind: "EVENT_RESEARCH",
-        enters_independent_model: false,
-      });
-      fields.push("away_wiki_rank");
-    }
+      fields.push(feature_key);
+    };
+    if (home?.pts != null) pushWiki("home_wiki_pts", home.pts);
+    if (home?.rank != null) pushWiki("home_wiki_rank", home.rank);
+    if (home?.played != null) pushWiki("home_wiki_played", home.played);
+    if (home?.gf != null) pushWiki("home_wiki_gf", home.gf);
+    if (home?.ga != null) pushWiki("home_wiki_ga", home.ga);
+    if (away?.pts != null) pushWiki("away_wiki_pts", away.pts);
+    if (away?.rank != null) pushWiki("away_wiki_rank", away.rank);
+    if (away?.played != null) pushWiki("away_wiki_played", away.played);
+    if (away?.gf != null) pushWiki("away_wiki_gf", away.gf);
+    if (away?.ga != null) pushWiki("away_wiki_ga", away.ga);
+    if (homeStad?.stadium) pushWiki("home_wiki_stadium", homeStad.stadium);
+    if (homeStad?.capacity != null) pushWiki("home_wiki_stadium_capacity", homeStad.capacity);
+    if (awayStad?.stadium) pushWiki("away_wiki_stadium", awayStad.stadium);
     wikipedia = {
       ok: fields.length > 0,
       fetched: true,
@@ -393,8 +355,8 @@ export async function researchPublicApisForEvent(input: {
       fields,
       reason:
         fields.length > 0
-          ? `Classifica ${wikiPage.title} — ${fields.length} campi per questa partita`
-          : `Pagina letta ma ${ev.home_or_a}/${ev.away_or_b} non in classifica parsata`,
+          ? `Classifica/stadi ${wikiPage.title} — ${fields.length} campi per questa partita`
+          : `Pagina letta ma ${ev.home_or_a}/${ev.away_or_b} non in classifica/stadi parsati`,
       parser_status: fields.length > 0 ? "OK" : "NO_EVENT",
     };
   }

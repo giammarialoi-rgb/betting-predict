@@ -270,7 +270,14 @@ export function buildFeatureVectorPi(
   put(values, missing, "away_defense_away", rate(aAway, "ga", "n"));
   put(values, missing, "home_attack_all", rate(hAll, "gf", "n"));
   put(values, missing, "away_attack_all", rate(aAll, "gf", "n"));
-  put(values, missing, "strength_diff_pts", (rate(hAll, "pts", "n") ?? 0) - (rate(aAll, "pts", "n") ?? 0));
+  const homePtsRate = rate(hAll, "pts", "n");
+  const awayPtsRate = rate(aAll, "pts", "n");
+  put(
+    values,
+    missing,
+    "strength_diff_pts",
+    homePtsRate != null && awayPtsRate != null ? homePtsRate - awayPtsRate : null,
+  );
 
   put(values, missing, "home_rest_days", restDays(priors, target.home_team_id, target.event_time));
   put(values, missing, "away_rest_days", restDays(priors, target.away_team_id, target.event_time));

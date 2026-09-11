@@ -81,22 +81,34 @@ export function parseWikiTables(html: string): { standings: WikiStandingRow[]; s
     const header = stripTags((table.match(/<tr[\s\S]*?<\/tr>/i)?.[0] ?? "")).toLowerCase();
     const rows = [...table.matchAll(/<tr[^>]*>([\s\S]*?)<\/tr>/gi)].slice(1);
     if (/\bpos\b/.test(header) && /\bpts\b/.test(header) && /\bpld\b/.test(header)) {
+      const headerRow = table.match(/<tr[\s\S]*?<\/tr>/i)?.[0] ?? "";
+      const headerCells = [...headerRow.matchAll(/<t[dh][^>]*>([\s\S]*?)<\/t[dh]>/gi)].map((c) =>
+        stripTags(c[1] ?? "").toLowerCase(),
+      );
+      const idx = (re: RegExp) => headerCells.findIndex((h) => re.test(h));
+      const iPts = idx(/^pts$/);
+      const iPld = idx(/^pld$|^mp$/);
+      const iW = idx(/^w$/);
+      const iD = idx(/^d$/);
+      const iL = idx(/^l$/);
+      const iGf = idx(/^gf$/);
+      const iGa = idx(/^ga$/);
       for (const row of rows) {
         const cells = [...row[1]!.matchAll(/<t[dh][^>]*>([\s\S]*?)<\/t[dh]>/gi)].map((c) => stripTags(c[1] ?? ""));
-        if (cells.length < 8) continue;
+        if (cells.length < 4) continue;
         const rank = num(cells[0]);
         const team = cells[1]?.replace(/\[.*?\]/g, "").trim();
         if (rank == null || !team || team.length < 2) continue;
         standings.push({
           rank,
           team,
-          played: num(cells[2]),
-          win: num(cells[3]),
-          draw: num(cells[4]),
-          loss: num(cells[5]),
-          gf: num(cells[6]),
-          ga: num(cells[7]),
-          pts: num(cells[9] ?? cells[8]),
+          played: iPld >= 0 ? num(cells[iPld]) : num(cells[2]),
+          win: iW >= 0 ? num(cells[iW]) : num(cells[3]),
+          draw: iD >= 0 ? num(cells[iD]) : num(cells[4]),
+          loss: iL >= 0 ? num(cells[iL]) : num(cells[5]),
+          gf: iGf >= 0 ? num(cells[iGf]) : num(cells[6]),
+          ga: iGa >= 0 ? num(cells[iGa]) : num(cells[7]),
+          pts: iPts >= 0 ? num(cells[iPts]) : num(cells[cells.length - 1]),
         });
       }
       continue;
@@ -207,13 +219,24 @@ export async function fetchWikipediaLeaguePage(input: {
   }
 }
 
-export function standingForTeam(rows: WikiStandingRow[], teamName: string): WikiStandingRow | null {
+function teamTokensMatch(rowTeam: string, teamName: string): boolean {
   const n = teamName.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
   const toks = n.split(" ").filter((t) => t.length >= 3);
+  const rn = rowTeam.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+  if (rn === n) return true;
+  return Boolean(toks.length && toks.every((t) => rn.includes(t)));
+}
+
+export function standingForTeam(rows: WikiStandingRow[], teamName: string): WikiStandingRow | null {
   for (const r of rows) {
-    const rn = r.team.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
-    if (rn === n) return r;
-    if (toks.length && toks.every((t) => rn.includes(t))) return r;
+    if (teamTokensMatch(r.team, teamName)) return r;
+  }
+  return null;
+}
+
+export function stadiumForTeam(rows: WikiStadiumRow[], teamName: string): WikiStadiumRow | null {
+  for (const r of rows) {
+    if (teamTokensMatch(r.team, teamName)) return r;
   }
   return null;
 }

@@ -97,13 +97,21 @@ describe("Phase 8 acquisition", () => {
     const html = `<table class="wikitable">
       <tr><th>Pos</th><th>Team</th><th>Pld</th><th>W</th><th>D</th><th>L</th><th>GF</th><th>GA</th><th>GD</th><th>Pts</th></tr>
       <tr><td>1</td><td>Arsenal</td><td>3</td><td>3</td><td>0</td><td>0</td><td>6</td><td>1</td><td>+5</td><td>9</td></tr>
+    </table>
+    <table class="wikitable">
+      <tr><th>Team</th><th>Location</th><th>Stadium</th><th>Capacity</th></tr>
+      <tr><td>Arsenal</td><td>London</td><td>Emirates Stadium</td><td>60,704</td></tr>
     </table>`;
-    const { standings } = parseWikiTables(html);
+    const { standings, stadiums } = parseWikiTables(html);
     assert.equal(standings.length, 1);
     assert.equal(standings[0]!.team, "Arsenal");
     assert.equal(standings[0]!.pts, 9);
+    assert.equal(standings[0]!.gf, 6);
     assert.ok(standingForTeam(standings, "Arsenal"));
     assert.equal(standingForTeam(standings, "Chelsea"), null);
+    assert.equal(stadiums.length, 1);
+    assert.equal(stadiums[0]!.stadium, "Emirates Stadium");
+    assert.equal(stadiums[0]!.capacity, 60704);
   });
 
   it("identity key unifies aliases on the same day", () => {

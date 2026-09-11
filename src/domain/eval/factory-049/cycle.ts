@@ -1,5 +1,5 @@
 import { permanentRoot044, ensurePermanentDirs044, labAStore044 } from "@/domain/eval/permanent-044/config";
-import { loadStore044, appendJournal044 } from "@/domain/eval/permanent-044/store";
+import { loadStore044, appendJournal044, persistStoreEvents044 } from "@/domain/eval/permanent-044/store";
 import { runPermanent044Cycle } from "@/domain/eval/permanent-044/cycle";
 import { analyzeAllLabB045 } from "@/domain/eval/factory-045/analyze";
 import { runSettle045 } from "@/domain/eval/factory-045/settle";
@@ -103,6 +103,7 @@ export async function runMassive049Cycle(input: {
         nowIso,
         fetchImpl: input.fetchImpl,
       });
+      persistStoreEvents044(storeForTsdb);
       appendJournal044(labB, { kind: "thesportsdb_discover", at: nowIso, ...tsdb });
     } catch {
       /* free discovery optional — Odds path remains */
@@ -124,6 +125,7 @@ export async function runMassive049Cycle(input: {
         labBRoot: labB,
         budget: envBudget,
       });
+      persistStoreEvents044(storePre);
       research = {
         events_touched: r.events_touched,
         research_fetches: r.research_fetches,

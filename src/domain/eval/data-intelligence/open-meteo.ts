@@ -219,10 +219,20 @@ export async function fetchOpenMeteoContext(input: {
 
   const rawTime = times[bestIdx]!;
   const hourIso = new Date(/Z|[+-]\d{2}:\d{2}$/.test(rawTime) ? rawTime : `${rawTime}Z`).toISOString();
-  // Forecast: public at analysis time. Do not use retrieved_at if it is a few ms after asOf
-  // (that would systematically mark weather NOT_ELIGIBLE). Archive hours stay DATE-like.
-  const available_at = futureKickoff ? input.asOf : hourIso;
-  if (!Number.isFinite(Date.parse(available_at))) {
+  // Live forecast is available at analysis time only when asOf is contemporaneous
+  // with this GET. Do not stamp a 2026 forecast onto a 2022 asOf (historical leak).
+  // Archive hours keep their own timestamp and are classified against asOf.
+  const retrievedMs = Date.parse(retrieved_at);
+  const asOfCloseToRetrieved =
+    Number.isFinite(retrievedMs) &&
+    Number.isFinite(asOfMs) &&
+    Math.abs(retrievedMs - asOfMs) <= 48 * 3600_000;
+  const available_at = futureKickoff
+    ? asOfCloseToRetrieved
+      ? input.asOf
+      : null
+    : hourIso;
+  if (available_at != null && !Number.isFinite(Date.parse(available_at))) {
     return [
       {
         source_id: "open-meteo",
@@ -240,7 +250,10 @@ export async function fetchOpenMeteoContext(input: {
       },
     ];
   }
-  const status = classifyObservationAsOf({ available_at }, input.asOf);
+  const status =
+    available_at == null
+      ? "UNAVAILABLE"
+      : classifyObservationAsOf({ available_at }, input.asOf);
   const temp = data.hourly?.temperature_2m?.[bestIdx] ?? null;
   const precip = data.hourly?.precipitation?.[bestIdx] ?? null;
   const precipProb = data.hourly?.precipitation_probability?.[bestIdx] ?? null;
