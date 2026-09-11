@@ -14,6 +14,7 @@ import {
   teamOverRate,
 } from "@/domain/eval/light-analysis/frequencies";
 import { computeLightAnalysis, lightHasEstimableMarket } from "@/domain/eval/light-analysis/compute";
+import { shouldReplaceLightAnalysis } from "@/domain/eval/light-analysis/persist";
 import { parseClubFootballHistory, parseFootballDataCoUkHistory } from "@/domain/eval/light-analysis/history";
 import { proseFromMarkets } from "@/domain/eval/light-analysis/prose";
 import { LIGHT_INSUFFICIENT_IT, LIGHT_MIN_N, type HistoricalMatchRow } from "@/domain/eval/light-analysis/types";
@@ -239,6 +240,37 @@ describe("compute light analysis", () => {
     const lines = proseFromMarkets(markets);
     assert.ok(lines.some((l) => l.includes("over 2.5") || l.includes("1X2") || l.includes("gol")));
     assert.ok(lines.every((l) => /n=\d+/.test(l) || /Frequenze 1X2/.test(l)));
+  });
+});
+
+describe("persist replace policy", () => {
+  it("does not overwrite a measured light row with an empty recompute", () => {
+    const good = computeLightAnalysis({
+      event_id: "keep",
+      home: "Arsenal",
+      away: "Chelsea",
+      kickoff_utc: "2024-03-10T15:00:00Z",
+      history: [
+        ...Array.from({ length: 10 }, (_, i) =>
+          row("Arsenal", "Burnley", `2024-01-${String(i + 1).padStart(2, "0")}`, 2, 0),
+        ),
+        ...Array.from({ length: 10 }, (_, i) =>
+          row("Fulham", "Chelsea", `2024-02-${String(i + 1).padStart(2, "0")}`, 0, 1),
+        ),
+      ],
+      skipAttach: true,
+    });
+    const empty = computeLightAnalysis({
+      event_id: "keep",
+      home: "Arsenal",
+      away: "Chelsea",
+      kickoff_utc: "2024-03-10T15:00:00Z",
+      history: [],
+      skipAttach: true,
+    });
+    assert.equal(shouldReplaceLightAnalysis(empty, good), false);
+    assert.equal(shouldReplaceLightAnalysis(good, empty), true);
+    assert.equal(shouldReplaceLightAnalysis(empty, null), true);
   });
 });
 

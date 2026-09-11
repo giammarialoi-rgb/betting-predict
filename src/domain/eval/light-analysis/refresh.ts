@@ -171,7 +171,7 @@ async function boundedAcquisition(nowIso: string, cwd: string): Promise<{
       sources_ok: [],
       sources_failed: [],
       note_it:
-        "Acquisizione fonti libere interrotta per tempo (Vercel). Ricalcolo light dai dati già su disco/Neon. Il cervello completo non è partito.",
+        "Acquisizione fonti libere interrotta per tempo. Ricalcolo light dai dati già su disco/Neon. Il cervello completo non è partito — non è ONLINE.",
     };
   }
   return {

@@ -118,7 +118,26 @@ export async function upsertLightAnalysisNeon(row: LightAnalysis): Promise<boole
   }
 }
 
+function hasOkMarket(row: LightAnalysis): boolean {
+  return row.markets.some((m) => m.status === "OK" && m.probability != null);
+}
+
+/** Do not replace a measured light row with an empty recompute (Vercel without CSV). */
+export function shouldReplaceLightAnalysis(
+  incoming: LightAnalysis,
+  existing: LightAnalysis | null,
+): boolean {
+  if (!existing) return true;
+  if (hasOkMarket(incoming)) return true;
+  if (!hasOkMarket(existing)) return true;
+  return false;
+}
+
 export async function persistLightAnalysis(row: LightAnalysis, cwd = process.cwd()): Promise<void> {
+  const existing = await loadLightAnalysis(row.event_id, cwd);
+  if (!shouldReplaceLightAnalysis(row, existing)) {
+    return;
+  }
   persistLightAnalysisDisk(row, cwd);
   await upsertLightAnalysisNeon(row);
 }
