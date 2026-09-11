@@ -20,7 +20,7 @@ export const ACTIVE_FONTI_SOURCE_IDS = [
   "sky-sports",
   "espn-soccer-news",
   "corriere-sport",
-  "tuttosport",
+  "il-messaggero",
 ] as const;
 
 export type ActiveFontiSourceId = (typeof ACTIVE_FONTI_SOURCE_IDS)[number];
@@ -57,6 +57,7 @@ export const PRUNED_FONTI_SOURCE_IDS = [
   "tennisstats",
   "tennisinsight",
   "sky-sport",
+  "tuttosport",
   "sportradar-news",
   "thestatsapi",
 ] as const;

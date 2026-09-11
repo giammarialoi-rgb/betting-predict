@@ -92,9 +92,9 @@ export const RESEARCH_SOURCE_CATALOGUE: CatalogueSource[] = [
     sport: "MULTI",
     url: "https://www.corrieredellosport.it/rss/calcio",
   }),
-  src("tuttosport", "Tuttosport RSS", "Public Tuttosport calcio RSS. CONTEXT only.", {
+  src("il-messaggero", "Il Messaggero Sport RSS", "Public Il Messaggero sport RSS (HTTP 200 with items). CONTEXT only. Tuttosport calcio RSS is an empty channel and not listed.", {
     sport: "MULTI",
-    url: "https://www.tuttosport.com/rss/calcio.xml",
+    url: "https://www.ilmessaggero.it/rss/sport.xml",
   }),
   src("understat", "Understat", "Public getLeagueData XHR (X-Requested-With); rolling L5 xG/xGA CONTEXT only; available_at unknown so not MODEL", {
     url: "https://understat.com/",

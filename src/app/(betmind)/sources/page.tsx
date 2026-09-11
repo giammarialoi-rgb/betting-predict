@@ -43,7 +43,7 @@ const PRIORITY_IDS = [
   "sky-sports",
   "espn-soccer-news",
   "corriere-sport",
-  "tuttosport",
+  "il-messaggero",
   "football-data-co-uk",
   "understat",
   "open-meteo",

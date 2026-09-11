@@ -79,7 +79,7 @@ export const SOURCE_CAPABILITIES: Record<string, SourceCapability[]> = {
   ansa: ["news"],
   "espn-soccer-news": ["news"],
   "corriere-sport": ["news"],
-  tuttosport: ["news"],
+  "il-messaggero": ["news"],
 };
 
 function loadRecentStatus(root: string, maxLines = 8000): ResearchStatusRow[] {

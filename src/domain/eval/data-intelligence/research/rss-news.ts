@@ -12,7 +12,7 @@ export type RssSourceId =
   | "sky-sports"
   | "espn-soccer-news"
   | "corriere-sport"
-  | "tuttosport";
+  | "il-messaggero";
 
 export type RssItem = {
   title: string;
@@ -41,7 +41,7 @@ export const RSS_FEEDS: Record<RssSourceId, string> = {
   "sky-sports": "https://www.skysports.com/rss/12040",
   "espn-soccer-news": "https://www.espn.com/espn/rss/soccer/news",
   "corriere-sport": "https://www.corrieredellosport.it/rss/calcio",
-  tuttosport: "https://www.tuttosport.com/rss/calcio.xml",
+  "il-messaggero": "https://www.ilmessaggero.it/rss/sport.xml",
 };
 
 const RSS_FALLBACK: Partial<Record<RssSourceId, string[]>> = {};

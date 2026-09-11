@@ -138,7 +138,7 @@ export async function runEventResearchBatch(input: {
         o.source === "sky-sports" ||
         o.source === "espn-soccer-news" ||
         o.source === "corriere-sport" ||
-        o.source === "tuttosport"
+        o.source === "il-messaggero"
       ) {
         result.real_event_observations += 1;
         eventsWithReal.add(eventId);

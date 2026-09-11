@@ -231,7 +231,7 @@ describe("always-on free acquisition engine", () => {
     assert.ok(ids.includes("sky-sports"));
     assert.ok(ids.includes("espn-soccer-news"));
     assert.ok(ids.includes("corriere-sport"));
-    assert.ok(ids.includes("tuttosport"));
+    assert.ok(ids.includes("il-messaggero"));
     assert.ok(ids.includes("understat"));
     assert.ok(ids.includes("open-meteo"));
     assert.ok(ids.includes("club-football-match-data"));
@@ -323,7 +323,7 @@ describe("always-on free acquisition engine", () => {
     assert.equal(byId["sky-sports"].ok, true);
     assert.equal(byId["espn-soccer-news"].ok, true);
     assert.equal(byId["corriere-sport"].ok, true);
-    assert.equal(byId.tuttosport.ok, true);
+    assert.equal(byId["il-messaggero"].ok, true);
     assert.equal(byId["club-football-match-data"].ok, true);
     assert.match(byId["club-football-match-data"].reason, /odds_columns_ignored/);
     assert.equal(byId.sofascore, undefined);

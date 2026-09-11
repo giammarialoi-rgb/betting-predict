@@ -15,7 +15,7 @@ const RSS_ENGINE_IDS = [
   "sky-sports",
   "espn-soccer-news",
   "corriere-sport",
-  "tuttosport",
+  "il-messaggero",
 ] as const;
 
 export function isRssEngineSource(id: string): id is (typeof RSS_ENGINE_IDS)[number] {

@@ -161,6 +161,7 @@ export function sourceTitleIt(sourceId: string, catalogueTitle?: string | null):
     "sky-sports": "Sky Sports",
     ansa: "ANSA",
     "corriere-sport": "Corriere dello Sport",
+    "il-messaggero": "Il Messaggero",
     tuttosport: "Tuttosport",
     analysisportiva: "AnalysisPortiva",
     sportytrader: "SportyTrader",
