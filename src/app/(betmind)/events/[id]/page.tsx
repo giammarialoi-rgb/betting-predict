@@ -15,7 +15,9 @@ import {
   fmtPct,
   fmtWhen,
 } from "@/components/betmind/ui";
+import { OddsBlock } from "@/components/betmind/OddsBlock";
 import { useBmLocale } from "@/components/betmind/useBmLocale";
+import { eventStatusIt, selectionLabelIt } from "@/domain/eval/betmind-runtime/status-copy";
 
 type DossierFeature = {
   name: string;
@@ -325,6 +327,7 @@ export default function EventDetailPage() {
             </h1>
             <p className="mt-2 text-sm bm-muted">
               {fmtWhen(String(data.event.kickoff_utc ?? ""))}
+              {data.event.status ? ` · ${eventStatusIt(data.event.status)}` : ""}
             </p>
           </header>
 
@@ -598,21 +601,22 @@ export default function EventDetailPage() {
             </Card>
 
             <Card title="Mercato — separato">
-              <p className="mb-2 text-xs bm-muted">
+              <p className="mb-2 text-sm bm-muted">
                 {dossier?.market.note ??
                   "Solo confronto — le quote non entrano nel modello indipendente."}
               </p>
+              <OddsBlock event={(data.event ?? {}) as Record<string, unknown>} />
               {marketProbs && Object.keys(marketProbs).length > 0 ? (
-                <ul className="space-y-1 text-sm">
+                <ul className="mt-3 space-y-1 text-sm">
                   {Object.entries(marketProbs).map(([k, v]) => (
                     <li key={k} className="flex justify-between">
-                      <span>{k}</span>
+                      <span>{selectionLabelIt(k)}</span>
                       <span>{fmtPct(v)}</span>
                     </li>
                   ))}
                 </ul>
               ) : (
-                <Unknown label={`${t.no_data} — probabilità di mercato assenti`} />
+                <p className="mt-3 text-sm bm-muted">Probabilità di mercato assenti. Niente di inventato.</p>
               )}
               <div className="mt-3">
                 <Metric

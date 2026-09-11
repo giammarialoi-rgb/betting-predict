@@ -3,48 +3,49 @@
 import {
   Card,
   EmptyState,
-  Pill,
   SnapshotBadge,
   StatusDot,
-  asRecord,
   fmtWhen,
-  normalizeState,
   type BmState,
 } from "@/components/betmind/ui";
 import { useBetMindData } from "@/components/betmind/DataProvider";
-import { operationalStatusIt } from "@/domain/eval/betmind-runtime/status-copy";
+import { sourceTitleIt } from "@/domain/eval/betmind-runtime/explain/source-status";
+import {
+  operationalStatusIt,
+  roleLabelIt,
+  sourceBlurbIt,
+  sourceStatusKind,
+  temporalLabelIt,
+} from "@/domain/eval/betmind-runtime/status-copy";
 
-function sourceState(status: string | undefined): BmState {
-  const s = String(status ?? "UNKNOWN").toUpperCase();
-  if (["ACTIVE", "ACTIVE_ASOF", "ONLINE", "OK", "SUCCESS"].includes(s)) return "ONLINE";
-  if (
-    [
-      "FOUNDATION",
-      "TEMPORALLY_CAUTIOUS",
-      "PLAN_LIMITED",
-      "RESEARCH_TEST",
-      "CANDIDATE",
-      "PARTIAL",
-      "AUTH_REQUIRED",
-      "RATE_LIMITED",
-    ].includes(s)
-  )
+function sourceDot(status: string | undefined): BmState {
+  const kind = sourceStatusKind(status);
+  if (kind === "OK") return "ONLINE";
+  if (kind === "AUTH_REQUIRED" || String(status ?? "").toUpperCase() === "FOUNDATION") return "DEGRADED";
+  if (kind === "BLOCKED" || kind === "NO_DATA" || kind === "NETWORK_ERROR") return "OFFLINE";
+  const u = String(status ?? "").toUpperCase();
+  if (["PARTIAL", "TEMPORALLY_CAUTIOUS", "RESEARCH_TEST", "PLAN_LIMITED", "CANDIDATE"].includes(u)) {
     return "DEGRADED";
-  if (["UNAVAILABLE", "DISABLED_BY_POLICY", "OFFLINE", "DISABLED", "BLOCKED", "NO_DATA", "NO_EVENT"].includes(s))
-    return "OFFLINE";
+  }
   return "UNKNOWN";
 }
 
+/** PR #7 + core acquisition first, then the rest of the honest registry. */
 const PRIORITY_IDS = [
-  "api-sports",
-  "api-football",
-  "the-odds-api",
-  "clubelo",
-  "football-data-co-uk",
-  "football-data-org",
+  "espn",
+  "openfootball",
+  "bbc-sport",
+  "guardian-football",
+  "gazzetta",
+  "ansa",
   "openligadb",
   "thesportsdb",
-  "espn",
+  "football-data-co-uk",
+  "football-data-org",
+  "clubelo",
+  "api-football",
+  "api-sports",
+  "the-odds-api",
   "open-meteo",
 ] as const;
 
@@ -63,14 +64,26 @@ export default function SourcesPage() {
     ...list.filter((s) => !(PRIORITY_IDS as readonly string[]).includes(s.id)),
   ];
 
+  const origin =
+    sources?.source === "neon"
+      ? "Elenco dallo specchio Neon: i numeri sono rendimento reale, non catalogo."
+      : sources?.source === "disk"
+        ? "Elenco dal disco Lab B su questo host."
+        : sources?.source === "memory"
+          ? "Elenco dal registro in memoria: su Vercel manca il JSON Lab B. Nessuno stato ONLINE inventato."
+          : "Origine del registro sconosciuta.";
+
   return (
-    <div className="mx-auto flex max-w-4xl flex-col gap-4">
+    <div className="mx-auto flex max-w-3xl flex-col gap-4">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
           <div className="bm-section-label">Dati</div>
           <h1 className="mt-1 text-2xl font-bold">Fonti</h1>
-          <p className="mt-1 text-sm bm-muted">
-            Registro onesto. Se Neon ha un rendimento reale, quello ha la precedenza sulle schede in memoria.
+          <p className="bm-prose-muted mt-2 max-w-xl">
+            Elenco leggibile delle fonti che BetMind consulta. Lo stato è onesto:
+            OK, nessun dato, autenticazione richiesta, bloccata, oppure errore di rete.
+            ESPN, OpenFootball, BBC Sport, The Guardian e Gazzetta sono nel registro.
+            Nessun bypass di WAF o CAPTCHA.
           </p>
         </div>
         <SnapshotBadge updating={updating} />
@@ -82,116 +95,59 @@ export default function SourcesPage() {
         </Card>
       )}
 
-      <Card title="Metadati registro">
-        <div className="flex flex-wrap gap-2 text-xs">
-          <Pill>
-            Origine{" "}
-            {sources?.source === "neon"
-              ? "specchio Neon"
-              : sources?.source === "disk"
-                ? "disco Lab B"
-                : sources?.source === "memory"
-                  ? "registro in memoria"
-                  : String(sources?.source ?? "—")}
-          </Pill>
-          <Pill>Aggiornato {fmtWhen(sources?.at ?? lastUpdate)}</Pill>
-          <Pill tone={sources?.scrape_enters_model ? "danger" : "accent"}>
-            scrape → modello {String(sources?.scrape_enters_model ?? false)}
-          </Pill>
-          <Pill>Test scrape {String(sources?.test_scrape_enabled ?? false)}</Pill>
-        </div>
-        {sources?.note && <p className="mt-3 text-sm bm-muted">{sources.note}</p>}
-        {coverage?.note && <p className="mt-2 text-sm bm-muted">{coverage.note}</p>}
-        <div className="mt-3 flex flex-wrap gap-2">
-          <Pill>
-            DATA_COVERAGE{" "}
-            {coverage?.DATA_COVERAGE != null ? String(coverage.DATA_COVERAGE) : "—"}
-          </Pill>
-          <Pill>SOURCE_COUNT {coverage?.SOURCE_COUNT != null ? String(coverage.SOURCE_COUNT) : "—"}</Pill>
-        </div>
+      <Card>
+        <p className="bm-prose">{origin}</p>
+        {sources?.note ? <p className="bm-prose-muted mt-2">{sources.note}</p> : null}
+        {coverage?.note ? <p className="bm-prose-muted mt-2">{coverage.note}</p> : null}
+        <p className="bm-prose-muted mt-2">
+          Aggiornato {fmtWhen(sources?.at ?? lastUpdate)}. Le quote restano solo confronto:
+          non entrano nel modello indipendente
+          {sources?.scrape_enters_model ? " — attenzione: scrape segnalato verso il modello." : "."}
+        </p>
       </Card>
 
       {!ordered.length ? (
         <EmptyState
-          title="Nessun registro fonti"
-          reason="L’API data-sources non ha restituito un elenco."
+          title="Nessun elenco fonti"
+          reason="L’API non ha restituito un registro. Niente di inventato: o lo specchio Neon è vuoto, o il runtime non ha ancora pubblicato le fonti."
         />
       ) : (
         <div className="grid gap-3">
           {ordered.map((s) => {
             if (!s) return null;
-            const st = sourceState(s.status);
-            const fallback =
-              s.overlay === "neon_operational" &&
-              (Number(s.events_found ?? 0) > 0 || Boolean(s.last_success))
-                ? "Stato dallo specchio Neon (rendimento reale)"
-                : sources?.source === "memory"
-                  ? "Registro in memoria (JSON Lab B assente su Vercel)"
-                  : s.status === "UNAVAILABLE" || s.status === "DISABLED_BY_POLICY"
-                    ? "Non disponibile / disabilitata da policy"
-                    : null;
+            const title = sourceTitleIt(s.id, s.title);
+            const status = operationalStatusIt(s.status);
+            const blurb = sourceBlurbIt(s.status, s.reason);
+            const lastOk = s.last_success ? fmtWhen(s.last_success) : null;
+            const lastTry = s.last_attempt ? fmtWhen(s.last_attempt) : null;
             return (
               <Card key={s.id}>
-                <div className="flex flex-wrap items-start justify-between gap-2">
-                  <div className="min-w-0">
-                    <h2 className="text-base font-semibold">{s.title ?? s.id}</h2>
-                    <p className="text-xs bm-muted">{s.id}</p>
-                  </div>
-                  <span className="bm-pill inline-flex items-center gap-1.5">
-                    <StatusDot state={st} />
-                    {operationalStatusIt(s.status)}
-                  </span>
-                </div>
-                <dl className="mt-3 grid gap-2 text-sm sm:grid-cols-2">
-                  <div>
-                    <dt className="bm-metric-label">Ruolo</dt>
-                    <dd>{s.role ?? "—"}</dd>
-                  </div>
-                  <div>
-                    <dt className="bm-metric-label">Precisione temporale</dt>
-                    <dd>{s.temporal_precision ?? "—"}</dd>
-                  </div>
-                  <div>
-                    <dt className="bm-metric-label">Entra nel modello indipendente</dt>
-                    <dd>{String(s.enters_independent_model ?? false)}</dd>
-                  </div>
-                  <div>
-                    <dt className="bm-metric-label">Ultimo tentativo</dt>
-                    <dd>{fmtWhen(s.last_attempt ?? null)}</dd>
-                  </div>
-                  <div>
-                    <dt className="bm-metric-label">Ultimo successo</dt>
-                    <dd>{fmtWhen(s.last_success ?? null)}</dd>
-                  </div>
-                  <div>
-                    <dt className="bm-metric-label">Ultimo errore</dt>
-                    <dd>{fmtWhen(s.last_failure ?? null)}</dd>
-                  </div>
-                  <div>
-                    <dt className="bm-metric-label">Ultimo evento reperito</dt>
-                    <dd>{s.last_event_label ?? "nessun evento reperito"}</dd>
-                  </div>
-                  <div>
-                    <dt className="bm-metric-label">Bloccati / senza evento</dt>
-                    <dd>
-                      {s.blocked_count ?? 0} / {s.no_event_count ?? 0}
-                    </dd>
-                  </div>
-                  <div>
-                    <dt className="bm-metric-label">Capacità</dt>
-                    <dd className="bm-muted">{(s.capabilities ?? []).join(", ") || "—"}</dd>
-                  </div>
-                  <div className="sm:col-span-2">
-                    <dt className="bm-metric-label">Motivo / nota copertura</dt>
-                    <dd className="bm-muted">{s.reason ?? "—"}</dd>
-                  </div>
-                  {fallback && (
-                    <div className="sm:col-span-2">
-                      <dt className="bm-metric-label">Fallback</dt>
-                      <dd>{fallback}</dd>
+                <div className="bm-source-card">
+                  <div className="flex flex-wrap items-start justify-between gap-2">
+                    <div className="min-w-0">
+                      <h2>{title}</h2>
+                      <p className="bm-muted text-xs">{s.id}</p>
                     </div>
-                  )}
-                </dl>
+                    <span className="bm-pill inline-flex items-center gap-1.5">
+                      <StatusDot state={sourceDot(s.status)} />
+                      {status}
+                    </span>
+                  </div>
+                  <p>{blurb}</p>
+                  <p className="bm-prose-muted">
+                    {roleLabelIt(s.role)}. {temporalLabelIt(s.temporal_precision)}.
+                    {s.enters_independent_model
+                      ? " Può entrare nel modello solo se i dati sono ammissibili."
+                      : " Non entra nel modello indipendente."}
+                  </p>
+                  <p className="bm-prose-muted">
+                    {lastOk
+                      ? `Ultimo successo: ${lastOk}.`
+                      : "Nessun successo registrato."}{" "}
+                    {lastTry ? `Ultimo tentativo: ${lastTry}.` : ""}
+                    {s.last_event_label ? ` Ultimo evento: ${s.last_event_label}.` : ""}
+                  </p>
+                </div>
               </Card>
             );
           })}
@@ -199,66 +155,31 @@ export default function SourcesPage() {
       )}
 
       {!!operational.length && (
-        <Card title="Rendimento event-level">
-          <p className="mb-3 text-xs bm-muted">
-            Una fonte e ACTIVE solo se ha restituito dati associati a un evento. HTTP 200 sulla homepage non conta.
+        <Card title="Rendimento per evento">
+          <p className="bm-prose-muted mb-3">
+            Una fonte è OK solo se ha restituito dati associati a una partita.
+            Una homepage con HTTP 200 non basta.
           </p>
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm">
-              <thead>
-                <tr className="bm-muted text-xs">
-                  <th className="py-1 pr-3">Fonte</th>
-                  <th className="py-1 pr-3">Stato</th>
-                  <th className="py-1 pr-3">Eventi</th>
-                  <th className="py-1 pr-3">Osservazioni</th>
-                  <th className="py-1">Ultimo errore / nota</th>
-                </tr>
-              </thead>
-              <tbody>
-                {operational.map((s) => (
-                  <tr key={String(s.id)} className="border-t border-[rgba(255,255,255,0.06)]">
-                    <td className="py-2 pr-3 font-medium">{s.title ?? s.id}</td>
-                    <td className="py-2 pr-3">{operationalStatusIt(String(s.status ?? "IDLE"))}</td>
-                    <td className="py-2 pr-3">{s.events_found ?? 0}</td>
-                    <td className="py-2 pr-3">{s.observations_found ?? 0}</td>
-                    <td className="py-2 text-xs bm-muted">
-                      {s.last_event_label ?? (s.blocked_count ? `${s.blocked_count} blocked` : "—")}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </Card>
-      )}
-      {(coverage?.FEATURES_STUB?.length || coverage?.FEATURES_MISSING?.length || coverage?.FEATURES_ACTIVE?.length) && (
-        <Card title="Feature readiness (manifest)">
-          <div className="space-y-2 text-sm">
-            {!!coverage?.FEATURES_ACTIVE?.length && (
-              <p>
-                <span className="bm-muted">ACTIVE: </span>
-                {coverage.FEATURES_ACTIVE.join(", ")}
-              </p>
-            )}
-            {!!coverage?.FEATURES_STUB?.length && (
-              <p>
-                <span className="bm-muted">STUB: </span>
-                {coverage.FEATURES_STUB.join(", ")}
-              </p>
-            )}
-            {!!coverage?.FEATURES_MISSING?.length && (
-              <p>
-                <span className="bm-muted">MISSING: </span>
-                {coverage.FEATURES_MISSING.join(", ")}
-              </p>
-            )}
-          </div>
+          <ul className="space-y-3">
+            {operational.map((s) => (
+              <li key={String(s.id)} className="border-t border-[rgba(255,255,255,0.06)] pt-3 first:border-0 first:pt-0">
+                <div className="flex flex-wrap items-baseline justify-between gap-2">
+                  <strong>{sourceTitleIt(String(s.id), s.title)}</strong>
+                  <span className="text-sm">{operationalStatusIt(String(s.status ?? "IDLE"))}</span>
+                </div>
+                <p className="bm-prose-muted mt-1">
+                  {s.events_found ?? 0} eventi · {s.observations_found ?? 0} osservazioni.
+                  {s.last_event_label
+                    ? ` ${s.last_event_label}.`
+                    : s.blocked_count
+                      ? ` ${s.blocked_count} tentativi bloccati.`
+                      : " Nessun evento associato."}
+                </p>
+              </li>
+            ))}
+          </ul>
         </Card>
       )}
     </div>
   );
 }
-
-// silence unused if tree-shaken oddly
-void asRecord;
-void normalizeState;

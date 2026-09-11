@@ -40,6 +40,27 @@ export function brainStatusIt(raw: string | null | undefined): string {
   return s;
 }
 
+export type SourceStatusKind =
+  | "OK"
+  | "NO_DATA"
+  | "AUTH_REQUIRED"
+  | "BLOCKED"
+  | "NETWORK_ERROR"
+  | "OTHER";
+
+/** Honest 5-way kind used by the Fonti list. Never invents OK. */
+export function sourceStatusKind(raw: string | null | undefined): SourceStatusKind {
+  const u = String(raw ?? "").toUpperCase();
+  if (["ACTIVE", "ACTIVE_ASOF", "ONLINE", "OK", "SUCCESS", "HEALTHY"].includes(u)) return "OK";
+  if (u === "AUTH_REQUIRED" || u === "PLAN_LIMITED" || u.includes("AUTH_REQUIRED")) {
+    return "AUTH_REQUIRED";
+  }
+  if (u === "BLOCKED" || u === "HTTP_403" || u.includes("WAF")) return "BLOCKED";
+  if (["NETWORK_ERROR", "HTTP_ERROR", "TIMEOUT"].includes(u)) return "NETWORK_ERROR";
+  if (["NO_DATA", "NO_EVENT", "UNAVAILABLE", "OFFLINE", "EMPTY"].includes(u)) return "NO_DATA";
+  return "OTHER";
+}
+
 export function operationalStatusIt(raw: string | null | undefined): string {
   const u = String(raw ?? "UNKNOWN").toUpperCase();
   switch (u) {
@@ -48,20 +69,31 @@ export function operationalStatusIt(raw: string | null | undefined): string {
     case "ONLINE":
     case "OK":
     case "SUCCESS":
-      return "Attiva";
+    case "HEALTHY":
+      return "OK — dati ottenuti";
     case "DEGRADED":
     case "PARTIAL":
     case "TEMPORALLY_CAUTIOUS":
-    case "PLAN_LIMITED":
     case "RESEARCH_TEST":
-      return "Parziale / attenzionata";
-    case "BLOCKED":
-      return "Bloccata (HTTP/WAF) — nessun bypass";
+    case "FOUNDATION":
+      return "Parziale / in prova";
+    case "PLAN_LIMITED":
     case "AUTH_REQUIRED":
-      return "Autenticazione richiesta — nessun dato inventato";
+      return "Autenticazione richiesta";
+    case "BLOCKED":
+    case "HTTP_403":
+      return "Bloccata";
+    case "NETWORK_ERROR":
+    case "TIMEOUT":
+      return "Errore di rete";
+    case "HTTP_ERROR":
+      return "Errore HTTP";
+    case "RATE_LIMITED":
+      return "Limite di richieste";
     case "NO_EVENT":
     case "NO_DATA":
-      return "Nessun dato utilizzabile / nessun evento associato";
+    case "EMPTY":
+      return "Nessun dato";
     case "MISSING_ADAPTER":
       return "Adapter assente";
     case "UNAVAILABLE":
@@ -74,9 +106,60 @@ export function operationalStatusIt(raw: string | null | undefined): string {
       return "Inattiva in questo ciclo";
     case "CANDIDATE":
       return "Candidata (non collegata)";
+    case "STALE":
+      return "Scaduta";
     default:
       return raw ? String(raw) : "Sconosciuto";
   }
+}
+
+/** One-sentence Italian explanation. Prefer stored prose; never invent success. */
+export function sourceBlurbIt(status: string | undefined, reason?: string | null): string {
+  const trimmed = String(reason ?? "").trim();
+  const looksLikeProse = trimmed.length > 12 && /[ a-zàèéìòù]/i.test(trimmed) && !/^[A-Z0-9_:-]+$/.test(trimmed);
+  if (looksLikeProse) return trimmed;
+  switch (sourceStatusKind(status)) {
+    case "OK":
+      return "La fonte ha restituito dati associati a un evento. Nessun dato inventato.";
+    case "NO_DATA":
+      return "Consultata, ma senza dati utilizzabili per queste partite.";
+    case "AUTH_REQUIRED":
+      return "Serve una chiave o un token già presenti. Nessun accesso inventato.";
+    case "BLOCKED":
+      return "Il sito ha bloccato la richiesta (HTTP/WAF). Nessun bypass.";
+    case "NETWORK_ERROR":
+      return "La rete non ha risposto. Nessun dato inventato.";
+    default:
+      return trimmed || "Stato di registro — nessun dato inventato.";
+  }
+}
+
+export function roleLabelIt(raw: string | null | undefined): string {
+  const u = String(raw ?? "").toUpperCase();
+  if (u === "MODEL_FEATURE") return "Può entrare nel modello, solo se i dati sono ammissibili";
+  if (u === "MARKET_COMPARE" || u === "MARKET") return "Quote di mercato, solo confronto";
+  if (u === "CONTEXT") return "Solo contesto, non entra nel modello";
+  if (u === "DISABLED") return "Disabilitata";
+  return raw ? String(raw) : "—";
+}
+
+export function temporalLabelIt(raw: string | null | undefined): string {
+  const u = String(raw ?? "").toUpperCase();
+  if (u === "STRICT_AS_OF") return "Orario preciso (as-of)";
+  if (u === "DATE_ONLY") return "Solo data, non orario esatto";
+  if (u === "UNKNOWN") return "Precisione sconosciuta";
+  if (u === "N/A" || u === "NA") return "Non applicabile";
+  return raw ? String(raw) : "—";
+}
+
+export function eventStatusIt(raw: string | null | undefined): string {
+  const u = String(raw ?? "").toUpperCase();
+  if (!u || u === "N/A" || u === "UNKNOWN") return "Stato sconosciuto";
+  if (/\b(LIVE|IN_PLAY|PLAYING|1H|2H|HT)\b/.test(u)) return "In corso";
+  if (/\b(FINISHED|ENDED|FT|FINAL|SETTLED|COMPLETE)\b/.test(u)) return "Terminata";
+  if (/\b(SCHEDULED|NS|NOT_STARTED|UPCOMING|PRE_MATCH|PREMATCH)\b/.test(u)) return "In programma";
+  if (/\b(POSTPONED|CANCELLED|CANCELED|ABANDONED)\b/.test(u)) return "Rinviata o annullata";
+  return decisionLabelIt(raw);
 }
 
 export function bucketLabelIt(raw: string | null | undefined): string {
