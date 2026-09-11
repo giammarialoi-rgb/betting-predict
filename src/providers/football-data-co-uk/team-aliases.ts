@@ -41,6 +41,15 @@ export const FOOTBALL_DATA_CO_UK_TEAM_ALIASES: Readonly<Record<string, string>> 
     Juventus: "juventus",
     Napoli: "napoli",
     Roma: "roma",
+    "Hull": "hull",
+    "Hull City": "hull",
+    Coventry: "coventry",
+    "Coventry City": "coventry",
+    Ipswich: "ipswich",
+    "Ipswich Town": "ipswich",
+    Sunderland: "sunderland",
+    Venezia: "venezia",
+    Fiorentina: "fiorentina",
     Lazio: "lazio",
   });
 

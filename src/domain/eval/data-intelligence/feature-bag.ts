@@ -19,6 +19,13 @@ const CONTEXT_ONLY_SOURCES = new Set([
   "flashscore",
   "soccerway",
   "the-odds-api",
+  "thesportsdb",
+  "wikipedia",
+  "bbc-sport",
+  "gazzetta",
+  "ansa",
+  "sky-sport",
+  "espn",
 ]);
 
 /** Preferred primary source per feature when conflict. */

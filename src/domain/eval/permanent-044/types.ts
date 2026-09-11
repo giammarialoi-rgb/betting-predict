@@ -73,6 +73,11 @@ export type PermanentEvent044 = {
   first_seen_at?: string;
   last_seen_at?: string;
   canonicalization_status?: "MATCH_EXACT" | "AMBIGUOUS_MATCH" | "PARTIAL";
+  /** Real API-Football fixture id when observed (TheSportsDB idAPIfootball). Never invented. */
+  api_football_fixture_id?: string | null;
+  thesportsdb_event_id?: string | null;
+  /** Real ESPN event id when observed. Never invented. */
+  espn_event_id?: string | null;
 };
 
 export type PermanentQuote044 = {

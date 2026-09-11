@@ -66,6 +66,7 @@ export async function fetchClubEloDay(
           Accept: "text/csv,text/plain,*/*",
           "User-Agent": "sports-prediction-engine-research/0.1",
         },
+        signal: AbortSignal.timeout(20_000),
       });
       status = res.status;
       text = await res.text();

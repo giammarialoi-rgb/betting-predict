@@ -44,10 +44,10 @@ export function predictPoissonIndependentDetailed(input: {
   params?: PoissonParamsPi;
 }): PoissonIndependentDetail {
   const p = input.params ?? DEFAULT_POISSON_PARAMS;
-  const ha = input.features.values.home_attack_home ?? input.features.values.home_attack_all ?? input.features.values.home_gf_l5;
-  const hd = input.features.values.home_defense_home ?? input.features.values.home_ga_l5;
-  const aa = input.features.values.away_attack_away ?? input.features.values.away_attack_all ?? input.features.values.away_gf_l5;
-  const ad = input.features.values.away_defense_away ?? input.features.values.away_ga_l5;
+  const ha = input.features.values.home_attack_home ?? input.features.values.home_attack_all ?? input.features.values.home_gf_l5 ?? input.features.values.home_xg_l5;
+  const hd = input.features.values.home_defense_home ?? input.features.values.home_ga_l5 ?? input.features.values.home_xga_l5;
+  const aa = input.features.values.away_attack_away ?? input.features.values.away_attack_all ?? input.features.values.away_gf_l5 ?? input.features.values.away_xg_l5;
+  const ad = input.features.values.away_defense_away ?? input.features.values.away_ga_l5 ?? input.features.values.away_xga_l5;
   const league = input.features.values.league_avg_gf ?? p.default_lambda;
 
   let homeLambda = Math.max(

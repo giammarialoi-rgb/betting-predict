@@ -176,7 +176,7 @@ export async function runEventResearchBatch(input: {
   ) => {
     result.observations_created += rows.length;
     for (const o of rows) {
-      if (o.kind === "EVENT_RESEARCH" || o.source === "open-meteo" || o.source === "ansa" || o.source === "sky-sport") {
+      if (o.kind === "EVENT_RESEARCH" || o.source === "open-meteo" || o.source === "ansa" || o.source === "sky-sport" || o.source === "bbc-sport" || o.source === "gazzetta" || o.source === "thesportsdb" || o.source === "wikipedia" || o.source === "espn") {
         result.real_event_observations += 1;
         eventsWithReal.add(eventId);
       } else if (o.kind === "DERIVED") {
@@ -212,6 +212,11 @@ export async function runEventResearchBatch(input: {
         "the-odds-api",
     "ansa",
     "sky-sport",
+    "bbc-sport",
+    "gazzetta",
+    "thesportsdb",
+    "wikipedia",
+    "espn",
   ]);
 
   // ClubElo once per batch (shared day as-of now) — avoid N× network
@@ -225,6 +230,7 @@ export async function runEventResearchBatch(input: {
   } catch {
     batchElo = null;
   }
+  const blockedThisCycle = new Set<string>();
 
   for (const ev of slice) {
     const kickoff = ev.kickoff_utc ?? nowIso;
@@ -241,7 +247,9 @@ export async function runEventResearchBatch(input: {
       : "";
 
     // 1) API-Sports cache-only
-    const fixtureRaw = (ev as { fixture_id?: number | string }).fixture_id;
+    const fixtureRaw =
+      (ev as { fixture_id?: number | string }).fixture_id ??
+      (ev as { api_football_fixture_id?: number | string }).api_football_fixture_id;
     const fixtureId =
       typeof fixtureRaw === "number"
         ? fixtureRaw
@@ -536,6 +544,25 @@ export async function runEventResearchBatch(input: {
           appendResearchObservation(row, root);
           eloRows.push(row);
         }
+        if (elo.home_rating != null && elo.away_rating != null) {
+          const row = {
+            event_id: ev.event_id,
+            feature_key: "elo_diff",
+            value: elo.home_rating - elo.away_rating,
+            source: "clubelo",
+            source_url: `http://api.clubelo.com/${eloDay}`,
+            observed_at: nowIso,
+            available_at: elo.home_available_at ?? elo.away_available_at,
+            extraction_method: "clubelo_asof_derived",
+            confidence: null,
+            status: "REAL" as const,
+            kind: "DERIVED" as const,
+            enters_independent_model: true,
+            derived_from: ["home_elo", "away_elo"],
+          };
+          appendResearchObservation(row, root);
+          eloRows.push(row);
+        }
         await noteObs(eloRows, ev.event_id);
       } else {
         bump(result.by_source, "clubelo", "fail");
@@ -691,6 +718,228 @@ export async function runEventResearchBatch(input: {
       }
     }
 
+    // TheSportsDB + Wikipedia — real public JSON/HTML
+    {
+      const { researchPublicApisForEvent } = await import(
+        "@/domain/eval/data-intelligence/research/research-public-apis"
+      );
+      const pub = await researchPublicApisForEvent({ ev, nowIso, asOf });
+      if (pub.tsdb.fixture_id != null && ev.fixture_id == null) {
+        ev.fixture_id = pub.tsdb.fixture_id;
+        ev.api_football_fixture_id = String(pub.tsdb.fixture_id);
+      }
+      if (pub.tsdb.idEvent) ev.thesportsdb_event_id = pub.tsdb.idEvent;
+      const { appendResearchObservation } = await import(
+        "@/domain/eval/data-intelligence/research/observations-store"
+      );
+      for (const o of pub.observations) appendResearchObservation(o, root);
+      await noteObs(pub.observations, ev.event_id);
+
+      const tsPhase =
+        pub.tsdb.parser_status === "BLOCKED"
+          ? "BLOCKED"
+          : pub.tsdb.ok
+            ? "OK"
+            : "UNAVAILABLE";
+      appendResearchStatus(
+        baseRow({
+          event_id: ev.event_id,
+          source_id: "thesportsdb",
+          phase: tsPhase,
+          ok: pub.tsdb.ok,
+          fetched: pub.tsdb.fetched,
+          fetched_at: pub.tsdb.fetched ? nowIso : null,
+          available_at: pub.tsdb.ok ? nowIso : null,
+          observed_at: pub.tsdb.ok ? nowIso : null,
+          reason: pub.tsdb.reason,
+          raw_ref: pub.tsdb.idEvent,
+          cycle_number: input.cycleNumber,
+          at: nowIso,
+          url: pub.tsdb.url,
+          adapter_kind: "PRODUCTION_ADAPTER",
+          http_status: pub.tsdb.http_status,
+          parser_status: pub.tsdb.parser_status,
+          fields_extracted: pub.tsdb.fields,
+        }),
+        root,
+      );
+      if (pub.tsdb.ok) {
+        bump(result.by_source, "thesportsdb", "ok");
+        result.research_fetches += 1;
+      } else if (pub.tsdb.parser_status === "BLOCKED") {
+        bump(result.by_source, "thesportsdb", "fail");
+        result.research_failures += 1;
+      } else {
+        bump(result.by_source, "thesportsdb", "fail");
+        result.research_failures += 1;
+      }
+
+      appendResearchStatus(
+        baseRow({
+          event_id: ev.event_id,
+          source_id: "wikipedia",
+          phase: pub.wikipedia.ok ? "OK" : pub.wikipedia.parser_status === "BLOCKED" ? "BLOCKED" : "UNAVAILABLE",
+          ok: pub.wikipedia.ok,
+          fetched: pub.wikipedia.fetched,
+          fetched_at: pub.wikipedia.fetched ? nowIso : null,
+          available_at: pub.wikipedia.ok ? nowIso : null,
+          observed_at: pub.wikipedia.ok ? nowIso : null,
+          reason: pub.wikipedia.reason,
+          raw_ref: null,
+          cycle_number: input.cycleNumber,
+          at: nowIso,
+          url: pub.wikipedia.url,
+          adapter_kind: "PRODUCTION_ADAPTER",
+          http_status: pub.wikipedia.http_status,
+          parser_status: pub.wikipedia.parser_status,
+          fields_extracted: pub.wikipedia.fields,
+        }),
+        root,
+      );
+      if (pub.wikipedia.ok) {
+        bump(result.by_source, "wikipedia", "ok");
+        result.research_fetches += 1;
+      } else {
+        bump(result.by_source, "wikipedia", "fail");
+        result.research_failures += 1;
+      }
+    }
+
+    // ESPN public scoreboard — CONTEXT identity / venue / form
+    {
+      const {
+        fetchEspnScoreboard,
+        mapCompetitionToEspnSlug,
+        pickEspnEventForMatch,
+        espnEventObservations,
+        ESPN_LEAGUES,
+      } = await import("@/domain/eval/data-intelligence/research/espn-scoreboard");
+      const slug = mapCompetitionToEspnSlug(ev.competition);
+      const lg = ESPN_LEAGUES.find((l) => l.slug === slug);
+      const day = (ev.kickoff_utc ?? nowIso).slice(0, 10).replace(/-/g, "");
+      if (!slug || !lg) {
+        appendResearchStatus(
+          baseRow({
+            event_id: ev.event_id,
+            source_id: "espn",
+            phase: "UNAVAILABLE",
+            ok: false,
+            fetched: false,
+            fetched_at: null,
+            available_at: null,
+            reason: "NO_ESPN_LEAGUE_MAP — competition not in public scoreboard catalogue",
+            raw_ref: null,
+            cycle_number: input.cycleNumber,
+            at: nowIso,
+            url: "https://site.api.espn.com/apis/site/v2/sports/soccer/",
+            adapter_kind: "PRODUCTION_ADAPTER",
+            parser_status: "NO_DATA",
+            fields_extracted: [],
+          }),
+          root,
+        );
+        bump(result.by_source, "espn", "fail");
+        result.research_failures += 1;
+      } else {
+        const board = await fetchEspnScoreboard({
+          slug,
+          yyyymmdd: day,
+          competition: lg.competition,
+          country: lg.country,
+        });
+        const hit =
+          board.http_status != null && board.http_status < 400
+            ? pickEspnEventForMatch(board.events, ev.home_or_a, ev.away_or_b, ev.kickoff_utc)
+            : null;
+        if (board.http_status === 403 || board.http_status === 401) {
+          appendResearchStatus(
+            baseRow({
+              event_id: ev.event_id,
+              source_id: "espn",
+              phase: "BLOCKED",
+              ok: false,
+              fetched: true,
+              fetched_at: nowIso,
+              available_at: null,
+              reason: board.error ?? "BLOCKED",
+              raw_ref: null,
+              cycle_number: input.cycleNumber,
+              at: nowIso,
+              url: board.url,
+              adapter_kind: "PRODUCTION_ADAPTER",
+              http_status: board.http_status,
+              parser_status: "BLOCKED",
+              fields_extracted: [],
+            }),
+            root,
+          );
+          bump(result.by_source, "espn", "fail");
+          result.research_failures += 1;
+        } else if (!hit) {
+          appendResearchStatus(
+            baseRow({
+              event_id: ev.event_id,
+              source_id: "espn",
+              phase: "UNAVAILABLE",
+              ok: false,
+              fetched: board.http_status != null,
+              fetched_at: board.http_status != null ? nowIso : null,
+              available_at: null,
+              reason: board.error ?? `NO_EVENT — ${board.events.length} scoreboard rows, none matched`,
+              raw_ref: null,
+              cycle_number: input.cycleNumber,
+              at: nowIso,
+              url: board.url,
+              adapter_kind: "PRODUCTION_ADAPTER",
+              http_status: board.http_status,
+              parser_status: board.error ? "HTTP_ERROR" : "NO_EVENT",
+              fields_extracted: [],
+            }),
+            root,
+          );
+          bump(result.by_source, "espn", "fail");
+          result.research_failures += 1;
+        } else {
+          if (!ev.espn_event_id) ev.espn_event_id = hit.espn_event_id;
+          const { appendResearchObservation } = await import(
+            "@/domain/eval/data-intelligence/research/observations-store"
+          );
+          const rows = espnEventObservations({
+            eventId: ev.event_id,
+            hit,
+            nowIso,
+            url: board.url,
+          });
+          for (const o of rows) appendResearchObservation(o, root);
+          await noteObs(rows, ev.event_id);
+          appendResearchStatus(
+            baseRow({
+              event_id: ev.event_id,
+              source_id: "espn",
+              phase: "OK",
+              ok: true,
+              fetched: true,
+              fetched_at: nowIso,
+              available_at: nowIso,
+              observed_at: nowIso,
+              reason: `evento ESPN ${hit.espn_event_id} abbinato`,
+              raw_ref: hit.espn_event_id,
+              cycle_number: input.cycleNumber,
+              at: nowIso,
+              url: board.url,
+              adapter_kind: "PRODUCTION_ADAPTER",
+              http_status: board.http_status,
+              parser_status: "OK",
+              fields_extracted: rows.map((r) => r.feature_key),
+            }),
+            root,
+          );
+          bump(result.by_source, "espn", "ok");
+          result.research_fetches += 1;
+        }
+      }
+    }
+
     // Odds API — market layer only (explicit: does not enter model)
     appendResearchStatus(
       baseRow({
@@ -734,6 +983,32 @@ export async function runEventResearchBatch(input: {
         "the-analyst",
         "abseits",
       ] as const) {
+        if (blockedThisCycle.has(sid)) {
+          appendResearchStatus(
+            baseRow({
+              event_id: ev.event_id,
+              source_id: sid,
+              phase: "BLOCKED",
+              ok: false,
+              fetched: false,
+              fetched_at: null,
+              available_at: null,
+              reason: "SKIPPED_THIS_CYCLE — source already BLOCKED (403/challenge) earlier this cycle. Not re-fetched.",
+              raw_ref: null,
+              cycle_number: input.cycleNumber,
+              at: nowIso,
+              url: null,
+              http_status: 403,
+              parser_status: "BLOCKED",
+              fields_extracted: [],
+              adapter_kind: "TEST_PROBE",
+            }),
+            root,
+          );
+          bump(result.by_source, sid, "fail");
+          result.research_failures += 1;
+          continue;
+        }
         const page = await fetchEventPage({
           sourceId: sid,
           home: ev.home_or_a,
@@ -811,6 +1086,7 @@ export async function runEventResearchBatch(input: {
           bump(result.by_source, sid, "ok");
           result.research_fetches += 1;
         } else {
+          if (page.status === "BLOCKED") blockedThisCycle.add(sid);
           bump(result.by_source, sid, "fail");
           result.research_failures += 1;
         }
@@ -820,7 +1096,7 @@ export async function runEventResearchBatch(input: {
     // Public RSS (ANSA / Sky) — CONTEXT mention only
     {
       const { matchRssToEvent } = await import("@/domain/eval/data-intelligence/research/rss-news");
-      for (const sid of ["ansa", "sky-sport"] as const) {
+      for (const sid of ["ansa", "sky-sport", "bbc-sport", "gazzetta"] as const) {
         const rss = await matchRssToEvent({ sourceId: sid, home: ev.home_or_a, away: ev.away_or_b });
         const phase =
           rss.status === "BLOCKED"

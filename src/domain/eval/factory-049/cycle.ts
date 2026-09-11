@@ -1,5 +1,5 @@
 import { permanentRoot044, ensurePermanentDirs044, labAStore044 } from "@/domain/eval/permanent-044/config";
-import { loadStore044, appendJournal044 } from "@/domain/eval/permanent-044/store";
+import { loadStore044, appendJournal044, persistStoreEvents044 } from "@/domain/eval/permanent-044/store";
 import { runPermanent044Cycle } from "@/domain/eval/permanent-044/cycle";
 import { analyzeAllLabB045 } from "@/domain/eval/factory-045/analyze";
 import { runSettle045 } from "@/domain/eval/factory-045/settle";
@@ -86,6 +86,42 @@ export async function runMassive049Cycle(input: {
   let research: CycleResult049["research"] = null;
   if (input.research) {
     try {
+      const { importLiveFootballDataSeason } = await import(
+        "@/domain/eval/predictive-intelligence/dataset/live-season"
+      );
+      await importLiveFootballDataSeason({ labBRoot: labB, fetchImpl: input.fetchImpl });
+    } catch {
+      /* live season overlay optional */
+    }
+    try {
+      const storeForTsdb = loadStore044(labB);
+      const { runTheSportsDbDiscover } = await import(
+        "@/domain/eval/factory-049/discover-thesportsdb"
+      );
+      const tsdb = await runTheSportsDbDiscover({
+        store: storeForTsdb,
+        nowIso,
+        fetchImpl: input.fetchImpl,
+      });
+      persistStoreEvents044(storeForTsdb);
+      appendJournal044(labB, { kind: "thesportsdb_discover", at: nowIso, ...tsdb });
+    } catch {
+      /* free discovery optional — Odds path remains */
+    }
+    try {
+      const storeForEspn = loadStore044(labB);
+      const { runEspnDiscover } = await import("@/domain/eval/factory-049/discover-espn");
+      const espn = await runEspnDiscover({
+        store: storeForEspn,
+        nowIso,
+        fetchImpl: input.fetchImpl,
+      });
+      persistStoreEvents044(storeForEspn);
+      appendJournal044(labB, { kind: "espn_discover", at: nowIso, ...espn });
+    } catch {
+      /* ESPN scoreboard optional */
+    }
+    try {
       const { runEventResearchOrchestrator } = await import(
         "@/domain/eval/data-intelligence/research/orchestrator"
       );
@@ -102,6 +138,7 @@ export async function runMassive049Cycle(input: {
         labBRoot: labB,
         budget: envBudget,
       });
+      persistStoreEvents044(storePre);
       research = {
         events_touched: r.events_touched,
         research_fetches: r.research_fetches,

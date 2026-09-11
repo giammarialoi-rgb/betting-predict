@@ -32,6 +32,10 @@ type TeamAgg = {
   cardsN: number;
   cleanSheets: number;
   scored: number;
+  xg: number;
+  xgN: number;
+  xga: number;
+  xgaN: number;
 };
 
 function emptyAgg(): TeamAgg {
@@ -50,6 +54,10 @@ function emptyAgg(): TeamAgg {
     cardsN: 0,
     cleanSheets: 0,
     scored: 0,
+    xg: 0,
+    xgN: 0,
+    xga: 0,
+    xgaN: 0,
   };
 }
 
@@ -66,6 +74,8 @@ function teamView(m: PiMatchRow, teamId: string): {
   sot: number | null;
   corners: number | null;
   cards: number | null;
+  xg: number | null;
+  xga: number | null;
   isHome: boolean;
   label: "HOME" | "DRAW" | "AWAY";
 } | null {
@@ -77,6 +87,8 @@ function teamView(m: PiMatchRow, teamId: string): {
       sot: m.hst,
       corners: m.hc,
       cards: m.hy != null || m.hr != null ? (m.hy ?? 0) + 2 * (m.hr ?? 0) : null,
+      xg: m.hxg ?? null,
+      xga: m.axg ?? null,
       isHome: true,
       label: m.ftr,
     };
@@ -89,6 +101,8 @@ function teamView(m: PiMatchRow, teamId: string): {
       sot: m.ast,
       corners: m.ac,
       cards: m.ay != null || m.ar != null ? (m.ay ?? 0) + 2 * (m.ar ?? 0) : null,
+      xg: m.axg ?? null,
+      xga: m.hxg ?? null,
       isHome: false,
       label: m.ftr,
     };
@@ -125,6 +139,14 @@ function aggregate(matches: PiMatchRow[], teamId: string, venue?: "home" | "away
       a.cards += v.cards;
       a.cardsN += 1;
     }
+    if (v.xg != null) {
+      a.xg += v.xg;
+      a.xgN += 1;
+    }
+    if (v.xga != null) {
+      a.xga += v.xga;
+      a.xgaN += 1;
+    }
   }
   return a;
 }
@@ -138,7 +160,11 @@ function lastN(matches: PiMatchRow[], teamId: string, n: number): PiMatchRow[] {
   return out.reverse();
 }
 
-function rate(a: TeamAgg, key: keyof TeamAgg, countKey: "n" | "shotsN" | "sotN" | "cornersN" | "cardsN"): number | null {
+function rate(
+  a: TeamAgg,
+  key: keyof TeamAgg,
+  countKey: "n" | "shotsN" | "sotN" | "cornersN" | "cardsN" | "xgN" | "xgaN",
+): number | null {
   const c = a[countKey] as number;
   if (c <= 0) return null;
   return (a[key] as number) / c;
@@ -257,6 +283,10 @@ export function buildFeatureVectorPi(
     put(values, missing, `away_cs_l${w}`, aA.n ? aA.cleanSheets / aA.n : null);
     put(values, missing, `home_score_cons_l${w}`, hA.n ? hA.scored / hA.n : null);
     put(values, missing, `away_score_cons_l${w}`, aA.n ? aA.scored / aA.n : null);
+    put(values, missing, `home_xg_l${w}`, rate(hA, "xg", "xgN"));
+    put(values, missing, `away_xg_l${w}`, rate(aA, "xg", "xgN"));
+    put(values, missing, `home_xga_l${w}`, rate(hA, "xga", "xgaN"));
+    put(values, missing, `away_xga_l${w}`, rate(aA, "xga", "xgaN"));
   }
 
   const hHome = aggregate(venuePriors, target.home_team_id, "home");
@@ -270,7 +300,14 @@ export function buildFeatureVectorPi(
   put(values, missing, "away_defense_away", rate(aAway, "ga", "n"));
   put(values, missing, "home_attack_all", rate(hAll, "gf", "n"));
   put(values, missing, "away_attack_all", rate(aAll, "gf", "n"));
-  put(values, missing, "strength_diff_pts", (rate(hAll, "pts", "n") ?? 0) - (rate(aAll, "pts", "n") ?? 0));
+  const homePtsRate = rate(hAll, "pts", "n");
+  const awayPtsRate = rate(aAll, "pts", "n");
+  put(
+    values,
+    missing,
+    "strength_diff_pts",
+    homePtsRate != null && awayPtsRate != null ? homePtsRate - awayPtsRate : null,
+  );
 
   put(values, missing, "home_rest_days", restDays(priors, target.home_team_id, target.event_time));
   put(values, missing, "away_rest_days", restDays(priors, target.away_team_id, target.event_time));

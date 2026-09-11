@@ -148,3 +148,47 @@ export function resolveEventIdentity(input: {
 }): CanonicalEventIdentity {
   return resolveCanonicalEventIdentity(input);
 }
+
+/** UTC calendar day of kickoff. DATE_ONLY when time missing. */
+export function matchDayUtc(kickoffIso: string | null | undefined): string | null {
+  if (!kickoffIso) return null;
+  const t = Date.parse(kickoffIso);
+  if (Number.isFinite(t)) return new Date(t).toISOString().slice(0, 10);
+  const d = kickoffIso.slice(0, 10);
+  return /^\d{4}-\d{2}-\d{2}$/.test(d) ? d : null;
+}
+
+/**
+ * Cross-source identity: date + canonical home/away.
+ * Competition labels differ across providers; PI division is optional tightening.
+ */
+export function eventIdentityKey(input: {
+  home: string;
+  away: string;
+  kickoff?: string | null;
+  labBRoot?: string;
+}): string {
+  const home = resolveTeamIdentity(input.home, undefined).canonical_id;
+  const away = resolveTeamIdentity(input.away, undefined).canonical_id;
+  const day = matchDayUtc(input.kickoff) ?? "unknown";
+  return `${day}|${home}|${away}`;
+}
+
+export function eventsShareIdentity(
+  a: { home_or_a?: string; away_or_b?: string; kickoff_utc?: string | null; home?: string; away?: string },
+  b: { home_or_a?: string; away_or_b?: string; kickoff_utc?: string | null; home?: string; away?: string },
+): boolean {
+  const ka = eventIdentityKey({
+    home: a.home_or_a ?? a.home ?? "",
+    away: a.away_or_b ?? a.away ?? "",
+    kickoff: a.kickoff_utc ?? null,
+  });
+  const kb = eventIdentityKey({
+    home: b.home_or_a ?? b.home ?? "",
+    away: b.away_or_b ?? b.away ?? "",
+    kickoff: b.kickoff_utc ?? null,
+  });
+  if (ka.endsWith("|") || kb.endsWith("|")) return false;
+  if (ka.includes("unknown") || kb.includes("unknown")) return false;
+  return ka === kb;
+}
