@@ -11,7 +11,8 @@ import { statusWordIt } from "@/domain/eval/betmind-runtime/status-copy";
 function navActive(pathname: string, href: string): boolean {
   const base = href.split("?")[0]!;
   if (base === "/") return pathname === "/";
-  if (base === "/learn") return pathname === "/learn" || pathname.startsWith("/learning");
+  if (base === "/learn") return pathname === "/learn" || pathname.startsWith("/learning") || pathname.startsWith("/conclusi");
+  if (base === "/conclusi") return pathname === "/conclusi" || pathname.startsWith("/learn");
   return pathname === base || pathname.startsWith(base + "/");
 }
 
@@ -38,6 +39,7 @@ export function AppShell({
     { href: "/analyzed", label: t.nav_analyzed },
     { href: "/live", label: t.nav_live },
     { href: "/learn", label: t.nav_learn },
+    { href: "/conclusi", label: t.nav_conclusi },
     { href: "/sources", label: t.nav_sources },
     { href: "/models", label: t.nav_models },
     { href: "/bankroll", label: t.nav_bankroll },

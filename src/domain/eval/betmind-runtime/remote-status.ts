@@ -1,8 +1,7 @@
 /**
- * Mirror Lab B runtime + analysis board to Neon for Vercel Control Center.
- * Stale heartbeats stay OFFLINE — never invent alive state or fake predictions.
+ * Mirror Lab B runtime + analysis board to the filesystem StorageProvider.
+ * NEON NON UTILIZZATO. Stale heartbeats stay OFFLINE — never invent alive state.
  */
-import { neon } from "@neondatabase/serverless";
 import { existsSync, readFileSync } from "node:fs";
 import { hostname } from "node:os";
 import { join } from "node:path";
@@ -32,6 +31,7 @@ import {
   computePipelineCounters3d,
   type PipelineCounters3d,
 } from "@/domain/eval/betmind-runtime/pipeline-counters";
+import { getStorage } from "@/domain/storage";
 
 export const RUNTIME_STATUS_ID = "default";
 /** After this age, remote status must not light ONLINE components. */
@@ -120,10 +120,8 @@ export type LoadedRuntimeStatus = {
   payload: BetMindRuntimePayload;
 };
 
-function sqlClient() {
-  const url = process.env.DATABASE_URL;
-  if (!url) return null;
-  return neon(url);
+function storage() {
+  return getStorage(permanentRoot044());
 }
 
 function readJson(path: string): Record<string, unknown> | null {
@@ -356,7 +354,7 @@ export function buildRuntimePayloadFromLocal(root = permanentRoot044()): BetMind
       store_root: "audit/external/task-044",
       store_present: storePresent,
       pi_verdict_present: Boolean(verdict),
-      mirror: "neon",
+      mirror: "filesystem",
       host: hostname(),
       events_analyzed: analysis.events_analyzed,
       events_with_predictions_store: analysis.predictions_persisted_events,
@@ -452,84 +450,40 @@ export function buildRuntimePayloadFromLocal(root = permanentRoot044()): BetMind
 }
 
 export async function ensureRuntimeTables(): Promise<boolean> {
-  const sql = sqlClient();
-  if (!sql) return false;
-  await sql`
-    CREATE TABLE IF NOT EXISTS betmind_runtime_status (
-      id text PRIMARY KEY DEFAULT 'default',
-      published_at timestamptz NOT NULL DEFAULT now(),
-      payload jsonb NOT NULL
-    )
-  `;
-  await sql`
-    CREATE TABLE IF NOT EXISTS betmind_analysis_cycles (
-      id bigserial PRIMARY KEY,
-      cycle_at timestamptz NOT NULL,
-      cycle_number integer,
-      priority text,
-      idle boolean NOT NULL DEFAULT false,
-      events_in_store integer,
-      events_analyzed integer,
-      predictions_produced integer,
-      decisions_on_board integer,
-      skipped integer,
-      model_version text,
-      host text,
-      reason text,
-      stats jsonb,
-      created_at timestamptz NOT NULL DEFAULT now()
-    )
-  `;
-  await sql`
-    CREATE TABLE IF NOT EXISTS betmind_board_events (
-      event_id text PRIMARY KEY,
-      published_at timestamptz NOT NULL,
-      bucket text,
-      payload jsonb NOT NULL
-    )
-  `;
+  storage();
   return true;
 }
 
 async function persistCycleAndBoard(payload: BetMindRuntimePayload): Promise<void> {
-  const sql = sqlClient();
-  if (!sql) return;
+  const store = storage();
   const a = payload.analysis;
-  await sql`
-    INSERT INTO betmind_analysis_cycles (
-      cycle_at, cycle_number, priority, idle,
-      events_in_store, events_analyzed, predictions_produced, decisions_on_board,
-      skipped, model_version, host, reason, stats
-    ) VALUES (
-      ${a.last_cycle_at ?? payload.published_at}::timestamptz,
-      ${a.cycle_number},
-      ${a.priority},
-      ${a.idle},
-      ${a.events_in_store},
-      ${a.events_analyzed},
-      ${a.predictions_produced},
-      ${a.decisions_on_board},
-      ${a.skipped},
-      ${a.model_version},
-      ${payload.host},
-      ${a.reason ?? a.no_events_reason},
-      ${JSON.stringify(a)}::jsonb
-    )
-  `;
+  store.appendAnalysisCycle({
+    cycle_at: a.last_cycle_at ?? payload.published_at,
+    cycle_number: a.cycle_number,
+    priority: a.priority,
+    idle: a.idle,
+    events_in_store: a.events_in_store,
+    events_analyzed: a.events_analyzed,
+    predictions_produced: a.predictions_produced,
+    decisions_on_board: a.decisions_on_board,
+    skipped: a.skipped,
+    model_version: a.model_version,
+    host: payload.host,
+    reason: a.reason ?? a.no_events_reason,
+    stats: a,
+    created_at: new Date().toISOString(),
+  });
 
   const events = (payload.observatory?.next_events as BoardEventRow[] | undefined) ?? [];
   for (const row of events) {
     const eventId = String(row.event_id ?? "");
     if (!eventId) continue;
-    const bucket = String(row.bucket ?? "DISCOVERED");
-    await sql`
-      INSERT INTO betmind_board_events (event_id, published_at, bucket, payload)
-      VALUES (${eventId}, ${payload.published_at}::timestamptz, ${bucket}, ${JSON.stringify(row)}::jsonb)
-      ON CONFLICT (event_id) DO UPDATE
-      SET published_at = EXCLUDED.published_at,
-          bucket = EXCLUDED.bucket,
-          payload = EXCLUDED.payload
-    `;
+    store.upsertBoardEvent({
+      event_id: eventId,
+      published_at: payload.published_at,
+      bucket: String(row.bucket ?? "DISCOVERED"),
+      payload: row,
+    });
   }
 }
 
@@ -537,17 +491,10 @@ export async function publishRuntimeStatus(
   payload: BetMindRuntimePayload = buildRuntimePayloadFromLocal(),
 ): Promise<{ ok: true; published_at: string; board: number } | { ok: false; error: string }> {
   try {
-    const sql = sqlClient();
-    if (!sql) return { ok: false, error: "DATABASE_URL is not set" };
+    const store = storage();
     await ensureRuntimeTables();
     const publishedAt = payload.published_at;
-    await sql`
-      INSERT INTO betmind_runtime_status (id, published_at, payload)
-      VALUES (${RUNTIME_STATUS_ID}, ${publishedAt}::timestamptz, ${JSON.stringify(payload)}::jsonb)
-      ON CONFLICT (id) DO UPDATE
-      SET published_at = EXCLUDED.published_at,
-          payload = EXCLUDED.payload
-    `;
+    store.publishRuntime(payload, publishedAt);
     try {
       await persistCycleAndBoard(payload);
     } catch (boardErr) {
@@ -556,12 +503,11 @@ export async function publishRuntimeStatus(
         boardErr instanceof Error ? boardErr.message : boardErr,
       );
     }
-    // Keep event dossiers in sync with the board so Vercel detail pages do not 404
     try {
-      const { mirrorDossiersToNeon } = await import("@/domain/eval/betmind-runtime/dossier");
+      const { mirrorDossiersToStore } = await import("@/domain/eval/betmind-runtime/dossier");
       const root = permanentRoot044();
       if (localLabStorePresent(root)) {
-        await mirrorDossiersToNeon(root, { limit: 150 });
+        await mirrorDossiersToStore(root, { limit: 150 });
       }
     } catch {
       /* dossier mirror optional — board publish must still succeed */
@@ -578,21 +524,10 @@ export async function loadRuntimeStatus(
   staleMs = RUNTIME_STALE_MS,
 ): Promise<LoadedRuntimeStatus | null> {
   try {
-    const sql = sqlClient();
-    if (!sql) return null;
-    const rows = (await sql`
-      SELECT published_at::text AS published_at, payload
-      FROM betmind_runtime_status
-      WHERE id = ${RUNTIME_STATUS_ID}
-      LIMIT 1
-    `) as Array<{ published_at: string; payload: BetMindRuntimePayload | string }>;
-    const row = rows[0];
+    const row = storage().loadRuntime();
     if (!row) return null;
-    const payload =
-      typeof row.payload === "string"
-        ? (JSON.parse(row.payload) as BetMindRuntimePayload)
-        : row.payload;
-    const published_at = row.published_at ?? payload.published_at;
+    const payload = row.payload as BetMindRuntimePayload;
+    const published_at = row.published_at || payload.published_at;
     const age_ms = Math.max(0, nowMs - Date.parse(published_at));
     return {
       published_at,
@@ -656,7 +591,7 @@ function buildHeartbeatComponents(root = permanentRoot044()): {
       cycles_completed: brain?.cycles_completed ?? null,
       store_present: storePresent,
       store_present_local_on_publisher: storePresent,
-      mirror: "neon",
+      mirror: "filesystem",
       host: hostname(),
       worker_pid: system.worker_pid ?? null,
       heartbeat_kind: "touch",
@@ -674,8 +609,6 @@ export async function publishRuntimeHeartbeat(): Promise<
   { ok: true; published_at: string; board: number; heartbeat: true } | { ok: false; error: string }
 > {
   try {
-    const sql = sqlClient();
-    if (!sql) return { ok: false, error: "DATABASE_URL is not set" };
     const existing = await loadRuntimeStatus(Date.now(), Number.POSITIVE_INFINITY);
     if (!existing) {
       const full = await publishRuntimeStatus();
@@ -709,13 +642,7 @@ export async function publishRuntimeHeartbeat(): Promise<
         ...patch.health053,
       },
     };
-    await sql`
-      INSERT INTO betmind_runtime_status (id, published_at, payload)
-      VALUES (${RUNTIME_STATUS_ID}, ${published_at}::timestamptz, ${JSON.stringify(merged)}::jsonb)
-      ON CONFLICT (id) DO UPDATE
-      SET published_at = EXCLUDED.published_at,
-          payload = EXCLUDED.payload
-    `;
+    storage().publishRuntime(merged, published_at);
     const board = ((merged.observatory?.next_events as unknown[]) ?? []).length;
     return { ok: true, published_at, board, heartbeat: true };
   } catch (e) {
@@ -723,28 +650,14 @@ export async function publishRuntimeHeartbeat(): Promise<
   }
 }
 
-export async function loadBoardEventsFromNeon(q: {
+export async function loadBoardEventsFromStore(q: {
   date?: string | null;
   from?: string | null;
   to?: string | null;
   sport?: string | null;
 }): Promise<{ events: unknown[]; total: number } | null> {
   try {
-    const sql = sqlClient();
-    if (!sql) return null;
-    const from = q.from ?? q.date ?? null;
-    const to = q.to ?? q.date ?? null;
-    const rows = from && to
-      ? ((await sql`
-          SELECT event_id, bucket, payload
-          FROM betmind_board_events
-          WHERE COALESCE(NULLIF(payload->>'calendar_day', ''), left(payload->>'kickoff_utc', 10))
-            BETWEEN ${from} AND ${to}
-        `) as Array<{ event_id: string; bucket: string | null; payload: unknown }>)
-      : ((await sql`
-          SELECT event_id, bucket, payload
-          FROM betmind_board_events
-        `) as Array<{ event_id: string; bucket: string | null; payload: unknown }>);
+    const rows = storage().loadBoardEvents();
     const events: unknown[] = [];
     const seen = new Set<string>();
     for (const row of rows) {
@@ -770,11 +683,13 @@ export async function loadBoardEventsFromNeon(q: {
   }
 }
 
+/** @deprecated name kept for call sites — reads filesystem, not Neon. */
+export const loadBoardEventsFromNeon = loadBoardEventsFromStore;
+
 /** Debounced fire-and-forget heartbeat (worker sleep / mid-cycle). Never throws. */
 export function schedulePublishRuntimeStatus(minIntervalMs = 30_000): void {
   const now = Date.now();
   if (publishInFlight || now - lastPublishMs < minIntervalMs) return;
-  if (!process.env.DATABASE_URL) return;
   publishInFlight = true;
   void publishRuntimeHeartbeat()
     .then((r) => {
@@ -793,7 +708,6 @@ export function schedulePublishRuntimeStatus(minIntervalMs = 30_000): void {
 export async function publishRuntimeStatusNow(): Promise<
   { ok: true; published_at: string; board: number } | { ok: false; error: string }
 > {
-  if (!process.env.DATABASE_URL) return { ok: false, error: "DATABASE_URL is not set" };
   const result = await publishRuntimeStatus();
   if (result.ok) lastPublishMs = Date.now();
   return result;

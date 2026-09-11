@@ -70,7 +70,7 @@ export async function GET(req: Request) {
   if (board && board.total > 0) {
     return NextResponse.json({
       ok: true,
-      source: "neon_board",
+      source: "filesystem_board",
       date,
       from: from ?? date,
       to: to ?? date,

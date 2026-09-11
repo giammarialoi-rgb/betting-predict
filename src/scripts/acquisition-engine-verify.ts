@@ -21,7 +21,7 @@ config({ path: ".env" });
 async function main() {
   const nowIso = new Date().toISOString();
   const cwd = process.cwd();
-  const persistNeon = Boolean(process.env.DATABASE_URL);
+  const persistNeon = false;
   const lab = labEventsForAcquisition();
   const result = await runAcquisitionEngineCycle({
     nowIso,

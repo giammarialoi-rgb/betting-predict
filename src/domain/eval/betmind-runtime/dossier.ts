@@ -23,10 +23,7 @@ import { detectConflicts, type FeatureConflict } from "@/domain/eval/data-intell
 import { loadResearchObservationsForEvent } from "@/domain/eval/data-intelligence/research/observations-store";
 import { catalogueAdapterKind } from "@/domain/eval/data-intelligence/research/source-catalogue";
 import { isPrunedFontiSource } from "@/domain/eval/acquisition-engine/active-fonti";
-import {
-  publishUnderstatXgObservations,
-  researchObservationsFromDossierFeatures,
-} from "@/ingest/understat-feature-publish";
+import { getStorage } from "@/domain/storage";
 import { overlayUnderstatXgOnFeatureData } from "@/domain/eval/data-intelligence/research/understat-league";
 
 export type UiFeatureStatus =
@@ -660,111 +657,51 @@ export function compactDossierForMirror(d: AnalysisDossier): Record<string, unkn
   };
 }
 
-export async function upsertDossierNeon(dossier: AnalysisDossier): Promise<void> {
-  const url = process.env.DATABASE_URL;
-  if (!url) return;
+export async function upsertDossierStore(dossier: AnalysisDossier): Promise<void> {
   try {
-    const { neon } = await import("@neondatabase/serverless");
-    const sql = neon(url);
-    await sql`
-      CREATE TABLE IF NOT EXISTS betmind_analysis_dossiers (
-        event_id text PRIMARY KEY,
-        published_at timestamptz NOT NULL DEFAULT now(),
-        payload jsonb NOT NULL
-      )
-    `;
-    const payload = JSON.stringify(compactDossierForMirror(dossier));
-    await sql`
-      INSERT INTO betmind_analysis_dossiers (event_id, published_at, payload)
-      VALUES (${dossier.event.event_id}, ${new Date().toISOString()}::timestamptz, ${payload}::jsonb)
-      ON CONFLICT (event_id) DO UPDATE
-      SET published_at = EXCLUDED.published_at,
-          payload = EXCLUDED.payload
-    `;
-    try {
-      const understatResearch = dossier.research.find((r) => r.source_id === "understat");
-      await publishUnderstatXgObservations({
-        observations: researchObservationsFromDossierFeatures({
-          eventId: dossier.event.event_id,
-          features: dossier.features,
-          sourceUrl: understatResearch?.url ?? null,
-          observedAtFallback:
-            understatResearch?.observed_at ??
-            understatResearch?.fetched_at ??
-            dossier.cycle.last_cycle_at ??
-            new Date().toISOString(),
-        }),
-        event: {
-          event_id: dossier.event.event_id,
-          home: dossier.event.home,
-          away: dossier.event.away,
-          competition: dossier.event.competition,
-          kickoff_utc: dossier.event.kickoff_utc,
-          sport: dossier.event.sport,
-        },
-      });
-    } catch (pubErr) {
-      console.warn(
-        `[understat-neon] dossier feature publish failed event=${dossier.event.event_id}:`,
-        pubErr instanceof Error ? pubErr.message : pubErr,
-      );
-    }
+    getStorage().upsertDossier(dossier.event.event_id, compactDossierForMirror(dossier));
   } catch (e) {
     console.warn(
-      `[dossier-neon] upsert failed event=${dossier.event.event_id}:`,
+      `[dossier-store] upsert failed event=${dossier.event.event_id}:`,
       e instanceof Error ? e.message : e,
     );
   }
 }
 
-export async function loadDossierNeon(eventId: string): Promise<AnalysisDossier | null> {
-  const url = process.env.DATABASE_URL;
-  if (!url) return null;
+/** @deprecated name — writes filesystem, not Neon. */
+export const upsertDossierNeon = upsertDossierStore;
+
+export async function loadDossierStore(eventId: string): Promise<AnalysisDossier | null> {
   try {
-    const { neon } = await import("@neondatabase/serverless");
-    const sql = neon(url);
-    const rows = (await sql`
-      SELECT payload FROM betmind_analysis_dossiers WHERE event_id = ${eventId} LIMIT 1
-    `) as Array<{ payload: AnalysisDossier | string }>;
-    const row = rows[0];
-    if (!row) return null;
-    return typeof row.payload === "string"
-      ? (JSON.parse(row.payload) as AnalysisDossier)
-      : row.payload;
+    const payload = getStorage().loadDossier(eventId);
+    if (!payload) return null;
+    return typeof payload === "string"
+      ? (JSON.parse(payload) as AnalysisDossier)
+      : (payload as AnalysisDossier);
   } catch {
     return null;
   }
 }
 
-/** Board row from Neon — identity check only; never silently treat as full dossier. */
-export async function loadBoardEventNeon(
+/** @deprecated name — reads filesystem, not Neon. */
+export const loadDossierNeon = loadDossierStore;
+
+/** Board row from filesystem mirror — identity check only; never silently treat as full dossier. */
+export async function loadBoardEventStore(
   eventId: string,
 ): Promise<Record<string, unknown> | null> {
-  const url = process.env.DATABASE_URL;
-  if (!url) return null;
   try {
-    const { neon } = await import("@neondatabase/serverless");
-    const sql = neon(url);
-    const rows = (await sql`
-      SELECT event_id, bucket, payload, published_at::text AS published_at
-      FROM betmind_board_events
-      WHERE event_id = ${eventId}
-      LIMIT 1
-    `) as Array<{
-      event_id: string;
-      bucket: string | null;
-      payload: Record<string, unknown> | string;
-      published_at: string;
-    }>;
-    const row = rows[0];
+    const row = getStorage()
+      .loadBoardEvents()
+      .find((r) => r.event_id === eventId);
     if (!row) return null;
     const payload =
       typeof row.payload === "string"
         ? (JSON.parse(row.payload) as Record<string, unknown>)
-        : row.payload;
+        : ((row.payload ?? {}) as Record<string, unknown>);
     return {
       ...payload,
-      event_id: row.event_id,
+      event_id: eventId,
       bucket: row.bucket ?? payload.bucket ?? null,
       published_at: row.published_at,
     };
@@ -773,11 +710,15 @@ export async function loadBoardEventNeon(
   }
 }
 
+/** @deprecated name — reads filesystem, not Neon. */
+export const loadBoardEventNeon = loadBoardEventStore;
+
 /**
- * Mirror Lab B analysis dossiers to Neon for Vercel `/events/[id]`.
+ * Mirror Lab B analysis dossiers to the filesystem store for `/events/[id]`.
  * Prefers ANALYZED / independent-inference events; never invents dossiers.
+ * NEON NON UTILIZZATO
  */
-export async function mirrorDossiersToNeon(
+export async function mirrorDossiersToStore(
   labB = permanentRoot044(),
   opts: { limit?: number; eventIds?: string[] } = {},
 ): Promise<{ attempted: number; upserted: number; skipped: number }> {
@@ -823,8 +764,11 @@ export async function mirrorDossiersToNeon(
       skipped += 1;
       continue;
     }
-    await upsertDossierNeon(d);
+    await upsertDossierStore(d);
     upserted += 1;
   }
   return { attempted, upserted, skipped };
 }
+
+/** @deprecated name — writes filesystem, not Neon. */
+export const mirrorDossiersToNeon = mirrorDossiersToStore;

@@ -252,6 +252,50 @@ export function classifyFeatureQuality(input: {
   return "DERIVED";
 }
 
+/** Phase 8 dossier truth taxonomy — deterministic, no LLM. */
+export type TruthLabel =
+  | "DATI_TROVATI"
+  | "DATI_DERIVATI"
+  | "DATI_STORICI"
+  | "DATI_MANCANTI"
+  | "DATI_ESCLUSI"
+  | "DATI_MERCATO";
+
+export function truthLabelFromQuality(q: FeatureQualityKind, marketLayer = false): TruthLabel {
+  if (marketLayer) return "DATI_MERCATO";
+  switch (q) {
+    case "REAL":
+      return "DATI_TROVATI";
+    case "DERIVED":
+      return "DATI_DERIVATI";
+    case "HISTORICAL_PRIOR":
+      return "DATI_STORICI";
+    case "MISSING":
+    case "STALE":
+    case "INVALID":
+      return "DATI_MANCANTI";
+    case "EXCLUDED":
+      return "DATI_ESCLUSI";
+  }
+}
+
+export function truthLabelIt(label: TruthLabel): string {
+  switch (label) {
+    case "DATI_TROVATI":
+      return "DATI TROVATI";
+    case "DATI_DERIVATI":
+      return "DATI DERIVATI";
+    case "DATI_STORICI":
+      return "DATI STORICI";
+    case "DATI_MANCANTI":
+      return "DATI MANCANTI";
+    case "DATI_ESCLUSI":
+      return "DATI ESCLUSI";
+    case "DATI_MERCATO":
+      return "DATI MERCATO";
+  }
+}
+
 export function qualityLabelIt(q: FeatureQualityKind): string {
   switch (q) {
     case "REAL":

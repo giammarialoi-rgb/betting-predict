@@ -1,0 +1,358 @@
+{
+  "at": "2026-09-11T22:25:47.780Z",
+  "commit_hint": "phase-8-mega",
+  "storage": {
+    "backend": "filesystem",
+    "neon_in_use": false,
+    "neon_status_it": "NEON NON UTILIZZATO",
+    "note": "NEON NON UTILIZZATO — filesystem/JSONL store (audit/external/task-044, data/)"
+  },
+  "neon_in_use": false,
+  "neon_status_it": "NEON NON UTILIZZATO",
+  "store_upcoming": 0,
+  "espn_probes": [
+    {
+      "url": "https://site.api.espn.com/apis/site/v2/sports/soccer/eng.1/scoreboard",
+      "status": 200,
+      "parsed": 7
+    },
+    {
+      "url": "https://site.api.espn.com/apis/site/v2/sports/soccer/ita.1/scoreboard",
+      "status": 200,
+      "parsed": 1
+    },
+    {
+      "url": "https://site.api.espn.com/apis/site/v2/sports/soccer/ger.1/scoreboard",
+      "status": 200,
+      "parsed": 1
+    },
+    {
+      "url": "https://site.api.espn.com/apis/site/v2/sports/soccer/esp.1/scoreboard",
+      "status": 200,
+      "parsed": 1
+    },
+    {
+      "url": "https://site.api.espn.com/apis/site/v2/sports/soccer/fra.1/scoreboard",
+      "status": 200,
+      "parsed": 1
+    },
+    {
+      "url": "https://site.api.espn.com/apis/site/v2/sports/soccer/uefa.champions/scoreboard",
+      "status": 200,
+      "parsed": 6
+    },
+    {
+      "url": "https://site.api.espn.com/apis/site/v2/sports/soccer/uefa.europa/scoreboard",
+      "status": 200,
+      "parsed": 9
+    },
+    {
+      "url": "https://site.api.espn.com/apis/site/v2/sports/soccer/ned.1/scoreboard",
+      "status": 200,
+      "parsed": 1
+    },
+    {
+      "url": "https://site.api.espn.com/apis/site/v2/sports/soccer/por.1/scoreboard",
+      "status": 200,
+      "parsed": 3
+    },
+    {
+      "url": "https://site.api.espn.com/apis/site/v2/sports/soccer/eng.2/scoreboard",
+      "status": 200,
+      "parsed": 1
+    },
+    {
+      "url": "https://site.api.espn.com/apis/site/v2/sports/soccer/ita.2/scoreboard",
+      "status": 200,
+      "parsed": 3
+    },
+    {
+      "url": "https://site.api.espn.com/apis/site/v2/sports/soccer/bel.1/scoreboard",
+      "status": 200,
+      "parsed": 1
+    },
+    {
+      "url": "https://site.api.espn.com/apis/site/v2/sports/soccer/tur.1/scoreboard",
+      "status": 200,
+      "parsed": 1
+    },
+    {
+      "url": "https://site.api.espn.com/apis/site/v2/sports/soccer/sco.1/scoreboard",
+      "status": 200,
+      "parsed": 2
+    }
+  ],
+  "espn_upcoming": 19,
+  "thesportsdb_probes": [
+    {
+      "url": "https://www.thesportsdb.com/api/v1/json/3/eventsnextleague.php?id=4328",
+      "status": 200,
+      "parsed": 1
+    },
+    {
+      "url": "https://www.thesportsdb.com/api/v1/json/3/eventsnextleague.php?id=4332",
+      "status": 200,
+      "parsed": 1
+    },
+    {
+      "url": "https://www.thesportsdb.com/api/v1/json/3/eventsnextleague.php?id=4335",
+      "status": 200,
+      "parsed": 1
+    },
+    {
+      "url": "https://www.thesportsdb.com/api/v1/json/3/eventsnextleague.php?id=4331",
+      "status": 200,
+      "parsed": 1
+    },
+    {
+      "url": "https://www.thesportsdb.com/api/v1/json/3/eventsnextleague.php?id=4334",
+      "status": 200,
+      "parsed": 1
+    },
+    {
+      "url": "https://www.thesportsdb.com/api/v1/json/3/eventsnextleague.php?id=4337",
+      "status": 200,
+      "parsed": 1
+    },
+    {
+      "url": "https://www.thesportsdb.com/api/v1/json/3/eventsnextleague.php?id=4346",
+      "status": 200,
+      "parsed": 1
+    },
+    {
+      "url": "https://www.thesportsdb.com/api/v1/json/3/eventsnextleague.php?id=4480",
+      "status": 200,
+      "parsed": 1
+    },
+    {
+      "url": "https://www.thesportsdb.com/api/v1/json/3/eventsnextleague.php?id=4481",
+      "status": 200,
+      "parsed": 1
+    }
+  ],
+  "thesportsdb_upcoming": 9,
+  "openligadb_probes": [
+    {
+      "url": "https://api.openligadb.de/getmatchdata/bl1",
+      "status": 200,
+      "parsed": 9
+    },
+    {
+      "url": "https://api.openligadb.de/getmatchdata/bl2",
+      "status": 200,
+      "parsed": 9
+    },
+    {
+      "url": "https://api.openligadb.de/getmatchdata/bl3",
+      "status": 200,
+      "parsed": 10
+    },
+    {
+      "url": "https://api.openligadb.de/getmatchdata/dfb",
+      "status": 200,
+      "parsed": 32
+    },
+    {
+      "url": "https://api.openligadb.de/getmatchdata/fbl1",
+      "status": 200,
+      "parsed": 7
+    },
+    {
+      "url": "https://api.openligadb.de/getmatchdata/ucl",
+      "status": 200,
+      "parsed": 18
+    },
+    {
+      "url": "https://api.openligadb.de/getmatchdata/ch1",
+      "status": 200,
+      "parsed": 6
+    },
+    {
+      "url": "https://api.openligadb.de/getmatchdata/la1",
+      "status": 200,
+      "parsed": 10
+    },
+    {
+      "url": "https://api.openligadb.de/getmatchdata/pl",
+      "status": 200,
+      "parsed": 10
+    }
+  ],
+  "openligadb_upcoming": 43,
+  "queued": 69,
+  "events_researched": 20,
+  "research": {
+    "events_touched": 20,
+    "research_fetches": 16,
+    "research_failures": 355,
+    "research_denied": 9,
+    "missing_adapters": 0,
+    "observations_created": 84,
+    "real_event_observations": 28,
+    "historical_observations": 56,
+    "derived_observations": 0,
+    "events_with_real_event_data": 5,
+    "events_with_historical_data": 8,
+    "data_yield": 0.221,
+    "by_source": {
+      "api-sports": {
+        "ok": 0,
+        "fail": 20,
+        "denied": 0,
+        "missing": 0
+      },
+      "open-meteo": {
+        "ok": 5,
+        "fail": 15,
+        "denied": 0,
+        "missing": 0
+      },
+      "clubelo": {
+        "ok": 0,
+        "fail": 20,
+        "denied": 0,
+        "missing": 0
+      },
+      "football-data-co-uk": {
+        "ok": 0,
+        "fail": 20,
+        "denied": 0,
+        "missing": 0
+      },
+      "club-football-match-data": {
+        "ok": 0,
+        "fail": 20,
+        "denied": 0,
+        "missing": 0
+      },
+      "espn": {
+        "ok": 0,
+        "fail": 20,
+        "denied": 0,
+        "missing": 0
+      },
+      "openligadb": {
+        "ok": 0,
+        "fail": 20,
+        "denied": 0,
+        "missing": 0
+      },
+      "openfootball": {
+        "ok": 0,
+        "fail": 20,
+        "denied": 0,
+        "missing": 0
+      },
+      "thesportsdb": {
+        "ok": 0,
+        "fail": 20,
+        "denied": 0,
+        "missing": 0
+      },
+      "understat": {
+        "ok": 8,
+        "fail": 3,
+        "denied": 9,
+        "missing": 0
+      },
+      "ansa": {
+        "ok": 1,
+        "fail": 19,
+        "denied": 0,
+        "missing": 0
+      },
+      "bbc-sport": {
+        "ok": 1,
+        "fail": 19,
+        "denied": 0,
+        "missing": 0
+      },
+      "guardian-football": {
+        "ok": 1,
+        "fail": 19,
+        "denied": 0,
+        "missing": 0
+      },
+      "gazzetta": {
+        "ok": 0,
+        "fail": 20,
+        "denied": 0,
+        "missing": 0
+      },
+      "sky-sports": {
+        "ok": 0,
+        "fail": 20,
+        "denied": 0,
+        "missing": 0
+      },
+      "espn-soccer-news": {
+        "ok": 0,
+        "fail": 20,
+        "denied": 0,
+        "missing": 0
+      },
+      "corriere-sport": {
+        "ok": 0,
+        "fail": 20,
+        "denied": 0,
+        "missing": 0
+      },
+      "il-messaggero": {
+        "ok": 0,
+        "fail": 20,
+        "denied": 0,
+        "missing": 0
+      },
+      "statsbomb": {
+        "ok": 0,
+        "fail": 20,
+        "denied": 0,
+        "missing": 0
+      }
+    }
+  },
+  "observations_for_researched": 101,
+  "sample": [
+    {
+      "event_id": "9705a032bcd10416549dd961",
+      "home": "VfL Bochum",
+      "away": "SpVgg Greuther Fürth",
+      "kickoff_utc": "2026-09-12T11:00:00.000Z",
+      "competition": "2. Fußball-Bundesliga 2026/2027",
+      "source": "openligadb"
+    },
+    {
+      "event_id": "71a2880b93c322421495862d",
+      "home": "1. FC Magdeburg",
+      "away": "1. FC Kaiserslautern",
+      "kickoff_utc": "2026-09-12T11:00:00.000Z",
+      "competition": "2. Fußball-Bundesliga 2026/2027",
+      "source": "openligadb"
+    },
+    {
+      "event_id": "2823a81b797eb7a9c6b36dd1",
+      "home": "Eintracht Braunschweig",
+      "away": "Dynamo Dresden",
+      "kickoff_utc": "2026-09-12T11:00:00.000Z",
+      "competition": "2. Fußball-Bundesliga 2026/2027",
+      "source": "openligadb"
+    },
+    {
+      "event_id": "c093673ab488f238bb438f81",
+      "home": "Racing de Santander",
+      "away": "Deportivo Alavés",
+      "kickoff_utc": "2026-09-12T12:00:00.000Z",
+      "competition": "Spanish La Liga",
+      "source": "thesportsdb"
+    },
+    {
+      "event_id": "3165af395636f60ee948179a",
+      "home": "Fortuna Düsseldorf",
+      "away": "MSV Duisburg",
+      "kickoff_utc": "2026-09-12T12:00:00.000Z",
+      "competition": "3. Liga 2026/2027",
+      "source": "openligadb"
+    }
+  ],
+  "honest_note": "Researched 20 upcoming events from real sources."
+}

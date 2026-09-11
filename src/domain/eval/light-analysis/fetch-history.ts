@@ -55,7 +55,7 @@ export type LightHistoryReport = {
   rows: HistoricalMatchRow[];
   fetched_at: string;
   from_cache: boolean;
-  cache: "memory" | "tmp" | "neon" | "disk" | "http" | "empty";
+  cache: "memory" | "tmp" | "disk" | "http" | "empty";
   seasons: string[];
   divisions: string[];
   packs: LightHistoryPack[];
@@ -139,61 +139,17 @@ function writeJsonFile(path: string, blob: CachedBlob): void {
   }
 }
 
-async function sqlClient() {
-  const url = process.env.DATABASE_URL;
-  if (!url) return null;
-  const { neon } = await import("@neondatabase/serverless");
-  return neon(url);
-}
-
 export async function ensureLightHistoryTable(): Promise<boolean> {
-  const sql = await sqlClient();
-  if (!sql) return false;
-  await sql`
-    CREATE TABLE IF NOT EXISTS betmind_light_history (
-      cache_key text PRIMARY KEY,
-      published_at timestamptz NOT NULL DEFAULT now(),
-      payload jsonb NOT NULL
-    )
-  `;
-  return true;
+  return false;
 }
 
 export async function loadLightHistoryNeon(): Promise<CachedBlob | null> {
-  const sql = await sqlClient();
-  if (!sql) return null;
-  try {
-    const rows = (await sql`
-      SELECT payload FROM betmind_light_history
-      WHERE cache_key = ${LIGHT_HISTORY_CACHE_KEY}
-      LIMIT 1
-    `) as Array<{ payload: unknown }>;
-    return asBlob(rows[0]?.payload);
-  } catch {
-    return null;
-  }
+  return null;
 }
 
 export async function saveLightHistoryNeon(blob: CachedBlob): Promise<boolean> {
-  const sql = await sqlClient();
-  if (!sql) return false;
-  try {
-    await ensureLightHistoryTable();
-    await sql`
-      INSERT INTO betmind_light_history (cache_key, published_at, payload)
-      VALUES (${LIGHT_HISTORY_CACHE_KEY}, ${blob.fetched_at}::timestamptz, ${JSON.stringify(blob)}::jsonb)
-      ON CONFLICT (cache_key) DO UPDATE
-      SET published_at = EXCLUDED.published_at,
-          payload = EXCLUDED.payload
-    `;
-    return true;
-  } catch (e) {
-    console.warn(
-      "[light-history] neon upsert failed:",
-      e instanceof Error ? e.message : e,
-    );
-    return false;
-  }
+  void blob;
+  return false;
 }
 
 function persistLocal(blob: CachedBlob, cwd: string): void {
@@ -436,11 +392,6 @@ export async function loadLightHistory(
       memory = { at: Date.now(), blob: tmp };
       return reportFromBlob(tmp, "tmp");
     }
-    const neon = await loadLightHistoryNeon();
-    if (neon?.rows.length) {
-      persistLocal(neon, cwd);
-      return reportFromBlob(neon, "neon");
-    }
     const diskFile = readJsonFile(diskCachePath(cwd));
     if (diskFile?.rows.length) {
       persistLocal(diskFile, cwd);
@@ -491,9 +442,6 @@ export async function loadLightHistory(
 
   if (rows.length) {
     persistLocal(blob, cwd);
-    if (input.persistNeon !== false) {
-      await saveLightHistoryNeon(blob);
-    }
   }
 
   const okPacks = packs.filter((p) => p.ok).length;

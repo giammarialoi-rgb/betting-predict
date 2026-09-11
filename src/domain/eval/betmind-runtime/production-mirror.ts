@@ -1,5 +1,5 @@
 /**
- * Production Control Center helpers — honest Neon mirror, never fake ONLINE.
+ * Production Control Center helpers — honest filesystem mirror, never fake ONLINE.
  * A historical/stale payload is still a real event list; stale ≠ empty.
  */
 import { existsSync } from "node:fs";
@@ -78,7 +78,7 @@ function opId(row: OperationalOverlay): string {
 }
 
 /**
- * Prefer measured Neon operational rows over in-memory registry placeholders.
+ * Prefer measured filesystem operational rows over in-memory registry placeholders.
  * Does not invent success: empty operational stays empty.
  */
 export function overlayRegistryWithOperational(
@@ -139,7 +139,7 @@ function operationalReason(op: OperationalOverlay, fallback: string): string {
   const events = Number(op.events_found ?? 0);
   const obs = Number(op.observations_found ?? 0);
   const parts = [
-    `Specchio Neon: ${operationalStatusIt(op.status)}`,
+    `Specchio filesystem: ${operationalStatusIt(op.status)}`,
     events ? `${events} eventi con dati` : null,
     obs ? `${obs} osservazioni` : null,
     op.last_event_label ? `ultimo: ${op.last_event_label}` : null,
@@ -157,14 +157,14 @@ export function neonEventsEmptyReason(input: {
   storePresentLocalOnPublisher?: boolean | null;
 }): string {
   if (!input.remotePresent) {
-    return "Nessuno specchio Neon: il PC non ha ancora pubblicato eventi. Vercel non ha lo store Lab B in locale — nessuna partita inventata.";
+    return "Nessuno specchio filesystem: il PC non ha ancora pubblicato eventi. Vercel non ha lo store Lab B in locale — nessuna partita inventata.";
   }
   if (input.universeCount === 0) {
     const stale = input.remoteFresh === false ? " Specchio non aggiornato." : "";
     const local = input.storePresentLocalOnPublisher
       ? " Sul PC lo store c’è, ma questo specchio non contiene righe calendario."
       : " Store Lab B assente anche sul publisher.";
-    return `Nessuna partita nello specchio Neon.${stale}${local}`;
+    return `Nessuna partita nello specchio filesystem.${stale}${local}`;
   }
   if (input.filteredCount === 0) {
     return `Nessuna partita per ${input.date}${input.sport && input.sport !== "ALL" ? ` · ${input.sport}` : ""} (${input.universeCount} eventi in altre date/sport nello specchio).`;

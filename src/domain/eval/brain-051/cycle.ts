@@ -186,7 +186,7 @@ export async function runBrainCycle051(input: {
       const store = loadStore044(labB);
       const acq = await runAcquisitionEngineCycle({
         nowIso,
-        persistNeon: Boolean(process.env.DATABASE_URL),
+        persistNeon: false,
         persistLabB: true,
         labBRoot: labB,
         labEvents: store.events.slice(-80).map((e) => ({
@@ -204,7 +204,7 @@ export async function runBrainCycle051(input: {
       );
       appendBrainLog051(
         labB,
-        `acquisition_engine ok=${acq.sources_ok} fail=${acq.sources_failed} records=${acq.records} neon=${acq.neon_sources.join(",") || "none"}`,
+        `acquisition_engine ok=${acq.sources_ok} fail=${acq.sources_failed} records=${acq.records} store=filesystem neon=unused`,
       );
     } catch (e) {
       appendBrainLog051(
@@ -251,10 +251,10 @@ export async function runBrainCycle051(input: {
       );
     }
 
-    // Mirror ANALYZED / independent dossiers to Neon for Vercel `/events/[id]`
+    // Mirror ANALYZED / independent dossiers to filesystem store for `/events/[id]`
     try {
-      const { mirrorDossiersToNeon } = await import("@/domain/eval/betmind-runtime/dossier");
-      await mirrorDossiersToNeon(labB, { limit: 2000 });
+      const { mirrorDossiersToStore } = await import("@/domain/eval/betmind-runtime/dossier");
+      await mirrorDossiersToStore(labB, { limit: 2000 });
     } catch {
       /* optional */
     }

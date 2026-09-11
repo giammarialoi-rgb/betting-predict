@@ -44,7 +44,7 @@ async function main() {
   saveBrainState051(root, state);
   appendBrainLog051(
     root,
-    `worker_start pid=${process.pid} analysis_runtime_version=${ANALYSIS_RUNTIME_VERSION} neon_mirror=${process.env.DATABASE_URL ? "enabled" : "disabled"}`,
+    `worker_start pid=${process.pid} analysis_runtime_version=${ANALYSIS_RUNTIME_VERSION} store=filesystem neon=unused`,
   );
   writeRichHeartbeat054(root, {
     pid: process.pid,

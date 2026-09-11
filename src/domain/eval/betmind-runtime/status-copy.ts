@@ -30,7 +30,7 @@ export function brainStatusIt(raw: string | null | undefined): string {
   if (!s || s === "—" || s === "UNKNOWN") return "Stato sconosciuto";
   const u = s.toUpperCase();
   if (u === "STALE_MIRROR") {
-    return "Specchio Neon scaduto — il PC non pubblica un battito recente";
+    return "Specchio filesystem scaduto — il PC non pubblica un battito recente";
   }
   if (u === "RUNNING" || u === "HEALTHY" || u === "WORKING") return "In esecuzione sul PC";
   if (u === "IDLE" || u === "PAUSED") return "In pausa / in attesa del prossimo ciclo";

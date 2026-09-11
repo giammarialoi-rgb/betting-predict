@@ -94,6 +94,15 @@ export function classifyHumanSourceStatus(row: ResearchLike): HumanSourceStatus 
   return "NO_DATA";
 }
 
+/** HTTP 200 is never DATA_SUCCESS by itself. */
+export function isDataSuccess(row: ResearchLike): boolean {
+  return classifyHumanSourceStatus(row) === "SUCCESS";
+}
+
+export function http200IsNotSuccess(httpStatus: number | null | undefined, fieldsExtracted: string[]): boolean {
+  return httpStatus === 200 && fieldsExtracted.filter((f) => !String(f).startsWith("page_mentions")).length === 0;
+}
+
 export function humanSourceStatusLabelIt(s: HumanSourceStatus): string {
   switch (s) {
     case "SUCCESS":

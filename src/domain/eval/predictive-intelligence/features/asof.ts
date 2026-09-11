@@ -89,3 +89,15 @@ export function assertTemporalExample(ex: {
   if (!(lt >= et)) throw new Error("label_time must be >= event_time");
   if (fs > fc) throw new Error("feature_source_time must be <= feature_cutoff");
 }
+
+/** Hard temporal firewall — evidence after asOf never enters the model. */
+export function assertNoFutureDataInModel(input: { asOf: string; available_at: string }): void {
+  const asOf = Date.parse(input.asOf);
+  const available = Date.parse(input.available_at);
+  if (!Number.isFinite(asOf) || !Number.isFinite(available)) {
+    throw new Error("FUTURE_DATA_MUST_NOT_ENTER_MODEL");
+  }
+  if (available > asOf) {
+    throw new Error("FUTURE_DATA_MUST_NOT_ENTER_MODEL");
+  }
+}
