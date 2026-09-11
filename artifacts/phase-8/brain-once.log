@@ -1,0 +1,40 @@
+$ tsx src/scripts/brain-once.ts
+◇ injected env (0) from .env.local // tip: ◈ secrets for agents [www.dotenvx.com]
+◇ injected env (0) from .env // tip: ◈ encrypted .env [www.dotenvx.com]
+{
+  "ok": true,
+  "priority": "P4",
+  "reason": "discovery_and_idle_scan",
+  "sleep_ms": 900000,
+  "idle": false,
+  "paper_bets_opened": 0,
+  "stats": {
+    "EVENTS_ANALYZED": 112,
+    "EVENTS_TODAY": 7,
+    "EVENTS_NEXT_24H": 7,
+    "EVENTS_NEXT_72H": 71,
+    "EVENTS_NEXT_7D": 104,
+    "SOCCER": 112,
+    "TENNIS": 0,
+    "BASKETBALL": 0,
+    "VOLLEYBALL": 0,
+    "HOCKEY": 0,
+    "OTHER": 0,
+    "MARKETS_OBSERVED": [],
+    "MARKETS_ANALYZED": 0,
+    "TOTAL_PREDICTIONS": 112,
+    "NO_BET": 0,
+    "BET_CANDIDATE": 0,
+    "STRONG_CANDIDATE": 0,
+    "LOCKED": 0,
+    "SETTLED": 0,
+    "AUTOPSIED": 0,
+    "LEARNING_CASES": 0,
+    "sport_coverage": {
+      "at": null,
+      "sports": []
+    },
+    "artificial_cap": false,
+    "catalog_note": "114 LAB A SEED — NOT A CATALOG CAP — no artificial event ceiling"
+  }
+}

@@ -126,6 +126,18 @@ describe("Phase 8 acquisition", () => {
     });
     assert.equal(a, b);
     assert.equal(resolveTeamIdentity("Hull City").canonical_id, resolveTeamIdentity("Hull").canonical_id);
+    assert.equal(
+      eventIdentityKey({ home: "Stade Rennais", away: "Marseille", kickoff: "2026-09-11T18:45:00.000Z" }),
+      eventIdentityKey({ home: "Rennes", away: "Marseille", kickoff: "2026-09-11T18:45:00.000Z" }),
+    );
+    assert.equal(
+      eventIdentityKey({
+        home: "1. FC Union Berlin",
+        away: "Schalke 04",
+        kickoff: "2026-09-11T18:30:00.000Z",
+      }),
+      eventIdentityKey({ home: "Union Berlin", away: "Schalke 04", kickoff: "2026-09-11T18:30:00.000Z" }),
+    );
   });
 
   it("RSS still requires both teams", () => {
