@@ -110,11 +110,11 @@ export function buildHumanExplanation(input: {
   };
   const fd = s.source_rows.find((r) => r.source_id === "football-data-co-uk");
   const liveOk = o.live_research_sources;
-  const did = `BetMind ha analizzato la partita ${home} – ${away} prima del calcio d'inizio. Ha cercato dati storici, forma recente, statistiche, precedenti, forza delle squadre, disponibilita della rosa, xG e altre informazioni pre-partita.`;
+  const did = `BetMind ha analizzato la partita ${home} – ${away} prima del calcio d'inizio. Ha cercato risultati recenti, forma, gol, tiri, tiri in porta, precedenti, disponibilita dei giocatori, xG, meteo e altre informazioni pre-partita.`;
   const live_research =
     liveOk === 0
-      ? "Ricerca live: 0 fonti con dati evento per questa partita."
-      : `Ricerca live: ${liveOk} fonti hanno restituito dati (anche parziali) riferiti all'evento.`;
+      ? "Ricerca live: 0 fonti con dati evento per questa partita. La ricerca e comunque proseguita sulle altre fonti."
+      : `Ricerca live: ${liveOk} fonti hanno restituito dati riferiti a questa partita.`;
   const archive =
     fd && (fd.human_status === "SUCCESS" || fd.human_status === "PARTIAL")
       ? `Archivio storico: Football-Data disponibile. Feature derivate dall'archivio: ${o.historical_prior_features}.`
@@ -191,7 +191,7 @@ export function buildHumanExplanation(input: {
     }
   }
 
-  const sources_summary = `Ricerca effettuata: ${s.sources_attempted} fonti/adapter tentati. ${s.sources_successful} hanno restituito dati. ${s.sources_partial} parziali. ${s.sources_blocked} errore/blocco. ${s.sources_no_event} non contenevano la partita. ${s.sources_missing_adapter} senza adapter. ${s.sources_no_data} senza dati sufficienti.`;
+  const sources_summary = `BetMind ha consultato ${s.sources_attempted} fonti. ${s.sources_successful} hanno restituito dati, ${s.sources_partial} in modo parziale. ${s.sources_blocked} erano inaccessibili. ${s.sources_no_event} non contenevano la partita. ${s.sources_missing_adapter} non hanno ancora un adapter. Le quote, se presenti, restano nel layer di mercato e non entrano nel modello.`;
   facts.push("sources_summary_counts");
   facts.push(`live_research=${liveOk}`);
   facts.push(`historical_priors=${o.historical_prior_features}`);

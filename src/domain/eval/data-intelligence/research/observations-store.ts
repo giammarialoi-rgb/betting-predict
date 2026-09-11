@@ -35,9 +35,20 @@ export function researchObservationsPath(root = permanentRoot044()): string {
   return join(root, "research-observations.jsonl");
 }
 
-export function appendResearchObservation(row: ResearchObservation, root = permanentRoot044()): void {
+export function observationDedupeKey(row: Pick<ResearchObservation, "event_id" | "source" | "feature_key" | "observed_at" | "available_at">): string {
+  return `${row.event_id}|${row.source}|${row.feature_key}|${row.available_at ?? ""}|${row.observed_at}`;
+}
+
+const writtenThisProcess = new Set<string>();
+
+/** Append unless the same logical observation was already persisted this process. */
+export function appendResearchObservation(row: ResearchObservation, root = permanentRoot044()): boolean {
+  const key = `${row.event_id}|${row.source}|${row.feature_key}|${row.available_at ?? ""}`;
+  if (writtenThisProcess.has(key)) return false;
+  writtenThisProcess.add(key);
   mkdirSync(root, { recursive: true });
   appendFileSync(researchObservationsPath(root), `${JSON.stringify(row)}\n`, "utf8");
+  return true;
 }
 
 export function loadResearchObservationsForEvent(

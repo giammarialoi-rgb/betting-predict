@@ -31,9 +31,9 @@ export const RESEARCH_SOURCE_CATALOGUE: CatalogueSource[] = [
     source_id: "api-sports",
     title: "API-Sports",
     sport: "SOCCER",
-    adapter: "CACHE_ONLY",
+    adapter: "PRODUCTION_ADAPTER",
     url: "https://v3.football.api-sports.io/",
-    notes: "Injuries/lineups from local cache only; no invented fixture_id",
+    notes: "Fixture resolver by date+teams; injuries/lineups/referee when fixture id is known. Never invents IDs.",
     market_layer: false,
   },
   {

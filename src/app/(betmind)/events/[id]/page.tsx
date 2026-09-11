@@ -187,7 +187,7 @@ type Detail = {
       analyzed_topics?: Array<{ id: string; label_it: string; light: string; note_it: string }>;
       found?: string[];
     } | null;
-    data_quality?: { data_quality_score: number; note_it: string } | null;
+    data_quality?: { data_quality_score: number; letter?: string; note_it: string } | null;
     conflicts?: Array<{ field: string; note_it: string; used_source: string | null }>;
     team_identity?: {
       home: {
@@ -455,8 +455,8 @@ export default function EventDetailPage() {
               <p className="mb-3 text-sm leading-relaxed">{hx.analyzed}</p>
               {dossier?.data_quality ? (
                 <p className="mb-3 text-xs bm-muted">
-                  Qualita dati {Math.round(dossier.data_quality.data_quality_score * 100)}% —{" "}
-                  {dossier.data_quality.note_it}
+                  Qualita dati {dossier.data_quality.letter ?? "—"}{" "}
+                  ({Math.round(dossier.data_quality.data_quality_score * 100)}%) — {dossier.data_quality.note_it}
                 </p>
               ) : null}
               <ul className="space-y-1 text-sm">
@@ -468,10 +468,26 @@ export default function EventDetailPage() {
                 }))).map((c) => {
                   const glyph =
                     c.light === "USED" ? "🟢" : c.light === "PARTIAL" ? "🟡" : c.light === "TEMPORAL" ? "🔴" : "⚪";
+                  const bar =
+                    c.light === "USED"
+                      ? "██████████"
+                      : c.light === "PARTIAL"
+                        ? "██████"
+                        : c.light === "TEMPORAL"
+                          ? "████"
+                          : "██";
+                  const stato =
+                    c.light === "USED"
+                      ? "Trovato"
+                      : c.light === "PARTIAL"
+                        ? "Parzialmente trovato"
+                        : c.light === "TEMPORAL"
+                          ? "Escluso temporalmente"
+                          : "Non disponibile";
                   return (
                     <li key={c.id}>
-                      {glyph} {c.label_it}
-                      <span className="bm-muted"> — {c.note_it}</span>
+                      {glyph} {c.label_it} {bar}
+                      <span className="bm-muted"> — {stato}. {c.note_it}</span>
                     </li>
                   );
                 })}

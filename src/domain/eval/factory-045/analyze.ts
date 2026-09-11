@@ -24,6 +24,7 @@ import {
 } from "@/domain/eval/market-intelligence";
 import { buildEventDiContext } from "@/domain/eval/data-intelligence/context";
 import { loadApiSportsPrematchFromCacheSync } from "@/domain/eval/data-intelligence/adapters/api-sports-prematch";
+import { getSourceEventIdentity } from "@/domain/eval/data-intelligence/research/source-identity-cache";
 import { buildDailyRankings044 } from "@/domain/eval/permanent-044/ranking";
 import { buildTimelineSnapshots044 } from "@/domain/eval/permanent-044/timeline";
 import { whyThisPrediction044 } from "@/domain/eval/permanent-044/why-prediction";
@@ -163,11 +164,13 @@ export function analyzeAllLabB045(input: {
       liquidity_proxy: marketSignal.liquidity_proxy,
     });
 
+    const fixtureId = getSourceEventIdentity(ev.event_id, input.store.root)?.api_sports_fixture_id ?? null;
     const diObservations = loadApiSportsPrematchFromCacheSync({
       eventId: ev.event_id,
       eventTime: ev.kickoff_utc,
       homeTeam: ev.home_or_a ?? "",
       awayTeam: ev.away_or_b ?? "",
+      fixtureId,
       decisionTime: asOf,
       labBRoot: input.store.root,
     });

@@ -5,6 +5,7 @@
 import { FOOTBALL_DATA_CO_UK_TEAM_ALIASES } from "@/providers/football-data-co-uk/team-aliases";
 import type { PiMatchRow } from "@/domain/eval/predictive-intelligence/types";
 import type { PiDivision } from "@/domain/eval/predictive-intelligence/config";
+import { resolveCompetitionMatrix } from "@/domain/eval/data-intelligence/research/identity-normalize";
 
 /** Odds API / Lab B competition keys → football-data.co.uk division codes. */
 const COMPETITION_TO_DIVISION: Record<string, PiDivision> = {
@@ -12,18 +13,23 @@ const COMPETITION_TO_DIVISION: Record<string, PiDivision> = {
   epl: "E0",
   e0: "E0",
   "premier league": "E0",
+  "england premier league": "E0",
+  "english premier league": "E0",
   soccer_italy_serie_a: "I1",
   serie_a: "I1",
   i1: "I1",
+  "serie a": "I1",
   soccer_spain_la_liga: "SP1",
   la_liga: "SP1",
   sp1: "SP1",
+  "la liga": "SP1",
   soccer_germany_bundesliga: "D1",
   bundesliga: "D1",
   d1: "D1",
   soccer_france_ligue_one: "F1",
   ligue_1: "F1",
   f1: "F1",
+  "ligue 1": "F1",
 };
 
 /**
@@ -74,7 +80,27 @@ const LIVE_NAME_TO_ID: Record<string, string> = {
   "real madrid": "real-madrid",
   barcelona: "barcelona",
   "bayern munich": "bayern-munich",
-  "bayern münchen": "bayern-munich",
+  "internazionale": "inter",
+  "internazionale milano": "inter",
+  "fc internazionale": "inter",
+  "bayern munchen": "bayern-munich",
+  "fc bayern munich": "bayern-munich",
+  "fc bayern munchen": "bayern-munich",
+  "sporting cp": "sporting-lisbon",
+  "sporting lisbon": "sporting-lisbon",
+  "fenerbahce": "fenerbahce",
+  "fenerbahce sk": "fenerbahce",
+  "bodo glimt": "bodo-glimt",
+  "fk bodo glimt": "bodo-glimt",
+  "shakhtar donetsk": "shakhtar",
+  "psv eindhoven": "psv",
+  psv: "psv",
+  "rb leipzig": "leipzig",
+  leipzig: "leipzig",
+  como: "como",
+  sabah: "sabah",
+  sunderland: "sunderland",
+  "sunderland afc": "sunderland",
   "borussia dortmund": "dortmund",
   "psg": "paris-sg",
   "paris saint germain": "paris-sg",
@@ -114,7 +140,10 @@ export function mapCompetitionToPiDivision(competition?: string | null): PiDivis
   if (COMPETITION_TO_DIVISION[k]) return COMPETITION_TO_DIVISION[k]!;
   const compact = competition.trim().toLowerCase();
   if (COMPETITION_TO_DIVISION[compact]) return COMPETITION_TO_DIVISION[compact]!;
-  // Already a division code
+  const matrix = resolveCompetitionMatrix(competition);
+  if (matrix.canonical_code === "E0" || matrix.canonical_code === "SP1" || matrix.canonical_code === "D1" || matrix.canonical_code === "I1" || matrix.canonical_code === "F1") {
+    return matrix.canonical_code;
+  }
   const up = competition.trim().toUpperCase();
   if (up === "E0" || up === "SP1" || up === "D1" || up === "I1" || up === "F1") {
     return up as PiDivision;

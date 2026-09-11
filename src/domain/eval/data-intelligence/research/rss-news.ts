@@ -25,7 +25,14 @@ export type RssMatch = {
 
 export const RSS_FEEDS: Record<RssSourceId, string> = {
   ansa: "https://www.ansa.it/sito/notizie/sport/calcio/calcio_rss.xml",
-  "sky-sport": "https://sport.sky.it/rss/calcio.xml",
+  "sky-sport": "https://www.sky.it/sport/calcio/rss.xml",
+};
+
+const RSS_FALLBACK: Partial<Record<RssSourceId, string[]>> = {
+  "sky-sport": [
+    "https://sport.sky.it/rss/calcio.xml",
+    "https://feeds.sky.it/sport/rss.xml",
+  ],
 };
 
 const cache = new Map<RssSourceId, { at: number; items: RssItem[]; http: number | null; error: string | null }>();
@@ -80,23 +87,32 @@ export async function loadRssFeed(
   }
   try {
     const fetchImpl = deps?.fetchImpl ?? globalThis.fetch.bind(globalThis);
-    const res = await fetchImpl(url, {
-      headers: { Accept: "application/rss+xml, application/xml, text/xml", "User-Agent": "betmind-research/0.1" },
-    });
-    if (res.status === 403 || res.status === 429 || res.status === 401) {
-      const packed = { at: now, items: [] as RssItem[], http: res.status, error: `HTTP_${res.status}` };
-      cache.set(sourceId, packed);
-      return { items: [], http: res.status, error: packed.error, url };
+    const urls = [url, ...(RSS_FALLBACK[sourceId] ?? [])];
+    let lastHttp: number | null = null;
+    let lastError: string | null = null;
+    let lastUrl = url;
+    for (const tryUrl of urls) {
+      lastUrl = tryUrl;
+      const res = await fetchImpl(tryUrl, {
+        headers: { Accept: "application/rss+xml, application/xml, text/xml", "User-Agent": "betmind-research/0.1" },
+      });
+      lastHttp = res.status;
+      if (res.status === 403 || res.status === 429 || res.status === 401) {
+        lastError = `HTTP_${res.status}`;
+        break;
+      }
+      if (!res.ok) {
+        lastError = `HTTP_${res.status}`;
+        continue;
+      }
+      const xml = await res.text();
+      const items = parseRssItems(xml);
+      cache.set(sourceId, { at: now, items, http: res.status, error: null });
+      return { items, http: res.status, error: null, url: tryUrl };
     }
-    if (!res.ok) {
-      const packed = { at: now, items: [] as RssItem[], http: res.status, error: `HTTP_${res.status}` };
-      cache.set(sourceId, packed);
-      return { items: [], http: res.status, error: packed.error, url };
-    }
-    const xml = await res.text();
-    const items = parseRssItems(xml);
-    cache.set(sourceId, { at: now, items, http: res.status, error: null });
-    return { items, http: res.status, error: null, url };
+    const packed = { at: now, items: [] as RssItem[], http: lastHttp, error: lastError };
+    cache.set(sourceId, packed);
+    return { items: [], http: lastHttp, error: lastError, url: lastUrl };
   } catch (e) {
     const packed = { at: now, items: [] as RssItem[], http: null, error: e instanceof Error ? e.message : String(e) };
     cache.set(sourceId, packed);

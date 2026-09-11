@@ -1,0 +1,103 @@
+{
+  "at": "2026-09-11T06:59:49.717Z",
+  "runtime": "phase-8-event-intelligence-v1",
+  "events_discovered": 445,
+  "events_researched": 20,
+  "events_with_real_data": 18,
+  "total_observations": 929,
+  "observations_by_source": {
+    "club-football-match-data": 153,
+    "football-data-co-uk": 2847,
+    "open-meteo": 255,
+    "api-sports": 61,
+    "ansa": 10
+  },
+  "observations_by_category": {
+    "forma": 2231,
+    "altro": 391,
+    "h2h": 118,
+    "attacco": 196,
+    "difesa": 77,
+    "meteo": 255,
+    "infortunii": 45,
+    "news": 10,
+    "arbitro": 3
+  },
+  "data_yield": 2.445,
+  "coverage": {
+    "form": 1,
+    "team_stats": 1,
+    "xg": 0,
+    "injuries": 0.3,
+    "lineup": 0,
+    "referee": 0.15,
+    "weather": 0.8
+  },
+  "samples": [
+    {
+      "match": "Aston Villa vs Nottingham Forest",
+      "observations": 394,
+      "categories": {
+        "form": true,
+        "team_stats": true,
+        "xg": false,
+        "injuries": true,
+        "lineup": false,
+        "referee": false,
+        "weather": true
+      }
+    },
+    {
+      "match": "Liverpool vs Fulham",
+      "observations": 400,
+      "categories": {
+        "form": true,
+        "team_stats": true,
+        "xg": false,
+        "injuries": true,
+        "lineup": false,
+        "referee": false,
+        "weather": true
+      }
+    },
+    {
+      "match": "Tottenham Hotspur vs Everton",
+      "observations": 400,
+      "categories": {
+        "form": true,
+        "team_stats": true,
+        "xg": false,
+        "injuries": true,
+        "lineup": false,
+        "referee": false,
+        "weather": true
+      }
+    },
+    {
+      "match": "Sunderland vs Arsenal",
+      "observations": 124,
+      "categories": {
+        "form": true,
+        "team_stats": true,
+        "xg": false,
+        "injuries": true,
+        "lineup": false,
+        "referee": false,
+        "weather": true
+      }
+    },
+    {
+      "match": "Bournemouth vs Brentford",
+      "observations": 393,
+      "categories": {
+        "form": true,
+        "team_stats": true,
+        "xg": false,
+        "injuries": false,
+        "lineup": false,
+        "referee": false,
+        "weather": true
+      }
+    }
+  ]
+}

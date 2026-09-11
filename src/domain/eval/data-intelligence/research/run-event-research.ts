@@ -4,7 +4,6 @@
  * Never invents available_at; scrape / market never enters independent MODEL.
  */
 import { permanentRoot044 } from "@/domain/eval/permanent-044/config";
-import { loadApiSportsPrematchFromCacheSync } from "@/domain/eval/data-intelligence/adapters/api-sports-prematch";
 import { fetchOpenMeteoContext } from "@/domain/eval/data-intelligence/open-meteo";
 import {
   ensureClubEloCacheDay,
@@ -26,6 +25,17 @@ import {
   buildEventResearchPlan,
   persistEventResearchPlan,
 } from "@/domain/eval/data-intelligence/research/research-plan";
+import { resolveApiSportsFixturesForBatch } from "@/domain/eval/data-intelligence/research/api-sports-fixture";
+import type { FixtureResolveResult } from "@/domain/eval/data-intelligence/research/api-sports-fixture";
+import {
+  runApiSportsPhase8Lane,
+  runUnderstatPhase8Lane,
+  runCalendarPhase8Lane,
+} from "@/domain/eval/data-intelligence/research/phase8-lanes";
+import { sourceOnCooldown, markSourceBlocked } from "@/domain/eval/data-intelligence/research/source-cooldown";
+import { newsObservationFromRss } from "@/domain/eval/data-intelligence/research/news-classify";
+import { upsertTeamIdentity } from "@/domain/eval/data-intelligence/research/identity-registry";
+import { resolveEventIdentity } from "@/domain/eval/data-intelligence/research/event-identity";
 
 export type ResearchCycleResult = {
   events_touched: number;
@@ -214,6 +224,19 @@ export async function runEventResearchBatch(input: {
     "sky-sport",
   ]);
 
+  let fixtureByEvent = new Map<string, FixtureResolveResult>();
+  try {
+    fixtureByEvent = await resolveApiSportsFixturesForBatch({
+      events: slice,
+      labBRoot: root,
+      nowIso,
+      maxNetworkDates: 6,
+    });
+  } catch {
+    fixtureByEvent = new Map();
+  }
+  let apiDetailBudget = 8;
+
   // ClubElo once per batch (shared day as-of now) — avoid N× network
   const batchEloDay = clubEloAsOfDateForKickoff(
     slice[0]?.kickoff_utc ?? nowIso,
@@ -240,98 +263,76 @@ export async function runEventResearchBatch(input: {
       ? " POST_KICKOFF — osservazione dopo kickoff, esclusa dal modello pre-match."
       : "";
 
-    // 1) API-Sports cache-only
-    const fixtureRaw = (ev as { fixture_id?: number | string }).fixture_id;
-    const fixtureId =
-      typeof fixtureRaw === "number"
-        ? fixtureRaw
-        : typeof fixtureRaw === "string" && /^\d+$/.test(fixtureRaw)
-          ? Number(fixtureRaw)
-          : null;
-    const apiObs = loadApiSportsPrematchFromCacheSync({
-      eventId: ev.event_id,
-      eventTime: kickoff,
-      homeTeam: ev.home_or_a,
-      awayTeam: ev.away_or_b,
-      fixtureId,
-      decisionTime: asOf,
-      labBRoot: root,
-    });
-    if (!fixtureId) {
-      appendResearchStatus(
-        baseRow({
-          event_id: ev.event_id,
-          source_id: "api-sports",
-          phase: "UNAVAILABLE",
-          ok: false,
-          fetched: false,
-          fetched_at: null,
-          available_at: null,
-          reason: "NO_FIXTURE_ID — cache lookup skipped (no invented id)",
-          raw_ref: null,
-          cycle_number: input.cycleNumber,
-          at: nowIso,
-          url: "https://v3.football.api-sports.io/",
-          adapter_kind: "CACHE_ONLY",
-          http_status: null,
-          parser_status: "SKIPPED",
-          fields_extracted: [],
-        }),
+    try {
+      const ident = resolveEventIdentity({
+        home: ev.home_or_a,
+        away: ev.away_or_b,
+        competition: ev.competition,
+        kickoff: ev.kickoff_utc,
+        labBRoot: root,
+      });
+      upsertTeamIdentity({
+        canonical_id: ident.home.canonical_id,
+        display_name: ev.home_or_a,
+        competition: ev.competition,
+        source_ids: { football_data: ident.home.source_ids.football_data ?? undefined },
         root,
-      );
-      bump(result.by_source, "api-sports", "fail");
-      result.research_failures += 1;
-    } else if (apiObs.length === 0) {
-      appendResearchStatus(
-        baseRow({
-          event_id: ev.event_id,
-          source_id: "api-sports",
-          phase: "UNAVAILABLE",
-          ok: false,
-          fetched: false,
-          fetched_at: null,
-          available_at: null,
-          reason: "CACHE_MISS — no injuries/lineups on disk for fixture",
-          raw_ref: null,
-          cycle_number: input.cycleNumber,
-          at: nowIso,
-          url: "https://v3.football.api-sports.io/",
-          adapter_kind: "CACHE_ONLY",
-          http_status: null,
-          parser_status: "CACHE_MISS",
-          fields_extracted: [],
-        }),
+      });
+      upsertTeamIdentity({
+        canonical_id: ident.away.canonical_id,
+        display_name: ev.away_or_b,
+        competition: ev.competition,
+        source_ids: { football_data: ident.away.source_ids.football_data ?? undefined },
         root,
-      );
-      bump(result.by_source, "api-sports", "fail");
-      result.research_failures += 1;
-    } else {
-      const clocks = apiObs.map((o) => o.available_at).filter(Boolean) as string[];
-      const fields = [...new Set(apiObs.map((o) => o.feature_name))];
-      appendResearchStatus(
-        baseRow({
-          event_id: ev.event_id,
-          source_id: "api-sports",
-          phase: "OK",
-          ok: true,
-          fetched: true,
-          fetched_at: nowIso,
-          available_at: clocks[0] ?? null,
-          observed_at: nowIso,
-          reason: `cache observations=${apiObs.length}`,
-          raw_ref: fixtureId != null ? `fixture:${fixtureId}` : null,
-          cycle_number: input.cycleNumber,
-          at: nowIso,
-          url: "https://v3.football.api-sports.io/",
-          adapter_kind: "CACHE_ONLY",
-          http_status: 200,
-          parser_status: "OK",
-          fields_extracted: fields,
-        }),
+      });
+    } catch {
+      /* identity persist optional */
+    }
+
+    // 1) API-Sports — resolve fixture, then injuries/lineups/referee. Continue on fail.
+    {
+      const allowDetails = apiDetailBudget > 0;
+      if (allowDetails) apiDetailBudget -= 1;
+      const lane = await runApiSportsPhase8Lane({
+        ev,
+        resolved: fixtureByEvent.get(ev.event_id),
+        nowIso,
+        asOf,
         root,
-      );
-      bump(result.by_source, "api-sports", "ok");
-      result.research_fetches += 1;
+        allowNetworkDetails: allowDetails,
+      });
+      for (const st of lane.statuses) {
+        appendResearchStatus(
+          baseRow({
+            event_id: ev.event_id,
+            source_id: st.source_id,
+            phase: st.phase,
+            ok: st.ok,
+            fetched: st.fetched,
+            fetched_at: st.fetched ? nowIso : null,
+            available_at: null,
+            observed_at: st.ok ? nowIso : null,
+            reason: st.reason + postNote,
+            raw_ref: st.raw_ref,
+            cycle_number: input.cycleNumber,
+            at: nowIso,
+            url: st.url,
+            adapter_kind: "PRODUCTION_ADAPTER",
+            http_status: st.http_status,
+            parser_status: st.parser_status,
+            fields_extracted: st.fields_extracted,
+          }),
+          root,
+        );
+        if (st.ok) {
+          bump(result.by_source, st.source_id, "ok");
+          result.research_fetches += 1;
+        } else {
+          bump(result.by_source, st.source_id, "fail");
+          result.research_failures += 1;
+        }
+      }
+      await noteObs(lane.observations, ev.event_id);
     }
 
     // 2) Open-Meteo CONTEXT
@@ -604,6 +605,8 @@ export async function runEventResearchBatch(input: {
         });
         for (const o of fdObs) appendResearchObservation(o, root);
         await noteObs(fdObs, ev.event_id);
+        const cal = runCalendarPhase8Lane({ ev, nowIso, asOf, root });
+        await noteObs(cal.observations, ev.event_id);
       } else {
         bump(result.by_source, "football-data-co-uk", "fail");
         result.research_failures += 1;
@@ -722,7 +725,6 @@ export async function runEventResearchBatch(input: {
       );
       for (const sid of [
         "fbref",
-        "understat",
         "uefa",
         "sofascore",
         "directa",
@@ -734,16 +736,45 @@ export async function runEventResearchBatch(input: {
         "the-analyst",
         "abseits",
       ] as const) {
+        if (sourceOnCooldown(sid)) {
+          appendResearchStatus(
+            baseRow({
+              event_id: ev.event_id,
+              source_id: sid,
+              phase: "BLOCKED",
+              ok: false,
+              fetched: false,
+              fetched_at: null,
+              available_at: null,
+              reason: "COOLDOWN after repeated HTTP 403/429 — skipped this cycle, other sources continue",
+              raw_ref: null,
+              cycle_number: input.cycleNumber,
+              at: nowIso,
+              url: null,
+              parser_status: "HTTP_403",
+              fields_extracted: [],
+              adapter_kind: "TEST_PROBE",
+            }),
+            root,
+          );
+          bump(result.by_source, sid, "fail");
+          result.research_failures += 1;
+          continue;
+        }
         const page = await fetchEventPage({
           sourceId: sid,
           home: ev.home_or_a,
           away: ev.away_or_b,
           cacheRoot: root,
           nowIso,
+          competition: ev.competition,
         });
         const typed = page.fields_extracted.filter(
           (f) => f !== "page_mentions_both_teams" && f !== "page_mentions_xg" && !f.startsWith("page_mentions_"),
         );
+        if (page.http_status === 403 || page.http_status === 429 || page.status === "BLOCKED") {
+          markSourceBlocked(sid, page.http_status ?? 403);
+        }
         const phase =
           page.status === "BLOCKED" || page.status === "AUTH_REQUIRED"
             ? "BLOCKED"
@@ -817,6 +848,47 @@ export async function runEventResearchBatch(input: {
       }
     }
 
+    // Understat league page — prior xG only. 403 does not stop other sources.
+    {
+      const us = await runUnderstatPhase8Lane({ ev, nowIso, asOf, root });
+      for (const st of us.statuses) {
+        if (st.http_status === 403 || st.http_status === 429) markSourceBlocked("understat", st.http_status);
+        appendResearchStatus(
+          baseRow({
+            event_id: ev.event_id,
+            source_id: st.source_id,
+            phase: st.phase,
+            ok: st.ok,
+            fetched: st.fetched,
+            fetched_at: st.fetched ? nowIso : null,
+            available_at: null,
+            observed_at: st.ok ? nowIso : null,
+            reason: st.reason + postNote,
+            raw_ref: st.raw_ref,
+            cycle_number: input.cycleNumber,
+            at: nowIso,
+            url: st.url,
+            adapter_kind: "TEST_PROBE",
+            http_status: st.http_status,
+            parser_status: st.parser_status,
+            fields_extracted: st.fields_extracted,
+          }),
+          root,
+        );
+        if (st.ok) {
+          bump(result.by_source, "understat", "ok");
+          result.research_fetches += 1;
+        } else if (st.parser_status === "DENIED") {
+          bump(result.by_source, "understat", "denied");
+          result.research_denied += 1;
+        } else {
+          bump(result.by_source, "understat", "fail");
+          result.research_failures += 1;
+        }
+      }
+      await noteObs(us.observations, ev.event_id);
+    }
+
     // Public RSS (ANSA / Sky) — CONTEXT mention only
     {
       const { matchRssToEvent } = await import("@/domain/eval/data-intelligence/research/rss-news");
@@ -858,9 +930,18 @@ export async function runEventResearchBatch(input: {
           const { appendResearchObservation } = await import(
             "@/domain/eval/data-intelligence/research/observations-store"
           );
+          const news = newsObservationFromRss({
+            source: sid,
+            title: rss.matched_title,
+            link: rss.matched_link,
+            pubDate: rss.matched_pubDate,
+            eventId: ev.event_id,
+            home: ev.home_or_a,
+            away: ev.away_or_b,
+          });
           const row = {
             event_id: ev.event_id,
-            feature_key: "rss_mention",
+            feature_key: `news_${news.category.toLowerCase()}`,
             value: rss.matched_title,
             source: sid,
             source_url: rss.matched_link ?? rss.url,

@@ -137,12 +137,29 @@ describe("data-intelligence", () => {
       deps: { jsonText: json },
     });
     assert.ok(ok.some((o) => o.key === "temp_c" && o.status === "ELIGIBLE"));
-    const blocked = await fetchOpenMeteoContext({
+    const forecast = await fetchOpenMeteoContext({
       eventId: "e1",
       homeTeam: "Arsenal",
       eventTimeIso: "2022-08-15T15:00:00.000Z",
       asOf: "2022-08-15T10:00:00.000Z",
       deps: { jsonText: json },
+    });
+    assert.ok(forecast.some((o) => o.key === "temp_c" && o.status === "ELIGIBLE"));
+    const blocked = await fetchOpenMeteoContext({
+      eventId: "e1",
+      homeTeam: "Arsenal",
+      eventTimeIso: "2022-08-15T12:00:00.000Z",
+      asOf: "2022-08-15T13:00:00.000Z",
+      deps: {
+        jsonText: JSON.stringify({
+          hourly: {
+            time: ["2022-08-15T15:00", "2022-08-15T18:00"],
+            temperature_2m: [20, 17],
+            precipitation: [0.2, 0],
+            windspeed_10m: [12, 8],
+          },
+        }),
+      },
     });
     assert.ok(blocked.every((o) => o.status !== "ELIGIBLE" || o.key === "weather"));
     assert.equal(observationBlockedFuture("2022-08-15T18:00:00.000Z", "2022-08-15T12:00:00.000Z"), true);

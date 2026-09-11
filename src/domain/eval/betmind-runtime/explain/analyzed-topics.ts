@@ -10,19 +10,6 @@ export type AnalyzedTopic = {
   note_it: string;
 };
 
-function lightGlyph(l: TopicLight): string {
-  switch (l) {
-    case "USED":
-      return "verde";
-    case "PARTIAL":
-      return "giallo";
-    case "MISSING":
-      return "bianco";
-    case "TEMPORAL":
-      return "rosso";
-  }
-}
-
 export function topicLightLabelIt(l: TopicLight): string {
   switch (l) {
     case "USED":
@@ -50,8 +37,9 @@ const TOPICS: Array<{ id: string; label_it: string; keys: RegExp; groups?: strin
   { id: "injuries", label_it: "Infortuni", keys: /injur/i },
   { id: "lineups", label_it: "Formazioni", keys: /lineup/i },
   { id: "referee", label_it: "Arbitro", keys: /referee|arbitro/i },
-  { id: "weather", label_it: "Meteo", keys: /weather|meteo/i },
-  { id: "advanced", label_it: "Statistiche avanzate", keys: /ppda|possession|progressive/i },
+  { id: "weather", label_it: "Meteo", keys: /weather|meteo|temp|precip|wind|humid/i },
+  { id: "calendar", label_it: "Calendario e riposo", keys: /matches_last_|days_since_last|rest_days/ },
+  { id: "news", label_it: "Notizie", keys: /^news_|rss_/ },
 ];
 
 export function buildAnalyzedTopics(input: {
@@ -68,11 +56,21 @@ export function buildAnalyzedTopics(input: {
     if (input.temporal_excluded && (excluded || researched) && !entered) light = "TEMPORAL";
     else if (entered) light = "USED";
     else if (researched || excluded) light = "PARTIAL";
+    let note: string;
+    if (light === "USED") {
+      note = `${t.label_it}: trovato e usato nel modello.`;
+    } else if (light === "PARTIAL") {
+      note = `${t.label_it}: parzialmente trovato. I dati restano nel dossier anche se non tutti entrano nel modello.`;
+    } else if (light === "TEMPORAL") {
+      note = `${t.label_it}: trovato ma escluso perche non era disponibile prima del calcio d'inizio.`;
+    } else {
+      note = `${t.label_it}: non disponibile.`;
+    }
     return {
       id: t.id,
       label_it: t.label_it,
       light,
-      note_it: `${t.label_it}: ${topicLightLabelIt(light)} (${lightGlyph(light)}).`,
+      note_it: note,
     };
   });
 }

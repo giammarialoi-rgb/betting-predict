@@ -38,8 +38,6 @@ export function eventPageUrls(sourceId: string, home: string, away: string): str
   const q = encodeURIComponent(`${home} ${away}`);
   switch (sourceId) {
     case "understat":
-      // No per-event URL without a fixture id. League table would false-positive
-      // any EPL team names. Empty → DENIED / no invented SUCCESS.
       return "";
     case "fbref":
       return `https://fbref.com/en/search/search.fcgi?search=${q}`;
@@ -90,6 +88,7 @@ export async function fetchEventPage(input: {
   fetchImpl?: typeof fetch;
   cacheRoot?: string;
   nowIso?: string;
+  competition?: string | null;
 }): Promise<EventPageFetch> {
   const allow = scrapingAllowedForSource(input.sourceId);
   const url = eventPageUrls(input.sourceId, input.home, input.away);

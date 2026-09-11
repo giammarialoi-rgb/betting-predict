@@ -16,9 +16,18 @@ export type DataQualityInput = {
 
 export type DataQualityResult = {
   data_quality_score: number;
+  letter: "A" | "B" | "C" | "D" | "F";
   breakdown: Record<string, number>;
   note_it: string;
 };
+
+function letterOf(score: number): DataQualityResult["letter"] {
+  if (score >= 0.8) return "A";
+  if (score >= 0.6) return "B";
+  if (score >= 0.4) return "C";
+  if (score >= 0.2) return "D";
+  return "F";
+}
 
 export function computeDataQualityScore(input: DataQualityInput): DataQualityResult {
   const usable = input.real_features + input.historical_prior_features + input.derived_features * 0.5;
@@ -40,8 +49,10 @@ export function computeDataQualityScore(input: DataQualityInput): DataQualityRes
       ) / 1000,
     ),
   );
+  const letter = letterOf(score);
   return {
     data_quality_score: score,
+    letter,
     breakdown: {
       coverage: Math.round(coverage * 1000) / 1000,
       source_breadth: Math.round(sourceBreadth * 1000) / 1000,
@@ -49,7 +60,6 @@ export function computeDataQualityScore(input: DataQualityInput): DataQualityRes
       conflict_penalty: conflictPenalty,
       temporal_penalty: temporalPenalty,
     },
-    note_it:
-      "Punteggio di qualita del dossier. Non sostituisce i gate di copertura del modello e non produce probabilita.",
+    note_it: `Qualita dati ${letter} (${Math.round(score * 100)}%). Non sostituisce i gate del modello e non produce probabilita.`,
   };
 }

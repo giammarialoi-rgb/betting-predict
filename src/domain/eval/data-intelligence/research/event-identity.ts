@@ -8,6 +8,8 @@ import {
   resolveLiveTeamId,
 } from "@/domain/eval/predictive-intelligence/live-resolve";
 import { loadPiMatches } from "@/domain/eval/predictive-intelligence/dataset/loader";
+import { normalizeTeamName } from "@/domain/eval/data-intelligence/research/identity-normalize";
+import { lookupTeamByAlias } from "@/domain/eval/data-intelligence/research/identity-registry";
 
 export type ResolvedTeamIdentity = {
   display_name: string;
@@ -103,7 +105,22 @@ export function resolveTeamIdentity(
   matches?: ReturnType<typeof loadPiMatches>,
 ): ResolvedTeamIdentity {
   const cleaned = stripClubSuffix(name) || name;
-  return teamFrom(name, resolveLiveTeamId(cleaned, matches ?? loadPiMatches()));
+  const fromReg = lookupTeamByAlias(name);
+  const resolved = resolveLiveTeamId(cleaned, matches ?? loadPiMatches());
+  const ident = teamFrom(name, resolved);
+  if (fromReg?.source_ids) {
+    ident.source_ids = {
+      sofascore: fromReg.source_ids.sofascore,
+      api_sports: fromReg.source_ids.api_sports,
+      fbref: fromReg.source_ids.fbref,
+      understat: fromReg.source_ids.understat,
+      football_data: fromReg.source_ids.football_data ?? ident.source_ids.football_data,
+    };
+  }
+  if (!ident.matched && normalizeTeamName(name)) {
+    ident.method = `${ident.method}+normalized`;
+  }
+  return ident;
 }
 
 export function resolveCompetitionIdentity(name: string | null | undefined): {

@@ -169,21 +169,35 @@ export default function SourcesPage() {
       )}
 
       {!!operational.length && (
-        <Card title="Esecuzioni reali del Brain">
+        <Card title="Rendimento event-level">
           <p className="mb-3 text-xs bm-muted">
-            Contatori da research-status.jsonl — HTTP 200 senza evento non è SUCCESS.
+            Una fonte e ACTIVE solo se ha restituito dati associati a un evento. HTTP 200 sulla homepage non conta.
           </p>
-          <div className="grid gap-2 text-sm">
-            {operational.map((s) => (
-              <div key={String(s.id)} className="flex flex-wrap justify-between gap-2 border-b border-[rgba(255,255,255,0.06)] py-2">
-                <span className="font-medium">{s.title ?? s.id}</span>
-                <span className="bm-muted">
-                  {String(s.status ?? "IDLE")} · osservazioni {s.observations_found ?? 0} · eventi{" "}
-                  {s.events_found ?? 0} · blocked {s.blocked_count ?? 0} ·{" "}
-                  {s.last_event_label ?? "nessun evento reperito"}
-                </span>
-              </div>
-            ))}
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-sm">
+              <thead>
+                <tr className="bm-muted text-xs">
+                  <th className="py-1 pr-3">Fonte</th>
+                  <th className="py-1 pr-3">Stato</th>
+                  <th className="py-1 pr-3">Eventi</th>
+                  <th className="py-1 pr-3">Osservazioni</th>
+                  <th className="py-1">Ultimo errore / nota</th>
+                </tr>
+              </thead>
+              <tbody>
+                {operational.map((s) => (
+                  <tr key={String(s.id)} className="border-t border-[rgba(255,255,255,0.06)]">
+                    <td className="py-2 pr-3 font-medium">{s.title ?? s.id}</td>
+                    <td className="py-2 pr-3">{String(s.status ?? "IDLE")}</td>
+                    <td className="py-2 pr-3">{s.events_found ?? 0}</td>
+                    <td className="py-2 pr-3">{s.observations_found ?? 0}</td>
+                    <td className="py-2 text-xs bm-muted">
+                      {s.last_event_label ?? (s.blocked_count ? `${s.blocked_count} blocked` : "—")}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         </Card>
       )}

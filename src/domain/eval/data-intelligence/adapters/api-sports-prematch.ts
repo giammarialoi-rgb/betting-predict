@@ -79,13 +79,15 @@ function extractPublishedAt(body: unknown, fallback: string | null | undefined):
   return null;
 }
 
-type InjuryRow = {
+export type InjuryRow = {
   teamName: string;
   playerName: string;
+  reason: string | null;
+  type: string | null;
   update: string | null;
 };
 
-function parseInjuries(body: unknown): InjuryRow[] {
+export function parseInjuries(body: unknown): InjuryRow[] {
   const response = (body as { response?: unknown })?.response;
   if (!Array.isArray(response)) return [];
   const out: InjuryRow[] = [];
@@ -93,25 +95,31 @@ function parseInjuries(body: unknown): InjuryRow[] {
     if (!row || typeof row !== "object") continue;
     const r = row as Record<string, unknown>;
     const team = r.team as { name?: string } | undefined;
-    const player = r.player as { name?: string; type?: string; reason?: string } | undefined;
+    const player = r.player as { name?: string; type?: string; reason?: string; update?: string } | undefined;
     const fixture = r.fixture as { date?: string } | undefined;
     const name = team?.name;
     if (!name || !player?.name) continue;
     let update: string | null = null;
-    if (typeof (player as { update?: string }).update === "string") {
-      update = (player as { update: string }).update;
+    if (typeof player.update === "string") {
+      update = player.update;
     } else if (typeof fixture?.date === "string") {
       // fixture.date is event time — NOT injury publish clock; ignore for available_at
       update = null;
     }
-    out.push({ teamName: name, playerName: player.name, update });
+    out.push({
+      teamName: name,
+      playerName: player.name,
+      reason: typeof player.reason === "string" ? player.reason : null,
+      type: typeof player.type === "string" ? player.type : null,
+      update,
+    });
   }
   return out;
 }
 
 type LineupSide = { teamName: string; confirmed: boolean; update: string | null };
 
-function parseLineups(body: unknown): LineupSide[] {
+export function parseLineups(body: unknown): LineupSide[] {
   const response = (body as { response?: unknown })?.response;
   if (!Array.isArray(response)) return [];
   const out: LineupSide[] = [];
