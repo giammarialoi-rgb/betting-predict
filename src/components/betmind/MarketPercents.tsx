@@ -51,7 +51,7 @@ export function MarketPercents({
   const groups: Array<{ title: string; items: MarketPct[] }> = [
     { title: "1X2", items: visibleItems(oneXTwo, true) },
     { title: "Over / Under", items: visibleItems(markets.filter((m) => m.market === "over_under"), false) },
-    { title: "Gol + gol", items: visibleItems(markets.filter((m) => m.market === "btts"), false) },
+    { title: "BTTS", items: visibleItems(markets.filter((m) => m.market === "btts"), false) },
     { title: "Gol squadra", items: visibleItems(markets.filter((m) => m.market === "team_goals"), false) },
     { title: "Calci d’angolo", items: visibleItems(markets.filter((m) => m.market === "corners"), false) },
   ];

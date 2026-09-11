@@ -19,6 +19,7 @@ import { OddsBlock } from "@/components/betmind/OddsBlock";
 import { MarketPercents } from "@/components/betmind/MarketPercents";
 import { useBmLocale } from "@/components/betmind/useBmLocale";
 import { eventStatusIt, selectionLabelIt } from "@/domain/eval/betmind-runtime/status-copy";
+import { leagueTitleIt } from "@/domain/eval/light-analysis/league-label";
 import type { LightAnalysis } from "@/domain/eval/light-analysis/types";
 
 type DossierFeature = {
@@ -326,7 +327,7 @@ export function EventDetailClient({ initialData = null }: { initialData?: Detail
       {data && (
         <>
           <header className="bm-hero text-center">
-            <div className="bm-section-label">{data.event.competition}</div>
+            <div className="bm-section-label">{leagueTitleIt(data.event.competition)}</div>
             <h1 className="mt-2 text-3xl font-bold leading-tight">
               {data.event.home_or_a}
               <div className="my-1 text-base font-medium bm-muted">{t.vs}</div>
