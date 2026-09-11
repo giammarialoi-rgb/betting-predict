@@ -178,6 +178,31 @@ export async function runBrainCycle051(input: {
       /* catalog module optional */
     }
 
+    // Always-on free acquisition engine (continue-on-fail; no WAF bypass)
+    try {
+      const { runAcquisitionEngineCycle } = await import(
+        "@/domain/eval/acquisition-engine/engine"
+      );
+      const acq = await runAcquisitionEngineCycle({
+        nowIso,
+        persistNeon: Boolean(process.env.DATABASE_URL),
+      });
+      appendActivity051(
+        labB,
+        "ACQUISITION_ENGINE",
+        `ok=${acq.sources_ok} fail=${acq.sources_failed} blocked=${acq.sources_blocked} records=${acq.records}`,
+      );
+      appendBrainLog051(
+        labB,
+        `acquisition_engine ok=${acq.sources_ok} fail=${acq.sources_failed} records=${acq.records} neon=${acq.neon_sources.join(",") || "none"}`,
+      );
+    } catch (e) {
+      appendBrainLog051(
+        labB,
+        `acquisition_engine_fail ${e instanceof Error ? e.message : String(e)}`,
+      );
+    }
+
     // Multi-source universal discovery (policy-gated stubs + Odds Lab B)
     try {
       const { runMultiSourceCycle055 } = await import("@/domain/eval/catalog-055/cycle");
