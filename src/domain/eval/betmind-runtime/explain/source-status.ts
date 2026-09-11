@@ -109,7 +109,7 @@ export function humanSourceStatusLabelIt(s: HumanSourceStatus): string {
     case "BLOCKED":
       return "Accesso negato dal sito";
     case "MISSING_ADAPTER":
-      return "Adapter non implementato";
+      return "Nessuna info su questa partita";
     case "DISABLED_BY_POLICY":
       return "Disabilitato per policy";
     case "STALE":
@@ -199,7 +199,7 @@ export function sourceFailureReasonIt(row: ResearchLike): string {
     return `${sourceTitleIt(row.source_id)} non era disponibile (HTTP ${http ?? "?"}).`;
   }
   if (status === "MISSING_ADAPTER") {
-    return `${sourceTitleIt(row.source_id)} e nel catalogo ma non ha un adapter di produzione.`;
+    return `Il sistema non consulta ${sourceTitleIt(row.source_id)} per questa partita.`;
   }
   if (status === "DISABLED_BY_POLICY") {
     return `${sourceTitleIt(row.source_id)} e disabilitato per policy: nessun scrape non autorizzato.`;

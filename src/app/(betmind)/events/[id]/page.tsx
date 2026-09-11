@@ -551,6 +551,8 @@ export default function EventDetailPage() {
                             ? "dopo kickoff (esclusa)"
                           : r.human_status === "PARSE_ERROR"
                             ? "risposta non interpretabile"
+                          : r.human_status === "MISSING_ADAPTER" || r.human_status === "DISABLED_BY_POLICY"
+                            ? "nessuna info su questa partita"
                           : "nessuna info su questa partita"}
                       </span>
                     </div>

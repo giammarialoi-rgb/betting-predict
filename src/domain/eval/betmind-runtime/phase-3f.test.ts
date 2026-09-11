@@ -4,7 +4,11 @@
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
 import { featureLabelIt, classifyFeatureQuality } from "@/domain/eval/betmind-runtime/explain/feature-dictionary";
-import { classifyHumanSourceStatus } from "@/domain/eval/betmind-runtime/explain/source-status";
+import {
+  classifyHumanSourceStatus,
+  humanSourceStatusLabelIt,
+  sourceFailureReasonIt,
+} from "@/domain/eval/betmind-runtime/explain/source-status";
 import { buildResearchSummary } from "@/domain/eval/betmind-runtime/explain/research-summary";
 import { buildHumanExplanation } from "@/domain/eval/betmind-runtime/explain/italian-explanation";
 import { assertIndependentOddsFirewall } from "@/domain/eval/betmind-runtime/explain/odds-firewall";
@@ -183,6 +187,16 @@ describe("Phase 3F explanation never hallucinates", () => {
     assert.equal(summary.sources_missing_adapter, 0);
     assert.equal(/adapter mancante|Adapter non implementato/i.test(hx.sources_summary), false);
     assert.equal(/SofaScore|Tennis Abstract/i.test(hx.sources_summary + hx.missing.join(" ")), false);
+    assert.equal(
+      /adapter mancante|Adapter non implementato/i.test(
+        `${humanSourceStatusLabelIt("MISSING_ADAPTER")} ${sourceFailureReasonIt({
+          source_id: "tennis-abstract",
+          phase: "MISSING_ADAPTER",
+          adapter_kind: "MISSING_ADAPTER",
+        })}`,
+      ),
+      false,
+    );
     assert.ok(hx.used.some((u) => /Gol segnati da Aston Villa/.test(u)));
     assert.ok(hx.odds_sentence.includes("non sono entrate"));
     assert.ok(hx.facts_used.includes("odds_entered_model=false"));
