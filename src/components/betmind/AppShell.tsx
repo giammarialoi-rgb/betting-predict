@@ -146,10 +146,12 @@ export function AppShell({
           <div className="hidden text-sm tracking-[0.12em] text-[var(--bm-muted)] lg:block">
             {t.brand_tagline}
           </div>
-          <div className="flex shrink-0 items-center gap-2">
-            <span className="bm-pill hidden sm:inline-flex">
-              <StatusDot state={webOnline ? "ONLINE" : "OFFLINE"} />
-              App web {webOnline ? "online" : "offline"}
+          <div className="flex min-w-0 shrink-0 items-center gap-2">
+            <span className="hidden sm:inline-flex">
+              <span className="bm-pill">
+                <StatusDot state={webOnline ? "ONLINE" : "OFFLINE"} />
+                App web {webOnline ? "online" : "offline"}
+              </span>
             </span>
             <span
               className={`bm-pill ${
@@ -163,17 +165,19 @@ export function AppShell({
               <StatusDot state={runtimeState} />
               {t.runtime} {statusWordIt(runtimeState)}
             </span>
-            <span
-              className={`bm-pill hidden md:inline-flex ${
-                engineState === "ONLINE"
-                  ? "bm-pill-accent"
-                  : engineState === "OFFLINE"
-                    ? "bm-pill-danger"
-                    : "bm-pill-warn"
-              }`}
-            >
-              <StatusDot state={engineState} />
-              {t.engine} {statusWordIt(engineState)}
+            <span className="hidden md:inline-flex">
+              <span
+                className={`bm-pill ${
+                  engineState === "ONLINE"
+                    ? "bm-pill-accent"
+                    : engineState === "OFFLINE"
+                      ? "bm-pill-danger"
+                      : "bm-pill-warn"
+                }`}
+              >
+                <StatusDot state={engineState} />
+                {t.engine} {statusWordIt(engineState)}
+              </span>
             </span>
           </div>
         </header>
