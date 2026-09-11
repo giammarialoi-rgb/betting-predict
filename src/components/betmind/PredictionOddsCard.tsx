@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { OddsBlock, completeBook1x2 } from "@/components/betmind/OddsBlock";
+import { OddsBlock } from "@/components/betmind/OddsBlock";
 import {
   Metric,
   Pill,
@@ -46,21 +46,6 @@ function modelProbs(ev: PredictionEvent): Record<string, number> | null {
   };
 }
 
-function marketProbs(ev: PredictionEvent): Record<string, number> | null {
-  const pm = asRecord(ev.probability_market);
-  if (!pm) return null;
-  const HOME = num(pm.HOME);
-  const DRAW = num(pm.DRAW);
-  const AWAY = num(pm.AWAY);
-  if (HOME == null && DRAW == null && AWAY == null) return null;
-  return {
-    ...(HOME != null ? { HOME } : {}),
-    ...(DRAW != null ? { DRAW } : {}),
-    ...(AWAY != null ? { AWAY } : {}),
-  };
-}
-
-
 function independentStatus(ev: PredictionEvent): {
   kind: "model" | "insufficient" | "no_bet" | "pending";
   label: string;
@@ -99,8 +84,6 @@ export function PredictionOddsCard({
   const away = String(ev.away_or_b ?? "").trim();
   const title = home && away ? `${home} vs ${away}` : String(ev.label ?? ev.event_id ?? "Partita");
   const model = modelProbs(ev);
-  const implied = marketProbs(ev);
-  const book = completeBook1x2(ev);
   const status = independentStatus(ev);
   const pick = pickSelection(model);
   const marketName = marketLabelIt(String(ev.odds_market ?? (ev.markets as string[] | undefined)?.[0] ?? "1X2"));
@@ -152,18 +135,6 @@ export function PredictionOddsCard({
 
         <div className="bm-panel-market">
           <OddsBlock event={ev} />
-          {!book && implied ? (
-            <>
-              <p className="mt-2 text-xs bm-muted">
-                Probabilità di mercato implicite — non sono quote book.
-              </p>
-              <div className="mt-2 grid grid-cols-3 gap-2">
-                <Metric label="Casa (impl.)" value={pct(implied.HOME)} />
-                <Metric label="Pareggio (impl.)" value={pct(implied.DRAW)} />
-                <Metric label="Trasferta (impl.)" value={pct(implied.AWAY)} />
-              </div>
-            </>
-          ) : null}
         </div>
       </div>
 
