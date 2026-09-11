@@ -1,5 +1,6 @@
 /**
- * ClubElo public CSV — harden local cache + optional Neon elo_snapshots.
+ * ClubElo public CSV — retry/backoff + HTTPS + previous-day failover.
+ * Still NO_DATA if every attempt fails. No fake Elo.
  */
 import { mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
@@ -9,11 +10,23 @@ import { parseCsv } from "@/providers/football-data-co-uk/parser";
 import { pickUniqueTeam } from "@/domain/eval/data-intelligence/research/identity-match";
 import { persistClubEloRatings } from "@/domain/eval/acquisition-engine/persist";
 import { emptyLane } from "@/domain/eval/acquisition-engine/blocked-audit";
+import { acquisitionGet } from "@/domain/eval/acquisition-engine/http";
+import { CLUBELO_FAILOVER_TEMPLATES } from "@/domain/eval/acquisition-engine/catalog";
 import type {
   AcquisitionCycleInput,
   AcquisitionRecord,
   SourceLaneResult,
 } from "@/domain/eval/acquisition-engine/types";
+
+function looksLikeClubEloCsv(text: string): boolean {
+  const head = text.slice(0, 200).toLowerCase();
+  return head.includes("rank") && head.includes("club") && head.includes("elo");
+}
+
+function shiftDay(day: string, minusDays: number): string {
+  const t = Date.parse(`${day}T00:00:00.000Z`);
+  return new Date(t - minusDays * 86_400_000).toISOString().slice(0, 10);
+}
 
 export async function runClubEloLane(input: {
   url: string;
@@ -22,53 +35,110 @@ export async function runClubEloLane(input: {
   persistNeon: boolean;
   csvText?: string;
   labEvents?: AcquisitionCycleInput["labEvents"];
+  fetchImpl?: typeof fetch;
+  maxRetries?: number;
 }): Promise<SourceLaneResult> {
   const day = input.nowIso.slice(0, 10);
-  let fetched = await fetchClubEloDay(day, {
-    csvText: input.csvText,
-  });
 
-  if (!input.csvText && fetched.provider_status !== "OK") {
-    const prev = new Date(Date.parse(`${day}T00:00:00.000Z`) - 86_400_000).toISOString().slice(0, 10);
-    const retry = await fetchClubEloDay(prev);
-    if (retry.provider_status === "OK" && retry.rawText) {
-      fetched = retry;
-    }
-  }
-
-  if (fetched.provider_status !== "OK" || !fetched.rawText) {
-    const blocked = fetched.http_status === 403 || fetched.http_status === 429;
-    return emptyLane({
-      source_id: "clubelo",
-      url: fetched.url,
-      status:
-        fetched.http_status === 429
-          ? "RATE_LIMITED"
-          : blocked
-            ? "BLOCKED"
-            : fetched.reason === "NETWORK_ERROR"
-              ? "NETWORK_ERROR"
-              : "NO_DATA",
-      http_status: fetched.http_status || null,
-      reason: fetched.reason ?? fetched.provider_status,
-      reason_it:
-        fetched.http_status === 403
-          ? "ClubElo ha restituito HTTP 403. Nessun rating inventato."
-          : `ClubElo non disponibile (${fetched.reason ?? fetched.provider_status}). Nessun Elo inventato.`,
+  if (input.csvText) {
+    return finishClubElo({
+      ...input,
+      rawText: input.csvText,
+      url: input.url,
+      http: 200,
+      ratingDate: day,
+      retries: 0,
     });
   }
 
-  const cacheDay = fetched.rating_date;
-  const path = clubEloDayPath(input.cwd, cacheDay);
-  mkdirSync(join(input.cwd, "data", "clubelo"), { recursive: true });
-  writeFileSync(path, fetched.rawText, "utf8");
+  let fetched = await fetchClubEloDay(day, { fetch: input.fetchImpl });
+  if (fetched.provider_status === "OK" && fetched.rawText) {
+    return finishClubElo({
+      ...input,
+      rawText: fetched.rawText,
+      url: fetched.url,
+      http: fetched.http_status,
+      ratingDate: fetched.rating_date,
+      retries: 0,
+    });
+  }
 
-  const table = parseCsv(fetched.rawText);
+  const failoverDays = [day, shiftDay(day, 1)];
+  let lastHttp = fetched.http_status || 0;
+  let lastUrl = fetched.url;
+  let retries = 0;
+  let lastReason = fetched.reason ?? fetched.provider_status;
+
+  for (const tryDay of failoverDays) {
+    for (const tmpl of CLUBELO_FAILOVER_TEMPLATES) {
+      const url = tmpl(tryDay);
+      if (url === fetched.url) continue;
+      const got = await acquisitionGet({
+        url,
+        sourceId: "clubelo",
+        minIntervalMs: input.fetchImpl ? 0 : 500,
+        fetchImpl: input.fetchImpl,
+        maxRetries: input.maxRetries ?? 1,
+      });
+      retries += got.retries;
+      lastHttp = got.status;
+      lastUrl = got.url;
+      lastReason = got.error ?? `HTTP_${got.status}`;
+      if (!got.ok || !looksLikeClubEloCsv(got.text)) continue;
+      return finishClubElo({
+        ...input,
+        rawText: got.text,
+        url: got.url,
+        http: got.status,
+        ratingDate: tryDay,
+        retries,
+      });
+    }
+  }
+
+  const blocked = lastHttp === 403 || lastHttp === 429;
+  return emptyLane({
+    source_id: "clubelo",
+    url: lastUrl,
+    status:
+      lastHttp === 429
+        ? "RATE_LIMITED"
+        : blocked
+          ? "BLOCKED"
+          : lastReason === "NETWORK_ERROR" || lastHttp === 0 || lastHttp >= 500
+            ? "NETWORK_ERROR"
+            : "NO_DATA",
+    http_status: lastHttp || null,
+    retries,
+    reason: lastReason,
+    reason_it:
+      lastHttp === 403
+        ? "ClubElo ha restituito HTTP 403. Nessun rating inventato."
+        : `ClubElo non disponibile (${lastReason}). Failover HTTP/HTTPS e giorni precedenti falliti. Nessun Elo inventato.`,
+  });
+}
+
+async function finishClubElo(input: {
+  nowIso: string;
+  cwd: string;
+  persistNeon: boolean;
+  labEvents?: AcquisitionCycleInput["labEvents"];
+  rawText: string;
+  url: string;
+  http: number;
+  ratingDate: string;
+  retries: number;
+}): Promise<SourceLaneResult> {
+  const path = clubEloDayPath(input.cwd, input.ratingDate);
+  mkdirSync(join(input.cwd, "data", "clubelo"), { recursive: true });
+  writeFileSync(path, input.rawText, "utf8");
+
+  const table = parseCsv(input.rawText);
   const clubRows = table.rows
     .map((row) => {
       const club = row.Club ?? row.club;
       const elo = Number(row.Elo ?? row.elo);
-      const from = row.From ?? row.from ?? cacheDay;
+      const from = row.From ?? row.from ?? input.ratingDate;
       if (!club || !Number.isFinite(elo)) return null;
       return { club, elo, from };
     })
@@ -101,7 +171,7 @@ export async function runClubEloLane(input: {
         feature_status: "VALID",
         enters_independent_model: false,
         extraction_method: "clubelo_public_csv",
-        source_url: fetched.url,
+        source_url: input.url,
         identity_status: home.status,
         reason_it: home.reason_it,
       });
@@ -122,7 +192,7 @@ export async function runClubEloLane(input: {
         feature_status: "NOT_ELIGIBLE",
         enters_independent_model: false,
         extraction_method: "clubelo_public_csv",
-        source_url: fetched.url,
+        source_url: input.url,
         identity_status: home.status,
         reason_it: home.reason_it,
       });
@@ -147,7 +217,7 @@ export async function runClubEloLane(input: {
         feature_status: "VALID",
         enters_independent_model: false,
         extraction_method: "clubelo_public_csv",
-        source_url: fetched.url,
+        source_url: input.url,
         identity_status: away.status,
         reason_it: away.reason_it,
       });
@@ -165,12 +235,12 @@ export async function runClubEloLane(input: {
     kickoff_iso: null,
     team_name: null,
     observed_at: input.nowIso,
-    available_at: `${cacheDay}T00:00:00.000Z`,
+    available_at: `${input.ratingDate}T00:00:00.000Z`,
     temporal_precision: "dataset_window",
     feature_status: "CONTEXT",
     enters_independent_model: false,
     extraction_method: "clubelo_public_csv",
-    source_url: fetched.url,
+    source_url: input.url,
     identity_status: "UNBOUND",
     reason_it: `CSV ClubElo in cache (${clubRows.length} club).`,
   });
@@ -201,13 +271,13 @@ export async function runClubEloLane(input: {
     ok: clubRows.length > 0,
     fetched: true,
     status: clubRows.length > 0 ? (bound.length > 0 ? "OK" : "PARTIAL") : "NO_DATA",
-    http_status: fetched.http_status,
-    url: fetched.url,
+    http_status: input.http,
+    url: input.url,
     records,
     fields_extracted: ["clubelo_clubs_parsed", ...bound.map((r) => r.feature_key)],
     reason: `cached ${path}; clubs=${clubRows.length}; bound=${bound.length}`,
     reason_it: `ClubElo CSV salvato in locale (${clubRows.length} club). ${bound.length} rating abbinate in modo univoco.`,
-    retries: 0,
+    retries: input.retries,
     cache_path: path,
     neon,
   };

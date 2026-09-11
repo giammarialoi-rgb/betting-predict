@@ -5,12 +5,16 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { CLUBELO_FIXTURE_CSV } from "@/providers/clubelo/adapter";
 import { runAcquisitionEngineCycle } from "@/domain/eval/acquisition-engine/engine";
-import { discoverFreeSourceJobs, FREE_SOURCE_CATALOG, BLOCKED_PROTECTED_SOURCES } from "@/domain/eval/acquisition-engine/catalog";
+import { discoverFreeSourceJobs, FREE_SOURCE_CATALOG, BLOCKED_PROTECTED_SOURCES, OPENLIGA_LEAGUES, THESPORTSDB_LEAGUES, FDOUK_DIVISIONS } from "@/domain/eval/acquisition-engine/catalog";
 import { blockedProtectedAudit } from "@/domain/eval/acquisition-engine/blocked-audit";
 import { parseOpenLigaMatches } from "@/domain/eval/acquisition-engine/sources/openligadb";
 import { parseTheSportsDbEvents } from "@/domain/eval/acquisition-engine/sources/thesportsdb";
 import { parseStatsBombCompetitions } from "@/domain/eval/acquisition-engine/sources/statsbomb";
 import { countResultRows } from "@/domain/eval/acquisition-engine/sources/football-data-co-uk";
+import { parseEspnScoreboard } from "@/domain/eval/acquisition-engine/sources/espn";
+import { parseOpenFootballPack } from "@/domain/eval/acquisition-engine/sources/openfootball";
+import { parseOddsApiEvents } from "@/domain/eval/acquisition-engine/sources/odds-api";
+import { parseApiFootballOdds } from "@/domain/eval/acquisition-engine/sources/api-football";
 import { pickUniqueTeam } from "@/domain/eval/data-intelligence/research/identity-match";
 import { catalogueById } from "@/domain/eval/data-intelligence/research/source-catalogue";
 import { assertNoMarketInputsInPredictionContext } from "@/domain/eval/predictive-intelligence/features/asof";
@@ -80,16 +84,91 @@ const RSS_FIXTURE = `<?xml version="1.0"?><rss><channel>
 <item><title>Calcio: preview giornata</title><link>https://www.ansa.it/x</link><pubDate>Fri, 11 Sep 2026 08:00:00 GMT</pubDate><description>Anteprima</description></item>
 </channel></rss>`;
 
+const ESPN_FIXTURE = JSON.stringify({
+  events: [
+    {
+      id: "espn-1",
+      date: "2026-09-12T14:00:00Z",
+      name: "Liverpool vs Chelsea",
+      competitions: [
+        {
+          competitors: [
+            { homeAway: "home", team: { displayName: "Liverpool" } },
+            { homeAway: "away", team: { displayName: "Chelsea" } },
+          ],
+          status: { type: { completed: false } },
+        },
+      ],
+    },
+  ],
+});
+
+const OPENFOOTBALL_FIXTURE = JSON.stringify({
+  name: "English Premier League 2025/26",
+  matches: [
+    { round: "Matchday 1", date: "2025-08-15", team1: "Liverpool", team2: "Bournemouth" },
+    { round: "Matchday 1", date: "2025-08-16", team1: "Arsenal", team2: "Wolves" },
+  ],
+});
+
+const ODDS_API_FIXTURE = JSON.stringify([
+  {
+    id: "odd-1",
+    home_team: "Liverpool",
+    away_team: "Chelsea",
+    commence_time: "2026-09-13T14:00:00Z",
+    bookmakers: [
+      {
+        key: "pinnacle",
+        title: "Pinnacle",
+        markets: [
+          {
+            key: "h2h",
+            outcomes: [
+              { name: "Liverpool", price: 1.85 },
+              { name: "Draw", price: 3.6 },
+              { name: "Chelsea", price: 4.2 },
+            ],
+          },
+        ],
+      },
+    ],
+  },
+]);
+
 function tmpCwd(): string {
   return mkdtempSync(join(tmpdir(), "acq-engine-"));
 }
 
+const CYCLE_FIXTURES = {
+  clubeloCsv: CLUBELO_FIXTURE_CSV,
+  openligaJson: OPENLIGA_FIXTURE,
+  theSportsDbJson: THESPORTSDB_FIXTURE,
+  statsbombJson: STATSBOMB_FIXTURE,
+  footballDataCoUkCsv: FDOUK_FIXTURE,
+  rssXml: RSS_FIXTURE,
+  espnJson: ESPN_FIXTURE,
+  openFootballJson: OPENFOOTBALL_FIXTURE,
+};
+
 describe("always-on free acquisition engine", () => {
   const prevToken = process.env.FOOTBALL_DATA_ORG_TOKEN;
+  const prevSports = process.env.API_SPORTS_KEY;
+  const prevFootball = process.env.API_FOOTBALL_KEY;
+  const prevOdds = process.env.THE_ODDS_API_KEY;
   process.env.FOOTBALL_DATA_ORG_TOKEN = "";
+  delete process.env.API_SPORTS_KEY;
+  delete process.env.API_FOOTBALL_KEY;
+  delete process.env.THE_ODDS_API_KEY;
   after(() => {
     if (prevToken === undefined) delete process.env.FOOTBALL_DATA_ORG_TOKEN;
     else process.env.FOOTBALL_DATA_ORG_TOKEN = prevToken;
+    if (prevSports === undefined) delete process.env.API_SPORTS_KEY;
+    else process.env.API_SPORTS_KEY = prevSports;
+    if (prevFootball === undefined) delete process.env.API_FOOTBALL_KEY;
+    else process.env.API_FOOTBALL_KEY = prevFootball;
+    if (prevOdds === undefined) delete process.env.THE_ODDS_API_KEY;
+    else process.env.THE_ODDS_API_KEY = prevOdds;
   });
   it("discovers allowlisted free URLs only", () => {
     const jobs = discoverFreeSourceJobs("2026-09-11T12:00:00.000Z");
@@ -98,8 +177,18 @@ describe("always-on free acquisition engine", () => {
     assert.ok(ids.includes("openligadb"));
     assert.ok(ids.includes("thesportsdb"));
     assert.ok(ids.includes("statsbomb"));
+    assert.ok(ids.includes("espn"));
+    assert.ok(ids.includes("openfootball"));
+    assert.ok(ids.includes("bbc-sport"));
+    assert.ok(ids.includes("guardian-football"));
+    assert.ok(ids.includes("gazzetta"));
+    assert.ok(ids.includes("api-football"));
+    assert.ok(ids.includes("the-odds-api"));
     assert.equal(jobs.some((j) => /sofascore|fbref|whoscored/i.test(j.url)), false);
     assert.match(jobs.find((j) => j.source_id === "clubelo")!.url, /api\.clubelo\.com\/2026-09-11/);
+    assert.ok(OPENLIGA_LEAGUES.length >= 4);
+    assert.ok(THESPORTSDB_LEAGUES.length >= 5);
+    assert.ok(FDOUK_DIVISIONS.length >= 13);
   });
 
   it("parses ClubElo + OpenLigaDB + TheSportsDB + StatsBomb fixtures continue-on-fail", async () => {
@@ -108,14 +197,7 @@ describe("always-on free acquisition engine", () => {
       nowIso: "2026-09-11T12:00:00.000Z",
       cwd,
       persistNeon: false,
-      fixtures: {
-        clubeloCsv: CLUBELO_FIXTURE_CSV,
-        openligaJson: OPENLIGA_FIXTURE,
-        theSportsDbJson: THESPORTSDB_FIXTURE,
-        statsbombJson: STATSBOMB_FIXTURE,
-        footballDataCoUkCsv: FDOUK_FIXTURE,
-        rssXml: RSS_FIXTURE,
-      },
+      fixtures: CYCLE_FIXTURES,
       fetchImpl: async () =>
         new Response("no token", { status: 401, headers: { "Content-Type": "text/plain" } }),
       labEvents: [
@@ -161,11 +243,23 @@ describe("always-on free acquisition engine", () => {
     assert.match(byId["football-data-co-uk"].reason, /odds_columns_ignored/);
 
     assert.equal(byId.ansa.ok, true);
+    assert.equal(byId["bbc-sport"].ok, true);
+    assert.equal(byId["guardian-football"].ok, true);
+    assert.equal(byId.gazzetta.ok, true);
+    assert.equal(byId.espn.ok, true);
+    assert.equal(byId.openfootball.ok, true);
+    assert.equal(byId.openfootball.records[0]?.feature_status, "NOT_ELIGIBLE");
     assert.equal(byId["football-data-org"].status, "AUTH_REQUIRED");
-    assert.match(byId["football-data-org"].reason_it, /token gratuito/i);
+    assert.match(byId["football-data-org"].reason_it, /token/i);
+    assert.equal(byId["api-football"].status, "AUTH_REQUIRED");
+    assert.equal(byId["the-odds-api"].status, "AUTH_REQUIRED");
+    assert.match(byId["the-odds-api"].reason_it, /THE_ODDS_API_KEY|chiave/i);
 
-    assert.ok(result.sources_ok >= 5);
+    assert.ok(result.sources_ok >= 8);
+    assert.ok(result.coverage.sources_ok.includes("espn"));
+    assert.ok(result.coverage.sources_auth_required.includes("football-data-org"));
     assert.ok(result.lanes.every((l) => l.records.every((r) => r.enters_independent_model === false)));
+    assert.equal(FREE_SOURCE_CATALOG.some((s) => /mock/i.test(s.source_id)), false);
   });
 
   it("fail-closed identity does not bind Villa", async () => {
@@ -174,14 +268,7 @@ describe("always-on free acquisition engine", () => {
       nowIso: "2026-09-11T12:00:00.000Z",
       cwd,
       persistNeon: false,
-      fixtures: {
-        clubeloCsv: CLUBELO_FIXTURE_CSV,
-        openligaJson: OPENLIGA_FIXTURE,
-        theSportsDbJson: THESPORTSDB_FIXTURE,
-        statsbombJson: STATSBOMB_FIXTURE,
-        footballDataCoUkCsv: FDOUK_FIXTURE,
-        rssXml: RSS_FIXTURE,
-      },
+      fixtures: CYCLE_FIXTURES,
       fetchImpl: async () => new Response("", { status: 401 }),
       labEvents: [
         {
@@ -209,10 +296,9 @@ describe("always-on free acquisition engine", () => {
       persistNeon: false,
       maxRetries: 0,
       fixtures: {
-        clubeloCsv: CLUBELO_FIXTURE_CSV,
-        statsbombJson: STATSBOMB_FIXTURE,
-        footballDataCoUkCsv: FDOUK_FIXTURE,
-        rssXml: RSS_FIXTURE,
+        ...CYCLE_FIXTURES,
+        openligaJson: undefined,
+        theSportsDbJson: undefined,
       },
       fetchImpl: async (url) => {
         calls += 1;
@@ -249,11 +335,8 @@ describe("always-on free acquisition engine", () => {
       persistNeon: false,
       maxRetries: 2,
       fixtures: {
-        clubeloCsv: CLUBELO_FIXTURE_CSV,
-        theSportsDbJson: THESPORTSDB_FIXTURE,
-        statsbombJson: STATSBOMB_FIXTURE,
-        footballDataCoUkCsv: FDOUK_FIXTURE,
-        rssXml: RSS_FIXTURE,
+        ...CYCLE_FIXTURES,
+        openligaJson: undefined,
       },
       fetchImpl: async (url) => {
         const href = String(url);
@@ -294,15 +377,87 @@ describe("always-on free acquisition engine", () => {
   });
 
   it("registers real free sources in catalogue (not mock)", () => {
-    for (const id of ["clubelo", "openligadb", "thesportsdb", "statsbomb", "football-data-org"]) {
+    for (const id of ["clubelo", "openligadb", "thesportsdb", "statsbomb", "football-data-org", "espn", "openfootball", "bbc-sport"]) {
       const cat = catalogueById(id);
       assert.ok(cat, id);
       assert.notEqual(cat!.adapter, "MISSING_ADAPTER");
-      assert.equal(cat!.market_layer, false);
     }
+    assert.equal(catalogueById("the-odds-api")!.market_layer, true);
     assert.ok(FREE_SOURCE_CATALOG.every((s) => s.license_class !== "unknown"));
+    assert.ok(FREE_SOURCE_CATALOG.every((s) => !/mock/i.test(s.source_id)));
     assert.equal(parseOpenLigaMatches(OPENLIGA_FIXTURE).length, 2);
     assert.equal(parseTheSportsDbEvents(THESPORTSDB_FIXTURE).length, 1);
     assert.equal(parseStatsBombCompetitions(STATSBOMB_FIXTURE).length, 2);
+    assert.equal(parseEspnScoreboard(ESPN_FIXTURE, "eng.1").length, 1);
+    assert.equal(parseOpenFootballPack(OPENFOOTBALL_FIXTURE).matches.length, 2);
+  });
+
+  it("parses The Odds API 1X2 as market-only and never invents a missing leg", () => {
+    const events = parseOddsApiEvents(JSON.parse(ODDS_API_FIXTURE));
+    assert.equal(events.length, 1);
+    assert.equal(events[0]?.homePrice, 1.85);
+    assert.equal(events[0]?.drawPrice, 3.6);
+    assert.equal(events[0]?.awayPrice, 4.2);
+    const incomplete = parseOddsApiEvents([{ home_team: "A", away_team: "B", bookmakers: [] }]);
+    assert.equal(incomplete[0]?.homePrice ?? null, null);
+    const af = parseApiFootballOdds({
+      response: [
+        {
+          fixture: { id: 1 },
+          bookmakers: [
+            {
+              name: "Bwin",
+              bets: [
+                {
+                  name: "Match Winner",
+                  values: [
+                    { value: "Home", odd: "2.10" },
+                    { value: "Draw", odd: "3.20" },
+                    { value: "Away", odd: "3.50" },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    });
+    assert.equal(af[0]?.homePrice, 2.1);
+    assert.equal(af[0]?.bookmaker, "Bwin");
+  });
+
+  it("attaches football-data.co.uk Bet365 1X2 as MARKET records, not model features", async () => {
+    const cwd = tmpCwd();
+    const labBRoot = join(cwd, "lab-b");
+    const result = await runAcquisitionEngineCycle({
+      nowIso: "2026-09-11T12:00:00.000Z",
+      cwd,
+      persistNeon: false,
+      persistLabB: true,
+      labBRoot,
+      fixtures: CYCLE_FIXTURES,
+      fetchImpl: async () => new Response("no", { status: 401 }),
+      labEvents: [
+        {
+          event_id: "e-liv-bou",
+          home: "Liverpool",
+          away: "Bournemouth",
+          kickoff_utc: "2025-08-09T14:00:00.000Z",
+        },
+      ],
+    });
+    const fd = result.lanes.find((l) => l.source_id === "football-data-co-uk")!;
+    const market = fd.records.find((r) => r.feature_key === "fdouk_event_market_1x2");
+    assert.ok(market);
+    assert.equal(market!.enters_independent_model, false);
+    assert.equal(market!.kind, "market");
+    assert.equal(market!.value, 1.4);
+    assert.match(fd.reason, /odds_columns_ignored/);
+    const quotesPath = join(labBRoot, "quotes.jsonl");
+    assert.equal(existsSync(quotesPath), true);
+    const quotes = readFileSync(quotesPath, "utf8");
+    assert.match(quotes, /"selection":"HOME"/);
+    assert.match(quotes, /"price":1\.4/);
+    assert.match(quotes, /e-liv-bou/);
   });
 });

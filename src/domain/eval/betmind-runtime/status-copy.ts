@@ -57,9 +57,11 @@ export function operationalStatusIt(raw: string | null | undefined): string {
       return "Parziale / attenzionata";
     case "BLOCKED":
       return "Bloccata (HTTP/WAF) — nessun bypass";
+    case "AUTH_REQUIRED":
+      return "Autenticazione richiesta — nessun dato inventato";
     case "NO_EVENT":
     case "NO_DATA":
-      return "Nessun evento associato";
+      return "Nessun dato utilizzabile / nessun evento associato";
     case "MISSING_ADAPTER":
       return "Adapter assente";
     case "UNAVAILABLE":

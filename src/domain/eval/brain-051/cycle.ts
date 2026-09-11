@@ -183,9 +183,19 @@ export async function runBrainCycle051(input: {
       const { runAcquisitionEngineCycle } = await import(
         "@/domain/eval/acquisition-engine/engine"
       );
+      const store = loadStore044(labB);
       const acq = await runAcquisitionEngineCycle({
         nowIso,
         persistNeon: Boolean(process.env.DATABASE_URL),
+        persistLabB: true,
+        labBRoot: labB,
+        labEvents: store.events.slice(-80).map((e) => ({
+          event_id: e.event_id,
+          home: e.home_or_a,
+          away: e.away_or_b,
+          kickoff_utc: e.kickoff_utc,
+          competition: e.competition,
+        })),
       });
       appendActivity051(
         labB,

@@ -1,12 +1,13 @@
 /**
- * OpenLigaDB — free German football API. No key. Continue-on-fail.
+ * OpenLigaDB — free German football API. No key. Continue-on-fail per league.
  */
 import { mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { acquisitionGet } from "@/domain/eval/acquisition-engine/http";
 import { emptyLane } from "@/domain/eval/acquisition-engine/blocked-audit";
 import { matchEventPair, pickUniqueTeam } from "@/domain/eval/data-intelligence/research/identity-match";
-import { ensureAcquisitionDataSource } from "@/domain/eval/acquisition-engine/persist";
+import { registerAcquisitionSource } from "@/domain/eval/acquisition-engine/persist";
+import { OPENLIGA_LEAGUES, openLigaMatchUrl } from "@/domain/eval/acquisition-engine/catalog";
 import type {
   AcquisitionCycleInput,
   AcquisitionRecord,
@@ -52,56 +53,59 @@ export async function runOpenLigaDbLane(input: {
   labEvents?: AcquisitionCycleInput["labEvents"];
   maxRetries?: number;
 }): Promise<SourceLaneResult> {
-  let text = input.jsonText;
-  let http = 200;
-  let retries = 0;
-  let url = input.url;
+  const cacheDir = join(input.cwd, "data", "acquisition", "openligadb");
+  mkdirSync(cacheDir, { recursive: true });
 
-  if (text == null) {
-    const got = await acquisitionGet({
-      url: input.url,
-      sourceId: "openligadb",
-      minIntervalMs: 1_000,
-      fetchImpl: input.fetchImpl,
-      maxRetries: input.maxRetries,
-    });
-    text = got.text;
-    http = got.status;
-    retries = got.retries;
-    url = got.url;
-    if (!got.ok) {
-      return emptyLane({
-        source_id: "openligadb",
+  const byLeague: Array<{ shortcut: string; matches: OpenLigaMatch[]; url: string; http: number }> = [];
+  let retries = 0;
+  let lastHttp = 200;
+  let lastUrl = input.url;
+  let lastError: string | null = null;
+
+  if (input.jsonText != null) {
+    const matches = parseOpenLigaMatches(input.jsonText);
+    writeFileSync(join(cacheDir, "bl1.json"), input.jsonText, "utf8");
+    byLeague.push({ shortcut: "bl1", matches, url: input.url, http: 200 });
+  } else {
+    for (const league of OPENLIGA_LEAGUES) {
+      const url = openLigaMatchUrl(league.shortcut);
+      const got = await acquisitionGet({
         url,
-        status: http === 403 ? "BLOCKED" : http === 429 ? "RATE_LIMITED" : "NETWORK_ERROR",
-        http_status: http || null,
-        retries,
-        reason: got.error ?? `HTTP_${http}`,
-        reason_it:
-          http === 403
-            ? "OpenLigaDB ha restituito HTTP 403. Nessun dato utilizzato."
-            : `OpenLigaDB non disponibile (HTTP ${http || "?"}). Nessun dato inventato.`,
+        sourceId: "openligadb",
+        minIntervalMs: input.fetchImpl ? 0 : 1_000,
+        fetchImpl: input.fetchImpl,
+        maxRetries: input.maxRetries,
       });
+      retries += got.retries;
+      lastHttp = got.status;
+      lastUrl = got.url;
+      if (!got.ok) {
+        lastError = got.error ?? `HTTP_${got.status}`;
+        continue;
+      }
+      const matches = parseOpenLigaMatches(got.text);
+      if (!matches.length) continue;
+      writeFileSync(join(cacheDir, `${league.shortcut}.json`), got.text, "utf8");
+      byLeague.push({ shortcut: league.shortcut, matches, url: got.url, http: got.status });
     }
   }
 
-  const matches = parseOpenLigaMatches(text);
+  const matches = byLeague.flatMap((l) => l.matches);
+  const leagues = byLeague.filter((l) => l.matches.length > 0).map((l) => l.shortcut);
   if (!matches.length) {
     return emptyLane({
       source_id: "openligadb",
-      url,
-      status: "PARSE_ERROR",
-      http_status: http,
+      url: lastUrl,
+      status: lastHttp === 403 ? "BLOCKED" : lastHttp === 429 ? "RATE_LIMITED" : lastError ? "NETWORK_ERROR" : "PARSE_ERROR",
+      http_status: lastHttp || null,
       retries,
-      reason: "EMPTY_OR_INVALID_JSON",
-      reason_it: "OpenLigaDB ha risposto senza partite interpretabili. Nessun dato inventato.",
+      reason: lastError ?? "EMPTY_OR_INVALID_JSON",
+      reason_it:
+        lastHttp === 403
+          ? "OpenLigaDB ha restituito HTTP 403. Nessun dato utilizzato."
+          : "OpenLigaDB non ha restituito partite interpretabili. Nessun dato inventato.",
     });
   }
-
-  const cacheDir = join(input.cwd, "data", "acquisition", "openligadb");
-  mkdirSync(cacheDir, { recursive: true });
-  const cachePath = join(cacheDir, "bl1.json");
-  writeFileSync(cachePath, text, "utf8");
 
   const records: AcquisitionRecord[] = [
     {
@@ -120,9 +124,9 @@ export async function runOpenLigaDbLane(input: {
       feature_status: "CONTEXT",
       enters_independent_model: false,
       extraction_method: "openligadb_getmatchdata",
-      source_url: url,
+      source_url: lastUrl,
       identity_status: "UNBOUND",
-      reason_it: `${matches.length} partite Bundesliga lette da OpenLigaDB.`,
+      reason_it: `${matches.length} partite OpenLigaDB (${leagues.join(", ")}).`,
     },
   ];
 
@@ -154,7 +158,7 @@ export async function runOpenLigaDbLane(input: {
           feature_status: "NOT_ELIGIBLE",
           enters_independent_model: false,
           extraction_method: "openligadb_getmatchdata",
-          source_url: url,
+          source_url: lastUrl,
           identity_status: homePick.status,
           reason_it: homePick.reason_it,
         });
@@ -180,7 +184,7 @@ export async function runOpenLigaDbLane(input: {
       feature_status: finished ? "NOT_ELIGIBLE" : "CONTEXT",
       enters_independent_model: false,
       extraction_method: "openligadb_getmatchdata",
-      source_url: url,
+      source_url: lastUrl,
       identity_status: "EXACT",
       reason_it: finished
         ? "Risultato OpenLigaDB: available_at del risultato non dimostrato, escluso dal modello pre-match."
@@ -190,36 +194,27 @@ export async function runOpenLigaDbLane(input: {
 
   let neon = { source_registered: false, elo_stored: 0, features_stored: 0, reason: null as string | null };
   if (input.persistNeon) {
-    try {
-      const id = await ensureAcquisitionDataSource({
-        slug: "openligadb",
-        name: "OpenLigaDB",
-        licenseClass: "public_endpoint",
-      });
-      neon = {
-        source_registered: Boolean(id),
-        elo_stored: 0,
-        features_stored: 0,
-        reason: id ? null : "DATABASE_URL not set or insert failed",
-      };
-    } catch (e) {
-      neon.reason = e instanceof Error ? e.message : String(e);
-    }
+    neon = await registerAcquisitionSource({
+      slug: "openligadb",
+      name: "OpenLigaDB",
+      licenseClass: "public_endpoint",
+    });
   }
 
   return {
     source_id: "openligadb",
     ok: true,
     fetched: true,
-    status: "OK",
-    http_status: http,
-    url,
+    status: leagues.length > 1 ? "OK" : "OK",
+    http_status: lastHttp,
+    url: lastUrl,
     records,
     fields_extracted: [...new Set(records.map((r) => r.feature_key))],
-    reason: `matches=${matches.length}`,
-    reason_it: `OpenLigaDB: ${matches.length} partite Bundesliga lette. Identità fail-closed.`,
+    reason: `matches=${matches.length}; leagues=${leagues.join(",")}`,
+    reason_it: `OpenLigaDB: ${matches.length} partite (${leagues.join(", ")}). Identità fail-closed.`,
     retries,
-    cache_path: cachePath,
+    cache_path: join(cacheDir, `${leagues[0] ?? "bl1"}.json`),
     neon,
+    coverage: { leagues, sports: ["football"] },
   };
 }

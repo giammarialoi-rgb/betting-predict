@@ -15,6 +15,11 @@ import { waitForProviderSlot } from "@/ingest/rate-limit";
 export const ACQUISITION_USER_AGENT =
   "betmind-acquisition/1.0 (+ordinary GET; no WAF bypass; no captcha)";
 
+/** Injected fetch (tests) skips the production rate-limit sleep. Live fetch keeps the interval. */
+export function acquisitionInterval(ms: number, fetchImpl?: typeof fetch): number {
+  return fetchImpl ? 0 : ms;
+}
+
 export type AcquisitionHttpResult = {
   ok: boolean;
   status: number;

@@ -16,18 +16,35 @@ import { operationalStatusIt } from "@/domain/eval/betmind-runtime/status-copy";
 
 function sourceState(status: string | undefined): BmState {
   const s = String(status ?? "UNKNOWN").toUpperCase();
-  if (["ACTIVE", "ACTIVE_ASOF", "ONLINE", "OK"].includes(s)) return "ONLINE";
-  if (["FOUNDATION", "TEMPORALLY_CAUTIOUS", "PLAN_LIMITED", "RESEARCH_TEST", "CANDIDATE"].includes(s))
+  if (["ACTIVE", "ACTIVE_ASOF", "ONLINE", "OK", "SUCCESS"].includes(s)) return "ONLINE";
+  if (
+    [
+      "FOUNDATION",
+      "TEMPORALLY_CAUTIOUS",
+      "PLAN_LIMITED",
+      "RESEARCH_TEST",
+      "CANDIDATE",
+      "PARTIAL",
+      "AUTH_REQUIRED",
+      "RATE_LIMITED",
+    ].includes(s)
+  )
     return "DEGRADED";
-  if (["UNAVAILABLE", "DISABLED_BY_POLICY", "OFFLINE", "DISABLED"].includes(s)) return "OFFLINE";
+  if (["UNAVAILABLE", "DISABLED_BY_POLICY", "OFFLINE", "DISABLED", "BLOCKED", "NO_DATA", "NO_EVENT"].includes(s))
+    return "OFFLINE";
   return "UNKNOWN";
 }
 
 const PRIORITY_IDS = [
   "api-sports",
+  "api-football",
   "the-odds-api",
   "clubelo",
   "football-data-co-uk",
+  "football-data-org",
+  "openligadb",
+  "thesportsdb",
+  "espn",
   "open-meteo",
 ] as const;
 

@@ -6,7 +6,8 @@ import { join } from "node:path";
 import { acquisitionGet } from "@/domain/eval/acquisition-engine/http";
 import { emptyLane } from "@/domain/eval/acquisition-engine/blocked-audit";
 import { matchEventPair } from "@/domain/eval/data-intelligence/research/identity-match";
-import { ensureAcquisitionDataSource } from "@/domain/eval/acquisition-engine/persist";
+import { registerAcquisitionSource } from "@/domain/eval/acquisition-engine/persist";
+import { THESPORTSDB_LEAGUES, theSportsDbNextUrl } from "@/domain/eval/acquisition-engine/catalog";
 import type {
   AcquisitionCycleInput,
   AcquisitionRecord,
@@ -54,53 +55,56 @@ export async function runTheSportsDbLane(input: {
   labEvents?: AcquisitionCycleInput["labEvents"];
   maxRetries?: number;
 }): Promise<SourceLaneResult> {
-  let text = input.jsonText;
-  let http = 200;
-  let retries = 0;
-  let url = input.url;
+  const cacheDir = join(input.cwd, "data", "acquisition", "thesportsdb");
+  mkdirSync(cacheDir, { recursive: true });
 
-  if (text == null) {
-    const got = await acquisitionGet({
-      url: input.url,
-      sourceId: "thesportsdb",
-      minIntervalMs: 1_500,
-      fetchImpl: input.fetchImpl,
-      maxRetries: input.maxRetries,
-    });
-    text = got.text;
-    http = got.status;
-    retries = got.retries;
-    url = got.url;
-    if (!got.ok) {
-      return emptyLane({
-        source_id: "thesportsdb",
-        url,
-        status: http === 401 ? "AUTH_REQUIRED" : http === 403 ? "BLOCKED" : http === 429 ? "RATE_LIMITED" : "NETWORK_ERROR",
-        http_status: http || null,
-        retries,
-        reason: got.error ?? `HTTP_${http}`,
-        reason_it: `TheSportsDB non disponibile (HTTP ${http || "?"}). Nessun dato inventato.`,
+  const events: TheSportsDbEvent[] = [];
+  const leagues: string[] = [];
+  let retries = 0;
+  let http = 200;
+  let url = input.url;
+  let lastError: string | null = null;
+
+  if (input.jsonText != null) {
+    const parsed = parseTheSportsDbEvents(input.jsonText);
+    writeFileSync(join(cacheDir, "eventsnext-4328.json"), input.jsonText, "utf8");
+    events.push(...parsed);
+    if (parsed.length) leagues.push("4328");
+  } else {
+    for (const league of THESPORTSDB_LEAGUES) {
+      const got = await acquisitionGet({
+        url: theSportsDbNextUrl(league.id),
+        sourceId: "thesportsdb",
+        minIntervalMs: input.fetchImpl ? 0 : 1_500,
+        fetchImpl: input.fetchImpl,
+        maxRetries: input.maxRetries,
       });
+      retries += got.retries;
+      http = got.status;
+      url = got.url;
+      if (!got.ok) {
+        lastError = got.error ?? `HTTP_${got.status}`;
+        continue;
+      }
+      const parsed = parseTheSportsDbEvents(got.text);
+      if (!parsed.length) continue;
+      writeFileSync(join(cacheDir, `eventsnext-${league.id}.json`), got.text, "utf8");
+      events.push(...parsed);
+      leagues.push(league.id);
     }
   }
 
-  const events = parseTheSportsDbEvents(text);
   if (!events.length) {
     return emptyLane({
       source_id: "thesportsdb",
       url,
-      status: "NO_DATA",
-      http_status: http,
+      status: http === 401 ? "AUTH_REQUIRED" : http === 403 ? "BLOCKED" : http === 429 ? "RATE_LIMITED" : lastError ? "NETWORK_ERROR" : "NO_DATA",
+      http_status: http || null,
       retries,
-      reason: "EMPTY_EVENTS",
+      reason: lastError ?? "EMPTY_EVENTS",
       reason_it: "TheSportsDB non ha restituito eventi. Nessun dato inventato.",
     });
   }
-
-  const cacheDir = join(input.cwd, "data", "acquisition", "thesportsdb");
-  mkdirSync(cacheDir, { recursive: true });
-  const cachePath = join(cacheDir, "eventsnext-4328.json");
-  writeFileSync(cachePath, text, "utf8");
 
   const records: AcquisitionRecord[] = [
     {
@@ -121,7 +125,7 @@ export async function runTheSportsDbLane(input: {
       extraction_method: "thesportsdb_eventsnextleague",
       source_url: url,
       identity_status: "UNBOUND",
-      reason_it: `${events.length} eventi TheSportsDB (meta/stemmi).`,
+      reason_it: `${events.length} eventi TheSportsDB (${leagues.length} campionati).`,
     },
   ];
 
@@ -156,21 +160,11 @@ export async function runTheSportsDbLane(input: {
 
   let neon = { source_registered: false, elo_stored: 0, features_stored: 0, reason: null as string | null };
   if (input.persistNeon) {
-    try {
-      const id = await ensureAcquisitionDataSource({
-        slug: "thesportsdb",
-        name: "TheSportsDB",
-        licenseClass: "public_endpoint",
-      });
-      neon = {
-        source_registered: Boolean(id),
-        elo_stored: 0,
-        features_stored: 0,
-        reason: id ? null : "DATABASE_URL not set or insert failed",
-      };
-    } catch (e) {
-      neon.reason = e instanceof Error ? e.message : String(e);
-    }
+    neon = await registerAcquisitionSource({
+      slug: "thesportsdb",
+      name: "TheSportsDB",
+      licenseClass: "public_endpoint",
+    });
   }
 
   return {
@@ -182,10 +176,11 @@ export async function runTheSportsDbLane(input: {
     url,
     records,
     fields_extracted: [...new Set(records.map((r) => r.feature_key))],
-    reason: `events=${events.length}`,
-    reason_it: `TheSportsDB: ${events.length} eventi in calendario. Solo meta/contesto.`,
+    reason: `events=${events.length}; leagues=${leagues.join(",")}`,
+    reason_it: `TheSportsDB: ${events.length} eventi in ${leagues.length} campionati. Solo meta/contesto.`,
     retries,
-    cache_path: cachePath,
+    cache_path: join(cacheDir, `eventsnext-${leagues[0] ?? "4328"}.json`),
     neon,
+    coverage: { leagues, sports: ["football"] },
   };
 }

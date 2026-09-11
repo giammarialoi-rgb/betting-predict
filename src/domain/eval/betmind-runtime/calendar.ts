@@ -15,6 +15,11 @@ import {
   compareMarketProbability,
   indexLatestCompleteBook1x2,
 } from "@/domain/eval/betmind-runtime/compare-odds";
+import {
+  loadCachedMarketCandidates,
+  quoteSlotFromBook,
+  resolveCompareBook,
+} from "@/domain/eval/betmind-runtime/market-attach";
 
 export type CalendarBucket =
   | "DISCOVERED"
@@ -88,6 +93,8 @@ export function listCalendarEvents(input: {
   to?: string | null;
   sport?: string | null;
   nowMs?: number;
+  /** Acquisition cache root (football-data.co.uk / ESPN). Defaults to process.cwd(). */
+  cwd?: string;
 }): { day: string | null; total: number; events: CalendarEventRow[] } {
   const events = readJsonlAllSmall(join(input.root, "events.jsonl"), 8_000_000);
   const predTail = readJsonlTail(join(input.root, "predictions.jsonl"), 20_000);
@@ -102,6 +109,7 @@ export function listCalendarEvents(input: {
   }
   const quoteTail = readJsonlTail(join(input.root, "quotes.jsonl"), 30_000);
   const bookByEvent = indexLatestCompleteBook1x2(quoteTail as Array<Record<string, unknown>>);
+  const marketCandidates = loadCachedMarketCandidates(input.cwd ?? process.cwd());
   const queue = loadResearchQueue(input.root);
   const qBy = new Map(queue.items.map((i) => [i.event_id, i]));
 
@@ -147,7 +155,16 @@ export function listCalendarEvents(input: {
       independent && pred?.probability_model && typeof pred.probability_model === "object"
         ? (pred.probability_model as Record<string, number>)
         : null;
-    const book = bookByEvent.get(id) ?? null;
+    const resolved = resolveCompareBook({
+      quotesBook: bookByEvent.get(id) ?? null,
+      home,
+      away,
+      kickoff_utc: kickoff,
+      calendar_day: day,
+      candidates: marketCandidates,
+    });
+    const book = resolved?.book ?? null;
+    const slot = quoteSlotFromBook(book, resolved?.source ?? null);
     const probability_market = compareMarketProbability(pred?.probability_market);
     const marketPct =
       probability_market?.HOME != null ? probability_market.HOME * 100 : null;
@@ -171,13 +188,15 @@ export function listCalendarEvents(input: {
       edge: null,
       ev: null,
       odds: null,
-      odds_home: book?.odds_home ?? null,
-      odds_draw: book?.odds_draw ?? null,
-      odds_away: book?.odds_away ?? null,
-      bookmaker: book?.bookmaker ?? null,
-      odds_market: book ? "1X2" : null,
-      odds_collected_at: book?.collected_at_utc ?? null,
-      odds_compare_only: true,
+      odds_home: slot.odds_home,
+      odds_draw: slot.odds_draw,
+      odds_away: slot.odds_away,
+      bookmaker: slot.bookmaker,
+      odds_market: slot.odds_market,
+      odds_collected_at: slot.odds_collected_at,
+      odds_compare_only: slot.odds_compare_only,
+      odds_source: slot.odds_source,
+      odds_status: slot.odds_status,
       probability_market,
       decision: independent ? "MODEL_INFERENCE" : calendar_bucket,
       stake: 0,
