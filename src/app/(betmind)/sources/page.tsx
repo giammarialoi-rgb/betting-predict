@@ -34,19 +34,21 @@ function sourceDot(status: string | undefined): BmState {
 const PRIORITY_IDS = [
   "espn",
   "openfootball",
+  "openligadb",
+  "thesportsdb",
   "bbc-sport",
   "guardian-football",
   "gazzetta",
   "ansa",
-  "openligadb",
-  "thesportsdb",
+  "sky-sports",
+  "espn-soccer-news",
+  "corriere-sport",
+  "tuttosport",
   "football-data-co-uk",
-  "football-data-org",
-  "clubelo",
-  "api-football",
-  "api-sports",
-  "the-odds-api",
+  "understat",
   "open-meteo",
+  "statsbomb",
+  "club-football-match-data",
 ] as const;
 
 export default function SourcesPage() {
@@ -80,10 +82,9 @@ export default function SourcesPage() {
           <div className="bm-section-label">Dati</div>
           <h1 className="mt-1 text-2xl font-bold">Fonti</h1>
           <p className="bm-prose-muted mt-2 max-w-xl">
-            Elenco leggibile delle fonti che BetMind consulta. Lo stato è onesto:
-            OK, nessun dato, autenticazione richiesta, bloccata, oppure errore di rete.
-            ESPN, OpenFootball, BBC Sport, The Guardian e Gazzetta sono nel registro.
-            Nessun bypass di WAF o CAPTCHA.
+            Elenco leggibile delle fonti che BetMind consulta. Solo fonti cablate e raggiungibili:
+            OK, parziale, non raggiungibile, oppure nessuna info su questa partita.
+            Nessun adapter mancante, nessuno stub di policy, nessun bypass di WAF o CAPTCHA.
           </p>
         </div>
         <SnapshotBadge updating={updating} />

@@ -234,3 +234,32 @@ export function matchEventPair(
 export function namesMatch(a: string, b: string): boolean {
   return namesEqual(a, b);
 }
+
+/**
+ * Same home/away pair may appear in several cache files. Keep fail-closed:
+ * with a kickoff day, only that DATE_ONLY slice; without kickoff, only when
+ * every hit shares one calendar day (duplicates of the same fixture are OK).
+ */
+export function pickUniqueDatedPair<T>(
+  hits: readonly T[],
+  dateOf: (hit: T) => string | null | undefined,
+  kickoffIso?: string | null,
+): T | null {
+  if (!hits.length) return null;
+  const day = kickoffIso ? String(kickoffIso).slice(0, 10) : null;
+  const dated = day
+    ? hits.filter((h) => {
+        const d = dateOf(h);
+        return Boolean(d && String(d).slice(0, 10) === day);
+      })
+    : [...hits];
+  if (!dated.length) return null;
+  const days = new Set(
+    dated.map((h) => {
+      const d = dateOf(h);
+      return d ? String(d).slice(0, 10) : "unknown";
+    }),
+  );
+  if (!day && days.size > 1) return null;
+  return dated[0] ?? null;
+}

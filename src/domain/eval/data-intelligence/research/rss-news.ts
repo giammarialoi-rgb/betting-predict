@@ -2,7 +2,17 @@
  * Public sports RSS — CONTEXT only when BOTH teams appear in the same item.
  * Never invents injuries/lineups from headlines. 403/WAF = BLOCKED.
  */
-export type RssSourceId = "ansa" | "sky-sport" | "bbc-sport" | "guardian-football" | "gazzetta";
+import { identityKey, isCollisionStem } from "@/domain/eval/data-intelligence/research/identity-normalize";
+
+export type RssSourceId =
+  | "ansa"
+  | "bbc-sport"
+  | "guardian-football"
+  | "gazzetta"
+  | "sky-sports"
+  | "espn-soccer-news"
+  | "corriere-sport"
+  | "tuttosport";
 
 export type RssItem = {
   title: string;
@@ -25,31 +35,26 @@ export type RssMatch = {
 
 export const RSS_FEEDS: Record<RssSourceId, string> = {
   ansa: "https://www.ansa.it/sito/notizie/sport/calcio/calcio_rss.xml",
-  "sky-sport": "https://www.sky.it/sport/calcio/rss.xml",
   "bbc-sport": "https://feeds.bbci.co.uk/sport/football/rss.xml",
   "guardian-football": "https://www.theguardian.com/football/rss",
   gazzetta: "https://www.gazzetta.it/rss/calcio.xml",
+  "sky-sports": "https://www.skysports.com/rss/12040",
+  "espn-soccer-news": "https://www.espn.com/espn/rss/soccer/news",
+  "corriere-sport": "https://www.corrieredellosport.it/rss/calcio",
+  tuttosport: "https://www.tuttosport.com/rss/calcio.xml",
 };
 
-const RSS_FALLBACK: Partial<Record<RssSourceId, string[]>> = {
-  "sky-sport": [
-    "https://sport.sky.it/rss/calcio.xml",
-    "https://feeds.sky.it/sport/rss.xml",
-  ],
-};
+const RSS_FALLBACK: Partial<Record<RssSourceId, string[]>> = {};
 
 const cache = new Map<RssSourceId, { at: number; items: RssItem[]; http: number | null; error: string | null }>();
 const CACHE_MS = 5 * 60 * 1000;
 
 function significantTokens(name: string): string[] {
-  return name
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .replace(/\b(fc|afc|cf|sc|club|as|ss|ac|ud|us)\b/g, " ")
-    .split(/[^a-z0-9]+/)
+  const key = identityKey(name);
+  return key
+    .split(" ")
     .filter((t) => t.length >= 4)
-    .filter((t) => t !== "villa" && t !== "united" && t !== "city" && t !== "real" && t !== "sporting");
+    .filter((t) => !isCollisionStem(t));
 }
 
 export function rssItemMentionsBoth(text: string, home: string, away: string): boolean {

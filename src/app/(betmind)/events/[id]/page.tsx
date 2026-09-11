@@ -536,26 +536,22 @@ export default function EventDetailPage() {
                       <span className="font-medium">{r.title}</span>
                       <span className="text-xs bm-muted">
                         {r.human_status === "SUCCESS"
-                          ? "dati ottenuti"
+                          ? "ha restituito dati"
                           : r.human_status === "PARTIAL"
-                            ? "dati parziali"
-                        : r.human_status === "BLOCKED"
-                          ? r.http_status === 403
-                            ? "accesso negato (403)"
-                            : "bloccata"
-                          : r.human_status === "MISSING_ADAPTER"
-                            ? "adapter mancante"
-                            : r.human_status === "DISABLED_BY_POLICY"
-                              ? "disabilitata per policy"
-                              : r.human_status === "NO_DATA"
-                                ? "nessun dato"
-                                : r.human_status === "NO_EVENT"
-                                  ? "partita non trovata"
-                                : r.human_status === "POST_KICKOFF"
-                                  ? "dopo kickoff (esclusa)"
-                                : r.human_status === "HTTP_ERROR"
-                                  ? `errore HTTP ${r.http_status ?? ""}`
-                                  : r.human_status.toLowerCase()}
+                            ? "parziale"
+                        : r.human_status === "BLOCKED" || r.human_status === "HTTP_ERROR"
+                          ? "non raggiungibile"
+                          : r.human_status === "NO_DATA" || r.human_status === "NO_EVENT"
+                            ? "nessuna info su questa partita"
+                          : r.human_status === "AUTH_REQUIRED"
+                            ? "autenticazione richiesta"
+                          : r.human_status === "RATE_LIMITED"
+                            ? "limite di richieste"
+                          : r.human_status === "POST_KICKOFF"
+                            ? "dopo kickoff (esclusa)"
+                          : r.human_status === "PARSE_ERROR"
+                            ? "risposta non interpretabile"
+                          : "nessuna info su questa partita"}
                       </span>
                     </div>
                     <p className="text-xs bm-muted">

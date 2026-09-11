@@ -130,6 +130,7 @@ export async function runAcquisitionJob(
           persistNeon,
           jsonText: fixtures.openFootballJson,
           fetchImpl: input.fetchImpl,
+          labEvents: input.labEvents,
           maxRetries: input.maxRetries,
         });
       case "api-football":

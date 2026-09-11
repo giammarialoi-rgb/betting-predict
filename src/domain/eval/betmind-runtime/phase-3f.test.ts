@@ -149,6 +149,14 @@ describe("Phase 3F explanation never hallucinates", () => {
           fields_extracted: [],
         },
         {
+          source_id: "tennis-abstract",
+          ok: false,
+          fetched: false,
+          phase: "MISSING_ADAPTER",
+          adapter_kind: "MISSING_ADAPTER",
+          fields_extracted: [],
+        },
+        {
           source_id: "football-data-co-uk",
           ok: true,
           fetched: true,
@@ -170,8 +178,11 @@ describe("Phase 3F explanation never hallucinates", () => {
     });
     const blob = `${hx.analyzed} ${hx.why.join(" ")} ${hx.used.join(" ")}`;
     assert.equal(/l'xG indica|xg indica/i.test(blob), false);
-    assert.equal(/ha analizzato SofaScore/i.test(hx.sources_summary + hx.missing.join(" ")), false);
-    assert.ok(hx.missing.some((m) => /403|SofaScore/i.test(m)));
+    assert.equal(summary.source_rows.some((r) => r.source_id === "sofascore"), false);
+    assert.equal(summary.source_rows.some((r) => r.source_id === "tennis-abstract"), false);
+    assert.equal(summary.sources_missing_adapter, 0);
+    assert.equal(/adapter mancante|Adapter non implementato/i.test(hx.sources_summary), false);
+    assert.equal(/SofaScore|Tennis Abstract/i.test(hx.sources_summary + hx.missing.join(" ")), false);
     assert.ok(hx.used.some((u) => /Gol segnati da Aston Villa/.test(u)));
     assert.ok(hx.odds_sentence.includes("non sono entrate"));
     assert.ok(hx.facts_used.includes("odds_entered_model=false"));

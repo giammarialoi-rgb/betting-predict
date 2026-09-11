@@ -1,7 +1,8 @@
 /**
- * Configured research source catalogue — honest adapter inventory.
- * Never pretend a scrape succeeded; missing production fetches are POLICY_DENIED or TEST_PROBE.
+ * Active product research catalogue — wired sources only.
+ * Policy stubs, WAF sites, and tennis dead ends are not consulted on Fonti.
  */
+import { isActiveFontiSource } from "@/domain/eval/acquisition-engine/active-fonti";
 
 export type SourceAdapterKind =
   | "PRODUCTION_ADAPTER"
@@ -22,390 +23,90 @@ export type CatalogueSource = {
   market_layer: boolean;
 };
 
+function src(
+  source_id: string,
+  title: string,
+  notes: string,
+  extra?: Partial<CatalogueSource>,
+): CatalogueSource {
+  return {
+    source_id,
+    title,
+    sport: extra?.sport ?? "SOCCER",
+    adapter: extra?.adapter ?? "PRODUCTION_ADAPTER",
+    url: extra?.url ?? null,
+    notes,
+    market_layer: extra?.market_layer ?? false,
+  };
+}
+
 /**
- * Full catalogue from project + Phase 3D request.
- * Adapters that exist today are marked; remaining catalogue rows are POLICY_DENIED or TEST_PROBE.
+ * Fonti / explain catalogue. Every row is a wired adapter. Zero MISSING_ADAPTER.
  */
 export const RESEARCH_SOURCE_CATALOGUE: CatalogueSource[] = [
-  {
-    source_id: "api-sports",
-    title: "API-Sports",
-    sport: "SOCCER",
-    adapter: "PRODUCTION_ADAPTER",
-    url: "https://v3.football.api-sports.io/",
-    notes: "Fixture resolver by date+teams; injuries/lineups/referee when fixture id is known. Never invents IDs.",
-    market_layer: false,
-  },
-  {
-    source_id: "api-football",
-    title: "API-Football",
-    sport: "SOCCER",
-    adapter: "PRODUCTION_ADAPTER",
-    url: "https://v3.football.api-sports.io/",
-    notes: "Same free-tier as API-Sports. AUTH_REQUIRED without API_SPORTS_KEY / API_FOOTBALL_KEY. Budget 100/day.",
-    market_layer: false,
-  },
-  {
-    source_id: "open-meteo",
-    title: "Open-Meteo",
+  src("openligadb", "OpenLigaDB", "Free API (BL1/2/3, DFB, Frauen-BL, UCL, Swiss SL, La Liga, PL). Identity fail-closed.", {
+    url: "https://api.openligadb.de/getmatchdata/bl1",
+  }),
+  src("espn", "ESPN Scoreboard (unofficial)", "Unofficial site JSON after a real 200. Cached. No CAPTCHA. CONTEXT fixtures.", {
     sport: "MULTI",
-    adapter: "PRODUCTION_ADAPTER",
-    url: "https://archive-api.open-meteo.com/",
-    notes: "CONTEXT weather; needs stadium coords",
-    market_layer: false,
-  },
-  {
-    source_id: "football-data-co-uk",
-    title: "Football-Data.co.uk",
-    sport: "SOCCER",
+    url: "https://site.api.espn.com/apis/site/v2/sports/soccer/eng.1/scoreboard",
+  }),
+  src("openfootball", "OpenFootball football.json", "Public GitHub season JSON. Historical DATE_ONLY. Not live. NOT_ELIGIBLE for independent model.", {
+    url: "https://github.com/openfootball/football.json",
+  }),
+  src("thesportsdb", "TheSportsDB", "Free test key 3 — EU5 plus NL/PT/Championship/Serie B. CONTEXT meta only.", {
+    url: "https://www.thesportsdb.com/api/v1/json/3/",
+  }),
+  src("statsbomb", "StatsBomb Open Data", "Historical open event/xG research. Not live. available_at unknown → NOT_ELIGIBLE.", {
+    url: "https://github.com/statsbomb/open-data",
+  }),
+  src("football-data-co-uk", "Football-Data.co.uk", "Local matches.jsonl / historical — DATE_ONLY. B365 1X2 is MARKET/UI only, never independent MODEL.", {
     adapter: "CACHE_ONLY",
     url: "https://www.football-data.co.uk/",
-    notes: "Local matches.jsonl / historical — DATE_ONLY. B365 1X2 is MARKET/UI only, never independent MODEL.",
-    market_layer: false,
-  },
-  {
-    source_id: "clubelo",
-    title: "ClubElo",
-    sport: "SOCCER",
-    adapter: "PRODUCTION_ADAPTER",
-    url: "http://api.clubelo.com/",
-    notes: "Public daily CSV (api.clubelo.com/YYYY-MM-DD) cached locally; rating From < kickoff",
-    market_layer: false,
-  },
-  {
-    source_id: "openligadb",
-    title: "OpenLigaDB",
-    sport: "SOCCER",
-    adapter: "PRODUCTION_ADAPTER",
-    url: "https://api.openligadb.de/getmatchdata/bl1",
-    notes: "Free German football API (Bundesliga, 2. Bundesliga, 3. Liga, DFB-Pokal). No key. Identity fail-closed.",
-    market_layer: false,
-  },
-  {
-    source_id: "thesportsdb",
-    title: "TheSportsDB",
-    sport: "SOCCER",
-    adapter: "PRODUCTION_ADAPTER",
-    url: "https://www.thesportsdb.com/api/v1/json/3/",
-    notes: "Free test key 3 — EPL, Serie A, La Liga, Bundesliga, Ligue 1. CONTEXT meta only.",
-    market_layer: false,
-  },
-  {
-    source_id: "espn",
-    title: "ESPN Scoreboard (unofficial)",
+  }),
+  src("ansa", "ANSA", "Public RSS — CONTEXT only if both teams appear in the same item; never invents injuries", {
     sport: "MULTI",
-    adapter: "PRODUCTION_ADAPTER",
-    url: "https://site.api.espn.com/apis/site/v2/sports/soccer/eng.1/scoreboard",
-    notes: "Unofficial/unstable site JSON after a real 200. Cached. No CAPTCHA. CONTEXT fixtures.",
-    market_layer: false,
-  },
-  {
-    source_id: "openfootball",
-    title: "OpenFootball football.json",
-    sport: "SOCCER",
-    adapter: "PRODUCTION_ADAPTER",
-    url: "https://github.com/openfootball/football.json",
-    notes: "Public GitHub season JSON. Historical DATE_ONLY. Not live. NOT_ELIGIBLE for independent model.",
-    market_layer: false,
-  },
-  {
-    source_id: "bbc-sport",
-    title: "BBC Sport Football RSS",
-    sport: "MULTI",
-    adapter: "PRODUCTION_ADAPTER",
-    url: "https://feeds.bbci.co.uk/sport/football/rss.xml",
-    notes: "Public RSS — CONTEXT only; never invents injuries",
-    market_layer: false,
-  },
-  {
-    source_id: "guardian-football",
-    title: "The Guardian Football RSS",
-    sport: "MULTI",
-    adapter: "PRODUCTION_ADAPTER",
-    url: "https://www.theguardian.com/football/rss",
-    notes: "Public RSS — CONTEXT only; never invents injuries",
-    market_layer: false,
-  },
-  {
-    source_id: "gazzetta",
-    title: "Gazzetta dello Sport RSS",
-    sport: "MULTI",
-    adapter: "PRODUCTION_ADAPTER",
-    url: "https://www.gazzetta.it/rss/calcio.xml",
-    notes: "Public RSS — CONTEXT only; never invents injuries",
-    market_layer: false,
-  },
-  {
-    source_id: "statsbomb",
-    title: "StatsBomb Open Data",
-    sport: "SOCCER",
-    adapter: "PRODUCTION_ADAPTER",
-    url: "https://github.com/statsbomb/open-data",
-    notes: "Historical open event/xG research. Not live. available_at unknown → NOT_ELIGIBLE.",
-    market_layer: false,
-  },
-  {
-    source_id: "football-data-org",
-    title: "football-data.org",
-    sport: "SOCCER",
-    adapter: "PRODUCTION_ADAPTER",
-    url: "https://api.football-data.org/v4",
-    notes: "Free tier with FOOTBALL_DATA_ORG_TOKEN. Rate-limited. AUTH_REQUIRED if token missing.",
-    market_layer: false,
-  },
-  {
-    source_id: "the-odds-api",
-    title: "The Odds API",
-    sport: "MULTI",
-    adapter: "PRODUCTION_ADAPTER",
-    url: "https://the-odds-api.com/",
-    notes: "MARKET compare only — NEVER independent MODEL input",
-    market_layer: true,
-  },
-  {
-    source_id: "fbref",
-    title: "FBref",
-    sport: "SOCCER",
-    adapter: "TEST_PROBE",
-    url: "https://fbref.com/en/",
-    notes: "Always-on event-page GET; CONTEXT only; 403 stays BLOCKED",
-    market_layer: false,
-  },
-  {
-    source_id: "understat",
-    title: "Understat",
-    sport: "SOCCER",
-    adapter: "PRODUCTION_ADAPTER",
-    url: "https://understat.com/",
-    notes:
-      "Public getLeagueData XHR (X-Requested-With); rolling L5 xG/xGA CONTEXT only; available_at unknown so not MODEL",
-    market_layer: false,
-  },
-  {
-    source_id: "uefa",
-    title: "UEFA",
-    sport: "SOCCER",
-    adapter: "TEST_PROBE",
-    url: "https://www.uefa.com/",
-    notes: "Always-on event search GET; CONTEXT only",
-    market_layer: false,
-  },
-  {
-    source_id: "sofascore",
-    title: "SofaScore",
-    sport: "MULTI",
-    adapter: "TEST_PROBE",
-    url: "https://www.sofascore.com/",
-    notes: "Always-on event search GET; 403 stays BLOCKED; no WAF bypass",
-    market_layer: false,
-  },
-  {
-    source_id: "directa",
-    title: "Diretta",
-    sport: "MULTI",
-    adapter: "TEST_PROBE",
-    url: "https://www.diretta.it/",
-    notes: "Always-on event search GET; 403 stays BLOCKED; no WAF bypass",
-    market_layer: false,
-  },
-  {
-    source_id: "flashscore",
-    title: "Flashscore",
-    sport: "MULTI",
-    adapter: "TEST_PROBE",
-    url: "https://www.flashscore.com/",
-    notes: "Always-on event search GET; 403 stays BLOCKED; no WAF bypass",
-    market_layer: false,
-  },
-  {
-    source_id: "soccerway",
-    title: "Soccerway",
-    sport: "SOCCER",
-    adapter: "TEST_PROBE",
-    url: "https://int.soccerway.com/",
-    notes: "Always-on event search GET; 403 stays BLOCKED; no WAF bypass",
-    market_layer: false,
-  },
-  {
-    source_id: "soccervista",
-    title: "SoccerVista",
-    sport: "SOCCER",
-    adapter: "TEST_PROBE",
-    url: "https://www.soccervista.com/",
-    notes: "Always-on event search GET; CONTEXT only; 403 stays BLOCKED",
-    market_layer: false,
-  },
-  {
-    source_id: "soccervital",
-    title: "SoccerVital",
-    sport: "SOCCER",
-    adapter: "TEST_PROBE",
-    url: "https://www.soccervital.com/",
-    notes: "Always-on event search GET; CONTEXT only; 403 stays BLOCKED",
-    market_layer: false,
-  },
-  {
-    source_id: "oddspedia",
-    title: "Oddspedia",
-    sport: "MULTI",
-    adapter: "POLICY_DENIED",
-    url: "https://oddspedia.com/",
-    notes: "Acquisition-engine policy stub — no public odds API; MARKET/UI only if a licensed feed appears; no scrape",
-    market_layer: true,
-  },
-  {
-    source_id: "betshoot",
-    title: "Betshoot",
-    sport: "MULTI",
-    adapter: "POLICY_DENIED",
-    url: "https://www.betshoot.com/",
-    notes: "Acquisition-engine policy stub — no public unauthenticated API; no scrape",
-    market_layer: false,
-  },
-  {
-    source_id: "click4soccer",
-    title: "Click4Soccer",
-    sport: "SOCCER",
-    adapter: "POLICY_DENIED",
-    url: "https://www.click4soccer.com/",
-    notes: "Acquisition-engine policy stub — no public unauthenticated API; no scrape",
-    market_layer: false,
-  },
-  {
-    source_id: "sky-sport",
-    title: "Sky Sport",
-    sport: "MULTI",
-    adapter: "PRODUCTION_ADAPTER",
-    url: "https://sport.sky.it/rss/calcio.xml",
-    notes: "No official public RSS found (HTTP 404 on /rss/calcio.xml). No homepage scrape. CONTEXT only if a public feed appears.",
-    market_layer: false,
-  },
-  {
-    source_id: "ansa",
-    title: "ANSA",
-    sport: "MULTI",
-    adapter: "PRODUCTION_ADAPTER",
     url: "https://www.ansa.it/sito/notizie/sport/calcio/calcio_rss.xml",
-    notes: "Public RSS — CONTEXT only if both teams appear in the same item; never invents injuries",
-    market_layer: false,
-  },
-  {
-    source_id: "analysisportiva",
-    title: "AnalysisPortiva",
-    sport: "SOCCER",
-    adapter: "POLICY_DENIED",
-    url: null,
-    notes: "Acquisition-engine policy stub — no public unauthenticated API; no scrape",
-    market_layer: false,
-  },
-  {
-    source_id: "sportytrader",
-    title: "SportyTrader",
+  }),
+  src("bbc-sport", "BBC Sport Football RSS", "Public RSS — CONTEXT only; never invents injuries", {
     sport: "MULTI",
-    adapter: "POLICY_DENIED",
-    url: "https://www.sportytrader.com/",
-    notes: "Acquisition-engine policy stub — tips/odds site; no public API; no scrape",
-    market_layer: true,
-  },
-  {
-    source_id: "ilveggente",
-    title: "IlVeggente",
-    sport: "SOCCER",
-    adapter: "POLICY_DENIED",
-    url: null,
-    notes: "Acquisition-engine policy stub — no public unauthenticated API; no scrape",
-    market_layer: false,
-  },
-  {
-    source_id: "opta",
-    title: "Opta",
-    sport: "SOCCER",
-    adapter: "POLICY_DENIED",
-    url: "https://www.statsperform.com/",
-    notes: "Commercial — AUTH_REQUIRED stub; no licensed token in lab; none invented",
-    market_layer: false,
-  },
-  {
-    source_id: "soccer-association",
-    title: "Soccer Association",
-    sport: "SOCCER",
-    adapter: "POLICY_DENIED",
-    url: null,
-    notes: "Acquisition-engine policy stub — no public unauthenticated API; no scrape",
-    market_layer: false,
-  },
-  {
-    source_id: "cies",
-    title: "CIES Football Observatory",
-    sport: "SOCCER",
-    adapter: "POLICY_DENIED",
-    url: "https://football-observatory.com/",
-    notes: "Acquisition-engine policy stub — no public machine API; no PDF scrape",
-    market_layer: false,
-  },
-  {
-    source_id: "whoscored",
-    title: "WhoScored",
-    sport: "SOCCER",
-    adapter: "TEST_PROBE",
-    url: "https://www.whoscored.com/",
-    notes: "Always-on event search GET; CONTEXT only; 403 stays BLOCKED; no WAF bypass",
-    market_layer: false,
-  },
-  {
-    source_id: "the-athletic",
-    title: "The Athletic",
+    url: "https://feeds.bbci.co.uk/sport/football/rss.xml",
+  }),
+  src("guardian-football", "The Guardian Football RSS", "Public RSS — CONTEXT only; never invents injuries", {
     sport: "MULTI",
-    adapter: "POLICY_DENIED",
-    url: "https://www.nytimes.com/athletic/",
-    notes: "Paywalled — AUTH_REQUIRED stub; no scrape/bypass",
-    market_layer: false,
-  },
-  {
-    source_id: "the-analyst",
-    title: "The Analyst",
-    sport: "SOCCER",
-    adapter: "TEST_PROBE",
-    url: "https://theanalyst.com/",
-    notes: "Always-on event search GET; CONTEXT only; 403 stays BLOCKED",
-    market_layer: false,
-  },
-  {
-    source_id: "abseits",
-    title: "Abseits",
-    sport: "SOCCER",
-    adapter: "TEST_PROBE",
-    url: "https://www.abseits.at/",
-    notes: "Always-on event search GET; CONTEXT only; 403 stays BLOCKED",
-    market_layer: false,
-  },
-  {
-    source_id: "club-football-match-data",
-    title: "Club-Football-Match-Data",
-    sport: "SOCCER",
+    url: "https://www.theguardian.com/football/rss",
+  }),
+  src("gazzetta", "Gazzetta dello Sport RSS", "Public RSS — CONTEXT only; never invents injuries", {
+    sport: "MULTI",
+    url: "https://www.gazzetta.it/rss/calcio.xml",
+  }),
+  src("sky-sports", "Sky Sports Football RSS", "Public Sky Sports UK football RSS. CONTEXT only. Italian Sky Sport feed is 404 and not listed.", {
+    sport: "MULTI",
+    url: "https://www.skysports.com/rss/12040",
+  }),
+  src("espn-soccer-news", "ESPN Soccer News RSS", "Public ESPN soccer news RSS. CONTEXT only; never invents injuries", {
+    sport: "MULTI",
+    url: "https://www.espn.com/espn/rss/soccer/news",
+  }),
+  src("corriere-sport", "Corriere dello Sport RSS", "Public Corriere dello Sport calcio RSS. CONTEXT only.", {
+    sport: "MULTI",
+    url: "https://www.corrieredellosport.it/rss/calcio",
+  }),
+  src("tuttosport", "Tuttosport RSS", "Public Tuttosport calcio RSS. CONTEXT only.", {
+    sport: "MULTI",
+    url: "https://www.tuttosport.com/rss/calcio.xml",
+  }),
+  src("understat", "Understat", "Public getLeagueData XHR (X-Requested-With); rolling L5 xG/xGA CONTEXT only; available_at unknown so not MODEL", {
+    url: "https://understat.com/",
+  }),
+  src("open-meteo", "Open-Meteo", "CONTEXT weather; needs stadium coords", {
+    sport: "MULTI",
+    url: "https://archive-api.open-meteo.com/",
+  }),
+  src("club-football-match-data", "Club-Football-Match-Data", "Local GitHub clone / CSV when present — research dataset", {
     adapter: "CACHE_ONLY",
-    url: null,
-    notes: "Local GitHub clone / CSV when present — research dataset",
-    market_layer: false,
-  },
-  {
-    source_id: "tennis-explorer",
-    title: "Tennis Explorer",
-    sport: "TENNIS",
-    adapter: "POLICY_DENIED",
-    url: "https://www.tennisexplorer.com/",
-    notes: "Acquisition-engine policy stub — no public unauthenticated API; no scrape",
-    market_layer: false,
-  },
-  {
-    source_id: "tennis-abstract",
-    title: "Tennis Abstract",
-    sport: "TENNIS",
-    adapter: "POLICY_DENIED",
-    url: "https://www.tennisabstract.com/",
-    notes: "Acquisition-engine policy stub — no wired public dataset in this engine; no scrape",
-    market_layer: false,
-  },
+    url: "https://github.com/xgabora/Club-Football-Match-Data",
+  }),
 ];
 
 export function catalogueById(id: string): CatalogueSource | undefined {
@@ -414,4 +115,8 @@ export function catalogueById(id: string): CatalogueSource | undefined {
 
 export function catalogueAdapterKind(sourceId: string): SourceAdapterKind | null {
   return catalogueById(sourceId)?.adapter ?? null;
+}
+
+export function isConsultedFontiSource(sourceId: string): boolean {
+  return isActiveFontiSource(sourceId) && Boolean(catalogueById(sourceId));
 }

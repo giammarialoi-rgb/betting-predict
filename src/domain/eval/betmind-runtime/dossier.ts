@@ -22,6 +22,7 @@ import { computeDataQualityScore, type DataQualityResult } from "@/domain/eval/d
 import { detectConflicts, type FeatureConflict } from "@/domain/eval/data-intelligence/research/conflict-engine";
 import { loadResearchObservationsForEvent } from "@/domain/eval/data-intelligence/research/observations-store";
 import { catalogueAdapterKind } from "@/domain/eval/data-intelligence/research/source-catalogue";
+import { isPrunedFontiSource } from "@/domain/eval/acquisition-engine/active-fonti";
 import {
   publishUnderstatXgObservations,
   researchObservationsFromDossierFeatures,
@@ -386,11 +387,18 @@ export function buildAnalysisDossier(
   }
   const consulted = research.filter(
     (r) =>
-      r.fetched === true ||
-      r.phase === "OK" ||
-      r.phase === "BLOCKED" ||
-      (r.adapter_kind === "CACHE_ONLY" && r.parser_status != null) ||
-      (r.adapter_kind === "PRODUCTION_ADAPTER" && r.fetched === true),
+      !isPrunedFontiSource(r.source_id) &&
+      r.phase !== "MISSING_ADAPTER" &&
+      r.phase !== "DENIED" &&
+      r.adapter_kind !== "MISSING_ADAPTER" &&
+      r.adapter_kind !== "POLICY_DENIED" &&
+      (
+        r.fetched === true ||
+        r.phase === "OK" ||
+        r.phase === "BLOCKED" ||
+        (r.adapter_kind === "CACHE_ONLY" && r.parser_status != null) ||
+        (r.adapter_kind === "PRODUCTION_ADAPTER" && r.fetched === true)
+      ),
   );
   const catalogueNoted = research.filter(
     (r) => r.phase === "MISSING_ADAPTER" || r.phase === "DENIED",

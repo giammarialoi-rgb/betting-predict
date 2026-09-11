@@ -74,7 +74,7 @@ export function summarizeObservations(
       eventsHist.add(o.event_id);
     } else if (o.status === "CONTEXT" || o.kind === "CONTEXT") {
       context += 1;
-      if (o.source === "open-meteo" || o.source === "ansa" || o.source === "sky-sport") {
+      if (o.source === "open-meteo" || o.source === "ansa" || o.source === "sky-sports") {
         real_event += 1;
         eventsReal.add(o.event_id);
       }

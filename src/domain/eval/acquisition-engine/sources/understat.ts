@@ -38,50 +38,80 @@ export async function runUnderstatLane(input: {
   maxRetries?: number;
 }): Promise<SourceLaneResult> {
   const year = understatSeasonYear(input.nowIso);
-  const league = UNDERSTAT_LEAGUES[0]!;
-  const dataUrl = understatLeagueDataUrl(league.slug, year);
-  const pageUrl = understatLeaguePageUrl(league.slug, year);
+  const years = [year, year - 1];
 
   let text = input.jsonText;
   let http = 200;
   let retries = 0;
-  let url = input.url || dataUrl;
+  let url = input.url;
+  let usedYear = year;
+  let usedLeague = UNDERSTAT_LEAGUES[0]!;
+  const leaguesHit: string[] = [];
+  const allMatches: UnderstatMatch[] = [];
 
   if (text == null) {
-    const got = await acquisitionGet({
-      url: dataUrl,
-      sourceId: "understat",
-      minIntervalMs: input.fetchImpl ? 0 : 2_000,
-      headers: {
-        Accept: "application/json, text/javascript, */*; q=0.01",
-        "X-Requested-With": "XMLHttpRequest",
-        Referer: pageUrl,
-      },
-      fetchImpl: input.fetchImpl,
-      maxRetries: input.maxRetries,
-    });
-    text = got.text;
-    http = got.status;
-    retries = got.retries;
-    url = got.url;
-    if (!got.ok) {
-      const blocked = http === 403 || http === 401;
+    for (const league of UNDERSTAT_LEAGUES) {
+      for (const tryYear of years) {
+        const dataUrl = understatLeagueDataUrl(league.slug, tryYear);
+        const pageUrl = understatLeaguePageUrl(league.slug, tryYear);
+        const got = await acquisitionGet({
+          url: dataUrl,
+          sourceId: "understat",
+          minIntervalMs: input.fetchImpl ? 0 : 2_000,
+          headers: {
+            Accept: "application/json, text/javascript, */*; q=0.01",
+            "X-Requested-With": "XMLHttpRequest",
+            Referer: pageUrl,
+          },
+          fetchImpl: input.fetchImpl,
+          maxRetries: input.maxRetries,
+        });
+        retries += got.retries;
+        http = got.status;
+        url = got.url;
+        if (!got.ok) {
+          if (http === 403 || http === 401) {
+            return emptyLane({
+              source_id: "understat",
+              url,
+              status: "BLOCKED",
+              http_status: http,
+              retries,
+              reason: got.error ?? `HTTP_${http}`,
+              reason_it: "Understat ha restituito HTTP 403. Nessun bypass. Nessun xG inventato.",
+            });
+          }
+          continue;
+        }
+        const parsed = parseUnderstatLeagueJson(got.text);
+        if (!parsed.length) continue;
+        text = got.text;
+        usedYear = tryYear;
+        usedLeague = league;
+        leaguesHit.push(`${league.slug}:${tryYear}`);
+        allMatches.push(...parsed);
+        const cacheDirEarly = join(input.cwd, "data", "acquisition", "understat");
+        mkdirSync(cacheDirEarly, { recursive: true });
+        writeFileSync(join(cacheDirEarly, `${league.slug}-${tryYear}.json`), got.text, "utf8");
+        break;
+      }
+    }
+    if (!allMatches.length) {
       return emptyLane({
         source_id: "understat",
         url,
-        status: http === 429 ? "RATE_LIMITED" : blocked ? "BLOCKED" : "NETWORK_ERROR",
+        status: http === 429 ? "RATE_LIMITED" : http >= 400 ? "NETWORK_ERROR" : "PARSE_ERROR",
         http_status: http || null,
         retries,
-        reason: got.error ?? `HTTP_${http}`,
-        reason_it:
-          http === 403
-            ? "Understat ha restituito HTTP 403. Nessun bypass. Nessun xG inventato."
-            : `Understat getLeagueData non disponibile (HTTP ${http || "?"}). Nessun xG inventato.`,
+        reason: `HTTP_${http}`,
+        reason_it: `Understat getLeagueData non disponibile (HTTP ${http || "?"}). Nessun xG inventato.`,
       });
     }
+  } else {
+    allMatches.push(...parseUnderstatLeagueJson(text));
   }
 
-  const matches = parseUnderstatLeagueJson(text);
+  const matches = allMatches;
   if (!matches.length) {
     return emptyLane({
       source_id: "understat",
@@ -96,8 +126,8 @@ export async function runUnderstatLane(input: {
 
   const cacheDir = join(input.cwd, "data", "acquisition", "understat");
   mkdirSync(cacheDir, { recursive: true });
-  const cachePath = join(cacheDir, `${league.slug}-${year}.json`);
-  writeFileSync(cachePath, text, "utf8");
+  const cachePath = join(cacheDir, `${usedLeague.slug}-${usedYear}.json`);
+  if (text) writeFileSync(cachePath, text, "utf8");
 
   const records: AcquisitionRecord[] = [
     {
@@ -118,7 +148,7 @@ export async function runUnderstatLane(input: {
       extraction_method: "understat_getLeagueData",
       source_url: url,
       identity_status: "UNBOUND",
-      reason_it: `${matches.length} partite Understat (${league.label} ${year}). available_at sconosciuto; solo contesto, non modello.`,
+      reason_it: `${matches.length} partite Understat (${leaguesHit.join(", ") || `${usedLeague.label} ${usedYear}`}). available_at sconosciuto; solo contesto, non modello.`,
     },
   ];
 
@@ -194,8 +224,8 @@ export async function runUnderstatLane(input: {
     url,
     records,
     fields_extracted: [...new Set(records.map((r) => r.feature_key))],
-    reason: `matches=${matches.length}; league=${league.slug}; year=${year}; NOT_ELIGIBLE available_at unknown`,
-    reason_it: `Understat getLeagueData ${league.label}: ${matches.length} partite. available_at sconosciuto; non entra nel modello indipendente.`,
+    reason: `matches=${matches.length}; leagues=${leaguesHit.join(",") || usedLeague.slug}; year=${usedYear}; NOT_ELIGIBLE available_at unknown`,
+    reason_it: `Understat getLeagueData: ${matches.length} partite (${leaguesHit.join(", ") || usedLeague.label}). available_at sconosciuto; non entra nel modello indipendente.`,
     retries,
     cache_path: cachePath,
     neon,
