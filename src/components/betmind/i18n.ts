@@ -25,6 +25,7 @@ export const it = {
 
   nav_home: "Home",
   nav_events: "Eventi",
+  nav_analyzed: "Analizzati",
   nav_live: "Live",
   nav_learn: "Apprendimento",
   nav_sources: "Fonti",
@@ -176,6 +177,7 @@ const en: BmMessages = {
   unknown: "UNKNOWN",
   nav_home: "Home",
   nav_events: "Events",
+  nav_analyzed: "Analyzed",
   nav_live: "Live",
   nav_learn: "Learn",
   nav_sources: "Sources",

@@ -43,6 +43,7 @@
 # Free acquisition engine caches (ClubElo CSV, OpenLigaDB JSON, …)
 /data/clubelo/*.csv
 /data/acquisition/
+/data/light-analysis/
 /artifacts/acquisition-engine/
 
 # debug

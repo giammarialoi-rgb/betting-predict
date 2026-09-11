@@ -8,6 +8,8 @@ import {
   loadBoardEventNeon,
   loadDossierNeon,
 } from "@/domain/eval/betmind-runtime/dossier";
+import { loadEventAnalyses } from "@/domain/eval/light-analysis/list";
+import type { LightAnalysis } from "@/domain/eval/light-analysis/types";
 
 export const dynamic = "force-dynamic";
 
@@ -95,12 +97,16 @@ export async function GET(_req: Request, ctx: { params: Promise<{ id: string }> 
   const pi = piRoot(root);
   const storePresent = existsSync(join(root, "events.jsonl"));
 
+  const lightBundle = await loadEventAnalyses(id);
+
   if (!storePresent) {
     const remote = await loadDossierNeon(id);
     if (remote) {
       return NextResponse.json({
         ...legacyShapeFromDossier(remote),
         dossier: remote,
+        light_analysis: lightBundle.light,
+        analysis_modes: analysisModesPayload(lightBundle.light, Boolean(remote.independent_model.probability)),
         mirror_source: "neon",
         api_calls_ui: 0 as const,
         real_money: false as const,
@@ -109,6 +115,17 @@ export async function GET(_req: Request, ctx: { params: Promise<{ id: string }> 
 
     // Board row alone is not a dossier — do not invent HDA/features/lineage.
     const board = await loadBoardEventNeon(id);
+    if (lightBundle.light) {
+      return NextResponse.json({
+        ...legacyShapeFromLight(lightBundle.light, board),
+        light_analysis: lightBundle.light,
+        analysis_modes: analysisModesPayload(lightBundle.light, lightBundle.strong_available),
+        dossier: null,
+        mirror_source: board ? "neon_board_light" : "light",
+        api_calls_ui: 0 as const,
+        real_money: false as const,
+      });
+    }
     if (board) {
       const label = String(board.label ?? "");
       const [homeGuess, awayGuess] = label.includes(" vs ")
@@ -124,6 +141,7 @@ export async function GET(_req: Request, ctx: { params: Promise<{ id: string }> 
             lab_b_disk: false,
             board_event: true,
             analysis_dossier: false,
+            light_analysis: false,
           },
           missing: ["betmind_analysis_dossiers.payload"],
           board_summary: {
@@ -150,13 +168,14 @@ export async function GET(_req: Request, ctx: { params: Promise<{ id: string }> 
         error: "not_found",
         event_id: id,
         reason:
-          "NO DATA AVAILABLE — Lab B assente, nessun dossier su Neon, nessun board event",
+          "NO DATA AVAILABLE — Lab B assente, nessun dossier su Neon, nessun board event, nessuna analisi light",
         present: {
           lab_b_disk: false,
           board_event: false,
           analysis_dossier: false,
+          light_analysis: false,
         },
-        missing: ["betmind_analysis_dossiers", "betmind_board_events"],
+        missing: ["betmind_analysis_dossiers", "betmind_board_events", "betmind_light_analyses"],
       },
       { status: 404 },
     );
@@ -342,11 +361,67 @@ export async function GET(_req: Request, ctx: { params: Promise<{ id: string }> 
       pred?.model_version ?? decision?.model_version ?? dossier?.cycle.model_version ?? "N/A",
     ),
     dossier,
+    light_analysis: lightBundle.light,
+    analysis_modes: analysisModesPayload(
+      lightBundle.light,
+      Boolean(dossier?.independent_model.probability) || lightBundle.strong_available,
+    ),
     finished,
     mirror_source: "local_disk",
     api_calls_ui: 0 as const,
     real_money: false as const,
   });
+}
+
+function analysisModesPayload(light: LightAnalysis | null, strongAvailable: boolean) {
+  return {
+    light: {
+      label_it: "Analisi light",
+      available: Boolean(light && light.markets.some((m) => m.status === "OK")),
+    },
+    strong: {
+      label_it: "Analisi forte",
+      available: strongAvailable,
+      unavailable_it: strongAvailable
+        ? null
+        : (light?.strong_unavailable_it ??
+          "Analisi forte non disponibile: i gate del modello indipendente restano invariati."),
+    },
+  };
+}
+
+function legacyShapeFromLight(
+  light: LightAnalysis,
+  board: Record<string, unknown> | null,
+) {
+  const label = String(board?.label ?? "");
+  const [homeGuess, awayGuess] = label.includes(" vs ")
+    ? label.split(" vs ").map((s) => s.trim())
+    : [light.home, light.away];
+  return {
+    event: {
+      event_id: light.event_id,
+      sport: light.sport,
+      competition: light.competition ?? String(board?.competition ?? "N/A"),
+      home_or_a: light.home || homeGuess || "N/A",
+      away_or_b: light.away || awayGuess || "N/A",
+      kickoff_utc: light.kickoff_utc ?? (board?.kickoff_utc as string | null) ?? null,
+      semantic_level: "N/A",
+      status: light.status ?? String(board?.status ?? "N/A"),
+    },
+    predictions: [],
+    settlement: null,
+    autopsies: [],
+    structured_explanation: { WHY_SELECTED: [], WHY_NOT_SELECTED: [], FINAL: "N/A", WHY_NO_BET: null },
+    why_buckets: {},
+    decision_048: null,
+    learning_case: null,
+    post_match: null,
+    autopsy_ui: null,
+    lock: null,
+    model_version: null,
+    finished: false,
+  };
 }
 
 function legacyShapeFromDossier(d: NonNullable<ReturnType<typeof buildAnalysisDossier>>) {

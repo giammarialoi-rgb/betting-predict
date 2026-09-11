@@ -11,6 +11,7 @@ import {
   sportBucket,
 } from "@/components/betmind/ui";
 import { EventCard } from "@/components/betmind/EventCard";
+import { RefreshEventsButton } from "@/components/betmind/RefreshEventsButton";
 import { useBetMindData } from "@/components/betmind/DataProvider";
 import { bucketLabelIt, formatAgeIt } from "@/domain/eval/betmind-runtime/status-copy";
 
@@ -92,6 +93,8 @@ function EventsInner() {
   const obs = asRecord(data?.observatory);
   const analysis = asRecord((data as { analysis?: unknown } | null)?.analysis) ?? asRecord(obs?.analysis);
   const [calendar, setCalendar] = useState<{ total: number; events: Ev[]; note?: string; source?: string; stale?: boolean } | null>(null);
+  const [refreshNote, setRefreshNote] = useState<string | null>(null);
+  const [refreshErr, setRefreshErr] = useState<string | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -208,11 +211,26 @@ function EventsInner() {
             </Link>
           </div>
         </div>
-        <div className="flex items-center gap-2 text-xs">
-          <SnapshotBadge updating={updating} />
-          <span className="bm-muted">{lastUpdate ? new Date(lastUpdate).toLocaleTimeString("it-IT") : "—"}</span>
+        <div className="flex flex-col items-end gap-2">
+          <div className="flex items-center gap-2 text-xs">
+            <SnapshotBadge updating={updating} />
+            <span className="bm-muted">{lastUpdate ? new Date(lastUpdate).toLocaleTimeString("it-IT") : "—"}</span>
+          </div>
+          <RefreshEventsButton
+            onProgress={(msg, err) => {
+              setRefreshNote(msg);
+              setRefreshErr(err);
+            }}
+          />
         </div>
       </div>
+
+      {(refreshNote || refreshErr) && (
+        <Card>
+          {refreshNote ? <p className="text-sm">{refreshNote}</p> : null}
+          {refreshErr ? <p className="text-sm text-[var(--bm-danger)]">{refreshErr}</p> : null}
+        </Card>
+      )}
 
       {error && (
         <Card className="border-[rgba(255,77,77,0.4)]">
