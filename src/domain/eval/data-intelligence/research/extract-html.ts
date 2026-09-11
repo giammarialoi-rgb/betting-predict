@@ -3,6 +3,8 @@
  * Homepage HTTP 200 is never SUCCESS. Typed numbers require EVENT_MATCHED.
  * No WAF/CAPTCHA bypass. Odds keys are never extracted into model fields.
  */
+import { identityKey, isCollisionStem } from "@/domain/eval/data-intelligence/research/identity-normalize";
+
 export type EventMatchKind =
   | "EVENT_MATCHED"
   | "NO_EVENT"
@@ -55,9 +57,12 @@ function teamTokens(name: string): string[] {
 }
 
 function mentionsTeam(hay: string, name: string): boolean {
+  const key = identityKey(name);
+  if (isCollisionStem(key)) return false;
   const h = norm(hay);
-  if (h.includes(norm(name)) && norm(name).length >= 4) return true;
-  const toks = teamTokens(name);
+  const n = norm(name);
+  if (h.includes(n) && n.length >= 4) return true;
+  const toks = teamTokens(name).filter((t) => !isCollisionStem(t));
   if (toks.length === 0) return false;
   return toks.every((t) => h.includes(t));
 }

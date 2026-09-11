@@ -57,7 +57,9 @@ export function classifyHumanSourceStatus(row: ResearchLike): HumanSourceStatus 
     parser === "NO_EVENT" ||
     parser === "WRONG_EVENT" ||
     parser === "AMBIGUOUS_EVENT" ||
-    reason.includes("DOES NOT CONTAIN BOTH TEAM")
+    reason.includes("DOES NOT CONTAIN BOTH TEAM") ||
+    reason.includes("IDENTITY_SHORT_NAME") ||
+    reason.includes("IDENTITY_AMBIGUOUS")
   ) {
     return "NO_EVENT";
   }
@@ -188,12 +190,23 @@ export function sourceFailureReasonIt(row: ResearchLike): string {
     return `${sourceTitleIt(row.source_id)} ha un'osservazione disponibile solo dopo il calcio d'inizio. Esclusa dal modello pre-match.`;
   }
   if (status === "NO_EVENT") {
+    const reason = String(row.reason ?? "");
+    if (/IDENTITY_SHORT_NAME|IDENTITY_AMBIGUOUS/.test(reason)) {
+      return `${sourceTitleIt(row.source_id)}: identità ambigua o nome troppo corto (es. Villa). Nessun aggancio per evitare un club sbagliato.`;
+    }
+    if (/IDENTITY_NONE/.test(reason)) {
+      return `${sourceTitleIt(row.source_id)} non ha un abbinamento univoco per queste squadre. Nessun dato inventato.`;
+    }
     return `${sourceTitleIt(row.source_id)} non conteneva questa partita. Nessun dato utilizzato.`;
   }
   if (status === "PARSE_ERROR") {
     return `La risposta di ${sourceTitleIt(row.source_id)} non e stata interpretata.`;
   }
   if (status === "PARTIAL") {
+    const reason = String(row.reason ?? "");
+    if (/home_identity=NONE|away_identity=NONE|IDENTITY_NONE|home_n=0|away_n=0/.test(reason)) {
+      return `${sourceTitleIt(row.source_id)} ha priors parziali: una squadra non è stata abbinata in modo univoco. Nessun dato inventato.`;
+    }
     return `${sourceTitleIt(row.source_id)} ha restituito dati incompleti.`;
   }
   if (status === "AUTH_REQUIRED") {
