@@ -154,7 +154,7 @@ export async function insertFeatureObservation(input: {
   featureValueText?: string | null;
   featureValueJson?: unknown;
   observedAt: Date;
-  availableAt: Date;
+  availableAt: Date | null;
   sourceId?: string | null;
   temporalPrecision?: string;
   featureStatus: string;

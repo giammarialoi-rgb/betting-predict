@@ -11,6 +11,8 @@ import {
   researchUnderstatLeague,
   overlayUnderstatXgOnFeatureData,
 } from "@/domain/eval/data-intelligence/research/understat-league";
+import { catalogueAdapterKind } from "@/domain/eval/data-intelligence/research/source-catalogue";
+import { understatXgPersistRows } from "@/ingest/understat-feature-publish";
 import { classifyNewsText } from "@/domain/eval/data-intelligence/research/news-classify";
 import { computeDataQualityScore } from "@/domain/eval/data-intelligence/research/data-quality";
 import { isEligibleForIndependentModel, classifyModelInput } from "@/domain/eval/data-intelligence/research/model-input-policy";
@@ -212,6 +214,12 @@ describe("Phase 8 event intelligence", () => {
     assert.equal(homeXg!.target_event_id, "test-villa-forest-xg");
     assert.ok(homeXg!.derived_from?.includes("excluded_target=true"));
     assert.ok(homeXg!.derived_from?.some((d) => d.startsWith("home_prior:")));
+    assert.equal(catalogueAdapterKind("understat"), "PRODUCTION_ADAPTER");
+    const persist = understatXgPersistRows(lane.observations);
+    assert.ok(persist.length >= 4);
+    assert.ok(persist.every((r) => r.availableAt === null));
+    assert.ok(persist.every((r) => r.featureStatus === "NOT_ELIGIBLE"));
+    assert.ok(persist.every((r) => r.featureValueJson.enters_independent_model === false));
   });
 
   it("overlays Understat xG into the feature bag without entering the independent model", () => {

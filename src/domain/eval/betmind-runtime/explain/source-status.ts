@@ -73,7 +73,13 @@ export function classifyHumanSourceStatus(row: ResearchLike): HumanSourceStatus 
     return "NO_DATA";
   }
   if (row.ok === true && row.fetched === true && fields.length > 0) {
-    if (parser === "CACHE_PRESENT" || parser === "MARKET_LAYER" || parser === "OK" || parser === "CACHE_ONLY") {
+    if (
+      parser === "CACHE_PRESENT" ||
+      parser === "MARKET_LAYER" ||
+      parser === "OK" ||
+      parser === "CACHE_ONLY" ||
+      parser === "SUCCESS"
+    ) {
       return "SUCCESS";
     }
     return "PARTIAL";

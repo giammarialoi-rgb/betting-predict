@@ -50,7 +50,7 @@ const MODE: Record<string, SourceRegistryEntry["mode"]> = {
   "api-sports": "CACHE",
   "open-meteo": "API",
   fbref: "SCRAPE",
-  understat: "SCRAPE",
+  understat: "API",
   sofascore: "SCRAPE",
   uefa: "HTML",
   directa: "SCRAPE",

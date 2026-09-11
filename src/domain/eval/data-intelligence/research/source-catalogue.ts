@@ -85,9 +85,10 @@ export const RESEARCH_SOURCE_CATALOGUE: CatalogueSource[] = [
     source_id: "understat",
     title: "Understat",
     sport: "SOCCER",
-    adapter: "TEST_PROBE",
+    adapter: "PRODUCTION_ADAPTER",
     url: "https://understat.com/",
-    notes: "Always-on event search GET; CONTEXT only; no event URL without fixture id",
+    notes:
+      "Public getLeagueData XHR (X-Requested-With); rolling L5 xG/xGA CONTEXT only; available_at unknown so not MODEL",
     market_layer: false,
   },
   {
@@ -319,4 +320,8 @@ export const RESEARCH_SOURCE_CATALOGUE: CatalogueSource[] = [
 
 export function catalogueById(id: string): CatalogueSource | undefined {
   return RESEARCH_SOURCE_CATALOGUE.find((s) => s.source_id === id);
+}
+
+export function catalogueAdapterKind(sourceId: string): SourceAdapterKind | null {
+  return catalogueById(sourceId)?.adapter ?? null;
 }

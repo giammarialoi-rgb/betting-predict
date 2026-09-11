@@ -83,16 +83,30 @@ describe("Phase 3F source taxonomy", () => {
     );
     assert.equal(
       classifyHumanSourceStatus({
-        source_id: "understat",
+        source_id: "fbref",
         ok: true,
         fetched: true,
         phase: "OK",
         http_status: 200,
         adapter_kind: "TEST_PROBE",
-        fields_extracted: ["understat_xg_hint"],
+        fields_extracted: ["page_mentions_both_teams"],
         reason: "SITE_PROBE (homepage, not match page)",
       }),
       "PARTIAL",
+    );
+    assert.equal(
+      classifyHumanSourceStatus({
+        source_id: "understat",
+        ok: true,
+        fetched: true,
+        phase: "OK",
+        http_status: 200,
+        adapter_kind: "PRODUCTION_ADAPTER",
+        parser_status: "SUCCESS",
+        fields_extracted: ["home_xg_l5", "away_xg_l5", "home_xg_prematch"],
+        reason: "Prior xG only (excluded_target=true). source=getLeagueData",
+      }),
+      "SUCCESS",
     );
   });
 });
