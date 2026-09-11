@@ -39,6 +39,20 @@ function decimalOdds(raw: string | undefined): number | null {
   return Number.isFinite(n) && n > 1 ? n : null;
 }
 
+/** football-data.co.uk Date is DATE_ONLY (DD/MM/YYYY or DD/MM/YY). Never treat as exact kickoff. */
+export function parseFdoukDate(raw: string | null | undefined): string | null {
+  if (!raw) return null;
+  const m = String(raw)
+    .trim()
+    .match(/^(\d{1,2})\/(\d{1,2})\/(\d{2}|\d{4})$/);
+  if (!m) return null;
+  const dd = m[1]!.padStart(2, "0");
+  const mm = m[2]!.padStart(2, "0");
+  let yyyy = m[3]!;
+  if (yyyy.length === 2) yyyy = Number(yyyy) >= 70 ? `19${yyyy}` : `20${yyyy}`;
+  return `${yyyy}-${mm}-${dd}`;
+}
+
 export function parseFdoukRows(csvText: string, divisionHint = ""): FdoukResultRow[] {
   const table = parseCsv(csvText);
   const out: FdoukResultRow[] = [];

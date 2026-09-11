@@ -135,6 +135,7 @@ export async function runAcquisitionJob(
           persistLabB,
           labBRoot,
           jsonText: fixtures.apiFootballJson,
+          oddsJson: fixtures.apiFootballOddsJson,
           fetchImpl: input.fetchImpl,
           labEvents: input.labEvents,
         });

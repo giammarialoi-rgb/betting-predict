@@ -123,6 +123,7 @@ export type AcquisitionFixtures = {
   espnJson?: string;
   openFootballJson?: string;
   apiFootballJson?: string;
+  apiFootballOddsJson?: string;
   oddsApiJson?: string;
 };
 

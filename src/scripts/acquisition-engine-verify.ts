@@ -8,7 +8,12 @@ import { config } from "dotenv";
 import { mkdirSync, writeFileSync, existsSync } from "node:fs";
 import { join } from "node:path";
 import { runAcquisitionEngineCycle } from "@/domain/eval/acquisition-engine/engine";
+import { labEventsForAcquisition } from "@/domain/eval/acquisition-engine/lab-events";
 import { FREE_SOURCE_CATALOG, BLOCKED_PROTECTED_SOURCES } from "@/domain/eval/acquisition-engine/catalog";
+import { listCalendarEvents, todayCalendarDay } from "@/domain/eval/betmind-runtime/calendar";
+import { summarizeMarketAttach } from "@/domain/eval/betmind-runtime/market-attach";
+import { localLabStorePresent } from "@/domain/eval/betmind-runtime/production-mirror";
+import { permanentRoot044 } from "@/domain/eval/permanent-044/config";
 
 config({ path: ".env.local" });
 config({ path: ".env" });
@@ -17,11 +22,52 @@ async function main() {
   const nowIso = new Date().toISOString();
   const cwd = process.cwd();
   const persistNeon = Boolean(process.env.DATABASE_URL);
+  const lab = labEventsForAcquisition();
   const result = await runAcquisitionEngineCycle({
     nowIso,
     cwd,
     persistNeon,
+    ...lab,
   });
+
+  const labBRoot = permanentRoot044();
+  const today = todayCalendarDay(nowIso);
+  const calendar = localLabStorePresent(labBRoot)
+    ? listCalendarEvents({ root: labBRoot, from: today, sport: "ALL", cwd })
+    : { day: today, total: 0, events: [] };
+  const oddsAttach = summarizeMarketAttach({
+    events: calendar.events.map((e) => ({
+      event_id: String(e.event_id),
+      home: e.home_or_a != null ? String(e.home_or_a) : null,
+      away: e.away_or_b != null ? String(e.away_or_b) : null,
+      kickoff_utc: e.kickoff_utc != null ? String(e.kickoff_utc) : null,
+      odds_home: typeof e.odds_home === "number" ? e.odds_home : null,
+      odds_draw: typeof e.odds_draw === "number" ? e.odds_draw : null,
+      odds_away: typeof e.odds_away === "number" ? e.odds_away : null,
+    })),
+  });
+  const sampleAttached = calendar.events
+    .filter((e) => e.odds_status === "BOOK")
+    .slice(0, 8)
+    .map((e) => ({
+      event_id: e.event_id,
+      label: e.label,
+      bookmaker: e.bookmaker,
+      odds_home: e.odds_home,
+      odds_draw: e.odds_draw,
+      odds_away: e.odds_away,
+      odds_source: e.odds_source,
+      odds_compare_only: e.odds_compare_only,
+    }));
+  const sampleMissing = calendar.events
+    .filter((e) => e.odds_status !== "BOOK")
+    .slice(0, 8)
+    .map((e) => ({
+      event_id: e.event_id,
+      label: e.label,
+      odds_status: "MISSING",
+      note: "Quote non disponibili. Niente di inventato.",
+    }));
 
   const clubeloCsv = join(cwd, "data", "clubelo", `${nowIso.slice(0, 10)}.csv`);
   const report = {
@@ -41,6 +87,12 @@ async function main() {
         }
       : { note: "DATABASE_URL not set — disk cache only. Set DATABASE_URL to register data_sources." },
     coverage: result.coverage,
+    odds_ui: {
+      note: "Compare-only book 1X2 on calendar/board. Never MODEL. Missing stays honest — no mock prices.",
+      ...oddsAttach,
+      sample_attached: sampleAttached,
+      sample_missing: sampleMissing,
+    },
     rate_limits: FREE_SOURCE_CATALOG.map((s) => ({
       source_id: s.source_id,
       min_interval_ms: s.rate_limit_ms,

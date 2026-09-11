@@ -6,6 +6,12 @@ import { existsSync, readFileSync, statSync, openSync, readSync, closeSync } fro
 import { join } from "node:path";
 import { expectedValue056, fairOdds056, mirrorsMarket056 } from "@/domain/eval/audit-056/math";
 import { parseExactUtcMs } from "@/domain/eval/prospective-036/clocks";
+import { indexLatestCompleteBook1x2 } from "@/domain/eval/betmind-runtime/compare-odds";
+import {
+  loadCachedMarketCandidates,
+  quoteSlotFromBook,
+  resolveCompareBook,
+} from "@/domain/eval/betmind-runtime/market-attach";
 
 function readJsonIfExists(path: string): Record<string, unknown> | null {
   if (!existsSync(path)) return null;
@@ -102,8 +108,13 @@ export function classifyBoardEvent(row: BoardEventRow): EventBucket {
   return "UNAVAILABLE";
 }
 
-/** Lite next_events from decisions tail + events index — never loads full quotes streams. */
-export function buildLiteNextEvents(root: string, nowMs: number, limit = 120): BoardEventRow[] {
+/** Lite next_events from decisions + events. Quote slot is compare-only (quotes.jsonl / free cache). */
+export function buildLiteNextEvents(
+  root: string,
+  nowMs: number,
+  limit = 120,
+  cwd = process.cwd(),
+): BoardEventRow[] {
   const edgeUnknown = isModelEdgeUnknown(root);
 
   const events = readJsonlAllSmall(join(root, "events.jsonl"), 2_000_000);
@@ -121,6 +132,10 @@ export function buildLiteNextEvents(root: string, nowMs: number, limit = 120): B
     const id = String(r.event_id);
     if (!latest.has(id)) latest.set(id, r);
   }
+
+  const quoteTail = readJsonlTail(join(root, "quotes.jsonl"), 30_000);
+  const bookByEvent = indexLatestCompleteBook1x2(quoteTail as Array<Record<string, unknown>>);
+  const marketCandidates = loadCachedMarketCandidates(cwd);
 
   const predTail = readJsonlTail(join(root, "predictions.jsonl"), 800);
   const latestPred = new Map<string, Record<string, unknown>>();
@@ -177,12 +192,27 @@ export function buildLiteNextEvents(root: string, nowMs: number, limit = 120): B
           ? (d.fair_probability as number)
           : null;
     const marketP = typeof d.market_probability === "number" ? (d.market_probability as number) : null;
+    const resolved = resolveCompareBook({
+      quotesBook: bookByEvent.get(event_id) ?? null,
+      home: ev?.home_or_a != null ? String(ev.home_or_a) : null,
+      away: ev?.away_or_b != null ? String(ev.away_or_b) : null,
+      kickoff_utc: kickoff,
+      candidates: marketCandidates,
+    });
+    const slot = quoteSlotFromBook(resolved?.book ?? null, resolved?.source ?? null);
+    const selection = String(d.prediction ?? d.selection ?? "").toUpperCase();
+    const bookLeg =
+      resolved?.book == null
+        ? null
+        : selection === "HOME" || selection === "H" || selection === "1"
+          ? resolved.book.odds_home
+          : selection === "DRAW" || selection === "D" || selection === "X"
+            ? resolved.book.odds_draw
+            : selection === "AWAY" || selection === "A" || selection === "2"
+              ? resolved.book.odds_away
+              : null;
     const odds =
-      marketP != null && marketP > 0
-        ? Number((1 / marketP).toFixed(3))
-        : typeof d.odds === "number"
-          ? (d.odds as number)
-          : null;
+      typeof d.odds === "number" && d.odds > 1 ? (d.odds as number) : bookLeg != null && bookLeg > 1 ? bookLeg : null;
     const evNum = modelP != null && odds != null ? expectedValue056(modelP, odds) : null;
     const decision = String(d.decision ?? "N/A");
     const why = String(
@@ -209,7 +239,7 @@ export function buildLiteNextEvents(root: string, nowMs: number, limit = 120): B
       minutes_to_kickoff: minutes,
       near_t1h: minutes != null && minutes >= 0 && minutes <= 180,
       status: String(d.status ?? decision),
-      markets: d.market ? [String(d.market)] : [],
+      markets: [...new Set([...(d.market ? [String(d.market)] : []), ...(resolved?.book ? ["1X2"] : [])])],
       prediction_status: decision,
       lock_status: "N/A",
       selection: (d.prediction as string | null) ?? (d.selection as string | null) ?? null,
@@ -219,6 +249,15 @@ export function buildLiteNextEvents(root: string, nowMs: number, limit = 120): B
       edge,
       ev: evNum,
       odds,
+      odds_home: slot.odds_home,
+      odds_draw: slot.odds_draw,
+      odds_away: slot.odds_away,
+      bookmaker: slot.bookmaker,
+      odds_market: slot.odds_market,
+      odds_collected_at: slot.odds_collected_at,
+      odds_compare_only: slot.odds_compare_only,
+      odds_source: slot.odds_source,
+      odds_status: slot.odds_status,
       decision,
       stake: typeof d.stake === "number" ? d.stake : 0,
       why,
@@ -249,6 +288,14 @@ export function buildLiteNextEvents(root: string, nowMs: number, limit = 120): B
     for (const e of events.slice(-limit).reverse()) {
       const r = asRec(e);
       if (!r?.event_id) continue;
+      const resolved = resolveCompareBook({
+        quotesBook: bookByEvent.get(String(r.event_id)) ?? null,
+        home: r.home_or_a != null ? String(r.home_or_a) : null,
+        away: r.away_or_b != null ? String(r.away_or_b) : null,
+        kickoff_utc: (r.kickoff_utc as string | null) ?? null,
+        candidates: marketCandidates,
+      });
+      const slot = quoteSlotFromBook(resolved?.book ?? null, resolved?.source ?? null);
       const row: BoardEventRow = {
         event_id: String(r.event_id),
         kickoff_utc: (r.kickoff_utc as string | null) ?? null,
@@ -261,7 +308,7 @@ export function buildLiteNextEvents(root: string, nowMs: number, limit = 120): B
         minutes_to_kickoff: null,
         near_t1h: false,
         status: String(r.status ?? "SCHEDULED"),
-        markets: [],
+        markets: resolved?.book ? ["1X2"] : [],
         prediction_status: "INSUFFICIENT_DATA",
         lock_status: "N/A",
         selection: null,
@@ -271,6 +318,15 @@ export function buildLiteNextEvents(root: string, nowMs: number, limit = 120): B
         edge: null,
         ev: null,
         odds: null,
+        odds_home: slot.odds_home,
+        odds_draw: slot.odds_draw,
+        odds_away: slot.odds_away,
+        bookmaker: slot.bookmaker,
+        odds_market: slot.odds_market,
+        odds_collected_at: slot.odds_collected_at,
+        odds_compare_only: slot.odds_compare_only,
+        odds_source: slot.odds_source,
+        odds_status: slot.odds_status,
         decision: "NO_BET",
         stake: 0,
         why: "INSUFFICIENT_DATA — no decision row yet",

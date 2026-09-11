@@ -14,6 +14,7 @@ import { countResultRows } from "@/domain/eval/acquisition-engine/sources/footba
 import { parseEspnScoreboard } from "@/domain/eval/acquisition-engine/sources/espn";
 import { parseOpenFootballPack } from "@/domain/eval/acquisition-engine/sources/openfootball";
 import { parseOddsApiEvents } from "@/domain/eval/acquisition-engine/sources/odds-api";
+import { parseApiFootballOdds } from "@/domain/eval/acquisition-engine/sources/api-football";
 import { pickUniqueTeam } from "@/domain/eval/data-intelligence/research/identity-match";
 import { catalogueById } from "@/domain/eval/data-intelligence/research/source-catalogue";
 import { assertNoMarketInputsInPredictionContext } from "@/domain/eval/predictive-intelligence/features/asof";
@@ -187,7 +188,7 @@ describe("always-on free acquisition engine", () => {
     assert.match(jobs.find((j) => j.source_id === "clubelo")!.url, /api\.clubelo\.com\/2026-09-11/);
     assert.ok(OPENLIGA_LEAGUES.length >= 4);
     assert.ok(THESPORTSDB_LEAGUES.length >= 5);
-    assert.ok(FDOUK_DIVISIONS.length >= 5);
+    assert.ok(FDOUK_DIVISIONS.length >= 13);
   });
 
   it("parses ClubElo + OpenLigaDB + TheSportsDB + StatsBomb fixtures continue-on-fail", async () => {
@@ -399,14 +400,41 @@ describe("always-on free acquisition engine", () => {
     assert.equal(events[0]?.awayPrice, 4.2);
     const incomplete = parseOddsApiEvents([{ home_team: "A", away_team: "B", bookmakers: [] }]);
     assert.equal(incomplete[0]?.homePrice ?? null, null);
+    const af = parseApiFootballOdds({
+      response: [
+        {
+          fixture: { id: 1 },
+          bookmakers: [
+            {
+              name: "Bwin",
+              bets: [
+                {
+                  name: "Match Winner",
+                  values: [
+                    { value: "Home", odd: "2.10" },
+                    { value: "Draw", odd: "3.20" },
+                    { value: "Away", odd: "3.50" },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    });
+    assert.equal(af[0]?.homePrice, 2.1);
+    assert.equal(af[0]?.bookmaker, "Bwin");
   });
 
   it("attaches football-data.co.uk Bet365 1X2 as MARKET records, not model features", async () => {
     const cwd = tmpCwd();
+    const labBRoot = join(cwd, "lab-b");
     const result = await runAcquisitionEngineCycle({
       nowIso: "2026-09-11T12:00:00.000Z",
       cwd,
       persistNeon: false,
+      persistLabB: true,
+      labBRoot,
       fixtures: CYCLE_FIXTURES,
       fetchImpl: async () => new Response("no", { status: 401 }),
       labEvents: [
@@ -425,5 +453,11 @@ describe("always-on free acquisition engine", () => {
     assert.equal(market!.kind, "market");
     assert.equal(market!.value, 1.4);
     assert.match(fd.reason, /odds_columns_ignored/);
+    const quotesPath = join(labBRoot, "quotes.jsonl");
+    assert.equal(existsSync(quotesPath), true);
+    const quotes = readFileSync(quotesPath, "utf8");
+    assert.match(quotes, /"selection":"HOME"/);
+    assert.match(quotes, /"price":1\.4/);
+    assert.match(quotes, /e-liv-bou/);
   });
 });

@@ -60,7 +60,7 @@ export const RESEARCH_SOURCE_CATALOGUE: CatalogueSource[] = [
     sport: "SOCCER",
     adapter: "CACHE_ONLY",
     url: "https://www.football-data.co.uk/",
-    notes: "Local matches.jsonl / historical — DATE_ONLY temporal precision",
+    notes: "Local matches.jsonl / historical — DATE_ONLY. B365 1X2 is MARKET/UI only, never independent MODEL.",
     market_layer: false,
   },
   {

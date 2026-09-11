@@ -64,10 +64,18 @@ export const THESPORTSDB_LEAGUES = [
 /** football-data.co.uk free CSVs. Odds columns stay MARKET layer. */
 export const FDOUK_DIVISIONS = [
   { code: "E0", label: "Premier League" },
+  { code: "E1", label: "Championship" },
   { code: "I1", label: "Serie A" },
+  { code: "I2", label: "Serie B" },
   { code: "SP1", label: "La Liga" },
+  { code: "SP2", label: "Segunda Division" },
   { code: "D1", label: "Bundesliga" },
+  { code: "D2", label: "2. Bundesliga" },
   { code: "F1", label: "Ligue 1" },
+  { code: "F2", label: "Ligue 2" },
+  { code: "N1", label: "Eredivisie" },
+  { code: "P1", label: "Primeira Liga" },
+  { code: "SC0", label: "Scottish Premiership" },
 ] as const;
 
 /** ESPN unofficial site JSON — allowlisted only after a real 200 without CAPTCHA. */
@@ -169,8 +177,8 @@ export const FREE_SOURCE_CATALOG: FreeSourceDef[] = [
     kind: "results",
     url: "https://www.football-data.co.uk/mmz4281/",
     rate_limit_ms: 2_000,
-    notes: "Free CSVs E0/I1/SP1/D1/F1. Scores DATE_ONLY. Odds columns MARKET only — never MODEL.",
-    notes_it: "CSV E0/I1/SP1/D1/F1. Risultati DATE_ONLY. Le quote restano layer di mercato.",
+    notes: "Free CSVs E0/E1/I1/I2/SP1/SP2/D1/D2/F1/F2/N1/P1/SC0. Scores DATE_ONLY. Odds columns MARKET/UI only — never MODEL.",
+    notes_it: "CSV campionati europei. Risultati DATE_ONLY. Le quote restano layer di mercato/UI.",
     market_layer: false,
     live: false,
   },
@@ -261,8 +269,8 @@ export const FREE_SOURCE_CATALOG: FreeSourceDef[] = [
     kind: "fixtures",
     url: "https://v3.football.api-sports.io/fixtures",
     rate_limit_ms: 7_000,
-    notes: "Free tier 100 req/day if API_SPORTS_KEY / API_FOOTBALL_KEY is set. AUTH_REQUIRED otherwise. Budget-capped.",
-    notes_it: "Piano free 100 req/giorno solo con chiave gia in env. Senza chiave: AUTH_REQUIRED. Budget rispettato.",
+    notes: "Free tier 100 req/day if API_SPORTS_KEY / API_FOOTBALL_KEY is set. Fixtures + one cached /odds?date= (MARKET/UI). AUTH_REQUIRED otherwise.",
+    notes_it: "Piano free 100 req/giorno con chiave gia in env. Quote solo layer mercato/UI. Senza chiave: AUTH_REQUIRED.",
     market_layer: false,
     live: true,
   },

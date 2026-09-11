@@ -5,13 +5,15 @@
  */
 import { config } from "dotenv";
 import { runAcquisitionEngineCycle } from "@/domain/eval/acquisition-engine/engine";
+import { labEventsForAcquisition } from "@/domain/eval/acquisition-engine/lab-events";
 
 config({ path: ".env.local" });
 config({ path: ".env" });
 
 async function main() {
   const persistNeon = Boolean(process.env.DATABASE_URL);
-  const result = await runAcquisitionEngineCycle({ persistNeon });
+  const lab = labEventsForAcquisition();
+  const result = await runAcquisitionEngineCycle({ persistNeon, ...lab });
   console.log(
     JSON.stringify(
       {
