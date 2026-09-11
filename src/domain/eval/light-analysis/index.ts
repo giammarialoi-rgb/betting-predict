@@ -28,5 +28,6 @@ export {
 } from "@/domain/eval/light-analysis/frequencies";
 export { computeLightAnalysis, lightHasEstimableMarket } from "@/domain/eval/light-analysis/compute";
 export { listAnalyzedEvents, loadEventAnalyses } from "@/domain/eval/light-analysis/list";
+export { listMarketLeans } from "@/domain/eval/light-analysis/list-leans";
 export { loadLightAnalysis, persistLightAnalysis } from "@/domain/eval/light-analysis/persist";
 export { refreshTodayEvents, listTodayEvents } from "@/domain/eval/light-analysis/refresh";

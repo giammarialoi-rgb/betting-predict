@@ -1,24 +1,24 @@
 import Link from "next/link";
-import { favoriteClassName, favoriteTone } from "@/domain/eval/light-analysis/favorite";
+import { favoriteClassName } from "@/domain/eval/light-analysis/favorite";
+import { listMarketLeans, type ListLean } from "@/domain/eval/light-analysis/list-leans";
 import type { AnalyzedListRow } from "@/domain/eval/light-analysis/types";
-import { fmtKick, fmtPct } from "@/components/betmind/ui";
+import { fmtKick } from "@/components/betmind/ui";
 import { eventStatusIt } from "@/domain/eval/betmind-runtime/status-copy";
 
-function kickClock(iso: string | null): string {
+function kickClock(iso: string | null, status: string | null): string {
+  const minute = String(status ?? "").match(/\b(\d{1,3})['′]\b/);
+  if (minute) return `${minute[1]}'`;
+  if (/live|in_play|playing/i.test(String(status ?? ""))) return "LIVE";
   if (!iso) return "—";
   const clock = fmtKick(iso);
   return clock === "—" ? iso.slice(11, 16) || "—" : clock;
 }
 
-function scoreCell(row: AnalyzedListRow): { top: string; bottom: string } {
-  const live = /live|in_play|playing/i.test(String(row.status ?? ""));
-  const finished = /finish|ended|ft|final|settled/i.test(String(row.status ?? ""));
+function scoreCell(row: AnalyzedListRow): { home: string; away: string; preview: boolean } {
   if (row.score_home != null && row.score_away != null) {
-    return { top: String(row.score_home), bottom: String(row.score_away) };
+    return { home: String(row.score_home), away: String(row.score_away), preview: false };
   }
-  if (live) return { top: "LIVE", bottom: "" };
-  if (finished) return { top: "FT", bottom: "" };
-  return { top: "—", bottom: "" };
+  return { home: "—", away: "—", preview: true };
 }
 
 function groupByLeague(rows: AnalyzedListRow[]): Array<{ league: string; rows: AnalyzedListRow[] }> {
@@ -32,10 +32,12 @@ function groupByLeague(rows: AnalyzedListRow[]): Array<{ league: string; rows: A
   return [...map.entries()].map(([league, items]) => ({ league, rows: items }));
 }
 
-function oneXTwoPct(row: AnalyzedListRow, sel: "HOME" | "DRAW" | "AWAY"): string {
-  const m = (row.markets ?? []).find((x) => x.market === "1x2" && x.selection === sel);
-  if (!m || m.probability == null) return "dato insufficiente";
-  return fmtPct(m.probability);
+function LeanChip({ lean }: { lean: ListLean }) {
+  return (
+    <span className={lean.favorite ? favoriteClassName("favorite") : favoriteClassName("muted")}>
+      <abbr title={lean.label_it}>{lean.label_it}</abbr> {lean.text}
+    </span>
+  );
 }
 
 export function AnalyzedTicker({ events }: { events: AnalyzedListRow[] }) {
@@ -46,11 +48,14 @@ export function AnalyzedTicker({ events }: { events: AnalyzedListRow[] }) {
         <section key={g.league}>
           <header className="bm-ticker-league">
             <span>{g.league}</span>
-            <span className="bm-muted">{g.rows.length}</span>
+            <span>{g.rows.length}</span>
           </header>
           {g.rows.map((row) => {
             const score = scoreCell(row);
-            const fav = row.favorite_1x2;
+            const leans = listMarketLeans(row.markets ?? [], row.favorite_1x2);
+            const oneXTwo = leans.filter((l) => l.group === "1x2");
+            const extras = leans.filter((l) => l.group !== "1x2");
+            const prose = row.prose[0] ?? null;
             return (
               <Link
                 key={row.event_id}
@@ -58,31 +63,44 @@ export function AnalyzedTicker({ events }: { events: AnalyzedListRow[] }) {
                 className="bm-ticker-row"
               >
                 <div className="bm-ticker-time">
-                  <span>{kickClock(row.kickoff_utc)}</span>
+                  <span>{kickClock(row.kickoff_utc, row.status)}</span>
                   {row.status ? <em>{eventStatusIt(row.status)}</em> : null}
                 </div>
                 <div className="bm-ticker-teams">
                   <span>{row.home}</span>
                   <span>{row.away}</span>
                 </div>
-                <div className="bm-ticker-score" aria-label="risultato">
-                  <strong>{score.top}</strong>
-                  {score.bottom ? <strong>{score.bottom}</strong> : null}
+                <div className={`bm-ticker-score${score.preview ? " bm-ticker-score-preview" : ""}`} aria-label="risultato">
+                  {score.preview ? (
+                    <>
+                      <strong>—</strong>
+                      <strong>—</strong>
+                    </>
+                  ) : (
+                    <>
+                      <strong>{score.home}</strong>
+                      <strong>{score.away}</strong>
+                    </>
+                  )}
+                </div>
+                <div className="bm-ticker-1x2" aria-label="frequenze 1X2">
+                  {oneXTwo.map((lean) => (
+                    <LeanChip key={lean.key} lean={lean} />
+                  ))}
                 </div>
                 <div className="bm-ticker-pcts">
-                  <span className={favoriteClassName(favoriteTone("home", fav))}>
-                    1 {oneXTwoPct(row, "HOME")}
-                  </span>
-                  <span className={favoriteClassName(favoriteTone("draw", fav))}>
-                    X {oneXTwoPct(row, "DRAW")}
-                  </span>
-                  <span className={favoriteClassName(favoriteTone("away", fav))}>
-                    2 {oneXTwoPct(row, "AWAY")}
-                  </span>
+                  {extras.map((lean) => (
+                    <LeanChip key={lean.key} lean={lean} />
+                  ))}
                   <span className="bm-ticker-modes">
-                    {row.light ? <em>Light</em> : null}
-                    {row.strong ? <em className="bm-accent">Forte</em> : <em className="bm-muted">Forte n/d</em>}
+                    {row.light ? <em>Analisi light</em> : null}
+                    {row.strong ? (
+                      <em className="bm-ticker-strong">Analisi forte</em>
+                    ) : (
+                      <em>Analisi forte n/d</em>
+                    )}
                   </span>
+                  {prose ? <span className="bm-ticker-prose">{prose}</span> : null}
                 </div>
               </Link>
             );

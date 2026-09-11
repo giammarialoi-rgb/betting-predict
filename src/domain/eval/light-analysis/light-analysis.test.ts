@@ -17,6 +17,7 @@ import { computeLightAnalysis, lightHasEstimableMarket } from "@/domain/eval/lig
 import { shouldReplaceLightAnalysis } from "@/domain/eval/light-analysis/persist";
 import { parseClubFootballHistory, parseFootballDataCoUkHistory } from "@/domain/eval/light-analysis/history";
 import { proseFromMarkets } from "@/domain/eval/light-analysis/prose";
+import { listMarketLeans } from "@/domain/eval/light-analysis/list-leans";
 import { LIGHT_INSUFFICIENT_IT, LIGHT_MIN_N, type HistoricalMatchRow } from "@/domain/eval/light-analysis/types";
 
 function row(
@@ -240,6 +241,38 @@ describe("compute light analysis", () => {
     const lines = proseFromMarkets(markets);
     assert.ok(lines.some((l) => l.includes("over 2.5") || l.includes("1X2") || l.includes("gol")));
     assert.ok(lines.every((l) => /n=\d+/.test(l) || /Frequenze 1X2/.test(l)));
+  });
+});
+
+describe("list market leans", () => {
+  it("exposes 1X2 + O/U + BTTS + team goals + corners without inventing missing %", () => {
+    const markets = buildLightMarkets({
+      homeHome: Array.from({ length: 10 }, () =>
+        row("A", "B", "2024-01-01", 2, 1, { home_corners: 8, away_corners: 2 }),
+      ),
+      awayAway: Array.from({ length: 10 }, () =>
+        row("C", "D", "2024-01-02", 0, 2, { home_corners: 2, away_corners: 7 }),
+      ),
+      source_ids: ["football-data-co-uk"],
+    });
+    const leans = listMarketLeans(markets, "home");
+    assert.equal(leans.find((l) => l.key === "1")?.favorite, true);
+    assert.equal(leans.find((l) => l.key === "x")?.favorite, false);
+    assert.match(leans.find((l) => l.key === "o15")?.text ?? "", /\d/);
+    assert.match(leans.find((l) => l.key === "o25")?.text ?? "", /\d/);
+    assert.match(leans.find((l) => l.key === "o35")?.text ?? "", /\d/);
+    assert.match(leans.find((l) => l.key === "btts")?.text ?? "", /\d/);
+    assert.match(leans.find((l) => l.key === "hg15")?.text ?? "", /\d/);
+    assert.match(leans.find((l) => l.key === "ag15")?.text ?? "", /\d/);
+    assert.match(leans.find((l) => l.key === "cor")?.text ?? "", /\d/);
+    assert.equal(leans.find((l) => l.key === "1")?.group, "1x2");
+    assert.equal(leans.find((l) => l.key === "o25")?.group, "ou");
+  });
+
+  it("prints dato insufficiente when a lean has no sample", () => {
+    const leans = listMarketLeans([], null);
+    assert.ok(leans.every((l) => l.text === LIGHT_INSUFFICIENT_IT));
+    assert.ok(leans.every((l) => l.favorite === false));
   });
 });
 

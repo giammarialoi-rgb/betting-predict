@@ -43,8 +43,9 @@ export function AnalyzedClient({
           <div className="bm-section-label">Lista partite</div>
           <h1 className="text-2xl font-bold">Eventi analizzati</h1>
           <p className="bm-prose-muted mt-1 max-w-xl">
-            Solo incontri con un’analisi reale (light e/o forte). Righe dense per campionato:
-            orario, casa / ospite, stato, percentuali 1X2. Il favorito light è in verde.
+            Solo incontri con un’analisi reale (light e/o forte). Lista densa per campionato:
+            orario, casa / ospite, stato, 1X2 (favorito in verde), over 1.5 / 2.5 / 3.5, BTTS,
+            gol squadra e angoli.
           </p>
         </div>
         <div className="flex flex-col items-end gap-2">
