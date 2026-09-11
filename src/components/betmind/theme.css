@@ -539,3 +539,162 @@
     top: 0;
   }
 }
+
+/* Diretta.it-like ticker (layout language only — no third-party marks) */
+.bm-ticker {
+  border: 1px solid var(--bm-border);
+  border-radius: 6px;
+  overflow: hidden;
+  background: #0e1116;
+}
+
+.bm-ticker-league {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.42rem 0.8rem;
+  background: #1a2433;
+  font-size: 0.78rem;
+  font-weight: 650;
+  letter-spacing: 0.01em;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.bm-ticker section:first-child .bm-ticker-league {
+  border-top: none;
+}
+
+.bm-ticker-row {
+  display: grid;
+  grid-template-columns: 52px minmax(0, 1.2fr) 44px minmax(0, 1.4fr);
+  gap: 0.45rem;
+  align-items: center;
+  min-height: 48px;
+  padding: 0.28rem 0.8rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  color: inherit;
+  text-decoration: none;
+}
+
+.bm-ticker-row:nth-child(odd) {
+  background: rgba(255, 255, 255, 0.015);
+}
+
+.bm-ticker-row:hover {
+  background: rgba(29, 185, 84, 0.06);
+}
+
+.bm-ticker-time {
+  display: flex;
+  flex-direction: column;
+  font-variant-numeric: tabular-nums;
+  font-size: 0.78rem;
+  color: var(--bm-muted);
+  line-height: 1.25;
+}
+
+.bm-ticker-time em {
+  font-style: normal;
+  font-size: 0.68rem;
+}
+
+.bm-ticker-teams {
+  display: flex;
+  flex-direction: column;
+  gap: 0.08rem;
+  min-width: 0;
+  font-size: 0.9rem;
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+.bm-ticker-teams span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.bm-ticker-score {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  font-size: 0.92rem;
+  line-height: 1.25;
+}
+
+.bm-ticker-pcts {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.35rem 0.55rem;
+  font-size: 0.72rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.bm-ticker-modes {
+  display: flex;
+  gap: 0.35rem;
+  width: 100%;
+  justify-content: flex-end;
+}
+
+.bm-ticker-modes em {
+  font-style: normal;
+  font-size: 0.68rem;
+  color: var(--bm-muted);
+}
+
+.bm-fav {
+  color: var(--bm-accent);
+  font-weight: 700;
+}
+
+.bm-muted-pct {
+  color: var(--bm-muted);
+  opacity: 0.72;
+}
+
+.bm-mkt-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 0.45rem;
+}
+
+.bm-mkt-cell {
+  border: 1px solid var(--bm-border);
+  border-radius: 8px;
+  padding: 0.45rem 0.55rem;
+  background: rgba(0, 0, 0, 0.22);
+}
+
+.bm-mkt-cell span {
+  display: block;
+  font-size: 0.72rem;
+  color: var(--bm-muted);
+}
+
+.bm-mkt-cell strong {
+  display: block;
+  margin-top: 0.12rem;
+  font-size: 1.02rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.bm-mkt-cell em {
+  display: block;
+  font-style: normal;
+  font-size: 0.68rem;
+}
+
+@media (max-width: 640px) {
+  .bm-ticker-row {
+    grid-template-columns: 44px minmax(0, 1fr) 36px;
+  }
+  .bm-ticker-pcts {
+    grid-column: 1 / -1;
+    justify-content: flex-start;
+  }
+}

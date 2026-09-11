@@ -11,6 +11,7 @@ import {
   sportBucket,
 } from "@/components/betmind/ui";
 import { EventCard } from "@/components/betmind/EventCard";
+import { RefreshEventsButton } from "@/components/betmind/RefreshEventsButton";
 import { useBetMindData } from "@/components/betmind/DataProvider";
 import { bucketLabelIt, formatAgeIt } from "@/domain/eval/betmind-runtime/status-copy";
 
@@ -208,9 +209,12 @@ function EventsInner() {
             </Link>
           </div>
         </div>
-        <div className="flex items-center gap-2 text-xs">
-          <SnapshotBadge updating={updating} />
-          <span className="bm-muted">{lastUpdate ? new Date(lastUpdate).toLocaleTimeString("it-IT") : "—"}</span>
+        <div className="flex flex-col items-end gap-2">
+          <div className="flex items-center gap-2 text-xs">
+            <SnapshotBadge updating={updating} />
+            <span className="bm-muted">{lastUpdate ? new Date(lastUpdate).toLocaleTimeString("it-IT") : "—"}</span>
+          </div>
+          <RefreshEventsButton />
         </div>
       </div>
 

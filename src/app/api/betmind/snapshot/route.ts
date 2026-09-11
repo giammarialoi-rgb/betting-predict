@@ -15,12 +15,14 @@ import { localLabStorePresent, staleMirrorComponents } from "@/domain/eval/betmi
 import { readJsonlTail } from "@/domain/eval/betmind-runtime/board";
 import { permanentRoot044 } from "@/domain/eval/permanent-044/config";
 import { piRoot } from "@/domain/eval/predictive-intelligence/config";
+import {
+  invalidateBetMindSnapshotCache,
+  readSnapshotCache,
+  writeSnapshotCache,
+} from "@/domain/eval/betmind-runtime/snapshot-cache";
 
 export const dynamic = "force-dynamic";
-
-type CacheEntry = { at: number; body: Record<string, unknown> };
-let cache: CacheEntry | null = null;
-const CACHE_MS = 3500;
+export { invalidateBetMindSnapshotCache };
 
 function readJsonIfExists(path: string): Record<string, unknown> | null {
   if (!existsSync(path)) return null;
@@ -82,8 +84,9 @@ function buildLiteObservatory(root: string, nowIso: string) {
 /** Disk-first BetMind snapshot; Neon mirror when Lab B FS absent (Vercel). Zero Odds/API-Sports. */
 export async function GET() {
   const now = Date.now();
-  if (cache && now - cache.at < CACHE_MS) {
-    return NextResponse.json({ ...cache.body, cache_hit: true });
+  const cached = readSnapshotCache(now);
+  if (cached) {
+    return NextResponse.json({ ...cached, cache_hit: true });
   }
 
   try {
@@ -139,7 +142,7 @@ export async function GET() {
           recent_autopsies: remote.payload.recent_autopsies ?? [],
           analysis: remote.payload.analysis,
         };
-        cache = { at: now, body };
+        writeSnapshotCache(body, now);
         return NextResponse.json(body);
       }
     }
@@ -177,7 +180,7 @@ export async function GET() {
       recent_autopsies: readJsonlTail(join(root, "autopsies.jsonl"), 30),
     };
 
-    cache = { at: now, body };
+    writeSnapshotCache(body, now);
     return NextResponse.json(body);
   } catch (error) {
     return NextResponse.json(

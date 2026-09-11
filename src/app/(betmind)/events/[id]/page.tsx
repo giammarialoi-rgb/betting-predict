@@ -16,8 +16,10 @@ import {
   fmtWhen,
 } from "@/components/betmind/ui";
 import { OddsBlock } from "@/components/betmind/OddsBlock";
+import { MarketPercents } from "@/components/betmind/MarketPercents";
 import { useBmLocale } from "@/components/betmind/useBmLocale";
 import { eventStatusIt, selectionLabelIt } from "@/domain/eval/betmind-runtime/status-copy";
+import type { LightAnalysis } from "@/domain/eval/light-analysis/types";
 
 type DossierFeature = {
   name: string;
@@ -214,6 +216,11 @@ type Detail = {
   model_version: string | null;
   finished?: boolean;
   api_calls_ui: 0;
+  light_analysis?: LightAnalysis | null;
+  analysis_modes?: {
+    light: { label_it: string; available: boolean };
+    strong: { label_it: string; available: boolean; unavailable_it: string | null };
+  };
 };
 
 function statusIt(s: string, t: ReturnType<typeof useBmLocale>["t"]): string {
@@ -331,24 +338,86 @@ export default function EventDetailPage() {
             </p>
           </header>
 
-          <Card title="Previsione BetMind" glow>
+          {data.light_analysis && (
+            <Card title="Analisi light" glow>
+              <p className="mb-3 text-sm bm-muted">
+                Modello magro sulle fonti gratuite già disponibili. Frequenze da storico reale
+                (n partite prima del giorno dell’incontro). Se una % non si può stimare:
+                «dato insufficiente». Quote mai usate come feature.
+              </p>
+              {data.light_analysis.sources_used.length > 0 && (
+                <p className="mb-3 text-xs bm-muted">
+                  Fonti usate: {data.light_analysis.sources_used.join(", ")}
+                </p>
+              )}
+              <MarketPercents
+                markets={data.light_analysis.markets}
+                favorite={data.light_analysis.favorite_1x2}
+              />
+              {data.light_analysis.prose.length > 0 && (
+                <ul className="mt-3 space-y-1 text-sm">
+                  {data.light_analysis.prose.map((line) => (
+                    <li key={line}>• {line}</li>
+                  ))}
+                </ul>
+              )}
+            </Card>
+          )}
+
+          <Card
+            title="Analisi forte"
+            right={
+              data.analysis_modes?.strong.available ? (
+                <span className="bm-pill bm-pill-accent">Disponibile</span>
+              ) : (
+                <span className="bm-pill">Non disponibile</span>
+              )
+            }
+          >
+            {data.analysis_modes?.strong.available ? (
+              <p className="mb-3 text-sm bm-muted">
+                Modello indipendente attuale. I gate non sono stati abbassati.
+              </p>
+            ) : (
+              <p className="mb-3 text-sm">
+                {data.analysis_modes?.strong.unavailable_it ??
+                  "Analisi forte non disponibile: i requisiti del modello indipendente non sono soddisfatti. Quella sopra è solo l’analisi light."}
+              </p>
+            )}
+          </Card>
+
+          <Card title="Previsione BetMind (forte / dossier)" glow>
             {hx?.insufficient ? (
               <p className="text-sm leading-relaxed">{hx.insufficient}</p>
             ) : modelProbs ? (
-              <ul className="space-y-2 text-lg">
-                <li className="flex justify-between">
-                  <span>Casa</span>
-                  <span className="font-semibold bm-accent">{fmtPct(modelProbs.HOME ?? modelProbs.home)}</span>
-                </li>
-                <li className="flex justify-between">
-                  <span>Pareggio</span>
-                  <span className="font-semibold bm-accent">{fmtPct(modelProbs.DRAW ?? modelProbs.draw)}</span>
-                </li>
-                <li className="flex justify-between">
-                  <span>Trasferta</span>
-                  <span className="font-semibold bm-accent">{fmtPct(modelProbs.AWAY ?? modelProbs.away)}</span>
-                </li>
-              </ul>
+              <MarketPercents
+                markets={[
+                  {
+                    market: "1x2",
+                    line: null,
+                    selection: "HOME",
+                    label_it: "1 (casa)",
+                    probability: Number(modelProbs.HOME ?? modelProbs.home),
+                    status: "OK",
+                  },
+                  {
+                    market: "1x2",
+                    line: null,
+                    selection: "DRAW",
+                    label_it: "X (pareggio)",
+                    probability: Number(modelProbs.DRAW ?? modelProbs.draw),
+                    status: "OK",
+                  },
+                  {
+                    market: "1x2",
+                    line: null,
+                    selection: "AWAY",
+                    label_it: "2 (trasferta)",
+                    probability: Number(modelProbs.AWAY ?? modelProbs.away),
+                    status: "OK",
+                  },
+                ]}
+              />
             ) : (
               <EmptyState
                 title="Nessuna previsione indipendente"

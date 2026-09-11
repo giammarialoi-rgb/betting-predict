@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
 import { StatusDot, type BmState } from "@/components/betmind/ui";
+import { RefreshEventsButton } from "@/components/betmind/RefreshEventsButton";
 import { useBmLocale } from "@/components/betmind/useBmLocale";
 import { statusWordIt } from "@/domain/eval/betmind-runtime/status-copy";
 
@@ -34,6 +35,7 @@ export function AppShell({
   const DESKTOP_NAV = [
     { href: "/", label: t.nav_home },
     { href: "/events", label: t.nav_events },
+    { href: "/analyzed", label: t.nav_analyzed },
     { href: "/live", label: t.nav_live },
     { href: "/learn", label: t.nav_learn },
     { href: "/sources", label: t.nav_sources },
@@ -46,7 +48,7 @@ export function AppShell({
   const MOBILE_NAV = [
     { href: "/", label: t.nav_home, icon: "⌂" },
     { href: "/events", label: t.nav_events, icon: "◎" },
-    { href: "/live", label: t.nav_live, icon: "◉" },
+    { href: "/analyzed", label: t.nav_analyzed, icon: "▣" },
     { href: "/sources", label: t.nav_sources, icon: "▦" },
     { href: "/settings", label: t.nav_settings, icon: "☰" },
   ] as const;
@@ -147,6 +149,9 @@ export function AppShell({
             {t.brand_tagline}
           </div>
           <div className="flex min-w-0 shrink-0 items-center gap-2">
+            <span className="hidden md:inline-flex">
+              <RefreshEventsButton compact />
+            </span>
             <span className="hidden sm:inline-flex">
               <span className="bm-pill">
                 <StatusDot state={webOnline ? "ONLINE" : "OFFLINE"} />
