@@ -18,6 +18,8 @@ export function AnalyzedClient({
   const [events, setEvents] = useState<AnalyzedListRow[]>(initialEvents);
   const [note, setNote] = useState<string | null>(initialNote);
   const [error, setError] = useState<string | null>(null);
+  const [refreshNote, setRefreshNote] = useState<string | null>(null);
+  const [refreshErr, setRefreshErr] = useState<string | null>(null);
 
   const load = useCallback(async () => {
     try {
@@ -55,7 +57,13 @@ export function AnalyzedClient({
               {lastUpdate ? new Date(lastUpdate).toLocaleTimeString("it-IT") : "—"}
             </span>
           </div>
-          <RefreshEventsButton onDone={() => void load()} />
+          <RefreshEventsButton
+            onProgress={(msg, err) => {
+              setRefreshNote(msg);
+              setRefreshErr(err);
+            }}
+            onDone={() => void load()}
+          />
         </div>
       </div>
 
@@ -72,6 +80,13 @@ export function AnalyzedClient({
           solo confronto mercato.
         </p>
       </Card>
+
+      {(refreshNote || refreshErr) && (
+        <Card>
+          {refreshNote ? <p className="text-sm">{refreshNote}</p> : null}
+          {refreshErr ? <p className="text-sm text-[var(--bm-danger)]">{refreshErr}</p> : null}
+        </Card>
+      )}
 
       {error && (
         <Card className="border-[rgba(255,77,77,0.4)]">

@@ -93,6 +93,8 @@ function EventsInner() {
   const obs = asRecord(data?.observatory);
   const analysis = asRecord((data as { analysis?: unknown } | null)?.analysis) ?? asRecord(obs?.analysis);
   const [calendar, setCalendar] = useState<{ total: number; events: Ev[]; note?: string; source?: string; stale?: boolean } | null>(null);
+  const [refreshNote, setRefreshNote] = useState<string | null>(null);
+  const [refreshErr, setRefreshErr] = useState<string | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -214,9 +216,21 @@ function EventsInner() {
             <SnapshotBadge updating={updating} />
             <span className="bm-muted">{lastUpdate ? new Date(lastUpdate).toLocaleTimeString("it-IT") : "—"}</span>
           </div>
-          <RefreshEventsButton />
+          <RefreshEventsButton
+            onProgress={(msg, err) => {
+              setRefreshNote(msg);
+              setRefreshErr(err);
+            }}
+          />
         </div>
       </div>
+
+      {(refreshNote || refreshErr) && (
+        <Card>
+          {refreshNote ? <p className="text-sm">{refreshNote}</p> : null}
+          {refreshErr ? <p className="text-sm text-[var(--bm-danger)]">{refreshErr}</p> : null}
+        </Card>
+      )}
 
       {error && (
         <Card className="border-[rgba(255,77,77,0.4)]">

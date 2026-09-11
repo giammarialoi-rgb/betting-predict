@@ -107,7 +107,7 @@ export function computeLightAnalysis(input: LightComputeInput): LightAnalysis {
     strong_available,
     strong_unavailable_it: strong_available
       ? null
-      : "Analisi forte non disponibile: i requisiti del modello indipendente (copertura, feature, gate) non sono soddisfatti. Quella sotto è solo l’analisi light.",
+      : "Analisi forte non disponibile: i requisiti del modello indipendente (copertura, feature, gate) non sono soddisfatti. Quella sopra è solo l’analisi light.",
   };
 }
 

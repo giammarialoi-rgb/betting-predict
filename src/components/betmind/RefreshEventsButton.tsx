@@ -3,22 +3,34 @@
 import { useState } from "react";
 import { useBetMindData } from "@/components/betmind/DataProvider";
 
+type LastRefresh = { msg: string | null; err: string | null };
+
+let lastRefresh: LastRefresh = { msg: null, err: null };
+
 export function RefreshEventsButton({
   compact = false,
   onDone,
+  onProgress,
 }: {
   compact?: boolean;
   onDone?: () => void;
+  onProgress?: (note: string | null, err: string | null) => void;
 }) {
   const { reload } = useBetMindData();
   const [busy, setBusy] = useState(false);
-  const [msg, setMsg] = useState<string | null>(null);
-  const [err, setErr] = useState<string | null>(null);
+  const [msg, setMsg] = useState<string | null>(lastRefresh.msg);
+  const [err, setErr] = useState<string | null>(lastRefresh.err);
+
+  function remember(next: LastRefresh) {
+    lastRefresh = next;
+    setMsg(next.msg);
+    setErr(next.err);
+    onProgress?.(next.msg, next.err);
+  }
 
   async function run() {
     setBusy(true);
-    setErr(null);
-    setMsg("Aggiorno…");
+    remember({ msg: "Aggiorno calendario e analisi light dalle fonti già cablate…", err: null });
     try {
       const res = await fetch("/api/betmind/refresh-events", {
         method: "POST",
@@ -29,20 +41,25 @@ export function RefreshEventsButton({
         progress_it?: string;
         errors?: string[];
         brain_ran?: boolean;
+        brain_online_claimed?: boolean;
         acquisition?: { note_it?: string; timed_out?: boolean };
       };
       const parts = [body.progress_it, body.acquisition?.note_it].filter(Boolean);
+      if (body.brain_ran === true || body.brain_online_claimed === true) {
+        parts.push("Il cervello completo non è stato dichiarato ONLINE.");
+      }
       if (!res.ok || body.ok === false) {
-        setErr(parts.join(" ") || "Aggiornamento non riuscito.");
-        setMsg(null);
+        remember({ msg: null, err: parts.join(" ") || "Aggiornamento non riuscito." });
       } else {
-        setMsg(parts.join(" "));
+        remember({ msg: parts.join(" "), err: null });
       }
       await reload();
       onDone?.();
     } catch (e) {
-      setErr(e instanceof Error ? e.message : "Aggiornamento non riuscito.");
-      setMsg(null);
+      remember({
+        msg: null,
+        err: e instanceof Error ? e.message : "Aggiornamento non riuscito.",
+      });
     } finally {
       setBusy(false);
     }
@@ -58,7 +75,11 @@ export function RefreshEventsButton({
       >
         {busy ? "Aggiorno…" : "Aggiorna eventi"}
       </button>
-      {!compact && msg && <p className="bm-prose-muted max-w-md text-xs">{msg}</p>}
+      {msg && (
+        <p className={compact ? "max-w-[16rem] text-right text-[10px] text-[var(--bm-muted)]" : "bm-prose-muted max-w-md text-xs"}>
+          {msg}
+        </p>
+      )}
       {err && (
         <p className={compact ? "max-w-[14rem] text-[10px] text-[var(--bm-danger)]" : "max-w-md text-xs text-[var(--bm-danger)]"}>
           {err}
