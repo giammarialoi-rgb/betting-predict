@@ -49,11 +49,13 @@ export type DataSourceEntry = {
   last_success?: string | null;
   last_failure?: string | null;
   events_found?: number;
+  observations_found?: number;
   blocked_count?: number;
   no_event_count?: number;
   last_event_label?: string | null;
   capabilities?: string[];
   missing_adapter?: boolean;
+  overlay?: "neon_operational" | "registry_only";
 };
 
 export type DataSourcesPayload = {

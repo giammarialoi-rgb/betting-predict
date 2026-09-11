@@ -109,7 +109,7 @@ export function SnapshotBadge({ updating }: { updating?: boolean }) {
   return (
     <Pill>
       <StatusDot state="ONLINE" />
-      {updating ? "AGGIORNO" : "WEB ONLINE"}
+      {updating ? "Aggiorno" : "App web online"}
     </Pill>
   );
 }

@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
 import { StatusDot, type BmState } from "@/components/betmind/ui";
 import { useBmLocale } from "@/components/betmind/useBmLocale";
+import { statusWordIt } from "@/domain/eval/betmind-runtime/status-copy";
 
 function navActive(pathname: string, href: string): boolean {
   const base = href.split("?")[0]!;
@@ -92,21 +93,21 @@ export function AppShell({
               <span className="bm-muted">{t.web_app}</span>
               <span className="inline-flex items-center gap-1.5 font-semibold">
                 <StatusDot state={webOnline ? "ONLINE" : "OFFLINE"} />
-                {webOnline ? t.online : t.offline}
+                {webOnline ? "Online" : "Offline"}
               </span>
             </div>
             <div className="flex items-center justify-between gap-2">
               <span className="bm-muted">{t.runtime}</span>
               <span className="inline-flex items-center gap-1.5 font-semibold">
                 <StatusDot state={runtimeState} />
-                {runtimeState}
+                {statusWordIt(runtimeState)}
               </span>
             </div>
             <div className="flex items-center justify-between gap-2">
               <span className="bm-muted">{t.engine}</span>
               <span className="inline-flex items-center gap-1.5 font-semibold">
                 <StatusDot state={engineState} />
-                {engineState}
+                {statusWordIt(engineState)}
               </span>
             </div>
             <div className="flex items-center gap-2 pt-1">
@@ -148,7 +149,7 @@ export function AppShell({
           <div className="flex shrink-0 items-center gap-2">
             <span className="bm-pill hidden sm:inline-flex">
               <StatusDot state={webOnline ? "ONLINE" : "OFFLINE"} />
-              WEB {webOnline ? t.online : t.offline}
+              App web {webOnline ? "online" : "offline"}
             </span>
             <span
               className={`bm-pill ${
@@ -160,7 +161,7 @@ export function AppShell({
               }`}
             >
               <StatusDot state={runtimeState} />
-              {t.runtime} {runtimeState}
+              {t.runtime} {statusWordIt(runtimeState)}
             </span>
             <span
               className={`bm-pill hidden md:inline-flex ${
@@ -172,7 +173,7 @@ export function AppShell({
               }`}
             >
               <StatusDot state={engineState} />
-              {t.engine} {engineState}
+              {t.engine} {statusWordIt(engineState)}
             </span>
           </div>
         </header>

@@ -14,6 +14,7 @@ import {
   sportBucket,
 } from "@/components/betmind/ui";
 import { useBetMindData } from "@/components/betmind/DataProvider";
+import { bucketLabelIt, formatAgeIt } from "@/domain/eval/betmind-runtime/status-copy";
 
 type Ev = {
   event_id: string;
@@ -82,21 +83,27 @@ function EventsInner() {
   const time = (sp.get("time") ?? "ALL").toUpperCase();
   const bucket = (sp.get("bucket") ?? "ALL").toUpperCase();
   const date = sp.get("date") ?? todayRome();
-  const { data, error, updating, lastUpdate } = useBetMindData();
+  const { data, error, updating, lastUpdate, health } = useBetMindData();
   const obs = asRecord(data?.observatory);
   const analysis = asRecord((data as { analysis?: unknown } | null)?.analysis) ?? asRecord(obs?.analysis);
-  const [calendar, setCalendar] = useState<{ total: number; events: Ev[] } | null>(null);
+  const [calendar, setCalendar] = useState<{ total: number; events: Ev[]; note?: string; source?: string; stale?: boolean } | null>(null);
 
   useEffect(() => {
     let cancelled = false;
     const q = new URLSearchParams();
     q.set("date", date);
-    if (sport !== "ALL") q.set("sport", sport === "FOOTBALL" ? "football" : sport.toLowerCase());
+    q.set("sport", sport === "FOOTBALL" ? "football" : sport.toLowerCase());
     fetch(`/api/events?${q.toString()}`)
       .then((r) => r.json())
       .then((body) => {
         if (cancelled) return;
-        setCalendar({ total: Number(body.total ?? 0), events: (body.events as Ev[]) ?? [] });
+        setCalendar({
+          total: Number(body.total ?? 0),
+          events: (body.events as Ev[]) ?? [],
+          note: typeof body.note === "string" ? body.note : undefined,
+          source: typeof body.source === "string" ? body.source : undefined,
+          stale: body.mirror_stale === true,
+        });
       })
       .catch(() => {
         if (!cancelled) setCalendar({ total: 0, events: [] });
@@ -172,8 +179,8 @@ function EventsInner() {
           <div className="bm-section-label">Eventi</div>
           <h1 className="text-2xl font-bold">Eventi</h1>
           <p className="mt-1 text-xs bm-muted">
-            {calendar?.total ?? events.length} eventi trovati per {date}
-            {sport !== "ALL" ? ` · ${sport}` : ""} — nessun cap artificiale sulla lista.
+            {calendar?.total ?? events.length} partite per {date}
+            {sport !== "ALL" ? ` · ${bucketLabelIt(sport)}` : ""} — lista reale, nessun cap artificiale.
           </p>
           <div className="mt-2 flex flex-wrap items-center gap-2 text-sm">
             <Link href={hrefFor({ date: shiftDay(todayRome(), -1) })} className="bm-pill">
@@ -206,10 +213,23 @@ function EventsInner() {
         </Card>
       )}
 
+      {(calendar?.stale || asRecord(health?.detail)?.mirror_stale === true) && (
+        <Card>
+          <p className="text-sm">
+            Elenco dall’ultimo specchio Neon
+            {typeof asRecord(health?.detail)?.mirror_age_ms === "number"
+              ? ` (${formatAgeIt(asRecord(health?.detail)?.mirror_age_ms as number)})`
+              : ""}
+            . Il cervello sul PC può essere acceso, ma Vercel non ha un battito recente — le partite
+            restano quelle dell’ultimo publish, niente di inventato.
+          </p>
+        </Card>
+      )}
+
       <div className="bm-tabrow">
         {SPORTS.map((s) => (
           <Link key={s} href={hrefFor({ sport: s })} className={`bm-pill ${sport === s ? "bm-pill-accent" : ""}`}>
-            {s}
+            {s === "ALL" ? "Tutti" : bucketLabelIt(s)}
           </Link>
         ))}
       </div>
@@ -217,7 +237,7 @@ function EventsInner() {
       <div className="bm-tabrow">
         {TIME_TABS.map((t) => (
           <Link key={t} href={hrefFor({ time: t })} className={`bm-pill ${time === t ? "bm-pill-accent" : ""}`}>
-            {t}
+            {bucketLabelIt(t)}
           </Link>
         ))}
       </div>
@@ -229,7 +249,7 @@ function EventsInner() {
             href={hrefFor({ bucket: b })}
             className={`bm-pill ${bucket === b ? "bm-pill-accent" : ""}`}
           >
-            {b === "ALL" ? "ALL" : `${b} (${bucketCounts[b] ?? 0})`}
+            {b === "ALL" ? "Tutte" : `${bucketLabelIt(b)} (${bucketCounts[b] ?? 0})`}
           </Link>
         ))}
       </div>
@@ -239,8 +259,8 @@ function EventsInner() {
           <Unknown
             label={
               diagnostics
-                ? `INSUFFICIENT_DATA / UNAVAILABLE — no ${sport} rows in store`
-                : `INSUFFICIENT_DATA — no ${sport} events in decision board`
+                ? `Nessuna partita di ${bucketLabelIt(sport)} nello store reale`
+                : `Nessuna partita di ${bucketLabelIt(sport)} sul board`
             }
           />
         </Card>
@@ -266,7 +286,7 @@ function EventsInner() {
                       : e.label || e.event_id}
                   </div>
                   <div className="mt-1 flex flex-wrap gap-1">
-                    <Pill>{bucketLabel || "—"}</Pill>
+                    <Pill>{bucketLabelIt(bucketLabel) || "—"}</Pill>
                     {(e.markets ?? []).slice(0, 2).map((m) => (
                       <Pill key={m}>{m}</Pill>
                     ))}
@@ -313,16 +333,17 @@ function EventsInner() {
 
         {filtered.length === 0 && events.length > 0 && (
           <Card>
-            <Unknown label="INSUFFICIENT_DATA — nessun evento per questo filtro (store reale, non mock)" />
+            <Unknown label="Nessuna partita per questo filtro (store reale, non mock)" />
           </Card>
         )}
         {events.length === 0 && (
           <Card>
             <Unknown
               label={
-                analysis?.no_events_reason
+                calendar?.note ||
+                (analysis?.no_events_reason
                   ? String(analysis.no_events_reason)
-                  : "NO EVENTS AVAILABLE — decision board empty / last discovery produced no rows"
+                  : "Nessuna partita trovata. Vercel non inventa incontri: o lo specchio Neon è vuoto per questa data, o il PC non ha ancora pubblicato il calendario.")
               }
             />
           </Card>
@@ -334,7 +355,7 @@ function EventsInner() {
 
 export default function EventsPage() {
   return (
-    <Suspense fallback={<Card><Unknown label="Loading filters…" /></Card>}>
+    <Suspense fallback={<Card><Unknown label="Carico i filtri…" /></Card>}>
       <EventsInner />
     </Suspense>
   );

@@ -14,7 +14,13 @@ import {
   summarizeBoardBuckets,
   type BoardEventRow,
 } from "@/domain/eval/betmind-runtime/board";
-import { listCalendarEvents, todayCalendarDay } from "@/domain/eval/betmind-runtime/calendar";
+import {
+  listCalendarEvents,
+  matchesCalendarQuery,
+  shiftCalendarDay,
+  todayCalendarDay,
+} from "@/domain/eval/betmind-runtime/calendar";
+import { localLabStorePresent } from "@/domain/eval/betmind-runtime/production-mirror";
 import { buildOperationalSourceEngine } from "@/domain/eval/data-intelligence/research/source-engine";
 import { loadCoverage055, loadCurrentActivity055, readActivityFeed055 } from "@/domain/eval/catalog-055/cycle";
 import { loadAutostartStatus055 } from "@/domain/eval/catalog-055/autostart";
@@ -229,8 +235,7 @@ export function buildRuntimePayloadFromLocal(root = permanentRoot044()): BetMind
   const learningReport = readJson(join(pi, "learning-report.json"));
   const paperReport = readJson(join(pi, "paper-bankroll-report.json"));
 
-  const storePresent =
-    existsSync(join(root, "events.jsonl")) && existsSync(join(root, "decisions.jsonl"));
+  const storePresent = localLabStorePresent(root);
   const settlementsPresent = existsSync(join(root, "settlements.jsonl"));
   const learningPresent =
     existsSync(join(pi, "learning", "cases.jsonl")) ||
@@ -257,11 +262,14 @@ export function buildRuntimePayloadFromLocal(root = permanentRoot044()): BetMind
 
   const published_at = new Date().toISOString();
   const today = todayCalendarDay(published_at);
+  const from = shiftCalendarDay(today, -7);
+  const to = shiftCalendarDay(today, 21);
   const calendar = storePresent
     ? listCalendarEvents({ root, date: today, sport: "football" })
     : { day: today, total: 0, events: [] };
+  /** Rolling window for the Vercel snapshot — full history stays on Lab B disk / board table. */
   const next_events = storePresent
-    ? listCalendarEvents({ root, sport: "ALL" }).events
+    ? listCalendarEvents({ root, from, to, sport: "ALL" }).events
     : [];
   const analysis = buildAnalysisSummaryFromLocal(root, next_events);
   const source_engine = storePresent ? buildOperationalSourceEngine({ labBRoot: root }) : [];
@@ -401,7 +409,7 @@ export function buildRuntimePayloadFromLocal(root = permanentRoot044()): BetMind
         source_no_event: source_engine.reduce((n, s) => n + s.no_event_count, 0),
         source_missing_adapter: source_engine.filter((s) => s.missing_adapter).length,
       },
-      analysis,
+      analysis: analysisLabeled,
       sport_diagnostics: coverage?.by_sport ?? null,
       coverage_047: coverage,
       multisource_055: {
@@ -428,7 +436,6 @@ export function buildRuntimePayloadFromLocal(root = permanentRoot044()): BetMind
         canonical_chain: "supervisor→worker→brain→massive049→decision048→bankroll053",
         open_task_057: false as const,
       },
-      analysis: analysisLabeled,
       api_calls_ui: 0,
     },
     predictive: {
@@ -541,12 +548,19 @@ export async function publishRuntimeStatus(
       SET published_at = EXCLUDED.published_at,
           payload = EXCLUDED.payload
     `;
-    await persistCycleAndBoard(payload);
+    try {
+      await persistCycleAndBoard(payload);
+    } catch (boardErr) {
+      console.warn(
+        "[runtime-publish] board/cycle persist failed (heartbeat row already written):",
+        boardErr instanceof Error ? boardErr.message : boardErr,
+      );
+    }
     // Keep event dossiers in sync with the board so Vercel detail pages do not 404
     try {
       const { mirrorDossiersToNeon } = await import("@/domain/eval/betmind-runtime/dossier");
       const root = permanentRoot044();
-      if (existsSync(join(root, "events.jsonl"))) {
+      if (localLabStorePresent(root)) {
         await mirrorDossiersToNeon(root, { limit: 150 });
       }
     } catch {
@@ -594,25 +608,188 @@ export async function loadRuntimeStatus(
 let lastPublishMs = 0;
 let publishInFlight = false;
 
-/** Debounced fire-and-forget publish (brain cycles). Never throws. */
+function buildHeartbeatComponents(root = permanentRoot044()): {
+  host: string;
+  store_present_local: boolean;
+  components: BetMindRemoteComponents;
+  detail: Record<string, unknown>;
+  health053: Record<string, unknown>;
+} {
+  const base = buildHealthPayload053(root);
+  const system = base.system as {
+    supervisor_alive?: boolean | null;
+    worker_alive?: boolean | null;
+    official_status?: string | null;
+    heartbeat_age_ms?: number | null;
+    last_cycle_at?: string | null;
+    last_priority?: string | null;
+    worker_pid?: number | null;
+  };
+  const brain = base.brain as { status?: string; cycles_completed?: number };
+  const brainStatus = String(brain?.status ?? (base.system as { status?: string }).status ?? "UNKNOWN");
+  const brainLabel = /HEALTHY|RUN|WORKING/i.test(brainStatus)
+    ? "ONLINE"
+    : /DEAD|STOPPED/i.test(brainStatus)
+      ? "OFFLINE"
+      : /DEGRADED|PAUSED|RECOVER|IDLE/i.test(brainStatus)
+        ? "DEGRADED"
+        : "UNKNOWN";
+  const storePresent = localLabStorePresent(root);
+  return {
+    host: hostname(),
+    store_present_local: storePresent,
+    components: {
+      supervisor: statusFromAlive(system.supervisor_alive),
+      worker: statusFromAlive(system.worker_alive),
+      brain: brainLabel,
+      predictive_engine: "UNKNOWN",
+      data_pipeline: storePresent ? "ONLINE" : "OFFLINE",
+      settlement: "UNKNOWN",
+      learning: "UNKNOWN",
+    },
+    detail: {
+      official_status: system.official_status ?? null,
+      heartbeat_age_ms: system.heartbeat_age_ms ?? null,
+      last_cycle_at: system.last_cycle_at ?? null,
+      last_priority: system.last_priority ?? null,
+      brain_status: brainStatus,
+      cycles_completed: brain?.cycles_completed ?? null,
+      store_present: storePresent,
+      store_present_local_on_publisher: storePresent,
+      mirror: "neon",
+      host: hostname(),
+      worker_pid: system.worker_pid ?? null,
+      heartbeat_kind: "touch",
+    },
+    health053: base as unknown as Record<string, unknown>,
+  };
+}
+
+/**
+ * Cheap liveness touch: refresh published_at + components without rebuilding the
+ * event board. Keeps last next_events so Vercel Eventi does not go empty mid-cycle.
+ * First row still needs a full publishRuntimeStatus().
+ */
+export async function publishRuntimeHeartbeat(): Promise<
+  { ok: true; published_at: string; board: number; heartbeat: true } | { ok: false; error: string }
+> {
+  try {
+    const sql = sqlClient();
+    if (!sql) return { ok: false, error: "DATABASE_URL is not set" };
+    const existing = await loadRuntimeStatus(Date.now(), Number.POSITIVE_INFINITY);
+    if (!existing) {
+      const full = await publishRuntimeStatus();
+      if (!full.ok) return full;
+      return { ok: true, published_at: full.published_at, board: full.board, heartbeat: true };
+    }
+    const patch = buildHeartbeatComponents();
+    const published_at = new Date().toISOString();
+    const prevDetail = (existing.payload.detail ?? {}) as Record<string, unknown>;
+    const merged: BetMindRuntimePayload = {
+      ...existing.payload,
+      published_at,
+      host: patch.host,
+      store_present_local: patch.store_present_local,
+      components: {
+        ...existing.payload.components,
+        ...patch.components,
+        predictive_engine: existing.payload.components.predictive_engine,
+        settlement: existing.payload.components.settlement,
+        learning: existing.payload.components.learning,
+      },
+      detail: {
+        ...prevDetail,
+        ...patch.detail,
+        predictive_engine: prevDetail.predictive_engine,
+        model_independent: prevDetail.model_independent,
+        model_version: prevDetail.model_version,
+      },
+      health053: {
+        ...existing.payload.health053,
+        ...patch.health053,
+      },
+    };
+    await sql`
+      INSERT INTO betmind_runtime_status (id, published_at, payload)
+      VALUES (${RUNTIME_STATUS_ID}, ${published_at}::timestamptz, ${JSON.stringify(merged)}::jsonb)
+      ON CONFLICT (id) DO UPDATE
+      SET published_at = EXCLUDED.published_at,
+          payload = EXCLUDED.payload
+    `;
+    const board = ((merged.observatory?.next_events as unknown[]) ?? []).length;
+    return { ok: true, published_at, board, heartbeat: true };
+  } catch (e) {
+    return { ok: false, error: e instanceof Error ? e.message : String(e) };
+  }
+}
+
+export async function loadBoardEventsFromNeon(q: {
+  date?: string | null;
+  from?: string | null;
+  to?: string | null;
+  sport?: string | null;
+}): Promise<{ events: unknown[]; total: number } | null> {
+  try {
+    const sql = sqlClient();
+    if (!sql) return null;
+    const from = q.from ?? q.date ?? null;
+    const to = q.to ?? q.date ?? null;
+    const rows = from && to
+      ? ((await sql`
+          SELECT event_id, bucket, payload
+          FROM betmind_board_events
+          WHERE COALESCE(NULLIF(payload->>'calendar_day', ''), left(payload->>'kickoff_utc', 10))
+            BETWEEN ${from} AND ${to}
+        `) as Array<{ event_id: string; bucket: string | null; payload: unknown }>)
+      : ((await sql`
+          SELECT event_id, bucket, payload
+          FROM betmind_board_events
+        `) as Array<{ event_id: string; bucket: string | null; payload: unknown }>);
+    const events: unknown[] = [];
+    const seen = new Set<string>();
+    for (const row of rows) {
+      const payload =
+        typeof row.payload === "string"
+          ? (JSON.parse(row.payload) as Record<string, unknown>)
+          : ((row.payload ?? {}) as Record<string, unknown>);
+      const eventId = String(row.event_id || payload.event_id || "");
+      if (!eventId || seen.has(eventId)) continue;
+      seen.add(eventId);
+      events.push({
+        ...payload,
+        event_id: eventId,
+        bucket: row.bucket ?? payload.bucket ?? null,
+      });
+    }
+    const filtered = events.filter((e) =>
+      matchesCalendarQuery(e as { calendar_day?: string; kickoff_utc?: string; sport?: string }, q),
+    );
+    return { events: filtered, total: filtered.length };
+  } catch {
+    return null;
+  }
+}
+
+/** Debounced fire-and-forget heartbeat (worker sleep / mid-cycle). Never throws. */
 export function schedulePublishRuntimeStatus(minIntervalMs = 30_000): void {
   const now = Date.now();
   if (publishInFlight || now - lastPublishMs < minIntervalMs) return;
   if (!process.env.DATABASE_URL) return;
   publishInFlight = true;
-  void publishRuntimeStatus()
+  void publishRuntimeHeartbeat()
     .then((r) => {
       if (r.ok) lastPublishMs = Date.now();
+      else console.warn("[runtime-publish] heartbeat failed:", r.error);
     })
-    .catch(() => {
-      /* swallow */
+    .catch((e) => {
+      console.warn("[runtime-publish] heartbeat exception:", e instanceof Error ? e.message : e);
     })
     .finally(() => {
       publishInFlight = false;
     });
 }
 
-/** Awaited publish after a real cycle — preferred over debounce. */
+/** Awaited full publish after a real cycle — preferred over debounce. */
 export async function publishRuntimeStatusNow(): Promise<
   { ok: true; published_at: string; board: number } | { ok: false; error: string }
 > {

@@ -3,6 +3,7 @@ import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { buildHealthPayload053 } from "@/domain/eval/bankroll-053/system";
 import { loadRuntimeStatus } from "@/domain/eval/betmind-runtime/remote-status";
+import { localLabStorePresent, staleMirrorComponents } from "@/domain/eval/betmind-runtime/production-mirror";
 import { permanentRoot044 } from "@/domain/eval/permanent-044/config";
 import { piRoot } from "@/domain/eval/predictive-intelligence/config";
 
@@ -68,8 +69,7 @@ export async function GET() {
   try {
     const root = permanentRoot044();
     const pi = piRoot(root);
-    const storePresent =
-      existsSync(join(root, "events.jsonl")) && existsSync(join(root, "decisions.jsonl"));
+    const storePresent = localLabStorePresent(root);
 
     if (!storePresent) {
       const remote = await loadRuntimeStatus();
@@ -105,23 +105,19 @@ export async function GET() {
           latency_ms: Date.now() - started,
           real_money: false as const,
           api_calls: 0 as const,
-          components: {
-            supervisor: "OFFLINE",
-            worker: "OFFLINE",
-            brain: "OFFLINE",
-            predictive_engine: "OFFLINE",
-            data_pipeline: "OFFLINE",
-            settlement: "UNKNOWN",
-            learning: "UNKNOWN",
-          },
+          components: staleMirrorComponents(),
           detail: {
             ...remote.payload.detail,
             store_present: false,
+            store_present_local_on_publisher: remote.payload.store_present_local,
             mirror_source: "neon",
             mirror_published_at: remote.published_at,
             mirror_age_ms: remote.age_ms,
             mirror_stale: true,
             brain_status: "STALE_MIRROR",
+            last_known_brain_status: remote.payload.detail.brain_status,
+            last_known_components: remote.payload.components,
+            analysis: remote.payload.analysis,
           },
         });
       }

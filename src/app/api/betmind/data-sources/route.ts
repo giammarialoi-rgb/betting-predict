@@ -8,10 +8,17 @@ import { isTestScrapeEnabled } from "@/domain/sources/scraping-policy";
 import { buildOperationalSourceEngine } from "@/domain/eval/data-intelligence/research/source-engine";
 import { loadStore044 } from "@/domain/eval/permanent-044/store";
 import { loadRuntimeStatus } from "@/domain/eval/betmind-runtime/remote-status";
+import {
+  localLabStorePresent,
+  operationalHasNeonSignal,
+  overlayRegistryWithOperational,
+  type OperationalOverlay,
+} from "@/domain/eval/betmind-runtime/production-mirror";
+import type { SourceEntry } from "@/domain/eval/data-intelligence/types";
 
 export const dynamic = "force-dynamic";
 
-/** Source registry — disk if present, else in-memory honest registry (Vercel-safe). */
+/** Source registry — disk if present, else Neon operational overlay, else in-memory catalog. */
 export async function GET() {
   const root = permanentRoot044();
   const path = join(dataIntelligenceRoot(root), "source-registry.json");
@@ -25,53 +32,78 @@ export async function GET() {
   } catch {
     eventLabels = new Map();
   }
-  let operational = existsSync(root)
+
+  let operationalSource: "disk" | "neon" | "none" = "none";
+  let operational = localLabStorePresent(root)
     ? buildOperationalSourceEngine({ labBRoot: root, eventLabels })
     : [];
+  if (operational.length > 0) operationalSource = "disk";
+
+  let remote: Awaited<ReturnType<typeof loadRuntimeStatus>> = null;
   if (operational.length === 0) {
     try {
-      const remote = await loadRuntimeStatus();
-      const fromNeon = (remote.payload?.observatory as { source_engine?: unknown } | undefined)?.source_engine;
+      remote = await loadRuntimeStatus();
+      const fromNeon = (remote?.payload?.observatory as { source_engine?: unknown } | undefined)
+        ?.source_engine;
       if (Array.isArray(fromNeon) && fromNeon.length > 0) {
         operational = fromNeon as typeof operational;
+        operationalSource = "neon";
       }
     } catch {
       /* Neon mirror optional */
     }
   }
 
-  if (existsSync(path)) {
-    try {
-      const body = JSON.parse(readFileSync(path, "utf8").replace(/^\uFEFF/, "")) as Record<
-        string,
-        unknown
-      >;
-      return NextResponse.json({
-        ok: true,
-        source: "disk",
-        test_scrape_enabled: testScrape,
-        scrape_enters_model: false,
-        operational,
-        ...body,
-      });
-    } catch {
-      /* fall through to memory */
-    }
-  }
+  const registryFromDisk = existsSync(path)
+    ? (() => {
+        try {
+          return JSON.parse(readFileSync(path, "utf8").replace(/^\uFEFF/, "")) as {
+            sources?: SourceEntry[];
+            note?: string;
+            at?: string;
+          };
+        } catch {
+          return null;
+        }
+      })()
+    : null;
 
-  const sources = buildSourceRegistry({
-    clubeloCachePresent: clubEloCachePresent(process.cwd()),
-    testScrapeEnabled: testScrape,
-  });
+  const registry: SourceEntry[] = Array.isArray(registryFromDisk?.sources)
+    ? registryFromDisk!.sources!
+    : buildSourceRegistry({
+        clubeloCachePresent: clubEloCachePresent(process.cwd()),
+        testScrapeEnabled: testScrape,
+      });
+
+  const sources = overlayRegistryWithOperational(
+    registry,
+    operational as OperationalOverlay[],
+  );
+  const neonSignal = operationalSource === "neon" && operationalHasNeonSignal(operational);
+  const source =
+    registryFromDisk && localLabStorePresent(root)
+      ? "disk"
+      : neonSignal
+        ? "neon"
+        : registryFromDisk
+          ? "disk"
+          : "memory";
+
+  const note = neonSignal
+    ? "Stato fonti dallo specchio Neon (rendimento reale). Il catalogo nomi è di registro; i numeri non sono inventati."
+    : registryFromDisk
+      ? registryFromDisk.note
+      : "Lab B source-registry.json assente su questo host — registro in memoria. Overlay Neon assente o senza dati.";
 
   return NextResponse.json({
     ok: true,
-    source: "memory",
-    at: new Date().toISOString(),
+    source,
+    operational_source: operationalSource,
+    at: registryFromDisk?.at ?? new Date().toISOString(),
     real_money: false,
     test_scrape_enabled: testScrape,
     scrape_enters_model: false,
-    note: "Lab B source-registry.json absent on this host — live registry snapshot only",
+    note,
     sources,
     operational,
   });

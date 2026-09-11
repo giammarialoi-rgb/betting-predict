@@ -11,6 +11,8 @@ import {
   todayCalendarDay,
 } from "@/domain/eval/betmind-runtime/calendar";
 import { loadRuntimeStatus } from "@/domain/eval/betmind-runtime/remote-status";
+import { localLabStorePresent, staleMirrorComponents } from "@/domain/eval/betmind-runtime/production-mirror";
+import { readJsonlTail } from "@/domain/eval/betmind-runtime/board";
 import { permanentRoot044 } from "@/domain/eval/permanent-044/config";
 import { piRoot } from "@/domain/eval/predictive-intelligence/config";
 
@@ -88,12 +90,12 @@ export async function GET() {
     const root = permanentRoot044();
     const pi = piRoot(root);
     const nowIso = new Date().toISOString();
-    const storePresent =
-      existsSync(join(root, "events.jsonl")) && existsSync(join(root, "decisions.jsonl"));
+    const storePresent = localLabStorePresent(root);
 
     if (!storePresent) {
       const remote = await loadRuntimeStatus(now);
-      if (remote?.fresh) {
+      if (remote) {
+        const components = remote.fresh ? remote.payload.components : staleMirrorComponents();
         const body = {
           at: nowIso,
           api_calls_ui: 0 as const,
@@ -102,11 +104,25 @@ export async function GET() {
           mirror_source: "neon" as const,
           mirror_published_at: remote.published_at,
           mirror_age_ms: remote.age_ms,
+          mirror_stale: !remote.fresh,
           observatory: remote.payload.observatory,
           health: {
             ...remote.payload.health053,
-            components: remote.payload.components,
-            detail: remote.payload.detail,
+            components,
+            detail: {
+              ...remote.payload.detail,
+              store_present: false,
+              store_present_local_on_publisher: remote.payload.store_present_local,
+              mirror_source: "neon",
+              mirror_published_at: remote.published_at,
+              mirror_age_ms: remote.age_ms,
+              mirror_stale: !remote.fresh,
+              brain_status: remote.fresh
+                ? remote.payload.detail.brain_status
+                : "STALE_MIRROR",
+              last_known_brain_status: remote.payload.detail.brain_status,
+              last_known_components: remote.payload.components,
+            },
             analysis: remote.payload.analysis,
           },
           challengers: [],

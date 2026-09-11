@@ -56,6 +56,20 @@ export async function runBrainCycle051(input: {
   const nowMs = Date.parse(nowIso);
 
   writeHeartbeat051(labB, { phase: "planning" });
+  try {
+    const { publishRuntimeHeartbeat } = await import(
+      "@/domain/eval/betmind-runtime/remote-status"
+    );
+    const hb = await publishRuntimeHeartbeat();
+    if (!hb.ok) {
+      appendBrainLog051(labB, `runtime_heartbeat_start fail ${hb.error}`);
+    }
+  } catch (e) {
+    appendBrainLog051(
+      labB,
+      `runtime_heartbeat_start exception ${e instanceof Error ? e.message : String(e)}`,
+    );
+  }
   const diCtx = ensureDataIntelligenceContext(labB);
   if (!diCtx.ok) {
     appendActivity051(labB, "DI_DEGRADED", "data-intelligence coverage missing — continuing");
@@ -89,9 +103,16 @@ export async function runBrainCycle051(input: {
       const { publishRuntimeStatusNow } = await import(
         "@/domain/eval/betmind-runtime/remote-status"
       );
-      await publishRuntimeStatusNow();
-    } catch {
-      /* optional Neon mirror */
+      const r = await publishRuntimeStatusNow();
+      appendBrainLog051(
+        labB,
+        r.ok ? `runtime_publish ok board=${r.board}` : `runtime_publish fail ${r.error}`,
+      );
+    } catch (e) {
+      appendBrainLog051(
+        labB,
+        `runtime_publish exception ${e instanceof Error ? e.message : String(e)}`,
+      );
     }
     return {
       priority: plan.priority,
@@ -254,9 +275,16 @@ export async function runBrainCycle051(input: {
       const { publishRuntimeStatusNow } = await import(
         "@/domain/eval/betmind-runtime/remote-status"
       );
-      await publishRuntimeStatusNow();
-    } catch {
-      /* optional Neon mirror for Vercel health + board */
+      const r = await publishRuntimeStatusNow();
+      appendBrainLog051(
+        labB,
+        r.ok ? `runtime_publish ok board=${r.board}` : `runtime_publish fail ${r.error}`,
+      );
+    } catch (e) {
+      appendBrainLog051(
+        labB,
+        `runtime_publish exception ${e instanceof Error ? e.message : String(e)}`,
+      );
     }
 
     return {
@@ -281,6 +309,14 @@ export async function runBrainCycle051(input: {
     writeHeartbeat051(labB, { phase: "error", error: msg });
     appendActivity051(labB, "CYCLE_ERROR", msg);
     appendBrainLog051(labB, `cycle_error ${msg}`);
+    try {
+      const { publishRuntimeHeartbeat } = await import(
+        "@/domain/eval/betmind-runtime/remote-status"
+      );
+      await publishRuntimeHeartbeat();
+    } catch {
+      /* still throw the cycle error */
+    }
     throw e;
   }
 }

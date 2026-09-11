@@ -18,6 +18,11 @@ import {
   type BmState,
 } from "@/components/betmind/ui";
 import { useBetMindData } from "@/components/betmind/DataProvider";
+import {
+  brainStatusIt,
+  formatAgeIt,
+  statusWordIt,
+} from "@/domain/eval/betmind-runtime/status-copy";
 
 function hasLivePrediction(firstEv: Record<string, unknown> | null): boolean {
   if (!firstEv) return false;
@@ -69,6 +74,10 @@ export default function BetMindHomePage() {
   const storePresent =
     detail?.store_present === true || detail?.store_present_local_on_publisher === true;
   const mirrored = detail?.mirror_source === "neon" || (data as { mirror_source?: string } | null)?.mirror_source === "neon";
+  const mirrorStale =
+    detail?.mirror_stale === true || (data as { mirror_stale?: boolean } | null)?.mirror_stale === true;
+  const mirrorAge = Number(detail?.mirror_age_ms ?? (data as { mirror_age_ms?: number } | null)?.mirror_age_ms);
+  const lastKnownBrain = String(detail?.last_known_brain_status ?? detail?.brain_status ?? sys?.status ?? "");
   const livePrediction = hasLivePrediction(firstEv) && strip.brain !== "OFFLINE";
   const rt = runtimeState(strip);
   const engine = strip.predictiveEngine;
@@ -102,60 +111,85 @@ export default function BetMindHomePage() {
     (Number(boardCount) === 0 && Number(analysis?.events_in_store ?? 0) === 0);
 
   const statusRows: { name: string; state: BmState; detail: string }[] = [
-    { name: "APP WEB", state: strip.webApp, detail: "Vercel / Next.js" },
+    { name: "App web", state: strip.webApp, detail: "Questa app su Vercel (Next.js)" },
     {
-      name: "RUNTIME",
+      name: "Runtime (PC)",
       state: rt,
       detail: mirrored
-        ? `Mirror ${String(detail?.mirror_host ?? "neon")} · età ${String(detail?.mirror_age_ms ?? "—")} ms`
+        ? `Specchio Neon da ${String(detail?.mirror_host ?? "giamm")} · ultimo segnale ${formatAgeIt(mirrorAge)}${mirrorStale ? " — scaduto" : ""}`
         : storePresent
-          ? "Lab B locale"
-          : "Nessun heartbeat runtime",
+          ? "Store Lab B su questo host"
+          : "Nessun battito runtime ricevuto",
     },
     {
-      name: "MOTORE PREDITTIVO",
+      name: "Motore predittivo",
       state: engine,
       detail: String(verdict?.model_independent ?? modelName),
     },
     {
-      name: "PIPELINE DATI",
+      name: "Pipeline dati",
       state: strip.dataPipeline,
-      detail: storePresent ? "Store Lab B presente (locale o publisher)" : "Store Lab B assente",
+      detail: storePresent
+        ? "Eventi presenti sul PC (publisher) — elenco via specchio Neon"
+        : mirrored
+          ? "Vercel non ha Lab B in locale; elenco da specchio Neon"
+          : "Store Lab B assente su Vercel e nessuno specchio",
     },
     {
-      name: "CERVELLO",
+      name: "Cervello",
       state: strip.brain,
-      detail: String(detail?.brain_status ?? sys?.status ?? "—"),
+      detail: mirrorStale
+        ? `${brainStatusIt("STALE_MIRROR")}. Ultimo stato noto: ${brainStatusIt(lastKnownBrain)}`
+        : brainStatusIt(String(detail?.brain_status ?? sys?.status ?? "")),
     },
     {
-      name: "WORKER",
+      name: "Worker",
       state: strip.worker,
-      detail: sys?.worker_pid != null ? `pid ${String(sys.worker_pid)}` : "nessun processo worker",
+      detail:
+        sys?.worker_pid != null
+          ? `Processo ${String(sys.worker_pid)} sul PC`
+          : strip.worker === "ONLINE"
+            ? "Ciclo in corso sul PC"
+            : "Nessun processo worker visibile da Vercel",
     },
   ];
 
   const blockers: string[] = [];
-  if (rt === "OFFLINE") blockers.push("Runtime OFFLINE — PC worker not publishing a fresh heartbeat.");
-  if (engine === "OFFLINE") blockers.push("Prediction engine OFFLINE.");
+  if (mirrorStale) {
+    blockers.push(
+      `Specchio Neon scaduto (${formatAgeIt(mirrorAge)}). Il cervello sul PC può essere acceso, ma Vercel non ha un battito recente — non lo mostriamo come Online.`,
+    );
+  }
+  if (rt === "OFFLINE" && !mirrorStale) {
+    blockers.push("Runtime offline — il worker sul PC non pubblica un battito fresco.");
+  }
+  if (engine === "OFFLINE") blockers.push("Motore predittivo offline.");
   if (coverage?.source === "memory") {
-    blockers.push("Coverage endpoint is memory fallback — not an audited Lab B report.");
+    blockers.push("Copertura: registro in memoria (nessun report Lab B su questo host).");
   }
   if (noEvents) {
-    blockers.push(String(analysis?.no_events_reason ?? "NO EVENTS AVAILABLE on the decision board."));
+    blockers.push(
+      String(
+        analysis?.no_events_reason ??
+          "Nessuna partita sul board. Niente di inventato.",
+      ),
+    );
   } else if (!livePrediction) {
-    blockers.push("Board has events but no independent model_pct on the first row.");
+    blockers.push("Ci sono eventi, ma la prima riga non ha una probabilità di modello indipendente.");
   }
 
   const noPredictionReason = noEvents
     ? String(
         analysis?.no_events_reason ??
-          "NO EVENTS AVAILABLE — last discovery/cycle recorded without board rows.",
+          "Nessuna partita disponibile — ultimo ciclo senza righe sul board.",
       )
     : strip.brain === "OFFLINE"
-      ? `Brain status is OFFLINE. Start the local brain (pnpm brain:start) then pnpm runtime:publish.`
+      ? mirrorStale
+        ? `Cervello offline per Vercel (specchio scaduto). Ultimo stato noto: ${brainStatusIt(lastKnownBrain)}.`
+        : "Cervello offline. Va avviato sul PC (pnpm brain:start); il worker pubblica da solo su Neon."
       : nextEvents.length === 0
-        ? "Decision board is empty in this snapshot."
-        : "Event row exists but model probability fields are not present (INSUFFICIENT_DATA or not yet analyzed).";
+        ? "Il board di questo snapshot è vuoto."
+        : "La riga esiste ma mancano le probabilità di modello (dati insufficienti o non ancora analizzata).";
 
   return (
     <div className="mx-auto flex max-w-6xl flex-col gap-4">
@@ -177,7 +211,7 @@ export default function BetMindHomePage() {
 
       {error && (
         <Card className="border-[rgba(229,72,77,0.4)]">
-          <p className="text-sm text-[var(--bm-danger)]">Snapshot error: {error}</p>
+          <p className="text-sm text-[var(--bm-danger)]">Errore snapshot: {error}</p>
         </Card>
       )}
 
@@ -188,9 +222,9 @@ export default function BetMindHomePage() {
             <h2 className="mt-1 text-lg font-semibold">Striscia operativa</h2>
           </div>
           <div className="flex flex-wrap gap-2">
-            <StatusPill state={strip.webApp} label={`WEB ${strip.webApp}`} />
-            <StatusPill state={rt} label={`RUNTIME ${rt}`} />
-            <StatusPill state={engine} label={`ENGINE ${engine}`} />
+            <StatusPill state={strip.webApp} label={`App web ${statusWordIt(strip.webApp)}`} />
+            <StatusPill state={rt} label={`Runtime ${statusWordIt(rt)}`} />
+            <StatusPill state={engine} label={`Motore ${statusWordIt(engine)}`} />
           </div>
         </div>
         <div className="bm-status-grid mt-4">
@@ -199,14 +233,14 @@ export default function BetMindHomePage() {
               <div className="bm-section-label">{s.name}</div>
               <strong className="inline-flex items-center gap-1.5">
                 <StatusDot state={s.state} />
-                {s.state}
+                {statusWordIt(s.state)}
               </strong>
               <p className="mt-1 truncate text-[11px] bm-muted">{s.detail}</p>
             </div>
           ))}
         </div>
         <div className="mt-3 flex flex-wrap gap-2">
-          <Pill>Cervello {strip.brain}</Pill>
+          <Pill>Cervello {statusWordIt(strip.brain)}</Pill>
           <Pill>Ultimo ciclo #{cycleNum != null ? String(cycleNum) : "—"}</Pill>
           <Pill>{fmtWhen(lastCycle)}</Pill>
         </div>
@@ -477,8 +511,8 @@ export default function BetMindHomePage() {
       <Card title="Ultime analisi" right={<Pill>{String(nextEvents.length)}</Pill>}>
         {nextEvents.length === 0 ? (
           <EmptyState
-            title="NO BOARD EVENTS"
-            reason={String(analysis?.no_events_reason ?? "Snapshot next_events is empty.")}
+            title="Nessun evento sul board"
+            reason={String(analysis?.no_events_reason ?? "next_events di questo snapshot è vuoto.")}
           />
         ) : (
           <ul className="divide-y divide-[var(--bm-border)] text-sm">
@@ -516,9 +550,9 @@ export default function BetMindHomePage() {
         </Link>
       </Card>
 
-      <Card title="Blockers" glow={blockers.length > 0}>
+      <Card title="Blocchi" glow={blockers.length > 0}>
         {blockers.length === 0 ? (
-          <p className="text-sm bm-muted">No blockers reported from this snapshot.</p>
+          <p className="text-sm bm-muted">Nessun blocco segnalato da questo snapshot.</p>
         ) : (
           <ul className="space-y-2 text-sm">
             {blockers.map((b) => (
@@ -531,23 +565,23 @@ export default function BetMindHomePage() {
         )}
         <div className="mt-3 flex flex-wrap gap-2">
           <Link href="/sources" className="bm-btn bm-btn-ghost text-xs">
-            Data sources
+            Fonti
           </Link>
           <Link href="/models" className="bm-btn bm-btn-ghost text-xs">
-            Models
+            Modelli
           </Link>
         </div>
       </Card>
 
       <div className="grid gap-4 lg:grid-cols-2">
-        <Card title="Paper bankroll">
+      <Card title="Bankroll simulato">
           <div className="text-3xl font-bold tracking-tight">
             {capital != null ? fmtMoney(capital) : "—"}
           </div>
           <div className="mt-1 text-xs bm-muted">
             {capital != null
-              ? "From paper report · REAL_MONEY=false"
-              : "No paper bankroll report on this host"}
+              ? "Dal report carta · REAL_MONEY=false"
+              : "Nessun report bankroll su questo host"}
           </div>
           <div className="mt-4 grid grid-cols-2 gap-3">
             <Metric label="P&L" value={fmtMoney(paper?.profit_flat as number | undefined)} />
@@ -557,7 +591,7 @@ export default function BetMindHomePage() {
           </div>
         </Card>
 
-        <Card title="Holdout metrics (if present)">
+        <Card title="Metriche holdout (se presenti)">
           {independent ? (
             <div className="grid grid-cols-2 gap-3">
               <Metric label="Log Loss" value={fmtN(independent.log_loss as number)} />
@@ -567,8 +601,8 @@ export default function BetMindHomePage() {
             </div>
           ) : (
             <EmptyState
-              title="NO HOLDOUT METRICS ON DISK"
-              reason="validation-report / holdout metrics are not present on this host."
+              title="Nessuna metrica holdout su disco"
+              reason="validation-report / holdout non è presente su questo host."
             />
           )}
           <div className="mt-3 grid grid-cols-3 gap-2">
@@ -596,16 +630,16 @@ export default function BetMindHomePage() {
             </div>
           ) : (
             <EmptyState
-              title="NO SETTLED CASES YET"
-              reason="learning_cases is empty — not UNKNOWN. Settlement/learning loop has no cases yet."
+              title="Nessun caso liquidato"
+              reason="learning_cases è vuoto — il ciclo di apprendimento non ha ancora casi."
             />
           )}
         </Card>
         <Card title="Settlement">
           {settlements.length === 0 ? (
             <EmptyState
-              title="NO SETTLED CASES YET"
-              reason="recent_settlements is empty — nothing invented."
+              title="Nessun caso liquidato"
+              reason="recent_settlements è vuoto — niente di inventato."
             />
           ) : (
             <div className="space-y-2 text-sm">
