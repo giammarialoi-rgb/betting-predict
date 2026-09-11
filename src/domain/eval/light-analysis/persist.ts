@@ -80,7 +80,8 @@ export async function ensureLightAnalysisTable(): Promise<boolean> {
 }
 
 /** Neon writes are banned. Kept as a no-op so call sites compile. */
-export async function upsertLightAnalysisNeon(_row: LightAnalysis): Promise<boolean> {
+export async function upsertLightAnalysisNeon(row: LightAnalysis): Promise<boolean> {
+  void row;
   return false;
 }
 
@@ -107,7 +108,8 @@ export async function persistLightAnalysis(row: LightAnalysis, cwd = process.cwd
   persistLightAnalysisDisk(row, cwd);
 }
 
-export async function loadLightAnalysisNeon(_eventId: string): Promise<LightAnalysis | null> {
+export async function loadLightAnalysisNeon(eventId: string): Promise<LightAnalysis | null> {
+  void eventId;
   return null;
 }
 

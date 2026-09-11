@@ -147,7 +147,8 @@ export async function loadLightHistoryNeon(): Promise<CachedBlob | null> {
   return null;
 }
 
-export async function saveLightHistoryNeon(_blob: CachedBlob): Promise<boolean> {
+export async function saveLightHistoryNeon(blob: CachedBlob): Promise<boolean> {
+  void blob;
   return false;
 }
 

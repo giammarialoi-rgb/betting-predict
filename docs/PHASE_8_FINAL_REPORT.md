@@ -1,154 +1,160 @@
-# Phase 8 — Event Intelligence and Real Data Acquisition
+# Phase 8 mega — final report
 
-Runtime: `phase-8-event-intelligence-v1`.
+**NEON NON UTILIZZATO.**
 
-Principle unchanged: no invented data, no HTTP 200 homepage as SUCCESS, no odds in the independent model, no post-kickoff leakage, no lowered gates (`coverage >= 0.35`, `missing_keys <= 45`).
+This is not a claim that the product is “fully working.” It is an evidence record of what this branch implemented and what this host measured.
 
-Phase 8 is not another honesty or UI rename. It is a data-path change: identity first, then source routing, then continue-on-fail extraction, then observations with provenance, then features, then the same Poisson gates.
-
-## 1. Baseline Phase 7
-
-Source: `artifacts/phase-7/research-cycle-report.json` (2026-09-10).
-
-| Metric | Phase 7 |
+| Field | Value |
 |---|---|
-| Events researched | 20 |
-| Events with real event-level data | 12 |
-| Observations created in cycle | 744 |
-| Real event observations | ~48 (almost all Open-Meteo) |
-| Historical | 36 |
-| Derived | 660 |
-| Data yield (cycle) | **1.958** |
-| HTML scrape typed SUCCESS | 0 |
-| xG / injuries / lineups / referee | 0 |
-| Form / team stats | Football-Data where bound |
-| Weather | where stadium coords existed |
+| Branch | `cursor/phase-8-mega-neon-free-db12` |
+| Base | `main` @ `dc360a2` |
+| Report written | 2026-09-11 |
+| Storage | filesystem `StorageProvider` → Lab B JSONL + `data/` + `mirror/` |
+| Neon | **NEON NON UTILIZZATO** (not store, not fallback) |
 
-Aston Villa vs Nottingham Forest in Phase 7: 221 store observations, form + team stats + weather, nothing else.
+## 1. Commits
 
-## 2. What Phase 8 changed in the data path
+Atomic series on this branch:
 
-1. **Identity resolver** — accent/FC/Utd/Inter/Roma/Bayern aliases; competition matrix beyond EPL (`E0`, `I1`, `SP1`, `D1`, `F1`, UCL/UEL/UECL). Source IDs stay `null` until observed.
-2. **Persistent identity cache** — `api_sports_fixture_id`, team IDs, venue, URLs in `audit/external/task-044/identity/source-events.json`. Discovery is not repeated every cycle.
-3. **API-Sports fixture resolver** — batch `/fixtures?date=` then match home/away names. IDs are never invented. Once found, the same ID is used for injuries, lineups, referee, venue.
-4. **Continue-on-fail routing** — 403/429 cooldown; one blocked source does not stop the graph.
-5. **Understat prior xG** — parse `datesData` when present; target match excluded; previous season fetched. HTTP 200 without `datesData` is PARSE_ERROR, not SUCCESS.
-6. **Availability / lineups** — typed `PlayerAvailabilityObservation`; EXPECTED vs CONFIRMED kept separate; empty injury/lineup lists are not stored as zero.
-7. **Calendar congestion** — matches last 7/14/21 days and rest days from priors with `excluded_target=true`.
-8. **News** — RSS classified into categories, CONTEXT only, never a free-text probability nudge.
-9. **Weather venues** — expanded stadium coordinate registry (Open-Meteo).
-10. **Data quality letter A–F** — separate from model confidence.
-11. **Italian dossier** — cosa ha analizzato / trovato / non ha trovato; technical keys under details.
-12. **Sources page** — event-level success and observation counts, not homepage HTTP 200.
+1. `736fbb7` — STEP1–2 StorageProvider + audit (`docs/PHASE_8_STORAGE_AUDIT.md`)
+2. `d801856` — STEP2 Neon removed from worker / light / dossier / runtime mirror
+3. `0013884` — STEP3–20 queue, capabilities, models, value gate, `/conclusi`, tests
+4. (this report + verification artifact + verify-script expansion)
 
-## 3. Sources implemented vs blocked
+Exact HEAD is the last commit on the PR after this file lands.
 
-| Source | Event-level status | Notes |
-|---|---|---|
-| Football-Data.co.uk | ACTIVE | Form, shots, SOT, corners, cards, H2H, calendar derived. Target excluded. |
-| Club-Football-Match-Data | PARTIAL | Historical prior GF/GA. Not MODEL. |
-| Open-Meteo | ACTIVE | Forecast at kickoff when coords exist. CONTEXT. |
-| API-Sports | ACTIVE when key loaded | Fixture IDs resolved (e.g. Villa Park 1557397). Injuries + some referee. Lineups often unpublished. |
-| ANSA RSS | PARTIAL | Both-team mention only. CONTEXT. |
-| The Odds API | MARKET only | Never MODEL. |
-| Understat | NO_DATA | League HTML 200 (~18k) without embedded `datesData` (JS-loaded). Not SUCCESS. |
-| SofaScore / FBref / WhoScored / Diretta / Flashscore / Soccerway | BLOCKED | Ordinary GET 403. No WAF bypass. |
-| ClubElo | ERROR | `MISSING_FILE` in this run. |
-| Sky Sport RSS | ERROR | No public RSS that returns items. |
-| OddsPedia / Betshoot / Click4Soccer / Opta / Athletic / CIES | MISSING_ADAPTER or POLICY | Catalogue kept. Not deleted. |
+## 2. Tests / build / lint
 
-HTML scrape typed SUCCESS remains **0** for WAF-fronted pages. That is honest, not a probe-as-success cheat.
+| Check | Result |
+|---|---|
+| New Phase 8 mega + storage tests | **82/82 pass** (targeted run) |
+| Full `pnpm test` | **777 pass, 16 fail, 15 skip** |
+| `pnpm build` | **OK** (`/conclusi` in route table) |
+| `pnpm lint` | **2 errors, 24 warnings** — errors are pre-existing (`page.tsx` React Compiler memo; `clubelo.ts` prefer-const). Not introduced by this slice. |
 
-## 4. 20-event real acquisition (2026-09-11)
+### Full-suite failures (honest)
 
-Script: `pnpm phase8:research` with `.env.local` loaded. No mocks.
+These fail because this VM has **empty Lab A / Lab B ledgers** (`audit/external` is gitignored and `events.jsonl` is empty) and a **stale Fonti registry test** (fbref/directa were pruned from `buildSourceRegistry` in an earlier PR):
 
-Cycle metrics (what this run created):
+- TASK 057 / 046 / 047 / 048 / 049 / 051 / 052 / 053 / 054 / 055 / 056 Lab A fingerprint `0 !== 114`
+- TASK 018 annual `withData.length > 0` on missing Club-Football corpus
+- data-intelligence: `fbref` missing from pruned registry
 
-| Metric | Phase 7 | Phase 8 | Delta |
+They are **not** Neon regressions and were not used to weaken gates.
+
+## 3. Real source audit (this host, 2026-09-11)
+
+Script: `pnpm phase8:mega-verify` → `artifacts/phase-8/mega-verification.json`.
+
+Ordinary GET only. No WAF bypass. HTTP 200 without both teams is not SUCCESS.
+
+| Source | HTTP | Parsed / upcoming | Notes |
 |---|---|---|---|
-| Observations created | 744 | **929** | +25% |
-| Real event observations | ~48 | **144** | +200% |
-| Historical | 36 | 36 | = |
-| Derived | 660 | 749 | +13% |
-| Data yield | 1.958 | **2.445** | **+25%** |
-| Events with real event data | 12 | **18** | +6 |
-| Events researched | 20 | 20 | = |
+| ESPN scoreboards (14 leagues) | 200 | 19 upcoming after kickoff filter | Unofficial JSON |
+| TheSportsDB `eventsnextleague` (9 leagues) | 200 | 9 upcoming | CONTEXT meta |
+| OpenLigaDB `getmatchdata` (9 competitions) | 200 | 43 upcoming | German + extras |
+| Football-Data.co.uk (in-research) | fail 20/20 | 0 | No local CSV / bind this host |
+| Open-Meteo | 5 ok / 15 fail | weather when coords exist | CONTEXT |
+| Understat | 8 ok / 3 fail / 9 denied | HTML/XHR; not invented xG | |
+| API-Sports | 20 fail | no key | AUTH / no fixture |
+| ClubElo | 20 fail | `MISSING_FILE` | |
+| SofaScore / FBref / WhoScored | not probed as success | capabilities `[]` | 403 = BLOCKED policy |
 
-Category coverage on the 20-event sample:
+## 4. Research cycle numbers
 
-| Category | Phase 7 | Phase 8 |
+| Metric | Number |
+|---|---|
+| Upcoming discovered (deduped pairs) | **69** |
+| Queued (every upcoming stays on the queue) | **69** |
+| Events researched this cycle | **20** (not padded) |
+| Observations created in cycle | **84** |
+| Observations on disk for those 20 | **101** |
+| Real event observations | **28** |
+| Historical observations | **56** |
+| Derived | **0** |
+| Events with real event-level data | **5** |
+| Events with historical data | **8** |
+| Cycle data yield | **0.221** |
+| Research fetches | 16 |
+| Honest failures | 355 |
+| Denied (policy / understat) | 9 |
+| Missing adapters | 0 |
+
+Sample researched: VfL Bochum vs Greuther Fürth; Magdeburg vs Kaiserslautern; Eintracht Braunschweig vs Dynamo Dresden; Racing Santander vs Alavés; Fortuna Düsseldorf vs MSV Duisburg.
+
+No invented xG / injuries / lineups / referees. No placeholder percentages.
+
+## 5. Features / models / backtest / promotion
+
+| Item | Evidence |
+|---|---|
+| Temporal firewall | `assertNoFutureDataInModel` throws `FUTURE_DATA_MUST_NOT_ENTER_MODEL` |
+| Odds firewall | `MARKET_INPUT_FORBIDDEN` on odds keys |
+| Independent Poisson | Still the only **live** champion (`INDEPENDENT_POISSON_v1`) |
+| Dixon–Coles | Implemented; requires train N ≥ 40 |
+| NegBin | Implemented; requires overdispersion + N ≥ 80 |
+| Logistic | Existing challenger; used only with trained weights |
+| GBM stumps | Implemented; requires N ≥ 200 and ≥6 keys — **not trained this host** |
+| OOS / walk-forward | Existing `walk-forward.ts`; **not re-run** — no PI `matches.jsonl` on this VM |
+| Promotion | Ledger `CANDIDATE→TRAINED→VALIDATED→OOS→SHADOW\|REJECTED`. **PROMOTED: 0. REJECTED on leakage: tested. Auto-promote: false.** |
+| Predictions this cycle | **0 independent probabilities** — coverage/missing_keys gates unchanged; thin events stay INSUFFICIENT |
+
+## 6. Value / live / settlement / learning / UI
+
+| Item | Evidence |
+|---|---|
+| Odds separate | `BET_QUALIFICATION_GATE`; `odds_in_model: false` |
+| Value candidates this cycle | **0** (no independent inference + no market quotes on this host) |
+| Live | Existing live/settlement path unchanged; no live scores faked |
+| Settlements this cycle | **0** (researched events are still upcoming) |
+| `/conclusi` | Route built; reads real `settlements.jsonl` only |
+| Learning records | Path exists; `auto_applied: false`; no per-match weight hack |
+| Retrain | `retrainIndependentModelPi` writes a **new** artifact; not executed (no dataset) |
+| UI truth | DATI TROVATI / DERIVATI / STORICI / MANCANTI / ESCLUSI / MERCATO |
+| Sources | DATA_SUCCESS ≠ HTTP 200 (`isDataSuccess`, `http200IsNotSuccess`) |
+
+## 7. Storage
+
+- Provider: `src/domain/storage/` — `backend: "filesystem"`, `neon_in_use: false`
+- Ledgers: `audit/external/task-044/*.jsonl`
+- Mirror: `audit/external/task-044/mirror/` (runtime, board, dossiers)
+- Light: `data/light-analysis/` + HTTP football-data.co.uk (no Neon cache)
+- **NEON NON UTILIZZATO.** `DATABASE_URL`, if present, is ignored.
+
+## 8. Criteria A–Q (honest)
+
+| | Criterion | Status |
 |---|---|---|
-| Form | high (Football-Data bind) | **1.00** |
-| Team stats | high | **1.00** |
-| Weather | ~0.60 | **0.80** |
-| Injuries | 0 | **0.30** |
-| Referee | 0 | **0.15** |
-| Lineups (confirmed) | 0 | **0** (unpublished; not faked) |
-| xG | 0 | **0** (Understat payload not in HTML) |
+| A | Storage without Neon | **Met** |
+| B | Real research | **Met** (20 upcoming, 69 queued) |
+| C | Observations + provenance | **Met** (84/101; failures recorded) |
+| D | Temporal features | **Met in tests**; FDouk history missing on this host |
+| E | Multi-model when data allows | **Implemented**; only Poisson is live; others gated by data |
+| F | OOS backtest | **Partial** — code exists; no dataset on this VM |
+| G | Promotion evidence | **Met as SHADOW/REJECT only** — none PROMOTED |
+| H | Odds separate | **Met** |
+| I | Value candidates | **Gate met**; 0 candidates (honest) |
+| J | Live | **Existing path**; not newly scored this cycle |
+| K | Settlement | **Write path met**; 0 rows (events still upcoming) |
+| L | `/conclusi` | **Met** (empty until settlements exist) |
+| M | Learning dataset | **Path met**; no new settled cases |
+| N | No leakage | **Met** (unit + firewall) |
+| O | Retrain path | **Exists**; not run |
+| P | UI truth | **Met** |
+| Q | Storage works without Neon | **Met** (tests ignore `DATABASE_URL`) |
 
-Store-side counts for the same 20 events are higher (Football-Data 2847 rows, yield_sum 8.822) because Lab B was not wiped between phases. The **cycle** numbers above are the fair before/after.
+**Phase 8 is not declared complete.** Incomplete: OOS numbers, promoted models, settlements, learning-from-settlement on this host, full-suite Lab A data.
 
-### Sample events
+## 9. Open problems
 
-| Event | Store obs | Found | Missing |
-|---|---|---|---|
-| Aston Villa vs Nottingham Forest | 394 | form, stats, injuries, weather | xG, confirmed XI, referee |
-| Liverpool vs Fulham | 400 | form, stats, injuries, weather | xG, XI, referee |
-| Tottenham vs Everton | 400 | form, stats, injuries, weather | xG, XI, referee |
-| Sunderland vs Arsenal | 124 | form, stats, injuries, weather | xG, XI, referee |
-| Venezia vs Fiorentina | 253 | form, stats, referee, weather | xG, injuries, XI |
-| Rennes vs Marseille | 316 | form, stats, weather | xG, injuries, XI, referee |
-| Omonoia vs Celta | 3 | form, stats (thin) | almost everything else |
-| Ararat-Armenia vs Sparta | 3 | form, stats (thin) | almost everything else |
+1. Lab B / Lab A JSONL not in git — Vercel/PC still need the host disk or a non-Neon sync of `audit/external/task-044`.
+2. Football-Data.co.uk / ClubElo files missing in this environment → form/stats/Elo FAIL honestly.
+3. API-Sports / Odds API keys unset → AUTH / no market quotes.
+4. Understat xG still JS-loaded; not SUCCESS from HTML GET.
+5. WAF sources remain BLOCKED; capabilities stay empty.
+6. Full `pnpm test` 16 fails need Lab A 114-event store + un-stale fbref registry test.
+7. No model was promoted. Do not lower gates to invent predictions.
 
-Odds entered the independent model: **FALSE** on every event.
+## 10. Verdict
 
-Independent inference still uses the same coverage/missing_keys rules. Thin European ties correctly stay INSUFFICIENT_DATA rather than receiving invented percentages.
-
-## 5. Feature / model path
-
-RAW observation → normalize → temporal firewall (`available_at <= kickoff`) → feature bag → quality letter → vector → `INDEPENDENT_POISSON_v1`.
-
-Odds, implied probability, and market movement stay MARKET_LAYER.
-
-Target match is excluded from rolling L3/L5/L10.
-
-Gates were **not** changed:
-
-```
-missing_keys.length > 45 || feature_coverage < 0.35  → no independent probability
-```
-
-## 6. Remaining blockers (technical, not documentation excuses)
-
-1. **SofaScore / FBref / WhoScored** — Cloudflare/WAF 403 on ordinary GET. Implementing a bypass would violate policy. Cache + continue-on-fail is the legal path.
-2. **Understat xG** — page returns 200 but `datesData` is loaded by JavaScript. Parser correctly returns PARSE_ERROR. No invented xG.
-3. **Confirmed lineups** — API-Sports often returns empty until about 60 minutes before kickoff. Empty is not stored as 0-XI.
-4. **ClubElo CSV** — file missing in this worker environment (`MISSING_FILE`).
-5. **Short-name matching** — after the 20-event run, `namesEqual("Villa", "Aston Villa")` was tightened to false so `"villa"` cannot bind Villarreal or a stray injury team. Fixture IDs already cached remain the official API-Sports IDs (Villa Park 1557397, Anfield 1557403, and so on).
-6. **HTML event-page scraping** — still 0 SUCCESS on WAF sites. Alternative licensed/public JSON (API-Sports, Football-Data, Open-Meteo, RSS) is what actually raised yield.
-
-## 7. Tests
-
-Phase 8 suite: identity aliases without invented IDs, fixture inject, Understat prior-only, news classification, odds firewall, unchanged gates, 403 cooldown, quality letter, short-name non-match.
-
-`pnpm test`: 695 pass, 0 fail. `pnpm lint`: 0 errors (pre-existing warnings only). Build recorded at the end of this phase.
-
-## 8. Production verification checklist
-
-After commit + push:
-
-- one brain worker, runtime `phase-8-event-intelligence-v1`
-- `pnpm runtime:publish`
-- `/events` for yesterday / today / tomorrow shows **all** discovered football events for the selected date
-- Sources page shows event-level counts, not homepage OK
-- at least five dossiers: Italian found/missing, market separate, prediction only if independent inference exists
-
-## 9. Verdict
-
-Phase 8 **improved real data yield** (1.958 → 2.445 cycle yield; 12 → 18 events with real event-level rows; first non-zero injuries and referee coverage).
-
-It did **not** magically unlock SofaScore, FBref, WhoScored, or Understat xG. Those remain blocked or empty for documented technical reasons. The system now keeps searching the rest of the graph instead of stopping at the first 403.
-
-Success criterion met: more real observations per researched event, without lowering gates, inventing data, or feeding odds into the model.
+The critical path no longer requires Neon. Real free sources returned **69** upcoming fixtures; **20** were researched; observations and failures are real. Independent prediction stayed off where features were insufficient. **NEON NON UTILIZZATO.**

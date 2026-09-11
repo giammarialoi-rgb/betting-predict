@@ -7,8 +7,17 @@ import { config } from "dotenv";
 import { createHash } from "node:crypto";
 import { mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
-import { ESPN_SCOREBOARDS, espnScoreboardUrl } from "@/domain/eval/acquisition-engine/catalog";
+import {
+  ESPN_SCOREBOARDS,
+  OPENLIGA_LEAGUES,
+  THESPORTSDB_LEAGUES,
+  espnScoreboardUrl,
+  openLigaMatchUrl,
+  theSportsDbNextUrl,
+} from "@/domain/eval/acquisition-engine/catalog";
 import { parseEspnScoreboard } from "@/domain/eval/acquisition-engine/sources/espn";
+import { parseTheSportsDbEvents } from "@/domain/eval/acquisition-engine/sources/thesportsdb";
+import { parseOpenLigaMatches } from "@/domain/eval/acquisition-engine/sources/openligadb";
 import { loadStore044 } from "@/domain/eval/permanent-044/store";
 import { permanentRoot044 } from "@/domain/eval/permanent-044/config";
 import { runEventResearchBatch } from "@/domain/eval/data-intelligence/research/run-event-research";
@@ -46,10 +55,7 @@ async function discoverEspn(): Promise<{
   const nowIso = new Date().toISOString();
   const events: PermanentEvent044[] = [];
   const probes: Array<{ url: string; status: number; parsed: number }> = [];
-  const boards = ESPN_SCOREBOARDS.filter((b) =>
-    ["eng.1", "ita.1", "ger.1", "esp.1", "fra.1", "uefa.champions"].includes(b.slug),
-  );
-  for (const board of boards) {
+  for (const board of ESPN_SCOREBOARDS) {
     const url = espnScoreboardUrl(board);
     try {
       const { status, text } = await fetchText(url);
@@ -88,6 +94,106 @@ async function discoverEspn(): Promise<{
   return { events, probes };
 }
 
+async function discoverTheSportsDb(): Promise<{
+  events: PermanentEvent044[];
+  probes: Array<{ url: string; status: number; parsed: number }>;
+}> {
+  const nowIso = new Date().toISOString();
+  const events: PermanentEvent044[] = [];
+  const probes: Array<{ url: string; status: number; parsed: number }> = [];
+  for (const league of THESPORTSDB_LEAGUES) {
+    const url = theSportsDbNextUrl(league.id);
+    try {
+      const { status, text } = await fetchText(url);
+      const parsed = status === 200 ? parseTheSportsDbEvents(text) : [];
+      probes.push({ url, status, parsed: parsed.length });
+      if (status !== 200 || parsed.length === 0) continue;
+      for (const e of parsed) {
+        if (!e.strHomeTeam || !e.strAwayTeam || !e.dateEvent) continue;
+        const time = (e.strTime && e.strTime !== "00:00:00" ? e.strTime : "15:00:00").slice(0, 8);
+        const kickoff = `${e.dateEvent}T${time}Z`;
+        const ko = Date.parse(kickoff);
+        if (!Number.isFinite(ko) || ko < Date.now()) continue;
+        const event_id = fp(`tsdb|${e.idEvent ?? `${e.strHomeTeam}|${e.strAwayTeam}|${e.dateEvent}`}`);
+        events.push({
+          event_id,
+          canonical_event_id: event_id,
+          source: "thesportsdb",
+          source_event_id: String(e.idEvent ?? event_id),
+          sport: "soccer",
+          competition: e.strLeague ?? league.label,
+          country: null,
+          home_or_a: e.strHomeTeam,
+          away_or_b: e.strAwayTeam,
+          kickoff_utc: new Date(ko).toISOString(),
+          collected_at_utc: nowIso,
+          available_at_utc: nowIso,
+          semantic_level: "RESEARCH",
+          data_quality: 0.4,
+          fingerprint: event_id,
+          status: "UPCOMING",
+        });
+      }
+    } catch {
+      probes.push({ url, status: 0, parsed: 0 });
+    }
+  }
+  return { events, probes };
+}
+
+async function discoverOpenLiga(): Promise<{
+  events: PermanentEvent044[];
+  probes: Array<{ url: string; status: number; parsed: number }>;
+}> {
+  const nowIso = new Date().toISOString();
+  const events: PermanentEvent044[] = [];
+  const probes: Array<{ url: string; status: number; parsed: number }> = [];
+  for (const league of OPENLIGA_LEAGUES) {
+    const url = openLigaMatchUrl(league.shortcut);
+    try {
+      const { status, text } = await fetchText(url);
+      const parsed = status === 200 ? parseOpenLigaMatches(text) : [];
+      probes.push({ url, status, parsed: parsed.length });
+      if (status !== 200 || parsed.length === 0) continue;
+      for (const m of parsed) {
+        if (m.matchIsFinished) continue;
+        const home = m.team1?.teamName;
+        const away = m.team2?.teamName;
+        const raw = m.matchDateTimeUTC || m.matchDateTime;
+        if (!home || !away || !raw) continue;
+        const ko = Date.parse(raw.endsWith("Z") || raw.includes("+") ? raw : `${raw}Z`);
+        if (!Number.isFinite(ko) || ko < Date.now()) continue;
+        const event_id = fp(`oldb|${m.matchID ?? `${home}|${away}|${raw}`}`);
+        events.push({
+          event_id,
+          canonical_event_id: event_id,
+          source: "openligadb",
+          source_event_id: String(m.matchID ?? event_id),
+          sport: "soccer",
+          competition: m.leagueName ?? league.label,
+          country: null,
+          home_or_a: home,
+          away_or_b: away,
+          kickoff_utc: new Date(ko).toISOString(),
+          collected_at_utc: nowIso,
+          available_at_utc: nowIso,
+          semantic_level: "RESEARCH",
+          data_quality: 0.4,
+          fingerprint: event_id,
+          status: "UPCOMING",
+        });
+      }
+    } catch {
+      probes.push({ url, status: 0, parsed: 0 });
+    }
+  }
+  return { events, probes };
+}
+
+function pairKey(e: PermanentEvent044): string {
+  return `${e.home_or_a.toLowerCase()}|${e.away_or_b.toLowerCase()}|${(e.kickoff_utc ?? "").slice(0, 10)}`;
+}
+
 async function main() {
   config({ path: ".env.local" });
   config({ path: ".env" });
@@ -107,9 +213,14 @@ async function main() {
   }
 
   const espn = await discoverEspn();
-  const byId = new Map<string, PermanentEvent044>();
-  for (const e of [...storeEvents, ...espn.events]) byId.set(e.event_id, e);
-  const upcoming = [...byId.values()].sort(
+  const tsdb = await discoverTheSportsDb();
+  const oldb = await discoverOpenLiga();
+  const byPair = new Map<string, PermanentEvent044>();
+  for (const e of [...storeEvents, ...espn.events, ...tsdb.events, ...oldb.events]) {
+    const k = pairKey(e);
+    if (!byPair.has(k)) byPair.set(k, e);
+  }
+  const upcoming = [...byPair.values()].sort(
     (a, b) => Date.parse(a.kickoff_utc ?? "") - Date.parse(b.kickoff_utc ?? ""),
   );
   const queue = enqueueUpcomingEvents({ events: upcoming, nowMs, nowIso, root });
@@ -140,6 +251,10 @@ async function main() {
     store_upcoming: storeEvents.length,
     espn_probes: espn.probes,
     espn_upcoming: espn.events.length,
+    thesportsdb_probes: tsdb.probes,
+    thesportsdb_upcoming: tsdb.events.length,
+    openligadb_probes: oldb.probes,
+    openligadb_upcoming: oldb.events.length,
     queued: queue.items.length,
     events_researched: picked.length,
     research,
@@ -154,7 +269,7 @@ async function main() {
     })),
     honest_note:
       picked.length < 20
-        ? `Only ${picked.length} upcoming events were available from store+ESPN. Not padded.`
+        ? `Only ${picked.length} upcoming events were available from store+ESPN+TheSportsDB+OpenLigaDB. Not padded.`
         : "Researched 20 upcoming events from real sources.",
   };
 
