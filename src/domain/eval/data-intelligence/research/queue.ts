@@ -1,6 +1,7 @@
 ﻿/**
  * Persistent research queue — process events across cycles, not only the first 8.
- * States: DISCOVERED -> QUEUED -> RESEARCHING -> RESEARCHED
+ * States: DISCOVERED -> QUEUED -> RESEARCHING -> RESEARCHED -> FEATURED -> INFERENCE|PREDICTION|INSUFFICIENT
+ * Budget is a governor only — every upcoming event stays on the queue.
  */
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
@@ -13,7 +14,9 @@ export type ResearchQueueState =
   | "RESEARCHING"
   | "RESEARCHED"
   | "FEATURED"
-  | "INFERENCE";
+  | "INFERENCE"
+  | "PREDICTION"
+  | "INSUFFICIENT";
 
 export type ResearchQueueItem = {
   event_id: string;
@@ -109,7 +112,13 @@ export function eventPriority(kickoffIso: string | null, nowMs: number): EventPr
 const PRIORITY_RANK: Record<EventPriority, number> = { P0: 0, P1: 1, P2: 2, P3: 3, P4: 4 };
 
 function isResearched(state: ResearchQueueState): boolean {
-  return state === "RESEARCHED" || state === "INFERENCE" || state === "FEATURED";
+  return (
+    state === "RESEARCHED" ||
+    state === "INFERENCE" ||
+    state === "FEATURED" ||
+    state === "PREDICTION" ||
+    state === "INSUFFICIENT"
+  );
 }
 
 /** Near kickoff, researched events become stale and may be refreshed. */
@@ -203,7 +212,12 @@ export function queueCounts(file: ResearchQueueFile, nowMs: number): {
     discovered: count("DISCOVERED"),
     queued: count("QUEUED"),
     researching: count("RESEARCHING"),
-    researched: count("RESEARCHED") + count("FEATURED") + count("INFERENCE"),
+    researched:
+      count("RESEARCHED") +
+      count("FEATURED") +
+      count("INFERENCE") +
+      count("PREDICTION") +
+      count("INSUFFICIENT"),
     upcoming: upcoming.length,
   };
 }

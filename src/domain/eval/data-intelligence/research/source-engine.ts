@@ -48,6 +48,10 @@ export type SourceEngineEntry = {
   status: "ACTIVE" | "DEGRADED" | "BLOCKED" | "MISSING_ADAPTER" | "NO_EVENT" | "IDLE";
 };
 
+/**
+ * Capability TRUE only if the adapter actually extracts that field.
+ * WAF-blocked / JS-only / missing adapters declare [] — not a wishlist.
+ */
 export const SOURCE_CAPABILITIES: Record<string, SourceCapability[]> = {
   "api-sports": ["fixtures", "lineups", "injuries", "statistics"],
   "open-meteo": ["weather"],
@@ -60,21 +64,21 @@ export const SOURCE_CAPABILITIES: Record<string, SourceCapability[]> = {
   "bbc-sport": ["news"],
   "guardian-football": ["news"],
   gazzetta: ["news"],
-  statsbomb: ["xg", "historical"],
+  statsbomb: ["historical"],
   "football-data-org": ["fixtures", "scores", "historical"],
   "the-odds-api": ["market_odds", "fixtures"],
   "api-football": ["fixtures", "lineups", "injuries"],
-  fbref: ["historical", "team_stats", "xg"],
-  understat: ["xg", "historical"],
-  uefa: ["fixtures", "lineups"],
-  sofascore: ["fixtures", "scores", "lineups", "injuries", "statistics"],
-  directa: ["fixtures", "scores", "lineups"],
-  flashscore: ["fixtures", "scores"],
-  soccerway: ["fixtures", "historical"],
+  fbref: [],
+  understat: [],
+  uefa: [],
+  sofascore: [],
+  directa: [],
+  flashscore: [],
+  soccerway: [],
   "club-football-match-data": ["historical"],
-  whoscored: ["statistics", "xg"],
-  opta: ["statistics", "xg"],
-  "the-analyst": ["xg", "team_stats"],
+  whoscored: [],
+  opta: [],
+  "the-analyst": [],
   "sky-sports": ["news"],
   ansa: ["news"],
   "espn-soccer-news": ["news"],
