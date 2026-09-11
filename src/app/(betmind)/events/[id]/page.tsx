@@ -186,6 +186,10 @@ type Detail = {
       category_checks: Array<{ label: string; found: boolean; note: string }>;
       analyzed_topics?: Array<{ id: string; label_it: string; light: string; note_it: string }>;
       found?: string[];
+      found_sentence?: string;
+      used_sentence?: string;
+      could_not_sentence?: string;
+      model_estimated_sentence?: string;
     } | null;
     data_quality?: { data_quality_score: number; note_it: string } | null;
     conflicts?: Array<{ field: string; note_it: string; used_source: string | null }>;
@@ -317,18 +321,18 @@ export default function EventDetailPage() {
       {data && (
         <>
           <header className="bm-hero text-center">
-            <div className="bm-section-label">{data.event.competition}</div>
+            <div className="bm-section-label">1. Partita</div>
             <h1 className="mt-2 text-3xl font-bold leading-tight">
               {data.event.home_or_a}
               <div className="my-1 text-base font-medium bm-muted">{t.vs}</div>
               {data.event.away_or_b}
             </h1>
             <p className="mt-2 text-sm bm-muted">
-              {fmtWhen(String(data.event.kickoff_utc ?? ""))}
+              {data.event.competition} · {fmtWhen(String(data.event.kickoff_utc ?? ""))}
             </p>
           </header>
 
-          <Card title="Previsione BetMind" glow>
+          <Card title="2. Previsione" glow>
             {hx?.insufficient ? (
               <p className="text-sm leading-relaxed">{hx.insufficient}</p>
             ) : modelProbs ? (
@@ -356,6 +360,9 @@ export default function EventDetailPage() {
                 }
               />
             )}
+            {hx?.model_estimated_sentence ? (
+              <p className="mt-3 text-sm">{hx.model_estimated_sentence}</p>
+            ) : null}
             {hx?.model_card && (
               <p className="mt-3 text-sm bm-muted">
                 Modello statistico indipendente · {hx.model_card.name_it}
@@ -367,10 +374,19 @@ export default function EventDetailPage() {
           </Card>
 
           {hx && (
-            <Card title="Cosa ha fatto BetMind">
+            <Card title="3. Perché">
               <p className="mb-2 text-sm leading-relaxed">{hx.did}</p>
               {hx.live_research ? <p className="mb-1 text-sm">{hx.live_research}</p> : null}
-              {hx.archive ? <p className="text-sm">{hx.archive}</p> : null}
+              {hx.archive ? <p className="mb-2 text-sm">{hx.archive}</p> : null}
+              {hx.why.map((line) => (
+                <p key={line} className="mb-2 text-sm leading-relaxed">
+                  {line}
+                </p>
+              ))}
+              <details className="mt-3 text-sm">
+                <summary className="cursor-pointer bm-muted">Come funziona il modello?</summary>
+                <p className="mt-2 leading-relaxed">{hx.how_model_works}</p>
+              </details>
             </Card>
           )}
 
@@ -423,35 +439,7 @@ export default function EventDetailPage() {
           )}
 
           {hx && (
-            <Card title="Perché">
-              {hx.why.map((line) => (
-                <p key={line} className="mb-2 text-sm leading-relaxed">
-                  {line}
-                </p>
-              ))}
-              <details className="mt-3 text-sm">
-                <summary className="cursor-pointer bm-muted">Come funziona il modello?</summary>
-                <p className="mt-2 leading-relaxed">{hx.how_model_works}</p>
-              </details>
-            </Card>
-          )}
-
-          {hx && (
-            <Card title="Cosa abbiamo trovato">
-              {(hx.found ?? []).length === 0 ? (
-                <p className="text-sm bm-muted">Nessuna osservazione persistita per questa partita.</p>
-              ) : (
-                <ul className="space-y-1 text-sm">
-                  {(hx.found ?? []).map((f) => (
-                    <li key={f}>• {f}</li>
-                  ))}
-                </ul>
-              )}
-            </Card>
-          )}
-
-          {hx && (
-            <Card title="Cosa ha analizzato BetMind">
+            <Card title="4. Cosa ha analizzato">
               <p className="mb-3 text-sm leading-relaxed">{hx.analyzed}</p>
               {dossier?.data_quality ? (
                 <p className="mb-3 text-xs bm-muted">
@@ -480,7 +468,23 @@ export default function EventDetailPage() {
           )}
 
           {hx && (
+            <Card title="5. Dati trovati">
+              {hx.found_sentence ? <p className="mb-2 text-sm">{hx.found_sentence}</p> : null}
+              {(hx.found ?? []).length === 0 ? (
+                <p className="text-sm bm-muted">Nessuna osservazione persistita per questa partita.</p>
+              ) : (
+                <ul className="space-y-1 text-sm">
+                  {(hx.found ?? []).map((f) => (
+                    <li key={f}>• {f}</li>
+                  ))}
+                </ul>
+              )}
+            </Card>
+          )}
+
+          {hx && (
             <Card title="Informazioni utilizzate">
+              {hx.used_sentence ? <p className="mb-2 text-sm">{hx.used_sentence}</p> : null}
               {hx.used.length === 0 ? (
                 <p className="text-sm bm-muted">Nessuna informazione è entrata nel modello indipendente.</p>
               ) : (
@@ -494,7 +498,8 @@ export default function EventDetailPage() {
           )}
 
           {hx && (
-            <Card title="Cosa non è riuscito a trovare">
+            <Card title="6. Dati non trovati">
+              {hx.could_not_sentence ? <p className="mb-2 text-sm">{hx.could_not_sentence}</p> : null}
               {hx.missing.length === 0 ? (
                 <p className="text-sm bm-muted">Nessuna lacuna aggiuntiva registrata oltre al catalogo tecnico.</p>
               ) : (
@@ -508,7 +513,7 @@ export default function EventDetailPage() {
           )}
 
           {rs && (
-            <Card title="Fonti consultate">
+            <Card title="7. Fonti consultate">
               <p className="mb-3 text-sm leading-relaxed">{hx?.sources_summary}</p>
               <ul className="space-y-3 text-sm">
                 {rs.source_rows.map((r) => (
@@ -553,7 +558,7 @@ export default function EventDetailPage() {
           )}
 
           {rs && rs.timeline.length > 0 && (
-            <Card title="Cronologia della ricerca">
+            <Card title="8. Timeline dei dati">
               <ul className="space-y-2 text-sm">
                 {rs.timeline.map((row) => (
                   <li key={`${row.at}-${row.label_it}`}>
@@ -581,7 +586,7 @@ export default function EventDetailPage() {
               )}
             </Card>
 
-            <Card title="Mercato — separato">
+            <Card title="9. Mercato separato">
               <p className="mb-2 text-xs bm-muted">
                 {dossier?.market.note ??
                   "Solo confronto — le quote non entrano nel modello indipendente."}
@@ -608,7 +613,7 @@ export default function EventDetailPage() {
           </div>
 
           <details className="rounded-xl border border-[var(--bm-border)] bg-[var(--bm-card)] p-4">
-            <summary className="cursor-pointer text-sm font-semibold">Dettagli tecnici</summary>
+            <summary className="cursor-pointer text-sm font-semibold">10. Dettagli tecnici</summary>
             <div className="mt-4 flex flex-col gap-4">
           {dossier?.lineage && (
             <Card title={t.lineage_title} glow>

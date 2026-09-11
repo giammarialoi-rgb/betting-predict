@@ -22,6 +22,11 @@ const CLUBELO_NAME_ALIASES: Record<string, string> = {
   psg: "parissg",
   parissaintgermain: "parissg",
   bayernmunich: "bayern",
+  hullcity: "hull",
+  coventrycity: "coventry",
+  ipswichtown: "ipswich",
+  unionberlin: "unionberlin",
+  schalke04: "schalke",
   atleticomadrid: "atletico",
 };
 

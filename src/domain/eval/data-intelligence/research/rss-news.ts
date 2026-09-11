@@ -2,7 +2,7 @@
  * Public sports RSS — CONTEXT only when BOTH teams appear in the same item.
  * Never invents injuries/lineups from headlines. 403/WAF = BLOCKED.
  */
-export type RssSourceId = "ansa" | "sky-sport";
+export type RssSourceId = "ansa" | "sky-sport" | "bbc-sport" | "gazzetta";
 
 export type RssItem = {
   title: string;
@@ -26,6 +26,8 @@ export type RssMatch = {
 export const RSS_FEEDS: Record<RssSourceId, string> = {
   ansa: "https://www.ansa.it/sito/notizie/sport/calcio/calcio_rss.xml",
   "sky-sport": "https://sport.sky.it/rss/calcio.xml",
+  "bbc-sport": "https://feeds.bbci.co.uk/sport/football/rss.xml",
+  gazzetta: "https://www.gazzetta.it/rss/calcio.xml",
 };
 
 const cache = new Map<RssSourceId, { at: number; items: RssItem[]; http: number | null; error: string | null }>();

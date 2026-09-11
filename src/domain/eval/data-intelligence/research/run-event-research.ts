@@ -176,7 +176,7 @@ export async function runEventResearchBatch(input: {
   ) => {
     result.observations_created += rows.length;
     for (const o of rows) {
-      if (o.kind === "EVENT_RESEARCH" || o.source === "open-meteo" || o.source === "ansa" || o.source === "sky-sport") {
+      if (o.kind === "EVENT_RESEARCH" || o.source === "open-meteo" || o.source === "ansa" || o.source === "sky-sport" || o.source === "bbc-sport" || o.source === "gazzetta" || o.source === "thesportsdb" || o.source === "wikipedia") {
         result.real_event_observations += 1;
         eventsWithReal.add(eventId);
       } else if (o.kind === "DERIVED") {
@@ -212,6 +212,10 @@ export async function runEventResearchBatch(input: {
         "the-odds-api",
     "ansa",
     "sky-sport",
+    "bbc-sport",
+    "gazzetta",
+    "thesportsdb",
+    "wikipedia",
   ]);
 
   // ClubElo once per batch (shared day as-of now) — avoid N× network
@@ -225,6 +229,7 @@ export async function runEventResearchBatch(input: {
   } catch {
     batchElo = null;
   }
+  const blockedThisCycle = new Set<string>();
 
   for (const ev of slice) {
     const kickoff = ev.kickoff_utc ?? nowIso;
@@ -241,7 +246,9 @@ export async function runEventResearchBatch(input: {
       : "";
 
     // 1) API-Sports cache-only
-    const fixtureRaw = (ev as { fixture_id?: number | string }).fixture_id;
+    const fixtureRaw =
+      (ev as { fixture_id?: number | string }).fixture_id ??
+      (ev as { api_football_fixture_id?: number | string }).api_football_fixture_id;
     const fixtureId =
       typeof fixtureRaw === "number"
         ? fixtureRaw
@@ -536,6 +543,25 @@ export async function runEventResearchBatch(input: {
           appendResearchObservation(row, root);
           eloRows.push(row);
         }
+        if (elo.home_rating != null && elo.away_rating != null) {
+          const row = {
+            event_id: ev.event_id,
+            feature_key: "elo_diff",
+            value: elo.home_rating - elo.away_rating,
+            source: "clubelo",
+            source_url: `http://api.clubelo.com/${eloDay}`,
+            observed_at: nowIso,
+            available_at: elo.home_available_at ?? elo.away_available_at,
+            extraction_method: "clubelo_asof_derived",
+            confidence: null,
+            status: "REAL" as const,
+            kind: "DERIVED" as const,
+            enters_independent_model: true,
+            derived_from: ["home_elo", "away_elo"],
+          };
+          appendResearchObservation(row, root);
+          eloRows.push(row);
+        }
         await noteObs(eloRows, ev.event_id);
       } else {
         bump(result.by_source, "clubelo", "fail");
@@ -691,6 +717,93 @@ export async function runEventResearchBatch(input: {
       }
     }
 
+    // TheSportsDB + Wikipedia — real public JSON/HTML
+    {
+      const { researchPublicApisForEvent } = await import(
+        "@/domain/eval/data-intelligence/research/research-public-apis"
+      );
+      const pub = await researchPublicApisForEvent({ ev, nowIso, asOf });
+      if (pub.tsdb.fixture_id != null && ev.fixture_id == null) {
+        ev.fixture_id = pub.tsdb.fixture_id;
+        ev.api_football_fixture_id = String(pub.tsdb.fixture_id);
+      }
+      if (pub.tsdb.idEvent) ev.thesportsdb_event_id = pub.tsdb.idEvent;
+      const { appendResearchObservation } = await import(
+        "@/domain/eval/data-intelligence/research/observations-store"
+      );
+      for (const o of pub.observations) appendResearchObservation(o, root);
+      await noteObs(pub.observations, ev.event_id);
+
+      const tsPhase =
+        pub.tsdb.parser_status === "BLOCKED"
+          ? "BLOCKED"
+          : pub.tsdb.ok
+            ? "OK"
+            : "UNAVAILABLE";
+      appendResearchStatus(
+        baseRow({
+          event_id: ev.event_id,
+          source_id: "thesportsdb",
+          phase: tsPhase,
+          ok: pub.tsdb.ok,
+          fetched: pub.tsdb.fetched,
+          fetched_at: pub.tsdb.fetched ? nowIso : null,
+          available_at: pub.tsdb.ok ? nowIso : null,
+          observed_at: pub.tsdb.ok ? nowIso : null,
+          reason: pub.tsdb.reason,
+          raw_ref: pub.tsdb.idEvent,
+          cycle_number: input.cycleNumber,
+          at: nowIso,
+          url: pub.tsdb.url,
+          adapter_kind: "PRODUCTION_ADAPTER",
+          http_status: pub.tsdb.http_status,
+          parser_status: pub.tsdb.parser_status,
+          fields_extracted: pub.tsdb.fields,
+        }),
+        root,
+      );
+      if (pub.tsdb.ok) {
+        bump(result.by_source, "thesportsdb", "ok");
+        result.research_fetches += 1;
+      } else if (pub.tsdb.parser_status === "BLOCKED") {
+        bump(result.by_source, "thesportsdb", "fail");
+        result.research_failures += 1;
+      } else {
+        bump(result.by_source, "thesportsdb", "fail");
+        result.research_failures += 1;
+      }
+
+      appendResearchStatus(
+        baseRow({
+          event_id: ev.event_id,
+          source_id: "wikipedia",
+          phase: pub.wikipedia.ok ? "OK" : pub.wikipedia.parser_status === "BLOCKED" ? "BLOCKED" : "UNAVAILABLE",
+          ok: pub.wikipedia.ok,
+          fetched: pub.wikipedia.fetched,
+          fetched_at: pub.wikipedia.fetched ? nowIso : null,
+          available_at: pub.wikipedia.ok ? nowIso : null,
+          observed_at: pub.wikipedia.ok ? nowIso : null,
+          reason: pub.wikipedia.reason,
+          raw_ref: null,
+          cycle_number: input.cycleNumber,
+          at: nowIso,
+          url: pub.wikipedia.url,
+          adapter_kind: "PRODUCTION_ADAPTER",
+          http_status: pub.wikipedia.http_status,
+          parser_status: pub.wikipedia.parser_status,
+          fields_extracted: pub.wikipedia.fields,
+        }),
+        root,
+      );
+      if (pub.wikipedia.ok) {
+        bump(result.by_source, "wikipedia", "ok");
+        result.research_fetches += 1;
+      } else {
+        bump(result.by_source, "wikipedia", "fail");
+        result.research_failures += 1;
+      }
+    }
+
     // Odds API — market layer only (explicit: does not enter model)
     appendResearchStatus(
       baseRow({
@@ -734,6 +847,32 @@ export async function runEventResearchBatch(input: {
         "the-analyst",
         "abseits",
       ] as const) {
+        if (blockedThisCycle.has(sid)) {
+          appendResearchStatus(
+            baseRow({
+              event_id: ev.event_id,
+              source_id: sid,
+              phase: "BLOCKED",
+              ok: false,
+              fetched: false,
+              fetched_at: null,
+              available_at: null,
+              reason: "SKIPPED_THIS_CYCLE — source already BLOCKED (403/challenge) earlier this cycle. Not re-fetched.",
+              raw_ref: null,
+              cycle_number: input.cycleNumber,
+              at: nowIso,
+              url: null,
+              http_status: 403,
+              parser_status: "BLOCKED",
+              fields_extracted: [],
+              adapter_kind: "TEST_PROBE",
+            }),
+            root,
+          );
+          bump(result.by_source, sid, "fail");
+          result.research_failures += 1;
+          continue;
+        }
         const page = await fetchEventPage({
           sourceId: sid,
           home: ev.home_or_a,
@@ -811,6 +950,7 @@ export async function runEventResearchBatch(input: {
           bump(result.by_source, sid, "ok");
           result.research_fetches += 1;
         } else {
+          if (page.status === "BLOCKED") blockedThisCycle.add(sid);
           bump(result.by_source, sid, "fail");
           result.research_failures += 1;
         }
@@ -820,7 +960,7 @@ export async function runEventResearchBatch(input: {
     // Public RSS (ANSA / Sky) — CONTEXT mention only
     {
       const { matchRssToEvent } = await import("@/domain/eval/data-intelligence/research/rss-news");
-      for (const sid of ["ansa", "sky-sport"] as const) {
+      for (const sid of ["ansa", "sky-sport", "bbc-sport", "gazzetta"] as const) {
         const rss = await matchRssToEvent({ sourceId: sid, home: ev.home_or_a, away: ev.away_or_b });
         const phase =
           rss.status === "BLOCKED"

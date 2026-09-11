@@ -24,6 +24,16 @@ const COMPETITION_TO_DIVISION: Record<string, PiDivision> = {
   soccer_france_ligue_one: "F1",
   ligue_1: "F1",
   f1: "F1",
+  english_premier_league: "E0",
+  "english premier league": "E0",
+  italian_serie_a: "I1",
+  "italian serie a": "I1",
+  spanish_la_liga: "SP1",
+  "spanish la liga": "SP1",
+  german_bundesliga: "D1",
+  "german bundesliga": "D1",
+  french_ligue_1: "F1",
+  "french ligue 1": "F1",
 };
 
 /**
@@ -79,6 +89,26 @@ const LIVE_NAME_TO_ID: Record<string, string> = {
   "psg": "paris-sg",
   "paris saint germain": "paris-sg",
   "paris saint-germain": "paris-sg",
+  "hull city": "hull",
+  hull: "hull",
+  coventry: "coventry",
+  "coventry city": "coventry",
+  ipswich: "ipswich",
+  "ipswich town": "ipswich",
+  sunderland: "sunderland",
+  venezia: "venezia",
+  fiorentina: "fiorentina",
+  "union berlin": "union-berlin",
+  "schalke 04": "schalke",
+  schalke: "schalke",
+  rennes: "rennes",
+  marseille: "marseille",
+  sevilla: "sevilla",
+  valencia: "valencia",
+  "sporting cp": "sporting-lisbon",
+  lens: "lens",
+  "celta vigo": "celta",
+  "omonia nicosia": "omonia",
 };
 
 function slugify(name: string): string {
@@ -119,6 +149,11 @@ export function mapCompetitionToPiDivision(competition?: string | null): PiDivis
   if (up === "E0" || up === "SP1" || up === "D1" || up === "I1" || up === "F1") {
     return up as PiDivision;
   }
+  if (compact.includes("premier league") && !compact.includes("2")) return "E0";
+  if (compact.includes("serie a") && !compact.includes("b")) return "I1";
+  if (compact.includes("la liga") || compact.includes("laliga")) return "SP1";
+  if (compact.includes("bundesliga") && !compact.includes("2")) return "D1";
+  if (compact.includes("ligue 1") || compact.includes("ligue1")) return "F1";
   return null;
 }
 

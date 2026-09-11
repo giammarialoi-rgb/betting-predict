@@ -16,8 +16,8 @@ import { ANALYSIS_RUNTIME_VERSION } from "@/domain/eval/permanent-044/prediction
 import { buildFoundFacts } from "@/domain/eval/betmind-runtime/explain/found-facts";
 
 describe("Phase 7 acquisition", () => {
-  it("runtime is phase-7", () => {
-    assert.match(ANALYSIS_RUNTIME_VERSION, /phase-7/);
+  it("runtime is phase-8", () => {
+    assert.match(ANALYSIS_RUNTIME_VERSION, /phase-8/);
   });
 
   it("homepage HTTP 200 without both teams is NO_EVENT", () => {

@@ -193,6 +193,6 @@ describe("Phase 6 explanation facts", () => {
     });
     assert.ok(hx.missing.some((m) => /infortun/i.test(m)));
     assert.ok(!/infortuni favoriscono/i.test(hx.why.join(" ")));
-    assert.match(ANALYSIS_RUNTIME_VERSION, /phase-7/);
+    assert.match(ANALYSIS_RUNTIME_VERSION, /phase-8/);
   });
 });

@@ -39,6 +39,10 @@ export type HumanExplanation = {
   analyzed_topics: AnalyzedTopic[];
   facts_used: string[];
   found: string[];
+  found_sentence: string;
+  used_sentence: string;
+  could_not_sentence: string;
+  model_estimated_sentence: string;
 };
 
 function pct1(v: number): string {
@@ -197,7 +201,7 @@ export function buildHumanExplanation(input: {
   facts.push(`historical_priors=${o.historical_prior_features}`);
 
   const odds_sentence =
-    "Le quote sono state osservate separatamente e non sono entrate nell'input del modello indipendente.";
+    "Il mercato è stato osservato separatamente e le quote non sono entrate nell'input del modello indipendente.";
   facts.push("odds_entered_model=false");
 
   let insufficient: string | null = null;
@@ -264,5 +268,21 @@ export function buildHumanExplanation(input: {
     analyzed_topics,
     facts_used: facts,
     found,
+    found_sentence:
+      found.length > 0
+        ? `Ha trovato ${found.length} osservazioni persistite (forma, statistiche, contesto o identità evento) provenienti solo da fonti realmente interrogate.`
+        : "Ha trovato: nessuna osservazione persistita per questa partita.",
+    used_sentence:
+      used.length > 0
+        ? `Ha utilizzato ${used.length} informazioni nel vettore del modello indipendente (senza quote).`
+        : "Non ha utilizzato alcun input nel modello indipendente: i requisiti di copertura non sono stati raggiunti.",
+    could_not_sentence:
+      missing.length > 0
+        ? `Non ha potuto utilizzare: ${missing.slice(0, 8).join(" ")}`
+        : "Non risultano lacune aggiuntive oltre al catalogo tecnico.",
+    model_estimated_sentence: hasInf
+      ? poisson ??
+        "Il modello ha stimato le probabilità dei tre risultati a partire dai dati storici e dalle caratteristiche pre-partita disponibili."
+      : "Il modello non ha stimato probabilità indipendenti: i dati necessari non erano sufficienti.",
   };
 }

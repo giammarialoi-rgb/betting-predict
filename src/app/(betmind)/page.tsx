@@ -214,22 +214,83 @@ export default function BetMindHomePage() {
 
       <div className="grid gap-4 lg:grid-cols-3">
         <Card title="Analisi" className="lg:col-span-2">
-          {noEvents ? (
-            <EmptyState
-              title="NESSUN EVENTO DISPONIBILE"
-              reason={String(
-                analysis?.no_events_reason ??
-                  `Fase ${phase}. Ultimo ciclo ${fmtWhen(lastCycle)}. Niente di inventato.`,
-              )}
-            />
-          ) : (
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
               <Metric
                 label="Ultimo ciclo"
                 value={cycleNum != null ? `#${String(cycleNum)}` : "—"}
                 accent
               />
-              <Metric label="Ultimo aggiornamento" value={fmtWhen(lastCycle)} />
+              <Metric label="Ultimo Brain" value={fmtWhen(lastCycle)} />
+              <Metric
+                label="Eventi disponibili"
+                value={String(
+                  (analysis as { events_discovered?: number } | null)?.events_discovered ??
+                    analysis?.events_in_store ??
+                    "—",
+                )}
+              />
+              <Metric
+                label="Eventi ricercati"
+                value={String(
+                  (analysis as { events_researched?: number } | null)?.events_researched ??
+                    (analysis as { events_with_research?: number } | null)?.events_with_research ??
+                    "—",
+                )}
+              />
+              <Metric
+                label="Con dati reali"
+                value={String(
+                  (analysis as { events_with_real_event_data?: number } | null)
+                    ?.events_with_real_event_data ?? "—",
+                )}
+              />
+              <Metric
+                label="Dati insufficienti"
+                value={String(
+                  (analysis as { insufficient_data?: number } | null)?.insufficient_data ?? "—",
+                )}
+              />
+              <Metric
+                label="Inferenze reali"
+                value={String(
+                  (analysis as { model_inferences?: number } | null)?.model_inferences ?? "—",
+                )}
+              />
+              <Metric
+                label="Osservazioni reali"
+                value={String(
+                  (analysis as { real_observations?: number } | null)?.real_observations ?? "—",
+                )}
+              />
+              <Metric
+                label="Ultimo evento elaborato"
+                value={String(
+                  (analysis as { last_processed_event?: string } | null)?.last_processed_event ?? "—",
+                )}
+              />
+              <Metric
+                label="Budget ricerca / ciclo"
+                value={String(
+                  (analysis as { research_budget_explicit?: string } | null)?.research_budget_explicit ??
+                    "24 eventi/ciclo (coda continua)",
+                )}
+              />
+              <Metric
+                label="Fonti ok oggi"
+                value={
+                  Array.isArray((analysis as { working_sources?: string[] } | null)?.working_sources)
+                    ? ((analysis as { working_sources?: string[] }).working_sources ?? []).join(", ") || "—"
+                    : String((analysis as { data_acquired_today?: number } | null)?.data_acquired_today ?? "—")
+                }
+              />
+              <Metric
+                label="Fonti fallite oggi"
+                value={
+                  Array.isArray((analysis as { failed_sources?: string[] } | null)?.failed_sources)
+                    ? ((analysis as { failed_sources?: string[] }).failed_sources ?? []).join(", ") || "—"
+                    : String((analysis as { sources_blocked_today?: number } | null)?.sources_blocked_today ?? "—")
+                }
+              />
                   <Metric
                     label="Eventi scoperti"
                     value={String(
@@ -360,7 +421,6 @@ export default function BetMindHomePage() {
                   <Metric label="Board decisioni (finestra)" value={String(boardCount)} />
                   <Metric label="Nota" value={String(activity?.note ?? analysis?.reason ?? "—")} />
             </div>
-          )}
         </Card>
         <Card title="Intelligenza predittiva">
           <div className="grid grid-cols-1 gap-3">

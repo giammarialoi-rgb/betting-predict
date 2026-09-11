@@ -42,6 +42,12 @@ export type PipelineCounters3d = {
   derived_observations: number;
   missing_features_estimate: number;
   data_yield: number;
+  last_processed_event: string | null;
+  last_processed_event_id: string | null;
+  last_brain_run_at: string | null;
+  working_sources: string[];
+  failed_sources: string[];
+  research_budget_explicit: string;
   /** Explicit: what the old "analyzed" counter meant. */
   legacy_analyzed_meaning: string;
 };
@@ -165,6 +171,35 @@ export function computePipelineCounters3d(root = permanentRoot044()): PipelineCo
   const uniq = (pred: (r: Record<string, unknown>) => boolean) =>
     new Set(todayRows.filter(pred).map((r) => String(r.source_id))).size;
 
+  const working_sources = [
+    ...new Set(
+      todayRows
+        .filter((r) => r.ok === true && !catalogueById(String(r.source_id))?.market_layer)
+        .map((r) => String(r.source_id)),
+    ),
+  ].sort();
+  const failed_sources = [
+    ...new Set(
+      todayRows
+        .filter(
+          (r) =>
+            r.ok !== true &&
+            (r.phase === "BLOCKED" ||
+              r.phase === "UNAVAILABLE" ||
+              r.http_status === 403 ||
+              r.phase === "MISSING_ADAPTER"),
+        )
+        .map((r) => String(r.source_id)),
+    ),
+  ].sort();
+  const lastResearch = [...research].reverse().find((r) => String(r.event_id ?? "") && r.event_id !== "batch");
+  const lastId = lastResearch ? String(lastResearch.event_id) : null;
+  const lastEv = lastId ? events.find((e) => String(e.event_id) === lastId) : null;
+  const lastLabel =
+    lastEv && lastEv.home_or_a && lastEv.away_or_b
+      ? `${String(lastEv.home_or_a)} vs ${String(lastEv.away_or_b)}`
+      : lastId;
+
   return {
     events_discovered: events.length,
     events_with_research: researchOk.size,
@@ -206,6 +241,12 @@ export function computePipelineCounters3d(root = permanentRoot044()): PipelineCo
     derived_observations: yieldSum.derived_observations,
     missing_features_estimate: Math.max(0, latest.size * 8 - yieldSum.model_eligible_observations),
     data_yield: yieldSum.data_yield,
+    last_processed_event: lastLabel,
+    last_processed_event_id: lastId,
+    last_brain_run_at: lastResearch ? String(lastResearch.at ?? "") || null : null,
+    working_sources,
+    failed_sources,
+    research_budget_explicit: `${RESEARCH_BUDGET_PER_CYCLE} eventi per ciclo (coda continua nei cicli successivi; RESEARCH_EVENT_BUDGET override)`,
     legacy_analyzed_meaning:
       "Unique event_id with ≥1 predictions.jsonl row. Includes INSUFFICIENT_DATA / null probability_model. Does NOT mean independent model inference.",
   };

@@ -82,6 +82,11 @@ export type AnalysisSummary = {
   derived_observations?: number | null;
   data_yield?: number | null;
   pipeline?: PipelineCounters3d;
+  last_processed_event?: string | null;
+  last_processed_event_id?: string | null;
+  working_sources?: string[];
+  failed_sources?: string[];
+  research_budget_explicit?: string | null;
 };
 
 export type BetMindRuntimePayload = {
@@ -206,6 +211,11 @@ export function buildAnalysisSummaryFromLocal(
     derived_observations: pipeline.derived_observations,
     data_yield: pipeline.data_yield,
     pipeline,
+    last_processed_event: pipeline.last_processed_event,
+    last_processed_event_id: pipeline.last_processed_event_id,
+    working_sources: pipeline.working_sources,
+    failed_sources: pipeline.failed_sources,
+    research_budget_explicit: pipeline.research_budget_explicit,
   };
 }
 

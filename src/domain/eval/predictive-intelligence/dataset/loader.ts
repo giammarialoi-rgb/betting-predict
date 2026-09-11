@@ -36,13 +36,25 @@ function manifestPath(labBRoot?: string): string {
   return join(piRoot(labBRoot), "dataset-manifest.json");
 }
 
-export function loadPiMatches(labBRoot?: string): PiMatchRow[] {
-  const p = matchesPath(labBRoot);
+function readMatchJsonl(p: string): PiMatchRow[] {
   if (!existsSync(p)) return [];
   return readFileSync(p, "utf8")
     .split(/\n/)
     .filter(Boolean)
     .map((l) => JSON.parse(l.replace(/^\uFEFF/, "")) as PiMatchRow);
+}
+
+export function loadPiMatches(labBRoot?: string): PiMatchRow[] {
+  const base = readMatchJsonl(matchesPath(labBRoot));
+  const live = readMatchJsonl(join(piDatasetsRoot(labBRoot), "matches-live.jsonl"));
+  if (!live.length) return base;
+  const seen = new Set(base.map((m) => m.canonical_id));
+  const extra = live.filter((m) => {
+    if (seen.has(m.canonical_id)) return false;
+    seen.add(m.canonical_id);
+    return true;
+  });
+  return extra.length ? base.concat(extra) : base;
 }
 
 /** Idempotent import: skip already-present canonical_ids; resumable across seasons. */

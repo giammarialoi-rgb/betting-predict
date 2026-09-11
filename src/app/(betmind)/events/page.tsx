@@ -116,13 +116,10 @@ function EventsInner() {
   }, [events]);
 
   const bucketCounts = useMemo(() => {
-    const c: Record<string, number> = {
-      DISCOVERED: 0,
-      ELIGIBLE_FOR_MODEL: 0,
-      ANALYZED: 0,
-      SKIPPED: 0,
-      UNAVAILABLE: 0,
-    };
+    const c: Record<string, number> = {};
+    for (const b of BUCKET_TABS) {
+      if (b !== "ALL") c[b] = 0;
+    }
     for (const e of events) {
       const b = String(
         (e as Ev & { calendar_bucket?: string; bucket?: string }).calendar_bucket ??
@@ -189,6 +186,15 @@ function EventsInner() {
               ← Giorno precedente
             </Link>
             <span className="font-semibold">{date}</span>
+            <input
+              type="date"
+              value={date}
+              onChange={(e) => {
+                const v = e.target.value;
+                if (v) window.location.href = hrefFor({ date: v });
+              }}
+              className="rounded border border-[var(--bm-border)] bg-transparent px-2 py-1 text-xs"
+            />
             <Link href={hrefFor({ date: shiftDay(date, 1) })} className="bm-pill">
               Giorno successivo →
             </Link>
@@ -248,8 +254,18 @@ function EventsInner() {
 
       <div className="grid gap-2">
         {filtered.map((e) => {
-          const row = e as Ev & { bucket?: string; calendar_bucket?: string; why?: string };
+          const row = e as Ev & {
+            bucket?: string;
+            calendar_bucket?: string;
+            why?: string;
+            research_state?: string | null;
+            prediction_status?: string;
+          };
           const bucketLabel = row.calendar_bucket ?? row.bucket ?? e.status;
+          const hasModel =
+            e.probability_model?.HOME != null &&
+            e.probability_model?.DRAW != null &&
+            e.probability_model?.AWAY != null;
           return (
           <Link key={e.event_id} href={`/events/${e.event_id}`} className="block">
             <Card className="!p-3 transition active:scale-[0.99] hover:border-[rgba(0,246,117,0.35)]">
@@ -263,10 +279,20 @@ function EventsInner() {
                   <div className="truncate font-semibold leading-snug">
                     {e.home_or_a && e.away_or_b
                       ? `${e.home_or_a} vs ${e.away_or_b}`
-                      : e.label || e.event_id}
+                      : e.label && !/^[a-f0-9]{8,}$/i.test(e.label)
+                        ? e.label
+                        : "Partita (nomi non ancora risolti)"}
                   </div>
                   <div className="mt-1 flex flex-wrap gap-1">
                     <Pill>{bucketLabel || "—"}</Pill>
+                    {row.research_state ? <Pill>Ricerca {row.research_state}</Pill> : null}
+                    <Pill>
+                      {hasModel
+                        ? "Modello: previsione"
+                        : bucketLabel === "INSUFFICIENT_DATA"
+                          ? "Modello: dati insufficienti"
+                          : "Modello: non prodotto"}
+                    </Pill>
                     {(e.markets ?? []).slice(0, 2).map((m) => (
                       <Pill key={m}>{m}</Pill>
                     ))}
@@ -280,7 +306,7 @@ function EventsInner() {
                   <div>
                     <div className="bm-muted">Casa</div>
                     <div className="font-semibold bm-accent">
-                      {e.probability_model?.HOME != null
+                      {hasModel && e.probability_model?.HOME != null
                         ? `${fmtN(e.probability_model.HOME * 100, 1)}%`
                         : "—"}
                     </div>

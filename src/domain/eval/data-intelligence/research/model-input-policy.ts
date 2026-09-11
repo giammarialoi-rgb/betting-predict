@@ -25,7 +25,18 @@ export function classifyModelInput(input: {
   verified?: boolean;
 }): ModelInputClass {
   if (input.market_layer || input.source === "the-odds-api" || input.kind === "MARKET") return "MARKET";
-  if (input.kind === "CONTEXT") return "CONTEXT";
+  if (
+    input.kind === "CONTEXT" ||
+    input.source === "thesportsdb" ||
+    input.source === "wikipedia" ||
+    input.source === "ansa" ||
+    input.source === "sky-sport" ||
+    input.source === "bbc-sport" ||
+    input.source === "gazzetta" ||
+    input.source === "open-meteo"
+  ) {
+    return "CONTEXT";
+  }
   if (input.temporal_valid === false) return "EXCLUDED_TEMPORAL";
   const asOf = input.asOf ? Date.parse(input.asOf) : NaN;
   const avail = input.available_at ? Date.parse(input.available_at) : NaN;
