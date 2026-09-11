@@ -64,7 +64,7 @@ export function AppShell({
             <div className="text-base font-bold tracking-tight">
               Bet<span className="bm-accent">Mind</span>
             </div>
-            <div className="text-[10px] uppercase tracking-[0.18em] text-[var(--bm-muted)]">
+            <div className="text-[11px] tracking-wide text-[var(--bm-muted)]">
               {t.control_center}
             </div>
           </div>
@@ -197,12 +197,14 @@ export function AppShell({
               <Link
                 key={item.href}
                 href={item.href}
-                className={`flex min-h-[var(--bm-nav-h)] min-w-0 flex-1 flex-col items-center justify-center gap-0.5 px-0.5 text-[10px] ${
+                className={`flex min-h-[var(--bm-nav-h)] min-w-0 flex-1 flex-col items-center justify-center gap-0.5 px-1 text-[11px] leading-tight ${
                   active ? "text-[var(--bm-accent)]" : "text-[var(--bm-muted)]"
                 }`}
               >
-                <span className="text-base leading-none">{item.icon}</span>
-                <span className="truncate">{item.label}</span>
+                <span className="text-base leading-none" aria-hidden>
+                  {item.icon}
+                </span>
+                <span className="max-w-full truncate">{item.label}</span>
               </Link>
             );
           })}

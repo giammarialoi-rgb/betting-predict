@@ -270,8 +270,9 @@ export default function BetMindHomePage() {
           <h1 className="mt-1 text-2xl font-bold tracking-tight sm:text-3xl">
             Bet<span className="bm-accent">Mind</span>
           </h1>
-          <p className="mt-1 max-w-xl text-sm bm-muted">
-            Cruscotto onesto. App web ≠ Runtime ≠ Motore predittivo. Solo simulazione · REAL_MONEY=false.
+          <p className="bm-prose-muted mt-2 max-w-xl">
+            Cruscotto onesto. L’app web, il runtime sul PC e il motore predittivo sono tre cose
+            diverse. Solo simulazione · REAL_MONEY=false.
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-2 text-xs">
@@ -286,15 +287,20 @@ export default function BetMindHomePage() {
         </Card>
       )}
 
-      <section className="bm-hero">
-        <div className="flex flex-wrap items-center justify-between gap-2">
-          <div className="bm-section-label">Stato</div>
-          <div className="flex flex-wrap gap-2">
-            <StatusPill state={strip.webApp} label={`App ${statusWordIt(strip.webApp)}`} />
-            <StatusPill state={rt} label={`Runtime ${statusWordIt(rt)}`} />
-            <StatusPill state={engine} label={`Motore ${statusWordIt(engine)}`} />
-            <Pill>Cervello {statusWordIt(strip.brain)}</Pill>
-          </div>
+      <section className="bm-hero space-y-3">
+        <div className="bm-section-label">Stato</div>
+        <p className="bm-prose">
+          L’app web è {statusWordIt(strip.webApp).toLowerCase()}. Il runtime sul PC è{" "}
+          {statusWordIt(rt).toLowerCase()}
+          {mirrorStale ? " — specchio Neon scaduto, non lo mostriamo come online" : ""}. Il motore
+          predittivo è {statusWordIt(engine).toLowerCase()}. Il cervello è{" "}
+          {statusWordIt(strip.brain).toLowerCase()}.
+        </p>
+        <div className="flex flex-wrap gap-2">
+          <StatusPill state={strip.webApp} label={`App ${statusWordIt(strip.webApp)}`} />
+          <StatusPill state={rt} label={`Runtime ${statusWordIt(rt)}`} />
+          <StatusPill state={engine} label={`Motore ${statusWordIt(engine)}`} />
+          <Pill>Cervello {statusWordIt(strip.brain)}</Pill>
         </div>
       </section>
 
@@ -303,8 +309,9 @@ export default function BetMindHomePage() {
           <div>
             <div className="bm-section-label">Oggi</div>
             <h2 className="mt-1 text-xl font-semibold tracking-tight">Previsioni</h2>
-            <p className="mt-1 text-xs bm-muted">
-              Modello indipendente e quote book restano strati separati. Le quote non entrano nel modello.
+            <p className="bm-prose-muted mt-1 max-w-xl">
+              Ogni scheda mostra la partita, l’orario, lo stato e le quote 1X2 vere — oppure
+              «Quote non disponibili». Le quote non entrano nel modello.
             </p>
           </div>
           <Link href="/events" className="text-xs bm-accent underline">
@@ -328,7 +335,7 @@ export default function BetMindHomePage() {
 
       <div className="bm-ops">
         <details>
-          <summary>Contatori operativi e resa dati</summary>
+          <summary>Dettagli operativi (contatori, resa dati)</summary>
           <div className="bm-status-grid mt-4">
             {statusRows.map((s) => (
               <div key={s.name} className="bm-status-cell">
@@ -348,7 +355,7 @@ export default function BetMindHomePage() {
           </div>
           {noEvents ? (
             <EmptyState
-              title="NESSUN EVENTO DISPONIBILE"
+              title="Nessun evento disponibile"
               reason={String(
                 analysis?.no_events_reason ??
                   `Fase ${phase}. Ultimo ciclo ${fmtWhen(lastCycle)}. Niente di inventato.`,
@@ -524,7 +531,7 @@ export default function BetMindHomePage() {
             <Metric label="P&L" value={fmtMoney(paper?.profit_flat as number | undefined)} />
             <Metric label="ROI" value={fmtPct(paper?.roi_flat as number | undefined)} />
             <Metric label="Drawdown" value={fmtPct(paper?.max_drawdown_flat as number | undefined)} />
-            <Metric label="Settled bets" value={String(paper?.n_settled ?? paper?.bets ?? "—")} />
+            <Metric label="Scommesse liquidate" value={String(paper?.n_settled ?? paper?.bets ?? "—")} />
           </div>
         </Card>
 
@@ -533,8 +540,8 @@ export default function BetMindHomePage() {
             <div className="grid grid-cols-2 gap-3">
               <Metric label="Log Loss" value={fmtN(independent.log_loss as number)} />
               <Metric label="Brier" value={fmtN(independent.brier as number)} />
-              <Metric label="Accuracy" value={fmtPct(independent.accuracy as number)} />
-              <Metric label="vs Market LL" value={market ? fmtN(market.log_loss as number) : "—"} />
+              <Metric label="Accuratezza" value={fmtPct(independent.accuracy as number)} />
+              <Metric label="Log loss mercato" value={market ? fmtN(market.log_loss as number) : "—"} />
             </div>
           ) : (
             <EmptyState
@@ -543,46 +550,46 @@ export default function BetMindHomePage() {
             />
           )}
           <div className="mt-3 grid grid-cols-3 gap-2">
-            <Metric label="Settlements" value={String(settlements.length)} />
-            <Metric label="Autopsies" value={String((data?.recent_autopsies ?? []).length)} />
-            <Metric label="Learning" value={String(learn.length)} />
+            <Metric label="Liquidazioni" value={String(settlements.length)} />
+            <Metric label="Autopsie" value={String((data?.recent_autopsies ?? []).length)} />
+            <Metric label="Casi di apprendimento" value={String(learn.length)} />
           </div>
         </Card>
       </div>
 
       <div className="grid gap-4 lg:grid-cols-2">
-        <Card title="Learning">
+        <Card title="Apprendimento">
           {learn0 ? (
             <div className="space-y-2 text-sm">
               <div className="flex flex-wrap gap-2">
-                <Pill tone="accent">{String(learn0.category ?? learn0.case_type ?? "CASE")}</Pill>
+                <Pill tone="accent">{String(learn0.category ?? learn0.case_type ?? "caso")}</Pill>
               </div>
-              <p className="bm-muted">
-                actual={String(learn0.actual ?? "—")} ·{" "}
-                {String(learn0.calibration_note ?? learn0.note ?? "—")}
+              <p className="bm-prose-muted">
+                Esito {String(learn0.actual ?? "non ancora noto")}.{" "}
+                {String(learn0.calibration_note ?? learn0.note ?? "")}
               </p>
               <Link href="/learn" className="bm-btn bm-btn-ghost mt-2 text-xs">
-                Open Learn
+                Apri apprendimento
               </Link>
             </div>
           ) : (
             <EmptyState
               title="Nessun caso liquidato"
-              reason="learning_cases è vuoto — il ciclo di apprendimento non ha ancora casi."
+              reason="Il ciclo di apprendimento non ha ancora partite terminate da cui imparare."
             />
           )}
         </Card>
-        <Card title="Settlement">
+        <Card title="Liquidazione">
           {settlements.length === 0 ? (
             <EmptyState
               title="Nessun caso liquidato"
-              reason="recent_settlements è vuoto — niente di inventato."
+              reason="Non ci sono esiti recenti. Niente di inventato."
             />
           ) : (
             <div className="space-y-2 text-sm">
-              <Metric label="Recent settlements" value={String(settlements.length)} />
-              <p className="bm-muted">
-                Latest: {String(asRecord(settlements[0])?.event_id ?? "—")} ·{" "}
+              <Metric label="Liquidazioni recenti" value={String(settlements.length)} />
+              <p className="bm-prose-muted">
+                Ultima: {String(asRecord(settlements[0])?.event_id ?? "—")} ·{" "}
                 {String(asRecord(settlements[0])?.outcome ?? "—")}
               </p>
             </div>

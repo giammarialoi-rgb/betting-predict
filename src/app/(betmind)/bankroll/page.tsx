@@ -1,6 +1,6 @@
 "use client";
 
-import { Card, SnapshotBadge, Pill, Unknown, fmtMoney, fmtPct } from "@/components/betmind/ui";
+import { Card, SnapshotBadge, Pill, EmptyState, fmtMoney, fmtPct } from "@/components/betmind/ui";
 import { useBetMindData } from "@/components/betmind/DataProvider";
 
 function asRecord(v: unknown): Record<string, unknown> | null {
@@ -25,18 +25,22 @@ export default function BankrollPage() {
       ? (summary.current_flat as number)
       : typeof ms?.paper_bankroll === "number"
         ? (ms.paper_bankroll as number)
-        : 1000;
+        : null;
 
   return (
     <div className="mx-auto flex max-w-3xl flex-col gap-4">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
+          <div className="bm-section-label">Simulazione</div>
           <h1 className="text-2xl font-bold">Bankroll</h1>
-          <p className="text-sm bm-muted">Paper trading · capitale iniziale €1000</p>
+          <p className="bm-prose-muted mt-1 max-w-xl">
+            Solo carta. Capitale di riferimento 1.000 €. REAL_MONEY resta falso: nessuna puntata
+            reale e nessun saldo inventato se manca il report.
+          </p>
         </div>
         <div className="flex items-center gap-2 text-xs">
           <SnapshotBadge updating={updating} />
-          <span className="bm-muted">{lastUpdate ? new Date(lastUpdate).toLocaleTimeString() : "N/A"}</span>
+          <span className="bm-muted">{lastUpdate ? new Date(lastUpdate).toLocaleTimeString("it-IT") : "—"}</span>
         </div>
       </div>
 
@@ -46,45 +50,55 @@ export default function BankrollPage() {
         </Card>
       )}
 
-      <Card title="PAPER CAPITAL" glow>
-        <div className="text-4xl font-bold tracking-tight">{fmtMoney(paperFlat)}</div>
+      <Card title="Capitale simulato" glow>
+        <div className="text-4xl font-bold tracking-tight">
+          {paperFlat != null ? fmtMoney(paperFlat) : "—"}
+        </div>
         <div className="mt-3 flex flex-wrap gap-2">
-          <Pill accent>REAL_MONEY={String(capital.REAL_MONEY ?? false)}</Pill>
+          <Pill accent>Solo simulazione</Pill>
           <Pill>{String(capital.CAPITAL ?? "PAPER_1000")}</Pill>
         </div>
+        {paperFlat == null ? (
+          <p className="bm-prose-muted mt-3">
+            Nessun report bankroll su questo host. Non mostriamo 1.000 € come se fossero un saldo
+            misurato.
+          </p>
+        ) : null}
       </Card>
 
       <div className="grid gap-3 sm:grid-cols-2">
-        <Card title="P&L">
+        <Card title="Profitto e perdita">
           <div className="text-2xl font-semibold">{fmtMoney(summary?.profit_flat as number)}</div>
         </Card>
-        <Card title="ROI">
+        <Card title="Rendimento">
           <div className="text-2xl font-semibold">{fmtPct(summary?.roi_flat as number)}</div>
         </Card>
-        <Card title="MAX DRAWDOWN">
+        <Card title="Drawdown massimo">
           <div className="text-2xl font-semibold">{fmtPct(summary?.max_drawdown_flat as number)}</div>
         </Card>
-        <Card title="BETS">
-          <div className="text-sm space-y-1">
-            <div>Settled: {String(summary?.n_settled ?? summary?.bets ?? "N/A")}</div>
-            <div>Wins: {String(summary?.wins ?? "N/A")}</div>
-            <div>Losses: {String(summary?.losses ?? "N/A")}</div>
+        <Card title="Scommesse">
+          <div className="space-y-1 text-sm">
+            <div>Liquidate: {String(summary?.n_settled ?? summary?.bets ?? "—")}</div>
+            <div>Vinte: {String(summary?.wins ?? "—")}</div>
+            <div>Perse: {String(summary?.losses ?? "—")}</div>
           </div>
         </Card>
       </div>
 
       {!summary && (
-        <Card>
-          <Unknown label="N/A — paper-bankroll-report / bankroll_053 summary assente; capitale di riferimento €1000" />
-        </Card>
+        <EmptyState
+          title="Report assente"
+          reason="Il report di bankroll simulato non è su questo host. Niente di inventato."
+        />
       )}
 
       {paperReport && (
-        <Card title="REPORT (disk)">
-          <pre className="max-h-56 overflow-auto text-[11px] text-[var(--bm-muted)]">
+        <details className="bm-ops">
+          <summary>Report tecnico</summary>
+          <pre className="mt-3 max-h-56 overflow-auto text-[11px] text-[var(--bm-muted)]">
             {JSON.stringify(paperReport, null, 2).slice(0, 2500)}
           </pre>
-        </Card>
+        </details>
       )}
     </div>
   );

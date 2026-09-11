@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { OddsBlock } from "@/components/betmind/OddsBlock";
 import {
   Metric,
   Pill,
@@ -10,6 +11,7 @@ import {
 } from "@/components/betmind/ui";
 import {
   decisionLabelIt,
+  eventStatusIt,
   marketLabelIt,
   selectionLabelIt,
 } from "@/domain/eval/betmind-runtime/status-copy";
@@ -29,11 +31,6 @@ function pct(v: unknown): string {
   return `${fmtN(x, 1)}%`;
 }
 
-function oddsTxt(v: unknown): string {
-  const n = num(v);
-  if (n == null || n <= 1) return "—";
-  return fmtN(n, 2);
-}
 
 function modelProbs(ev: PredictionEvent): Record<string, number> | null {
   const pm = asRecord(ev.probability_model);
@@ -47,24 +44,6 @@ function modelProbs(ev: PredictionEvent): Record<string, number> | null {
     ...(DRAW != null ? { DRAW } : {}),
     ...(AWAY != null ? { AWAY } : {}),
   };
-}
-
-function marketProbs(ev: PredictionEvent): Record<string, number> | null {
-  const pm = asRecord(ev.probability_market);
-  if (!pm) return null;
-  const HOME = num(pm.HOME);
-  const DRAW = num(pm.DRAW);
-  const AWAY = num(pm.AWAY);
-  if (HOME == null && DRAW == null && AWAY == null) return null;
-  return {
-    ...(HOME != null ? { HOME } : {}),
-    ...(DRAW != null ? { DRAW } : {}),
-    ...(AWAY != null ? { AWAY } : {}),
-  };
-}
-
-function hasBook1x2(ev: PredictionEvent): boolean {
-  return num(ev.odds_home) != null && num(ev.odds_draw) != null && num(ev.odds_away) != null;
 }
 
 function independentStatus(ev: PredictionEvent): {
@@ -105,20 +84,21 @@ export function PredictionOddsCard({
   const away = String(ev.away_or_b ?? "").trim();
   const title = home && away ? `${home} vs ${away}` : String(ev.label ?? ev.event_id ?? "Partita");
   const model = modelProbs(ev);
-  const implied = marketProbs(ev);
-  const book = hasBook1x2(ev);
   const status = independentStatus(ev);
   const pick = pickSelection(model);
   const marketName = marketLabelIt(String(ev.odds_market ?? (ev.markets as string[] | undefined)?.[0] ?? "1X2"));
-  const bookmaker = String(ev.bookmaker ?? "").trim();
+  const kick = String(ev.kickoff_utc ?? "");
+  const matchStatus = eventStatusIt(String(ev.status ?? ""));
   const inner = (
     <article className="bm-pred-card">
       <div className="flex flex-wrap items-start justify-between gap-2">
         <div className="min-w-0">
           <div className="bm-section-label">{String(ev.competition ?? "—")}</div>
-          <h3 className="mt-0.5 text-base font-semibold leading-snug">{title}</h3>
-          <p className="mt-0.5 text-xs bm-muted">
-            {fmtWhen(String(ev.kickoff_utc ?? ""))} · {marketName}
+          <h3 className="mt-0.5 text-lg font-semibold leading-snug">{title}</h3>
+          <p className="mt-0.5 text-sm bm-muted">
+            {kick ? fmtWhen(kick) : "Orario non disponibile"}
+            {ev.status ? ` · ${matchStatus}` : ""}
+            {` · ${marketName}`}
           </p>
         </div>
         <Pill tone={status.kind === "model" ? "accent" : status.kind === "insufficient" ? "warn" : "neutral"}>
@@ -154,31 +134,7 @@ export function PredictionOddsCard({
         </div>
 
         <div className="bm-panel-market">
-          <div className="bm-section-label">Quote (mercato, solo confronto)</div>
-          {book ? (
-            <>
-              <div className="mt-2 grid grid-cols-3 gap-2">
-                <Metric label="Casa" value={oddsTxt(ev.odds_home)} />
-                <Metric label="Pareggio" value={oddsTxt(ev.odds_draw)} />
-                <Metric label="Trasferta" value={oddsTxt(ev.odds_away)} />
-              </div>
-              <p className="mt-2 text-xs bm-muted">
-                {bookmaker ? `Book: ${bookmaker}` : "Book osservato"} · non entra nel modello
-              </p>
-            </>
-          ) : implied ? (
-            <>
-              <p className="mt-2 text-sm bm-muted">Quote decimali non disponibili.</p>
-              <div className="mt-2 grid grid-cols-3 gap-2">
-                <Metric label="Casa (impl.)" value={pct(implied.HOME)} />
-                <Metric label="Pareggio (impl.)" value={pct(implied.DRAW)} />
-                <Metric label="Trasferta (impl.)" value={pct(implied.AWAY)} />
-              </div>
-              <p className="mt-2 text-xs bm-muted">Probabilità di mercato, non una quota book.</p>
-            </>
-          ) : (
-            <p className="mt-2 text-sm bm-muted">Quote non disponibili. Niente di inventato.</p>
-          )}
+          <OddsBlock event={ev} />
         </div>
       </div>
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { Card, SnapshotBadge, Pill, Unknown, fmtN } from "@/components/betmind/ui";
+import { Card, SnapshotBadge, Pill, EmptyState, fmtN } from "@/components/betmind/ui";
 import { useBetMindData } from "@/components/betmind/DataProvider";
 
 function asRecord(v: unknown): Record<string, unknown> | null {
@@ -27,15 +27,19 @@ export default function ModelsPage() {
   const gate = asRecord(verdict?.promotion_gate);
 
   return (
-    <div className="mx-auto flex max-w-4xl flex-col gap-4">
+    <div className="mx-auto flex max-w-3xl flex-col gap-4">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold">Modelli AI</h1>
-          <p className="text-sm bm-muted">Champion / Challenger / Market baseline · PI disk</p>
+          <div className="bm-section-label">Motore</div>
+          <h1 className="text-2xl font-bold">Modelli</h1>
+          <p className="bm-prose-muted mt-1 max-w-xl">
+            Campione, sfidante e baseline di mercato. Le soglie restano quelle del laboratorio:
+            nessuna promozione automatica e le quote non entrano nel modello indipendente.
+          </p>
         </div>
         <div className="flex items-center gap-2 text-xs">
           <SnapshotBadge updating={updating} />
-          <span className="bm-muted">{lastUpdate ? new Date(lastUpdate).toLocaleTimeString() : "N/A"}</span>
+          <span className="bm-muted">{lastUpdate ? new Date(lastUpdate).toLocaleTimeString("it-IT") : "—"}</span>
         </div>
       </div>
 
@@ -45,39 +49,36 @@ export default function ModelsPage() {
         </Card>
       )}
 
-      <Card title="VERDICT" glow right={<Pill accent>{String(verdict?.verdict ?? "UNKNOWN")}</Pill>}>
-        <div className="grid gap-2 text-sm sm:grid-cols-2">
-          <div>Independent: {String(verdict?.model_independent ?? "N/A")}</div>
-          <div>Blocker: {String(verdict?.blocker ?? gate?.blocker ?? "N/A")}</div>
-          <div>
-            MODEL_EDGE:{" "}
-            <span className="bm-accent">{String(gate?.model_edge ?? "UNKNOWN")}</span>
-          </div>
-          <div>Auto-promotion: false</div>
-        </div>
+      <Card title="Verdetto" glow right={<Pill accent>{String(verdict?.verdict ?? "sconosciuto")}</Pill>}>
+        <p className="bm-prose">
+          Modello indipendente: {String(verdict?.model_independent ?? "non dichiarato")}.
+          Blocco: {String(verdict?.blocker ?? gate?.blocker ?? "nessuno segnalato")}.
+          Soglia di vantaggio: {String(gate?.model_edge ?? "sconosciuta")}.
+          Promozione automatica: no.
+        </p>
       </Card>
 
-      <Card title="HOLDOUT METRICS">
+      <Card title="Metriche holdout">
         {independent || market ? (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">
               <thead className="text-xs bm-muted">
                 <tr>
-                  <th className="py-2">Source</th>
-                  <th>LogLoss</th>
+                  <th className="py-2">Fonte</th>
+                  <th>Log loss</th>
                   <th>Brier</th>
-                  <th>Accuracy</th>
+                  <th>Accuratezza</th>
                 </tr>
               </thead>
               <tbody>
                 <tr className="border-t border-[var(--bm-border)]">
-                  <td className="py-2">Independent</td>
+                  <td className="py-2">Indipendente</td>
                   <td>{fmtN(independent?.log_loss as number)}</td>
                   <td>{fmtN(independent?.brier as number)}</td>
                   <td>{fmtN(independent?.accuracy as number)}</td>
                 </tr>
                 <tr className="border-t border-[var(--bm-border)]">
-                  <td className="py-2">Market</td>
+                  <td className="py-2">Mercato</td>
                   <td>{fmtN(market?.log_loss as number)}</td>
                   <td>{fmtN(market?.brier as number)}</td>
                   <td>{fmtN(market?.accuracy as number)}</td>
@@ -86,36 +87,44 @@ export default function ModelsPage() {
             </table>
           </div>
         ) : (
-          <Unknown label="UNKNOWN — validation-report assente o incompleto" />
+          <EmptyState
+            title="Nessuna metrica holdout"
+            reason="Il report di validazione non è presente su questo host. Niente di inventato."
+          />
         )}
       </Card>
 
-      <Card title="REGISTRY">
+      <Card title="Registro modelli">
         <div className="space-y-3">
           {challengers.map((m) => (
             <div key={m.model_id} className="border-t border-[var(--bm-border)] pt-3 first:border-0 first:pt-0">
               <div className="flex flex-wrap items-center gap-2">
                 <span className="font-semibold">{m.model_id}</span>
-                <Pill accent={m.role === "CHAMPION"}>{m.role}</Pill>
-                <Pill>{m.status}</Pill>
+                <Pill accent={m.role === "CHAMPION"}>{m.role === "CHAMPION" ? "Campione" : m.role}</Pill>
               </div>
-              <p className="mt-1 text-xs bm-muted">{m.note}</p>
-              <p className="text-[10px] bm-muted">
-                settled_required_for_edge={m.settled_required_for_edge} · auto_promotion=
-                {String(m.auto_promotion)}
+              <p className="mt-1 text-sm bm-muted">{m.note}</p>
+              <p className="text-xs bm-muted">
+                Casi liquidati richiesti per un vantaggio: {m.settled_required_for_edge}. Promozione
+                automatica: {m.auto_promotion ? "sì" : "no"}.
               </p>
             </div>
           ))}
-          {challengers.length === 0 && <Unknown label="N/A — registry vuoto" />}
+          {challengers.length === 0 && (
+            <EmptyState
+              title="Registro vuoto"
+              reason="Nessun modello è stato pubblicato su questo host."
+            />
+          )}
         </div>
       </Card>
 
       {manifest && (
-        <Card title="MODEL MANIFEST">
-          <pre className="max-h-56 overflow-auto text-[11px] text-[var(--bm-muted)]">
+        <details className="bm-ops">
+          <summary>Manifest tecnico</summary>
+          <pre className="mt-3 max-h-56 overflow-auto text-[11px] text-[var(--bm-muted)]">
             {JSON.stringify(manifest, null, 2).slice(0, 2500)}
           </pre>
-        </Card>
+        </details>
       )}
     </div>
   );

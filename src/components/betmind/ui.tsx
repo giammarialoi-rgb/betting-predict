@@ -33,11 +33,7 @@ export function Card({
     <section className={`bm-card ${glow ? "bm-card-glow" : ""} ${className}`}>
       {(title || right) && (
         <div className="mb-3 flex items-start justify-between gap-2">
-          {title ? (
-            <h2 className="text-[0.78rem] font-semibold tracking-[0.08em] text-[var(--bm-muted)] uppercase">
-              {title}
-            </h2>
-          ) : (
+          {title ? <h2 className="bm-card-title">{title}</h2> : (
             <span />
           )}
           {right}
@@ -165,16 +161,17 @@ export function fmtKick(iso: string | null | undefined): string {
   if (!iso) return "—";
   const d = new Date(iso);
   if (Number.isNaN(d.getTime())) return "—";
-  return d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+  return d.toLocaleTimeString("it-IT", { hour: "2-digit", minute: "2-digit" });
 }
 
 export function fmtWhen(iso: string | null | undefined): string {
   if (!iso) return "—";
   const d = new Date(iso);
   if (Number.isNaN(d.getTime())) return "—";
-  return d.toLocaleString([], {
-    month: "short",
+  return d.toLocaleString("it-IT", {
+    weekday: "short",
     day: "numeric",
+    month: "short",
     hour: "2-digit",
     minute: "2-digit",
   });

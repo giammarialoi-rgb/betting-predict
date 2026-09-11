@@ -3,40 +3,43 @@
 import Link from "next/link";
 import {
   Card,
+  EmptyState,
   SnapshotBadge,
-  Metric,
-  Pill,
-  Unknown,
   asRecord,
-  edgeLabel,
-  fmtKick,
-  fmtN,
-  sportBucket,
 } from "@/components/betmind/ui";
+import { EventCard } from "@/components/betmind/EventCard";
 import { useBetMindData } from "@/components/betmind/DataProvider";
+import { decisionLabelIt } from "@/domain/eval/betmind-runtime/status-copy";
 
 export default function LivePage() {
-  const { data, error, updating, lastUpdate } = useBetMindData();
+  const { data, error, updating, lastUpdate, health } = useBetMindData();
   const obs = asRecord(data?.observatory);
   const sys = asRecord(obs?.system);
+  const detail = asRecord(health?.detail);
   const activity =
     asRecord(asRecord(obs?.multisource_055)?.current_activity) ?? asRecord(obs?.current_work);
   const events = ((obs?.next_events as Record<string, unknown>[]) ?? []).filter(Boolean);
   const live = events.filter((e) => /live|in_play|playing/i.test(String(e.status)));
   const decisions = events.slice(0, 12);
   const settlements = data?.recent_settlements ?? [];
-  const phase = String(activity?.phase ?? sys?.phase ?? "UNKNOWN");
+  const phase = String(activity?.phase ?? sys?.phase ?? "");
+  const idle = /IDLE|SLEEP/i.test(phase);
+  const stale = detail?.mirror_stale === true;
 
   return (
-    <div className="mx-auto flex max-w-4xl flex-col gap-4">
+    <div className="mx-auto flex max-w-3xl flex-col gap-4">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
           <div className="bm-section-label">Monitor</div>
           <h1 className="text-2xl font-bold">Live</h1>
+          <p className="bm-prose-muted mt-1 max-w-xl">
+            Solo partite davvero in corso o decisioni già sul board. Se il runtime è spento
+            o lo specchio è scaduto, lo diciamo: niente LIVE inventato.
+          </p>
         </div>
         <div className="flex items-center gap-2 text-xs">
           <SnapshotBadge updating={updating} />
-          <span className="bm-muted">{lastUpdate ? new Date(lastUpdate).toLocaleTimeString() : "N/A"}</span>
+          <span className="bm-muted">{lastUpdate ? new Date(lastUpdate).toLocaleTimeString("it-IT") : "—"}</span>
         </div>
       </div>
 
@@ -46,77 +49,93 @@ export default function LivePage() {
         </Card>
       )}
 
-      <Card title="CURRENT ANALYSIS" glow>
-        <div className="grid gap-3 sm:grid-cols-2">
-          <Metric label="Phase" value={phase} accent />
-          <Metric label="Priority" value={String(sys?.last_priority ?? "N/A")} />
-          <Metric label="Sport" value={String(activity?.sport ?? sys?.sport ?? "N/A")} />
-          <Metric label="Note" value={String(activity?.note ?? "N/A")} />
-        </div>
-        {/IDLE|SLEEP/i.test(phase) && (
-          <p className="mt-3 text-sm bm-muted">Waiting for next analysis — {String(activity?.note ?? phase)}</p>
+      <Card title="Cosa sta facendo ora">
+        {stale ? (
+          <p className="bm-prose">
+            Specchio Neon scaduto. Il PC può essere acceso, ma Vercel non ha un battito recente —
+            non mostriamo il sistema come online.
+          </p>
+        ) : idle || !phase ? (
+          <p className="bm-prose">
+            In attesa del prossimo ciclo
+            {activity?.note ? `: ${String(activity.note)}` : "."} Nessuna analisi live inventata.
+          </p>
+        ) : (
+          <p className="bm-prose">
+            Fase {phase}
+            {activity?.sport ? ` · ${String(activity.sport)}` : ""}
+            {activity?.note ? `. ${String(activity.note)}` : "."}
+          </p>
         )}
       </Card>
 
-      <Card title="LIVE EVENTS">
+      <section className="space-y-3">
+        <h2 className="text-lg font-semibold">Partite in corso</h2>
         {live.length === 0 ? (
-          <Unknown label="INSUFFICIENT_DATA — no LIVE rows in current board" />
+          <EmptyState
+            title="Nessuna partita live"
+            reason="Sul board attuale non c’è nessuna riga in corso. Non inventiamo un live vuoto."
+          />
         ) : (
-          <div className="space-y-2">
+          <div className="grid gap-3">
             {live.map((e) => (
-              <Link key={String(e.event_id)} href={`/events/${e.event_id}`} className="block rounded-xl bg-black/20 p-3">
-                <div className="flex justify-between gap-2">
-                  <div>
-                    <div className="text-[11px] bm-muted">{sportBucket(String(e.sport))} · {String(e.competition)}</div>
-                    <div className="font-semibold">{String(e.label)}</div>
-                  </div>
-                  <Pill accent>{String(e.status)}</Pill>
-                </div>
-              </Link>
+              <EventCard
+                key={String(e.event_id)}
+                event={e}
+                href={e.event_id ? `/events/${String(e.event_id)}` : undefined}
+              />
             ))}
           </div>
         )}
-      </Card>
+      </section>
 
-      <Card title="RECENT DECISIONS">
-        <div className="space-y-2">
-          {decisions.map((e) => (
-            <Link key={String(e.event_id)} href={`/events/${e.event_id}`} className="flex items-center justify-between gap-2 border-t border-[var(--bm-border)] py-2 first:border-0">
-              <div className="min-w-0">
-                <div className="truncate text-sm font-medium">{String(e.label)}</div>
-                <div className="text-[11px] bm-muted">
-                  {fmtKick(e.kickoff_utc as string | null)} · MODEL{" "}
-                  {e.model_pct != null ? fmtN(e.model_pct as number, 1) : "N/A"} · MKT{" "}
-                  {e.market_pct != null ? fmtN(e.market_pct as number, 1) : "N/A"}
-                </div>
-              </div>
-              <div className="text-right">
-                <div className="text-xs bm-accent">{edgeLabel(e.edge_status, e.edge)}</div>
-                <Pill>{String(e.decision ?? "N/A")}</Pill>
-              </div>
-            </Link>
-          ))}
-          {decisions.length === 0 && <Unknown label="INSUFFICIENT_DATA" />}
-        </div>
-      </Card>
+      <section className="space-y-3">
+        <h2 className="text-lg font-semibold">Decisioni recenti</h2>
+        {decisions.length === 0 ? (
+          <EmptyState
+            title="Nessuna decisione sul board"
+            reason="Il board è vuoto. Se lo specchio Neon è spento o scaduto, le decisioni restano assenti."
+          />
+        ) : (
+          <div className="grid gap-3">
+            {decisions.map((e) => (
+              <EventCard
+                key={String(e.event_id)}
+                event={e}
+                href={e.event_id ? `/events/${String(e.event_id)}` : undefined}
+              />
+            ))}
+          </div>
+        )}
+      </section>
 
-      <Card title="RECENT RESULTS">
-        <div className="space-y-2">
-          {settlements.slice(0, 10).map((s, i) => {
-            const row = asRecord(s);
-            return (
-              <div key={String(row?.event_id ?? i)} className="flex justify-between gap-2 text-sm border-t border-[var(--bm-border)] py-2 first:border-0">
-                <Link className="bm-accent underline" href={`/events/${String(row?.event_id)}`}>
-                  {String(row?.event_id).slice(0, 12)}…
-                </Link>
-                <span>
-                  {String(row?.result ?? "N/A")} · {String(row?.outcome ?? "N/A")}
-                </span>
-              </div>
-            );
-          })}
-          {settlements.length === 0 && <Unknown label="INSUFFICIENT_DATA — no settlements" />}
-        </div>
+      <Card title="Risultati recenti">
+        {settlements.length === 0 ? (
+          <EmptyState
+            title="Nessun esito liquidato"
+            reason="Non ci sono settlements recenti. Il ciclo di apprendimento aspetta partite terminate."
+          />
+        ) : (
+          <ul className="space-y-2 text-sm">
+            {settlements.slice(0, 10).map((s, i) => {
+              const row = asRecord(s);
+              return (
+                <li
+                  key={String(row?.event_id ?? i)}
+                  className="border-t border-[var(--bm-border)] py-2 first:border-0"
+                >
+                  <Link className="bm-accent underline" href={`/events/${String(row?.event_id)}`}>
+                    {String(row?.label ?? row?.event_id ?? "evento")}
+                  </Link>
+                  <p className="bm-muted mt-0.5">
+                    {String(row?.result ?? "esito assente")} ·{" "}
+                    {decisionLabelIt(String(row?.outcome ?? ""))}
+                  </p>
+                </li>
+              );
+            })}
+          </ul>
+        )}
       </Card>
     </div>
   );
