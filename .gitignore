@@ -37,6 +37,9 @@
 # TASK 039 live raw pulls
 /artifacts/task-039/raw/
 
+# Phase 8 Understat JSON cache from local xG verification
+/artifacts/phase-8/xg-verify-cache/
+
 # debug
 npm-debug.log*
 yarn-debug.log*

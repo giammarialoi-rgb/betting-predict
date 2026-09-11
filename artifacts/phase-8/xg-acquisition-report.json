@@ -1,0 +1,2578 @@
+{
+  "at": "2026-09-11T07:44:27.316Z",
+  "runtime": "phase-8-xg-acquisition-v1",
+  "events_attempted": 20,
+  "events_with_real_xg_obs": 20,
+  "observation_counts": 160,
+  "sample_team_names": [
+    "Bournemouth",
+    "Brentford",
+    "Aston Villa",
+    "Nottingham Forest",
+    "Chelsea",
+    "Hull",
+    "Everton",
+    "Manchester United",
+    "Arsenal",
+    "Venezia",
+    "Fiorentina",
+    "Genoa",
+    "Frosinone",
+    "Sassuolo",
+    "Juventus",
+    "Cagliari",
+    "Lecce",
+    "Udinese",
+    "Lazio",
+    "Celta Vigo",
+    "Malaga",
+    "Athletic Club",
+    "Elche",
+    "Getafe"
+  ],
+  "sources_fetched": [
+    {
+      "league": "EPL",
+      "url": "https://understat.com/getLeagueData/EPL/2026",
+      "http": 200,
+      "matches": 380,
+      "bytes": 237626
+    },
+    {
+      "league": "Serie_A",
+      "url": "https://understat.com/getLeagueData/Serie_A/2026",
+      "http": 200,
+      "matches": 380,
+      "bytes": 243633
+    },
+    {
+      "league": "La_liga",
+      "url": "https://understat.com/getLeagueData/La_liga/2026",
+      "http": 200,
+      "matches": 380,
+      "bytes": 260340
+    },
+    {
+      "league": "Bundesliga",
+      "url": "https://understat.com/getLeagueData/Bundesliga/2026",
+      "http": 200,
+      "matches": 306,
+      "bytes": 198023
+    },
+    {
+      "league": "Ligue_1",
+      "url": "https://understat.com/getLeagueData/Ligue_1/2026",
+      "http": 200,
+      "matches": 306,
+      "bytes": 219308
+    }
+  ],
+  "notes": {
+    "endpoint": "GET https://understat.com/getLeagueData/{league}/{season} with X-Requested-With: XMLHttpRequest (public page XHR, not a WAF bypass)",
+    "html_datesData": "League HTML still has no datesData; JSON path is the production path",
+    "model": "xG observations have available_at=null and enters_independent_model=false; overlay status NOT_ELIGIBLE",
+    "zeros": "Missing xG stays null; completed-match 0 would persist only if Understat published 0"
+  },
+  "results": [
+    {
+      "event_id": "xg-verify-31210",
+      "match": "Bournemouth vs Brentford",
+      "competition": "soccer_epl",
+      "kickoff_utc": "2026-09-12T14:00:00.000Z",
+      "origin": "understat_calendar",
+      "status": "SUCCESS",
+      "url": "https://understat.com/getLeagueData/EPL/2026",
+      "http_status": 200,
+      "match_id": "31210",
+      "reason": "Prior xG only (excluded_target=true). home_n=5 away_n=5 source=getLeagueData",
+      "observation_count": 8,
+      "xg_values": [
+        {
+          "key": "home_xg_l5",
+          "value": 1.531,
+          "available_at": null,
+          "enters_model": false
+        },
+        {
+          "key": "away_xg_l5",
+          "value": 2.049,
+          "available_at": null,
+          "enters_model": false
+        },
+        {
+          "key": "home_xga_l5",
+          "value": 1.647,
+          "available_at": null,
+          "enters_model": false
+        },
+        {
+          "key": "away_xga_l5",
+          "value": 1.776,
+          "available_at": null,
+          "enters_model": false
+        },
+        {
+          "key": "home_xg_prematch",
+          "value": 1.531,
+          "available_at": null,
+          "enters_model": false
+        },
+        {
+          "key": "away_xg_prematch",
+          "value": 2.049,
+          "available_at": null,
+          "enters_model": false
+        },
+        {
+          "key": "home_xga_prematch",
+          "value": 1.647,
+          "available_at": null,
+          "enters_model": false
+        },
+        {
+          "key": "away_xga_prematch",
+          "value": 1.776,
+          "available_at": null,
+          "enters_model": false
+        }
+      ],
+      "feature_bag_xg": [
+        {
+          "key": "home_xg_prematch",
+          "value": 1.531,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        },
+        {
+          "key": "home_xg_l5",
+          "value": 1.531,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        },
+        {
+          "key": "away_xg_l5",
+          "value": 2.049,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        },
+        {
+          "key": "home_xga_l5",
+          "value": 1.647,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        },
+        {
+          "key": "away_xga_l5",
+          "value": 1.776,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        },
+        {
+          "key": "away_xg_prematch",
+          "value": 2.049,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        },
+        {
+          "key": "home_xga_prematch",
+          "value": 1.647,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        },
+        {
+          "key": "away_xga_prematch",
+          "value": 1.776,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        }
+      ],
+      "italian_xg": {
+        "light": "PARTIAL",
+        "note_it": "xG: parzialmente trovato. I dati restano nel dossier anche se non tutti entrano nel modello."
+      },
+      "found_lines": [
+        "Expected Goals (xG) di Bournemouth nelle ultime 5 partite (media Understat) = 1.531 (understat, archivio storico, 2026-09-11T07:44:27.316Z)",
+        "Expected Goals (xG) di Brentford nelle ultime 5 partite (media Understat) = 2.049 (understat, archivio storico, 2026-09-11T07:44:27.316Z)",
+        "Expected Goals against (xGA) di Bournemouth nelle ultime 5 partite (media Understat) = 1.647 (understat, archivio storico, 2026-09-11T07:44:27.316Z)",
+        "Expected Goals against (xGA) di Brentford nelle ultime 5 partite (media Understat) = 1.776 (understat, archivio storico, 2026-09-11T07:44:27.316Z)",
+        "Expected Goals pre-partita di Bournemouth (priors Understat, non nel modello) = 1.531 (understat, archivio storico, 2026-09-11T07:44:27.316Z)",
+        "Expected Goals pre-partita di Brentford (priors Understat, non nel modello) = 2.049 (understat, archivio storico, 2026-09-11T07:44:27.316Z)"
+      ]
+    },
+    {
+      "event_id": "xg-verify-31211",
+      "match": "Aston Villa vs Nottingham Forest",
+      "competition": "soccer_epl",
+      "kickoff_utc": "2026-09-12T14:00:00.000Z",
+      "origin": "understat_calendar",
+      "status": "SUCCESS",
+      "url": "https://understat.com/getLeagueData/EPL/2026",
+      "http_status": 200,
+      "match_id": "31211",
+      "reason": "Prior xG only (excluded_target=true). home_n=5 away_n=5 source=getLeagueData",
+      "observation_count": 8,
+      "xg_values": [
+        {
+          "key": "home_xg_l5",
+          "value": 1.431,
+          "available_at": null,
+          "enters_model": false
+        },
+        {
+          "key": "away_xg_l5",
+          "value": 1.654,
+          "available_at": null,
+          "enters_model": false
+        },
+        {
+          "key": "home_xga_l5",
+          "value": 1.854,
+          "available_at": null,
+          "enters_model": false
+        },
+        {
+          "key": "away_xga_l5",
+          "value": 1.77,
+          "available_at": null,
+          "enters_model": false
+        },
+        {
+          "key": "home_xg_prematch",
+          "value": 1.431,
+          "available_at": null,
+          "enters_model": false
+        },
+        {
+          "key": "away_xg_prematch",
+          "value": 1.654,
+          "available_at": null,
+          "enters_model": false
+        },
+        {
+          "key": "home_xga_prematch",
+          "value": 1.854,
+          "available_at": null,
+          "enters_model": false
+        },
+        {
+          "key": "away_xga_prematch",
+          "value": 1.77,
+          "available_at": null,
+          "enters_model": false
+        }
+      ],
+      "feature_bag_xg": [
+        {
+          "key": "home_xg_prematch",
+          "value": 1.431,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        },
+        {
+          "key": "home_xg_l5",
+          "value": 1.431,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        },
+        {
+          "key": "away_xg_l5",
+          "value": 1.654,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        },
+        {
+          "key": "home_xga_l5",
+          "value": 1.854,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        },
+        {
+          "key": "away_xga_l5",
+          "value": 1.77,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        },
+        {
+          "key": "away_xg_prematch",
+          "value": 1.654,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        },
+        {
+          "key": "home_xga_prematch",
+          "value": 1.854,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        },
+        {
+          "key": "away_xga_prematch",
+          "value": 1.77,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        }
+      ],
+      "italian_xg": {
+        "light": "PARTIAL",
+        "note_it": "xG: parzialmente trovato. I dati restano nel dossier anche se non tutti entrano nel modello."
+      },
+      "found_lines": [
+        "Expected Goals (xG) di Aston Villa nelle ultime 5 partite (media Understat) = 1.431 (understat, archivio storico, 2026-09-11T07:44:27.316Z)",
+        "Expected Goals (xG) di Nottingham Forest nelle ultime 5 partite (media Understat) = 1.654 (understat, archivio storico, 2026-09-11T07:44:27.316Z)",
+        "Expected Goals against (xGA) di Aston Villa nelle ultime 5 partite (media Understat) = 1.854 (understat, archivio storico, 2026-09-11T07:44:27.316Z)",
+        "Expected Goals against (xGA) di Nottingham Forest nelle ultime 5 partite (media Understat) = 1.77 (understat, archivio storico, 2026-09-11T07:44:27.316Z)",
+        "Expected Goals pre-partita di Aston Villa (priors Understat, non nel modello) = 1.431 (understat, archivio storico, 2026-09-11T07:44:27.316Z)",
+        "Expected Goals pre-partita di Nottingham Forest (priors Understat, non nel modello) = 1.654 (understat, archivio storico, 2026-09-11T07:44:27.316Z)"
+      ]
+    },
+    {
+      "event_id": "xg-verify-31212",
+      "match": "Chelsea vs Hull",
+      "competition": "soccer_epl",
+      "kickoff_utc": "2026-09-12T14:00:00.000Z",
+      "origin": "understat_calendar",
+      "status": "SUCCESS",
+      "url": "https://understat.com/getLeagueData/EPL/2026",
+      "http_status": 200,
+      "match_id": "31212",
+      "reason": "Prior xG only (excluded_target=true). home_n=5 away_n=3 source=getLeagueData",
+      "observation_count": 8,
+      "xg_values": [
+        {
+          "key": "home_xg_l5",
+          "value": 1.771,
+          "available_at": null,
+          "enters_model": false
+        },
+        {
+          "key": "away_xg_l5",
+          "value": 0.923,
+          "available_at": null,
+          "enters_model": false
+        },
+        {
+          "key": "home_xga_l5",
+          "value": 2.1,
+          "available_at": null,
+          "enters_model": false
+        },
+        {
+          "key": "away_xga_l5",
+          "value": 1.532,
+          "available_at": null,
+          "enters_model": false
+        },
+        {
+          "key": "home_xg_prematch",
+          "value": 1.771,
+          "available_at": null,
+          "enters_model": false
+        },
+        {
+          "key": "away_xg_prematch",
+          "value": 0.923,
+          "available_at": null,
+          "enters_model": false
+        },
+        {
+          "key": "home_xga_prematch",
+          "value": 2.1,
+          "available_at": null,
+          "enters_model": false
+        },
+        {
+          "key": "away_xga_prematch",
+          "value": 1.532,
+          "available_at": null,
+          "enters_model": false
+        }
+      ],
+      "feature_bag_xg": [
+        {
+          "key": "home_xg_prematch",
+          "value": 1.771,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        },
+        {
+          "key": "home_xg_l5",
+          "value": 1.771,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        },
+        {
+          "key": "away_xg_l5",
+          "value": 0.923,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        },
+        {
+          "key": "home_xga_l5",
+          "value": 2.1,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        },
+        {
+          "key": "away_xga_l5",
+          "value": 1.532,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        },
+        {
+          "key": "away_xg_prematch",
+          "value": 0.923,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        },
+        {
+          "key": "home_xga_prematch",
+          "value": 2.1,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        },
+        {
+          "key": "away_xga_prematch",
+          "value": 1.532,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        }
+      ],
+      "italian_xg": {
+        "light": "PARTIAL",
+        "note_it": "xG: parzialmente trovato. I dati restano nel dossier anche se non tutti entrano nel modello."
+      },
+      "found_lines": [
+        "Expected Goals (xG) di Chelsea nelle ultime 5 partite (media Understat) = 1.771 (understat, archivio storico, 2026-09-11T07:44:27.316Z)",
+        "Expected Goals (xG) di Hull nelle ultime 5 partite (media Understat) = 0.923 (understat, archivio storico, 2026-09-11T07:44:27.316Z)",
+        "Expected Goals against (xGA) di Chelsea nelle ultime 5 partite (media Understat) = 2.1 (understat, archivio storico, 2026-09-11T07:44:27.316Z)",
+        "Expected Goals against (xGA) di Hull nelle ultime 5 partite (media Understat) = 1.532 (understat, archivio storico, 2026-09-11T07:44:27.316Z)",
+        "Expected Goals pre-partita di Chelsea (priors Understat, non nel modello) = 1.771 (understat, archivio storico, 2026-09-11T07:44:27.316Z)",
+        "Expected Goals pre-partita di Hull (priors Understat, non nel modello) = 0.923 (understat, archivio storico, 2026-09-11T07:44:27.316Z)"
+      ]
+    },
+    {
+      "event_id": "xg-verify-31208",
+      "match": "Everton vs Manchester United",
+      "competition": "soccer_epl",
+      "kickoff_utc": "2026-09-06T13:00:00.000Z",
+      "origin": "understat_calendar",
+      "status": "SUCCESS",
+      "url": "https://understat.com/getLeagueData/EPL/2026",
+      "http_status": 200,
+      "match_id": "31208",
+      "reason": "Prior xG only (excluded_target=true). home_n=5 away_n=5 source=getLeagueData",
+      "observation_count": 8,
+      "xg_values": [
+        {
+          "key": "home_xg_l5",
+          "value": 1.361,
+          "available_at": null,
+          "enters_model": false
+        },
+        {
+          "key": "away_xg_l5",
+          "value": 2.759,
+          "available_at": null,
+          "enters_model": false
+        },
+        {
+          "key": "home_xga_l5",
+          "value": 2.093,
+          "available_at": null,
+          "enters_model": false
+        },
+        {
+          "key": "away_xga_l5",
+          "value": 1.417,
+          "available_at": null,
+          "enters_model": false
+        },
+        {
+          "key": "home_xg_prematch",
+          "value": 1.361,
+          "available_at": null,
+          "enters_model": false
+        },
+        {
+          "key": "away_xg_prematch",
+          "value": 2.759,
+          "available_at": null,
+          "enters_model": false
+        },
+        {
+          "key": "home_xga_prematch",
+          "value": 2.093,
+          "available_at": null,
+          "enters_model": false
+        },
+        {
+          "key": "away_xga_prematch",
+          "value": 1.417,
+          "available_at": null,
+          "enters_model": false
+        }
+      ],
+      "feature_bag_xg": [
+        {
+          "key": "home_xg_prematch",
+          "value": 1.361,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        },
+        {
+          "key": "home_xg_l5",
+          "value": 1.361,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        },
+        {
+          "key": "away_xg_l5",
+          "value": 2.759,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        },
+        {
+          "key": "home_xga_l5",
+          "value": 2.093,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        },
+        {
+          "key": "away_xga_l5",
+          "value": 1.417,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        },
+        {
+          "key": "away_xg_prematch",
+          "value": 2.759,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        },
+        {
+          "key": "home_xga_prematch",
+          "value": 2.093,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        },
+        {
+          "key": "away_xga_prematch",
+          "value": 1.417,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        }
+      ],
+      "italian_xg": {
+        "light": "PARTIAL",
+        "note_it": "xG: parzialmente trovato. I dati restano nel dossier anche se non tutti entrano nel modello."
+      },
+      "found_lines": [
+        "Expected Goals (xG) di Everton nelle ultime 5 partite (media Understat) = 1.361 (understat, archivio storico, 2026-09-11T07:44:27.316Z)",
+        "Expected Goals (xG) di Manchester United nelle ultime 5 partite (media Understat) = 2.759 (understat, archivio storico, 2026-09-11T07:44:27.316Z)",
+        "Expected Goals against (xGA) di Everton nelle ultime 5 partite (media Understat) = 2.093 (understat, archivio storico, 2026-09-11T07:44:27.316Z)",
+        "Expected Goals against (xGA) di Manchester United nelle ultime 5 partite (media Understat) = 1.417 (understat, archivio storico, 2026-09-11T07:44:27.316Z)",
+        "Expected Goals pre-partita di Everton (priors Understat, non nel modello) = 1.361 (understat, archivio storico, 2026-09-11T07:44:27.316Z)",
+        "Expected Goals pre-partita di Manchester United (priors Understat, non nel modello) = 2.759 (understat, archivio storico, 2026-09-11T07:44:27.316Z)"
+      ]
+    },
+    {
+      "event_id": "xg-verify-31209",
+      "match": "Arsenal vs Chelsea",
+      "competition": "soccer_epl",
+      "kickoff_utc": "2026-09-06T15:30:00.000Z",
+      "origin": "understat_calendar",
+      "status": "SUCCESS",
+      "url": "https://understat.com/getLeagueData/EPL/2026",
+      "http_status": 200,
+      "match_id": "31209",
+      "reason": "Prior xG only (excluded_target=true). home_n=5 away_n=5 source=getLeagueData",
+      "observation_count": 8,
+      "xg_values": [
+        {
+          "key": "home_xg_l5",
+          "value": 1.988,
+          "available_at": null,
+          "enters_model": false
+        },
+        {
+          "key": "away_xg_l5",
+          "value": 1.805,
+          "available_at": null,
+          "enters_model": false
+        },
+        {
+          "key": "home_xga_l5",
+          "value": 0.672,
+          "available_at": null,
+          "enters_model": false
+        },
+        {
+          "key": "away_xga_l5",
+          "value": 1.663,
+          "available_at": null,
+          "enters_model": false
+        },
+        {
+          "key": "home_xg_prematch",
+          "value": 1.988,
+          "available_at": null,
+          "enters_model": false
+        },
+        {
+          "key": "away_xg_prematch",
+          "value": 1.805,
+          "available_at": null,
+          "enters_model": false
+        },
+        {
+          "key": "home_xga_prematch",
+          "value": 0.672,
+          "available_at": null,
+          "enters_model": false
+        },
+        {
+          "key": "away_xga_prematch",
+          "value": 1.663,
+          "available_at": null,
+          "enters_model": false
+        }
+      ],
+      "feature_bag_xg": [
+        {
+          "key": "home_xg_prematch",
+          "value": 1.988,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        },
+        {
+          "key": "home_xg_l5",
+          "value": 1.988,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        },
+        {
+          "key": "away_xg_l5",
+          "value": 1.805,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        },
+        {
+          "key": "home_xga_l5",
+          "value": 0.672,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        },
+        {
+          "key": "away_xga_l5",
+          "value": 1.663,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        },
+        {
+          "key": "away_xg_prematch",
+          "value": 1.805,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        },
+        {
+          "key": "home_xga_prematch",
+          "value": 0.672,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        },
+        {
+          "key": "away_xga_prematch",
+          "value": 1.663,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        }
+      ],
+      "italian_xg": {
+        "light": "PARTIAL",
+        "note_it": "xG: parzialmente trovato. I dati restano nel dossier anche se non tutti entrano nel modello."
+      },
+      "found_lines": [
+        "Expected Goals (xG) di Arsenal nelle ultime 5 partite (media Understat) = 1.988 (understat, archivio storico, 2026-09-11T07:44:27.316Z)",
+        "Expected Goals (xG) di Chelsea nelle ultime 5 partite (media Understat) = 1.805 (understat, archivio storico, 2026-09-11T07:44:27.316Z)",
+        "Expected Goals against (xGA) di Arsenal nelle ultime 5 partite (media Understat) = 0.672 (understat, archivio storico, 2026-09-11T07:44:27.316Z)",
+        "Expected Goals against (xGA) di Chelsea nelle ultime 5 partite (media Understat) = 1.663 (understat, archivio storico, 2026-09-11T07:44:27.316Z)",
+        "Expected Goals pre-partita di Arsenal (priors Understat, non nel modello) = 1.988 (understat, archivio storico, 2026-09-11T07:44:27.316Z)",
+        "Expected Goals pre-partita di Chelsea (priors Understat, non nel modello) = 1.805 (understat, archivio storico, 2026-09-11T07:44:27.316Z)"
+      ]
+    },
+    {
+      "event_id": "xg-verify-31590",
+      "match": "Venezia vs Fiorentina",
+      "competition": "Serie A",
+      "kickoff_utc": "2026-09-11T18:45:00.000Z",
+      "origin": "understat_calendar",
+      "status": "SUCCESS",
+      "url": "https://understat.com/getLeagueData/Serie_A/2026",
+      "http_status": 200,
+      "match_id": "31590",
+      "reason": "Prior xG only (excluded_target=true). home_n=3 away_n=5 source=getLeagueData",
+      "observation_count": 8,
+      "xg_values": [
+        {
+          "key": "home_xg_l5",
+          "value": 2.051,
+          "available_at": null,
+          "enters_model": false
+        },
+        {
+          "key": "away_xg_l5",
+          "value": 1.025,
+          "available_at": null,
+          "enters_model": false
+        },
+        {
+          "key": "home_xga_l5",
+          "value": 2.487,
+          "available_at": null,
+          "enters_model": false
+        },
+        {
+          "key": "away_xga_l5",
+          "value": 2.01,
+          "available_at": null,
+          "enters_model": false
+        },
+        {
+          "key": "home_xg_prematch",
+          "value": 2.051,
+          "available_at": null,
+          "enters_model": false
+        },
+        {
+          "key": "away_xg_prematch",
+          "value": 1.025,
+          "available_at": null,
+          "enters_model": false
+        },
+        {
+          "key": "home_xga_prematch",
+          "value": 2.487,
+          "available_at": null,
+          "enters_model": false
+        },
+        {
+          "key": "away_xga_prematch",
+          "value": 2.01,
+          "available_at": null,
+          "enters_model": false
+        }
+      ],
+      "feature_bag_xg": [
+        {
+          "key": "home_xg_prematch",
+          "value": 2.051,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        },
+        {
+          "key": "home_xg_l5",
+          "value": 2.051,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        },
+        {
+          "key": "away_xg_l5",
+          "value": 1.025,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        },
+        {
+          "key": "home_xga_l5",
+          "value": 2.487,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        },
+        {
+          "key": "away_xga_l5",
+          "value": 2.01,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        },
+        {
+          "key": "away_xg_prematch",
+          "value": 1.025,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        },
+        {
+          "key": "home_xga_prematch",
+          "value": 2.487,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        },
+        {
+          "key": "away_xga_prematch",
+          "value": 2.01,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        }
+      ],
+      "italian_xg": {
+        "light": "PARTIAL",
+        "note_it": "xG: parzialmente trovato. I dati restano nel dossier anche se non tutti entrano nel modello."
+      },
+      "found_lines": [
+        "Expected Goals (xG) di Venezia nelle ultime 5 partite (media Understat) = 2.051 (understat, archivio storico, 2026-09-11T07:44:27.316Z)",
+        "Expected Goals (xG) di Fiorentina nelle ultime 5 partite (media Understat) = 1.025 (understat, archivio storico, 2026-09-11T07:44:27.316Z)",
+        "Expected Goals against (xGA) di Venezia nelle ultime 5 partite (media Understat) = 2.487 (understat, archivio storico, 2026-09-11T07:44:27.316Z)",
+        "Expected Goals against (xGA) di Fiorentina nelle ultime 5 partite (media Understat) = 2.01 (understat, archivio storico, 2026-09-11T07:44:27.316Z)",
+        "Expected Goals pre-partita di Venezia (priors Understat, non nel modello) = 2.051 (understat, archivio storico, 2026-09-11T07:44:27.316Z)",
+        "Expected Goals pre-partita di Fiorentina (priors Understat, non nel modello) = 1.025 (understat, archivio storico, 2026-09-11T07:44:27.316Z)"
+      ]
+    },
+    {
+      "event_id": "xg-verify-31591",
+      "match": "Genoa vs Frosinone",
+      "competition": "Serie A",
+      "kickoff_utc": "2026-09-12T13:00:00.000Z",
+      "origin": "understat_calendar",
+      "status": "SUCCESS",
+      "url": "https://understat.com/getLeagueData/Serie_A/2026",
+      "http_status": 200,
+      "match_id": "31591",
+      "reason": "Prior xG only (excluded_target=true). home_n=5 away_n=3 source=getLeagueData",
+      "observation_count": 8,
+      "xg_values": [
+        {
+          "key": "home_xg_l5",
+          "value": 0.923,
+          "available_at": null,
+          "enters_model": false
+        },
+        {
+          "key": "away_xg_l5",
+          "value": 1.369,
+          "available_at": null,
+          "enters_model": false
+        },
+        {
+          "key": "home_xga_l5",
+          "value": 1.809,
+          "available_at": null,
+          "enters_model": false
+        },
+        {
+          "key": "away_xga_l5",
+          "value": 2.29,
+          "available_at": null,
+          "enters_model": false
+        },
+        {
+          "key": "home_xg_prematch",
+          "value": 0.923,
+          "available_at": null,
+          "enters_model": false
+        },
+        {
+          "key": "away_xg_prematch",
+          "value": 1.369,
+          "available_at": null,
+          "enters_model": false
+        },
+        {
+          "key": "home_xga_prematch",
+          "value": 1.809,
+          "available_at": null,
+          "enters_model": false
+        },
+        {
+          "key": "away_xga_prematch",
+          "value": 2.29,
+          "available_at": null,
+          "enters_model": false
+        }
+      ],
+      "feature_bag_xg": [
+        {
+          "key": "home_xg_prematch",
+          "value": 0.923,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        },
+        {
+          "key": "home_xg_l5",
+          "value": 0.923,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        },
+        {
+          "key": "away_xg_l5",
+          "value": 1.369,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        },
+        {
+          "key": "home_xga_l5",
+          "value": 1.809,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        },
+        {
+          "key": "away_xga_l5",
+          "value": 2.29,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        },
+        {
+          "key": "away_xg_prematch",
+          "value": 1.369,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        },
+        {
+          "key": "home_xga_prematch",
+          "value": 1.809,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        },
+        {
+          "key": "away_xga_prematch",
+          "value": 2.29,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        }
+      ],
+      "italian_xg": {
+        "light": "PARTIAL",
+        "note_it": "xG: parzialmente trovato. I dati restano nel dossier anche se non tutti entrano nel modello."
+      },
+      "found_lines": [
+        "Expected Goals (xG) di Genoa nelle ultime 5 partite (media Understat) = 0.923 (understat, archivio storico, 2026-09-11T07:44:27.316Z)",
+        "Expected Goals (xG) di Frosinone nelle ultime 5 partite (media Understat) = 1.369 (understat, archivio storico, 2026-09-11T07:44:27.316Z)",
+        "Expected Goals against (xGA) di Genoa nelle ultime 5 partite (media Understat) = 1.809 (understat, archivio storico, 2026-09-11T07:44:27.316Z)",
+        "Expected Goals against (xGA) di Frosinone nelle ultime 5 partite (media Understat) = 2.29 (understat, archivio storico, 2026-09-11T07:44:27.316Z)",
+        "Expected Goals pre-partita di Genoa (priors Understat, non nel modello) = 0.923 (understat, archivio storico, 2026-09-11T07:44:27.316Z)",
+        "Expected Goals pre-partita di Frosinone (priors Understat, non nel modello) = 1.369 (understat, archivio storico, 2026-09-11T07:44:27.316Z)"
+      ]
+    },
+    {
+      "event_id": "xg-verify-31592",
+      "match": "Sassuolo vs Juventus",
+      "competition": "Serie A",
+      "kickoff_utc": "2026-09-12T16:00:00.000Z",
+      "origin": "understat_calendar",
+      "status": "SUCCESS",
+      "url": "https://understat.com/getLeagueData/Serie_A/2026",
+      "http_status": 200,
+      "match_id": "31592",
+      "reason": "Prior xG only (excluded_target=true). home_n=5 away_n=5 source=getLeagueData",
+      "observation_count": 8,
+      "xg_values": [
+        {
+          "key": "home_xg_l5",
+          "value": 2.04,
+          "available_at": null,
+          "enters_model": false
+        },
+        {
+          "key": "away_xg_l5",
+          "value": 2.126,
+          "available_at": null,
+          "enters_model": false
+        },
+        {
+          "key": "home_xga_l5",
+          "value": 1.648,
+          "available_at": null,
+          "enters_model": false
+        },
+        {
+          "key": "away_xga_l5",
+          "value": 0.425,
+          "available_at": null,
+          "enters_model": false
+        },
+        {
+          "key": "home_xg_prematch",
+          "value": 2.04,
+          "available_at": null,
+          "enters_model": false
+        },
+        {
+          "key": "away_xg_prematch",
+          "value": 2.126,
+          "available_at": null,
+          "enters_model": false
+        },
+        {
+          "key": "home_xga_prematch",
+          "value": 1.648,
+          "available_at": null,
+          "enters_model": false
+        },
+        {
+          "key": "away_xga_prematch",
+          "value": 0.425,
+          "available_at": null,
+          "enters_model": false
+        }
+      ],
+      "feature_bag_xg": [
+        {
+          "key": "home_xg_prematch",
+          "value": 2.04,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        },
+        {
+          "key": "home_xg_l5",
+          "value": 2.04,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        },
+        {
+          "key": "away_xg_l5",
+          "value": 2.126,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        },
+        {
+          "key": "home_xga_l5",
+          "value": 1.648,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        },
+        {
+          "key": "away_xga_l5",
+          "value": 0.425,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        },
+        {
+          "key": "away_xg_prematch",
+          "value": 2.126,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        },
+        {
+          "key": "home_xga_prematch",
+          "value": 1.648,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        },
+        {
+          "key": "away_xga_prematch",
+          "value": 0.425,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        }
+      ],
+      "italian_xg": {
+        "light": "PARTIAL",
+        "note_it": "xG: parzialmente trovato. I dati restano nel dossier anche se non tutti entrano nel modello."
+      },
+      "found_lines": [
+        "Expected Goals (xG) di Sassuolo nelle ultime 5 partite (media Understat) = 2.04 (understat, archivio storico, 2026-09-11T07:44:27.316Z)",
+        "Expected Goals (xG) di Juventus nelle ultime 5 partite (media Understat) = 2.126 (understat, archivio storico, 2026-09-11T07:44:27.316Z)",
+        "Expected Goals against (xGA) di Sassuolo nelle ultime 5 partite (media Understat) = 1.648 (understat, archivio storico, 2026-09-11T07:44:27.316Z)",
+        "Expected Goals against (xGA) di Juventus nelle ultime 5 partite (media Understat) = 0.425 (understat, archivio storico, 2026-09-11T07:44:27.316Z)",
+        "Expected Goals pre-partita di Sassuolo (priors Understat, non nel modello) = 2.04 (understat, archivio storico, 2026-09-11T07:44:27.316Z)",
+        "Expected Goals pre-partita di Juventus (priors Understat, non nel modello) = 2.126 (understat, archivio storico, 2026-09-11T07:44:27.316Z)"
+      ]
+    },
+    {
+      "event_id": "xg-verify-31588",
+      "match": "Cagliari vs Lecce",
+      "competition": "Serie A",
+      "kickoff_utc": "2026-09-07T16:00:00.000Z",
+      "origin": "understat_calendar",
+      "status": "SUCCESS",
+      "url": "https://understat.com/getLeagueData/Serie_A/2026",
+      "http_status": 200,
+      "match_id": "31588",
+      "reason": "Prior xG only (excluded_target=true). home_n=5 away_n=5 source=getLeagueData",
+      "observation_count": 8,
+      "xg_values": [
+        {
+          "key": "home_xg_l5",
+          "value": 1.668,
+          "available_at": null,
+          "enters_model": false
+        },
+        {
+          "key": "away_xg_l5",
+          "value": 1.554,
+          "available_at": null,
+          "enters_model": false
+        },
+        {
+          "key": "home_xga_l5",
+          "value": 2.08,
+          "available_at": null,
+          "enters_model": false
+        },
+        {
+          "key": "away_xga_l5",
+          "value": 2.623,
+          "available_at": null,
+          "enters_model": false
+        },
+        {
+          "key": "home_xg_prematch",
+          "value": 1.668,
+          "available_at": null,
+          "enters_model": false
+        },
+        {
+          "key": "away_xg_prematch",
+          "value": 1.554,
+          "available_at": null,
+          "enters_model": false
+        },
+        {
+          "key": "home_xga_prematch",
+          "value": 2.08,
+          "available_at": null,
+          "enters_model": false
+        },
+        {
+          "key": "away_xga_prematch",
+          "value": 2.623,
+          "available_at": null,
+          "enters_model": false
+        }
+      ],
+      "feature_bag_xg": [
+        {
+          "key": "home_xg_prematch",
+          "value": 1.668,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        },
+        {
+          "key": "home_xg_l5",
+          "value": 1.668,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        },
+        {
+          "key": "away_xg_l5",
+          "value": 1.554,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        },
+        {
+          "key": "home_xga_l5",
+          "value": 2.08,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        },
+        {
+          "key": "away_xga_l5",
+          "value": 2.623,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        },
+        {
+          "key": "away_xg_prematch",
+          "value": 1.554,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        },
+        {
+          "key": "home_xga_prematch",
+          "value": 2.08,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        },
+        {
+          "key": "away_xga_prematch",
+          "value": 2.623,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        }
+      ],
+      "italian_xg": {
+        "light": "PARTIAL",
+        "note_it": "xG: parzialmente trovato. I dati restano nel dossier anche se non tutti entrano nel modello."
+      },
+      "found_lines": [
+        "Expected Goals (xG) di Cagliari nelle ultime 5 partite (media Understat) = 1.668 (understat, archivio storico, 2026-09-11T07:44:27.316Z)",
+        "Expected Goals (xG) di Lecce nelle ultime 5 partite (media Understat) = 1.554 (understat, archivio storico, 2026-09-11T07:44:27.316Z)",
+        "Expected Goals against (xGA) di Cagliari nelle ultime 5 partite (media Understat) = 2.08 (understat, archivio storico, 2026-09-11T07:44:27.316Z)",
+        "Expected Goals against (xGA) di Lecce nelle ultime 5 partite (media Understat) = 2.623 (understat, archivio storico, 2026-09-11T07:44:27.316Z)",
+        "Expected Goals pre-partita di Cagliari (priors Understat, non nel modello) = 1.668 (understat, archivio storico, 2026-09-11T07:44:27.316Z)",
+        "Expected Goals pre-partita di Lecce (priors Understat, non nel modello) = 1.554 (understat, archivio storico, 2026-09-11T07:44:27.316Z)"
+      ]
+    },
+    {
+      "event_id": "xg-verify-31589",
+      "match": "Udinese vs Lazio",
+      "competition": "Serie A",
+      "kickoff_utc": "2026-09-07T18:45:00.000Z",
+      "origin": "understat_calendar",
+      "status": "SUCCESS",
+      "url": "https://understat.com/getLeagueData/Serie_A/2026",
+      "http_status": 200,
+      "match_id": "31589",
+      "reason": "Prior xG only (excluded_target=true). home_n=5 away_n=5 source=getLeagueData",
+      "observation_count": 8,
+      "xg_values": [
+        {
+          "key": "home_xg_l5",
+          "value": 1.247,
+          "available_at": null,
+          "enters_model": false
+        },
+        {
+          "key": "away_xg_l5",
+          "value": 1.042,
+          "available_at": null,
+          "enters_model": false
+        },
+        {
+          "key": "home_xga_l5",
+          "value": 1.616,
+          "available_at": null,
+          "enters_model": false
+        },
+        {
+          "key": "away_xga_l5",
+          "value": 1.495,
+          "available_at": null,
+          "enters_model": false
+        },
+        {
+          "key": "home_xg_prematch",
+          "value": 1.247,
+          "available_at": null,
+          "enters_model": false
+        },
+        {
+          "key": "away_xg_prematch",
+          "value": 1.042,
+          "available_at": null,
+          "enters_model": false
+        },
+        {
+          "key": "home_xga_prematch",
+          "value": 1.616,
+          "available_at": null,
+          "enters_model": false
+        },
+        {
+          "key": "away_xga_prematch",
+          "value": 1.495,
+          "available_at": null,
+          "enters_model": false
+        }
+      ],
+      "feature_bag_xg": [
+        {
+          "key": "home_xg_prematch",
+          "value": 1.247,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        },
+        {
+          "key": "home_xg_l5",
+          "value": 1.247,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        },
+        {
+          "key": "away_xg_l5",
+          "value": 1.042,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        },
+        {
+          "key": "home_xga_l5",
+          "value": 1.616,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        },
+        {
+          "key": "away_xga_l5",
+          "value": 1.495,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        },
+        {
+          "key": "away_xg_prematch",
+          "value": 1.042,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        },
+        {
+          "key": "home_xga_prematch",
+          "value": 1.616,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        },
+        {
+          "key": "away_xga_prematch",
+          "value": 1.495,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        }
+      ],
+      "italian_xg": {
+        "light": "PARTIAL",
+        "note_it": "xG: parzialmente trovato. I dati restano nel dossier anche se non tutti entrano nel modello."
+      },
+      "found_lines": [
+        "Expected Goals (xG) di Udinese nelle ultime 5 partite (media Understat) = 1.247 (understat, archivio storico, 2026-09-11T07:44:27.316Z)",
+        "Expected Goals (xG) di Lazio nelle ultime 5 partite (media Understat) = 1.042 (understat, archivio storico, 2026-09-11T07:44:27.316Z)",
+        "Expected Goals against (xGA) di Udinese nelle ultime 5 partite (media Understat) = 1.616 (understat, archivio storico, 2026-09-11T07:44:27.316Z)",
+        "Expected Goals against (xGA) di Lazio nelle ultime 5 partite (media Understat) = 1.495 (understat, archivio storico, 2026-09-11T07:44:27.316Z)",
+        "Expected Goals pre-partita di Udinese (priors Understat, non nel modello) = 1.247 (understat, archivio storico, 2026-09-11T07:44:27.316Z)",
+        "Expected Goals pre-partita di Lazio (priors Understat, non nel modello) = 1.042 (understat, archivio storico, 2026-09-11T07:44:27.316Z)"
+      ]
+    },
+    {
+      "event_id": "xg-verify-30811",
+      "match": "Celta Vigo vs Malaga",
+      "competition": "La Liga",
+      "kickoff_utc": "2026-09-13T15:00:00.000Z",
+      "origin": "understat_calendar",
+      "status": "SUCCESS",
+      "url": "https://understat.com/getLeagueData/La_liga/2026",
+      "http_status": 200,
+      "match_id": "30811",
+      "reason": "Prior xG only (excluded_target=true). home_n=5 away_n=4 source=getLeagueData",
+      "observation_count": 8,
+      "xg_values": [
+        {
+          "key": "home_xg_l5",
+          "value": 0.78,
+          "available_at": null,
+          "enters_model": false
+        },
+        {
+          "key": "away_xg_l5",
+          "value": 1.018,
+          "available_at": null,
+          "enters_model": false
+        },
+        {
+          "key": "home_xga_l5",
+          "value": 1.586,
+          "available_at": null,
+          "enters_model": false
+        },
+        {
+          "key": "away_xga_l5",
+          "value": 1.768,
+          "available_at": null,
+          "enters_model": false
+        },
+        {
+          "key": "home_xg_prematch",
+          "value": 0.78,
+          "available_at": null,
+          "enters_model": false
+        },
+        {
+          "key": "away_xg_prematch",
+          "value": 1.018,
+          "available_at": null,
+          "enters_model": false
+        },
+        {
+          "key": "home_xga_prematch",
+          "value": 1.586,
+          "available_at": null,
+          "enters_model": false
+        },
+        {
+          "key": "away_xga_prematch",
+          "value": 1.768,
+          "available_at": null,
+          "enters_model": false
+        }
+      ],
+      "feature_bag_xg": [
+        {
+          "key": "home_xg_prematch",
+          "value": 0.78,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        },
+        {
+          "key": "home_xg_l5",
+          "value": 0.78,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        },
+        {
+          "key": "away_xg_l5",
+          "value": 1.018,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        },
+        {
+          "key": "home_xga_l5",
+          "value": 1.586,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        },
+        {
+          "key": "away_xga_l5",
+          "value": 1.768,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        },
+        {
+          "key": "away_xg_prematch",
+          "value": 1.018,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        },
+        {
+          "key": "home_xga_prematch",
+          "value": 1.586,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        },
+        {
+          "key": "away_xga_prematch",
+          "value": 1.768,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        }
+      ],
+      "italian_xg": {
+        "light": "PARTIAL",
+        "note_it": "xG: parzialmente trovato. I dati restano nel dossier anche se non tutti entrano nel modello."
+      },
+      "found_lines": [
+        "Expected Goals (xG) di Celta Vigo nelle ultime 5 partite (media Understat) = 0.78 (understat, archivio storico, 2026-09-11T07:44:27.316Z)",
+        "Expected Goals (xG) di Malaga nelle ultime 5 partite (media Understat) = 1.018 (understat, archivio storico, 2026-09-11T07:44:27.316Z)",
+        "Expected Goals against (xGA) di Celta Vigo nelle ultime 5 partite (media Understat) = 1.586 (understat, archivio storico, 2026-09-11T07:44:27.316Z)",
+        "Expected Goals against (xGA) di Malaga nelle ultime 5 partite (media Understat) = 1.768 (understat, archivio storico, 2026-09-11T07:44:27.316Z)",
+        "Expected Goals pre-partita di Celta Vigo (priors Understat, non nel modello) = 0.78 (understat, archivio storico, 2026-09-11T07:44:27.316Z)",
+        "Expected Goals pre-partita di Malaga (priors Understat, non nel modello) = 1.018 (understat, archivio storico, 2026-09-11T07:44:27.316Z)"
+      ]
+    },
+    {
+      "event_id": "xg-verify-30812",
+      "match": "Athletic Club vs Elche",
+      "competition": "La Liga",
+      "kickoff_utc": "2026-09-13T15:00:00.000Z",
+      "origin": "understat_calendar",
+      "status": "SUCCESS",
+      "url": "https://understat.com/getLeagueData/La_liga/2026",
+      "http_status": 200,
+      "match_id": "30812",
+      "reason": "Prior xG only (excluded_target=true). home_n=5 away_n=5 source=getLeagueData",
+      "observation_count": 8,
+      "xg_values": [
+        {
+          "key": "home_xg_l5",
+          "value": 1.629,
+          "available_at": null,
+          "enters_model": false
+        },
+        {
+          "key": "away_xg_l5",
+          "value": 1.441,
+          "available_at": null,
+          "enters_model": false
+        },
+        {
+          "key": "home_xga_l5",
+          "value": 1.758,
+          "available_at": null,
+          "enters_model": false
+        },
+        {
+          "key": "away_xga_l5",
+          "value": 1.74,
+          "available_at": null,
+          "enters_model": false
+        },
+        {
+          "key": "home_xg_prematch",
+          "value": 1.629,
+          "available_at": null,
+          "enters_model": false
+        },
+        {
+          "key": "away_xg_prematch",
+          "value": 1.441,
+          "available_at": null,
+          "enters_model": false
+        },
+        {
+          "key": "home_xga_prematch",
+          "value": 1.758,
+          "available_at": null,
+          "enters_model": false
+        },
+        {
+          "key": "away_xga_prematch",
+          "value": 1.74,
+          "available_at": null,
+          "enters_model": false
+        }
+      ],
+      "feature_bag_xg": [
+        {
+          "key": "home_xg_prematch",
+          "value": 1.629,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        },
+        {
+          "key": "home_xg_l5",
+          "value": 1.629,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        },
+        {
+          "key": "away_xg_l5",
+          "value": 1.441,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        },
+        {
+          "key": "home_xga_l5",
+          "value": 1.758,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        },
+        {
+          "key": "away_xga_l5",
+          "value": 1.74,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        },
+        {
+          "key": "away_xg_prematch",
+          "value": 1.441,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        },
+        {
+          "key": "home_xga_prematch",
+          "value": 1.758,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        },
+        {
+          "key": "away_xga_prematch",
+          "value": 1.74,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        }
+      ],
+      "italian_xg": {
+        "light": "PARTIAL",
+        "note_it": "xG: parzialmente trovato. I dati restano nel dossier anche se non tutti entrano nel modello."
+      },
+      "found_lines": [
+        "Expected Goals (xG) di Athletic Club nelle ultime 5 partite (media Understat) = 1.629 (understat, archivio storico, 2026-09-11T07:44:27.316Z)",
+        "Expected Goals (xG) di Elche nelle ultime 5 partite (media Understat) = 1.441 (understat, archivio storico, 2026-09-11T07:44:27.316Z)",
+        "Expected Goals against (xGA) di Athletic Club nelle ultime 5 partite (media Understat) = 1.758 (understat, archivio storico, 2026-09-11T07:44:27.316Z)",
+        "Expected Goals against (xGA) di Elche nelle ultime 5 partite (media Understat) = 1.74 (understat, archivio storico, 2026-09-11T07:44:27.316Z)",
+        "Expected Goals pre-partita di Athletic Club (priors Understat, non nel modello) = 1.629 (understat, archivio storico, 2026-09-11T07:44:27.316Z)",
+        "Expected Goals pre-partita di Elche (priors Understat, non nel modello) = 1.441 (understat, archivio storico, 2026-09-11T07:44:27.316Z)"
+      ]
+    },
+    {
+      "event_id": "xg-verify-30813",
+      "match": "Getafe vs Deportivo La Coruna",
+      "competition": "La Liga",
+      "kickoff_utc": "2026-09-13T15:00:00.000Z",
+      "origin": "understat_calendar",
+      "status": "SUCCESS",
+      "url": "https://understat.com/getLeagueData/La_liga/2026",
+      "http_status": 200,
+      "match_id": "30813",
+      "reason": "Prior xG only (excluded_target=true). home_n=5 away_n=4 source=getLeagueData",
+      "observation_count": 8,
+      "xg_values": [
+        {
+          "key": "home_xg_l5",
+          "value": 0.811,
+          "available_at": null,
+          "enters_model": false
+        },
+        {
+          "key": "away_xg_l5",
+          "value": 1.33,
+          "available_at": null,
+          "enters_model": false
+        },
+        {
+          "key": "home_xga_l5",
+          "value": 1.476,
+          "available_at": null,
+          "enters_model": false
+        },
+        {
+          "key": "away_xga_l5",
+          "value": 1.901,
+          "available_at": null,
+          "enters_model": false
+        },
+        {
+          "key": "home_xg_prematch",
+          "value": 0.811,
+          "available_at": null,
+          "enters_model": false
+        },
+        {
+          "key": "away_xg_prematch",
+          "value": 1.33,
+          "available_at": null,
+          "enters_model": false
+        },
+        {
+          "key": "home_xga_prematch",
+          "value": 1.476,
+          "available_at": null,
+          "enters_model": false
+        },
+        {
+          "key": "away_xga_prematch",
+          "value": 1.901,
+          "available_at": null,
+          "enters_model": false
+        }
+      ],
+      "feature_bag_xg": [
+        {
+          "key": "home_xg_prematch",
+          "value": 0.811,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        },
+        {
+          "key": "home_xg_l5",
+          "value": 0.811,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        },
+        {
+          "key": "away_xg_l5",
+          "value": 1.33,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        },
+        {
+          "key": "home_xga_l5",
+          "value": 1.476,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        },
+        {
+          "key": "away_xga_l5",
+          "value": 1.901,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        },
+        {
+          "key": "away_xg_prematch",
+          "value": 1.33,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        },
+        {
+          "key": "home_xga_prematch",
+          "value": 1.476,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        },
+        {
+          "key": "away_xga_prematch",
+          "value": 1.901,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        }
+      ],
+      "italian_xg": {
+        "light": "PARTIAL",
+        "note_it": "xG: parzialmente trovato. I dati restano nel dossier anche se non tutti entrano nel modello."
+      },
+      "found_lines": [
+        "Expected Goals (xG) di Getafe nelle ultime 5 partite (media Understat) = 0.811 (understat, archivio storico, 2026-09-11T07:44:27.316Z)",
+        "Expected Goals (xG) di Deportivo La Coruna nelle ultime 5 partite (media Understat) = 1.33 (understat, archivio storico, 2026-09-11T07:44:27.316Z)",
+        "Expected Goals against (xGA) di Getafe nelle ultime 5 partite (media Understat) = 1.476 (understat, archivio storico, 2026-09-11T07:44:27.316Z)",
+        "Expected Goals against (xGA) di Deportivo La Coruna nelle ultime 5 partite (media Understat) = 1.901 (understat, archivio storico, 2026-09-11T07:44:27.316Z)",
+        "Expected Goals pre-partita di Getafe (priors Understat, non nel modello) = 0.811 (understat, archivio storico, 2026-09-11T07:44:27.316Z)",
+        "Expected Goals pre-partita di Deportivo La Coruna (priors Understat, non nel modello) = 1.33 (understat, archivio storico, 2026-09-11T07:44:27.316Z)"
+      ]
+    },
+    {
+      "event_id": "xg-verify-30809",
+      "match": "Getafe vs Celta Vigo",
+      "competition": "La Liga",
+      "kickoff_utc": "2026-09-07T17:00:00.000Z",
+      "origin": "understat_calendar",
+      "status": "SUCCESS",
+      "url": "https://understat.com/getLeagueData/La_liga/2026",
+      "http_status": 200,
+      "match_id": "30809",
+      "reason": "Prior xG only (excluded_target=true). home_n=5 away_n=5 source=getLeagueData",
+      "observation_count": 8,
+      "xg_values": [
+        {
+          "key": "home_xg_l5",
+          "value": 0.538,
+          "available_at": null,
+          "enters_model": false
+        },
+        {
+          "key": "away_xg_l5",
+          "value": 0.819,
+          "available_at": null,
+          "enters_model": false
+        },
+        {
+          "key": "home_xga_l5",
+          "value": 1.33,
+          "available_at": null,
+          "enters_model": false
+        },
+        {
+          "key": "away_xga_l5",
+          "value": 1.445,
+          "available_at": null,
+          "enters_model": false
+        },
+        {
+          "key": "home_xg_prematch",
+          "value": 0.538,
+          "available_at": null,
+          "enters_model": false
+        },
+        {
+          "key": "away_xg_prematch",
+          "value": 0.819,
+          "available_at": null,
+          "enters_model": false
+        },
+        {
+          "key": "home_xga_prematch",
+          "value": 1.33,
+          "available_at": null,
+          "enters_model": false
+        },
+        {
+          "key": "away_xga_prematch",
+          "value": 1.445,
+          "available_at": null,
+          "enters_model": false
+        }
+      ],
+      "feature_bag_xg": [
+        {
+          "key": "home_xg_prematch",
+          "value": 0.538,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        },
+        {
+          "key": "home_xg_l5",
+          "value": 0.538,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        },
+        {
+          "key": "away_xg_l5",
+          "value": 0.819,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        },
+        {
+          "key": "home_xga_l5",
+          "value": 1.33,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        },
+        {
+          "key": "away_xga_l5",
+          "value": 1.445,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        },
+        {
+          "key": "away_xg_prematch",
+          "value": 0.819,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        },
+        {
+          "key": "home_xga_prematch",
+          "value": 1.33,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        },
+        {
+          "key": "away_xga_prematch",
+          "value": 1.445,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        }
+      ],
+      "italian_xg": {
+        "light": "PARTIAL",
+        "note_it": "xG: parzialmente trovato. I dati restano nel dossier anche se non tutti entrano nel modello."
+      },
+      "found_lines": [
+        "Expected Goals (xG) di Getafe nelle ultime 5 partite (media Understat) = 0.538 (understat, archivio storico, 2026-09-11T07:44:27.316Z)",
+        "Expected Goals (xG) di Celta Vigo nelle ultime 5 partite (media Understat) = 0.819 (understat, archivio storico, 2026-09-11T07:44:27.316Z)",
+        "Expected Goals against (xGA) di Getafe nelle ultime 5 partite (media Understat) = 1.33 (understat, archivio storico, 2026-09-11T07:44:27.316Z)",
+        "Expected Goals against (xGA) di Celta Vigo nelle ultime 5 partite (media Understat) = 1.445 (understat, archivio storico, 2026-09-11T07:44:27.316Z)",
+        "Expected Goals pre-partita di Getafe (priors Understat, non nel modello) = 0.538 (understat, archivio storico, 2026-09-11T07:44:27.316Z)",
+        "Expected Goals pre-partita di Celta Vigo (priors Understat, non nel modello) = 0.819 (understat, archivio storico, 2026-09-11T07:44:27.316Z)"
+      ]
+    },
+    {
+      "event_id": "xg-verify-30810",
+      "match": "Elche vs Real Sociedad",
+      "competition": "La Liga",
+      "kickoff_utc": "2026-09-07T19:30:00.000Z",
+      "origin": "understat_calendar",
+      "status": "SUCCESS",
+      "url": "https://understat.com/getLeagueData/La_liga/2026",
+      "http_status": 200,
+      "match_id": "30810",
+      "reason": "Prior xG only (excluded_target=true). home_n=5 away_n=5 source=getLeagueData",
+      "observation_count": 8,
+      "xg_values": [
+        {
+          "key": "home_xg_l5",
+          "value": 1.005,
+          "available_at": null,
+          "enters_model": false
+        },
+        {
+          "key": "away_xg_l5",
+          "value": 1.354,
+          "available_at": null,
+          "enters_model": false
+        },
+        {
+          "key": "home_xga_l5",
+          "value": 1.583,
+          "available_at": null,
+          "enters_model": false
+        },
+        {
+          "key": "away_xga_l5",
+          "value": 1.741,
+          "available_at": null,
+          "enters_model": false
+        },
+        {
+          "key": "home_xg_prematch",
+          "value": 1.005,
+          "available_at": null,
+          "enters_model": false
+        },
+        {
+          "key": "away_xg_prematch",
+          "value": 1.354,
+          "available_at": null,
+          "enters_model": false
+        },
+        {
+          "key": "home_xga_prematch",
+          "value": 1.583,
+          "available_at": null,
+          "enters_model": false
+        },
+        {
+          "key": "away_xga_prematch",
+          "value": 1.741,
+          "available_at": null,
+          "enters_model": false
+        }
+      ],
+      "feature_bag_xg": [
+        {
+          "key": "home_xg_prematch",
+          "value": 1.005,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        },
+        {
+          "key": "home_xg_l5",
+          "value": 1.005,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        },
+        {
+          "key": "away_xg_l5",
+          "value": 1.354,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        },
+        {
+          "key": "home_xga_l5",
+          "value": 1.583,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        },
+        {
+          "key": "away_xga_l5",
+          "value": 1.741,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        },
+        {
+          "key": "away_xg_prematch",
+          "value": 1.354,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        },
+        {
+          "key": "home_xga_prematch",
+          "value": 1.583,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        },
+        {
+          "key": "away_xga_prematch",
+          "value": 1.741,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        }
+      ],
+      "italian_xg": {
+        "light": "PARTIAL",
+        "note_it": "xG: parzialmente trovato. I dati restano nel dossier anche se non tutti entrano nel modello."
+      },
+      "found_lines": [
+        "Expected Goals (xG) di Elche nelle ultime 5 partite (media Understat) = 1.005 (understat, archivio storico, 2026-09-11T07:44:27.316Z)",
+        "Expected Goals (xG) di Real Sociedad nelle ultime 5 partite (media Understat) = 1.354 (understat, archivio storico, 2026-09-11T07:44:27.316Z)",
+        "Expected Goals against (xGA) di Elche nelle ultime 5 partite (media Understat) = 1.583 (understat, archivio storico, 2026-09-11T07:44:27.316Z)",
+        "Expected Goals against (xGA) di Real Sociedad nelle ultime 5 partite (media Understat) = 1.741 (understat, archivio storico, 2026-09-11T07:44:27.316Z)",
+        "Expected Goals pre-partita di Elche (priors Understat, non nel modello) = 1.005 (understat, archivio storico, 2026-09-11T07:44:27.316Z)",
+        "Expected Goals pre-partita di Real Sociedad (priors Understat, non nel modello) = 1.354 (understat, archivio storico, 2026-09-11T07:44:27.316Z)"
+      ]
+    },
+    {
+      "event_id": "xg-verify-32263",
+      "match": "Union Berlin vs Schalke 04",
+      "competition": "Bundesliga",
+      "kickoff_utc": "2026-09-11T18:30:00.000Z",
+      "origin": "understat_calendar",
+      "status": "PARTIAL",
+      "url": "https://understat.com/getLeagueData/Bundesliga/2026",
+      "http_status": 200,
+      "match_id": "32263",
+      "reason": "Prior xG only (excluded_target=true). home_n=5 away_n=2 source=getLeagueData",
+      "observation_count": 8,
+      "xg_values": [
+        {
+          "key": "home_xg_l5",
+          "value": 1.763,
+          "available_at": null,
+          "enters_model": false
+        },
+        {
+          "key": "away_xg_l5",
+          "value": 1.044,
+          "available_at": null,
+          "enters_model": false
+        },
+        {
+          "key": "home_xga_l5",
+          "value": 1.963,
+          "available_at": null,
+          "enters_model": false
+        },
+        {
+          "key": "away_xga_l5",
+          "value": 3.795,
+          "available_at": null,
+          "enters_model": false
+        },
+        {
+          "key": "home_xg_prematch",
+          "value": 1.763,
+          "available_at": null,
+          "enters_model": false
+        },
+        {
+          "key": "away_xg_prematch",
+          "value": 1.044,
+          "available_at": null,
+          "enters_model": false
+        },
+        {
+          "key": "home_xga_prematch",
+          "value": 1.963,
+          "available_at": null,
+          "enters_model": false
+        },
+        {
+          "key": "away_xga_prematch",
+          "value": 3.795,
+          "available_at": null,
+          "enters_model": false
+        }
+      ],
+      "feature_bag_xg": [
+        {
+          "key": "home_xg_prematch",
+          "value": 1.763,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        },
+        {
+          "key": "home_xg_l5",
+          "value": 1.763,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        },
+        {
+          "key": "away_xg_l5",
+          "value": 1.044,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        },
+        {
+          "key": "home_xga_l5",
+          "value": 1.963,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        },
+        {
+          "key": "away_xga_l5",
+          "value": 3.795,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        },
+        {
+          "key": "away_xg_prematch",
+          "value": 1.044,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        },
+        {
+          "key": "home_xga_prematch",
+          "value": 1.963,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        },
+        {
+          "key": "away_xga_prematch",
+          "value": 3.795,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        }
+      ],
+      "italian_xg": {
+        "light": "PARTIAL",
+        "note_it": "xG: parzialmente trovato. I dati restano nel dossier anche se non tutti entrano nel modello."
+      },
+      "found_lines": [
+        "Expected Goals (xG) di Union Berlin nelle ultime 5 partite (media Understat) = 1.763 (understat, archivio storico, 2026-09-11T07:44:27.316Z)",
+        "Expected Goals (xG) di Schalke 04 nelle ultime 5 partite (media Understat) = 1.044 (understat, archivio storico, 2026-09-11T07:44:27.316Z)",
+        "Expected Goals against (xGA) di Union Berlin nelle ultime 5 partite (media Understat) = 1.963 (understat, archivio storico, 2026-09-11T07:44:27.316Z)",
+        "Expected Goals against (xGA) di Schalke 04 nelle ultime 5 partite (media Understat) = 3.795 (understat, archivio storico, 2026-09-11T07:44:27.316Z)",
+        "Expected Goals pre-partita di Union Berlin (priors Understat, non nel modello) = 1.763 (understat, archivio storico, 2026-09-11T07:44:27.316Z)",
+        "Expected Goals pre-partita di Schalke 04 (priors Understat, non nel modello) = 1.044 (understat, archivio storico, 2026-09-11T07:44:27.316Z)"
+      ]
+    },
+    {
+      "event_id": "xg-verify-32264",
+      "match": "Freiburg vs Borussia M.Gladbach",
+      "competition": "Bundesliga",
+      "kickoff_utc": "2026-09-12T13:30:00.000Z",
+      "origin": "understat_calendar",
+      "status": "SUCCESS",
+      "url": "https://understat.com/getLeagueData/Bundesliga/2026",
+      "http_status": 200,
+      "match_id": "32264",
+      "reason": "Prior xG only (excluded_target=true). home_n=5 away_n=5 source=getLeagueData",
+      "observation_count": 8,
+      "xg_values": [
+        {
+          "key": "home_xg_l5",
+          "value": 1.526,
+          "available_at": null,
+          "enters_model": false
+        },
+        {
+          "key": "away_xg_l5",
+          "value": 1.741,
+          "available_at": null,
+          "enters_model": false
+        },
+        {
+          "key": "home_xga_l5",
+          "value": 1.266,
+          "available_at": null,
+          "enters_model": false
+        },
+        {
+          "key": "away_xga_l5",
+          "value": 2.36,
+          "available_at": null,
+          "enters_model": false
+        },
+        {
+          "key": "home_xg_prematch",
+          "value": 1.526,
+          "available_at": null,
+          "enters_model": false
+        },
+        {
+          "key": "away_xg_prematch",
+          "value": 1.741,
+          "available_at": null,
+          "enters_model": false
+        },
+        {
+          "key": "home_xga_prematch",
+          "value": 1.266,
+          "available_at": null,
+          "enters_model": false
+        },
+        {
+          "key": "away_xga_prematch",
+          "value": 2.36,
+          "available_at": null,
+          "enters_model": false
+        }
+      ],
+      "feature_bag_xg": [
+        {
+          "key": "home_xg_prematch",
+          "value": 1.526,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        },
+        {
+          "key": "home_xg_l5",
+          "value": 1.526,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        },
+        {
+          "key": "away_xg_l5",
+          "value": 1.741,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        },
+        {
+          "key": "home_xga_l5",
+          "value": 1.266,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        },
+        {
+          "key": "away_xga_l5",
+          "value": 2.36,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        },
+        {
+          "key": "away_xg_prematch",
+          "value": 1.741,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        },
+        {
+          "key": "home_xga_prematch",
+          "value": 1.266,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        },
+        {
+          "key": "away_xga_prematch",
+          "value": 2.36,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        }
+      ],
+      "italian_xg": {
+        "light": "PARTIAL",
+        "note_it": "xG: parzialmente trovato. I dati restano nel dossier anche se non tutti entrano nel modello."
+      },
+      "found_lines": [
+        "Expected Goals (xG) di Freiburg nelle ultime 5 partite (media Understat) = 1.526 (understat, archivio storico, 2026-09-11T07:44:27.316Z)",
+        "Expected Goals (xG) di Borussia M.Gladbach nelle ultime 5 partite (media Understat) = 1.741 (understat, archivio storico, 2026-09-11T07:44:27.316Z)",
+        "Expected Goals against (xGA) di Freiburg nelle ultime 5 partite (media Understat) = 1.266 (understat, archivio storico, 2026-09-11T07:44:27.316Z)",
+        "Expected Goals against (xGA) di Borussia M.Gladbach nelle ultime 5 partite (media Understat) = 2.36 (understat, archivio storico, 2026-09-11T07:44:27.316Z)",
+        "Expected Goals pre-partita di Freiburg (priors Understat, non nel modello) = 1.526 (understat, archivio storico, 2026-09-11T07:44:27.316Z)",
+        "Expected Goals pre-partita di Borussia M.Gladbach (priors Understat, non nel modello) = 1.741 (understat, archivio storico, 2026-09-11T07:44:27.316Z)"
+      ]
+    },
+    {
+      "event_id": "xg-verify-32265",
+      "match": "Hoffenheim vs VfB Stuttgart",
+      "competition": "Bundesliga",
+      "kickoff_utc": "2026-09-12T13:30:00.000Z",
+      "origin": "understat_calendar",
+      "status": "SUCCESS",
+      "url": "https://understat.com/getLeagueData/Bundesliga/2026",
+      "http_status": 200,
+      "match_id": "32265",
+      "reason": "Prior xG only (excluded_target=true). home_n=5 away_n=5 source=getLeagueData",
+      "observation_count": 8,
+      "xg_values": [
+        {
+          "key": "home_xg_l5",
+          "value": 1.958,
+          "available_at": null,
+          "enters_model": false
+        },
+        {
+          "key": "away_xg_l5",
+          "value": 2.354,
+          "available_at": null,
+          "enters_model": false
+        },
+        {
+          "key": "home_xga_l5",
+          "value": 1.68,
+          "available_at": null,
+          "enters_model": false
+        },
+        {
+          "key": "away_xga_l5",
+          "value": 2.64,
+          "available_at": null,
+          "enters_model": false
+        },
+        {
+          "key": "home_xg_prematch",
+          "value": 1.958,
+          "available_at": null,
+          "enters_model": false
+        },
+        {
+          "key": "away_xg_prematch",
+          "value": 2.354,
+          "available_at": null,
+          "enters_model": false
+        },
+        {
+          "key": "home_xga_prematch",
+          "value": 1.68,
+          "available_at": null,
+          "enters_model": false
+        },
+        {
+          "key": "away_xga_prematch",
+          "value": 2.64,
+          "available_at": null,
+          "enters_model": false
+        }
+      ],
+      "feature_bag_xg": [
+        {
+          "key": "home_xg_prematch",
+          "value": 1.958,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        },
+        {
+          "key": "home_xg_l5",
+          "value": 1.958,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        },
+        {
+          "key": "away_xg_l5",
+          "value": 2.354,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        },
+        {
+          "key": "home_xga_l5",
+          "value": 1.68,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        },
+        {
+          "key": "away_xga_l5",
+          "value": 2.64,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        },
+        {
+          "key": "away_xg_prematch",
+          "value": 2.354,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        },
+        {
+          "key": "home_xga_prematch",
+          "value": 1.68,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        },
+        {
+          "key": "away_xga_prematch",
+          "value": 2.64,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        }
+      ],
+      "italian_xg": {
+        "light": "PARTIAL",
+        "note_it": "xG: parzialmente trovato. I dati restano nel dossier anche se non tutti entrano nel modello."
+      },
+      "found_lines": [
+        "Expected Goals (xG) di Hoffenheim nelle ultime 5 partite (media Understat) = 1.958 (understat, archivio storico, 2026-09-11T07:44:27.316Z)",
+        "Expected Goals (xG) di VfB Stuttgart nelle ultime 5 partite (media Understat) = 2.354 (understat, archivio storico, 2026-09-11T07:44:27.316Z)",
+        "Expected Goals against (xGA) di Hoffenheim nelle ultime 5 partite (media Understat) = 1.68 (understat, archivio storico, 2026-09-11T07:44:27.316Z)",
+        "Expected Goals against (xGA) di VfB Stuttgart nelle ultime 5 partite (media Understat) = 2.64 (understat, archivio storico, 2026-09-11T07:44:27.316Z)",
+        "Expected Goals pre-partita di Hoffenheim (priors Understat, non nel modello) = 1.958 (understat, archivio storico, 2026-09-11T07:44:27.316Z)",
+        "Expected Goals pre-partita di VfB Stuttgart (priors Understat, non nel modello) = 2.354 (understat, archivio storico, 2026-09-11T07:44:27.316Z)"
+      ]
+    },
+    {
+      "event_id": "xg-verify-32261",
+      "match": "Hamburger SV vs Mainz 05",
+      "competition": "Bundesliga",
+      "kickoff_utc": "2026-09-06T13:30:00.000Z",
+      "origin": "understat_calendar",
+      "status": "SUCCESS",
+      "url": "https://understat.com/getLeagueData/Bundesliga/2026",
+      "http_status": 200,
+      "match_id": "32261",
+      "reason": "Prior xG only (excluded_target=true). home_n=5 away_n=5 source=getLeagueData",
+      "observation_count": 8,
+      "xg_values": [
+        {
+          "key": "home_xg_l5",
+          "value": 1.374,
+          "available_at": null,
+          "enters_model": false
+        },
+        {
+          "key": "away_xg_l5",
+          "value": 2.718,
+          "available_at": null,
+          "enters_model": false
+        },
+        {
+          "key": "home_xga_l5",
+          "value": 1.681,
+          "available_at": null,
+          "enters_model": false
+        },
+        {
+          "key": "away_xga_l5",
+          "value": 2.024,
+          "available_at": null,
+          "enters_model": false
+        },
+        {
+          "key": "home_xg_prematch",
+          "value": 1.374,
+          "available_at": null,
+          "enters_model": false
+        },
+        {
+          "key": "away_xg_prematch",
+          "value": 2.718,
+          "available_at": null,
+          "enters_model": false
+        },
+        {
+          "key": "home_xga_prematch",
+          "value": 1.681,
+          "available_at": null,
+          "enters_model": false
+        },
+        {
+          "key": "away_xga_prematch",
+          "value": 2.024,
+          "available_at": null,
+          "enters_model": false
+        }
+      ],
+      "feature_bag_xg": [
+        {
+          "key": "home_xg_prematch",
+          "value": 1.374,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        },
+        {
+          "key": "home_xg_l5",
+          "value": 1.374,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        },
+        {
+          "key": "away_xg_l5",
+          "value": 2.718,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        },
+        {
+          "key": "home_xga_l5",
+          "value": 1.681,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        },
+        {
+          "key": "away_xga_l5",
+          "value": 2.024,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        },
+        {
+          "key": "away_xg_prematch",
+          "value": 2.718,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        },
+        {
+          "key": "home_xga_prematch",
+          "value": 1.681,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        },
+        {
+          "key": "away_xga_prematch",
+          "value": 2.024,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        }
+      ],
+      "italian_xg": {
+        "light": "PARTIAL",
+        "note_it": "xG: parzialmente trovato. I dati restano nel dossier anche se non tutti entrano nel modello."
+      },
+      "found_lines": [
+        "Expected Goals (xG) di Hamburger SV nelle ultime 5 partite (media Understat) = 1.374 (understat, archivio storico, 2026-09-11T07:44:27.316Z)",
+        "Expected Goals (xG) di Mainz 05 nelle ultime 5 partite (media Understat) = 2.718 (understat, archivio storico, 2026-09-11T07:44:27.316Z)",
+        "Expected Goals against (xGA) di Hamburger SV nelle ultime 5 partite (media Understat) = 1.681 (understat, archivio storico, 2026-09-11T07:44:27.316Z)",
+        "Expected Goals against (xGA) di Mainz 05 nelle ultime 5 partite (media Understat) = 2.024 (understat, archivio storico, 2026-09-11T07:44:27.316Z)",
+        "Expected Goals pre-partita di Hamburger SV (priors Understat, non nel modello) = 1.374 (understat, archivio storico, 2026-09-11T07:44:27.316Z)",
+        "Expected Goals pre-partita di Mainz 05 (priors Understat, non nel modello) = 2.718 (understat, archivio storico, 2026-09-11T07:44:27.316Z)"
+      ]
+    },
+    {
+      "event_id": "xg-verify-32262",
+      "match": "Eintracht Frankfurt vs Augsburg",
+      "competition": "Bundesliga",
+      "kickoff_utc": "2026-09-06T15:30:00.000Z",
+      "origin": "understat_calendar",
+      "status": "SUCCESS",
+      "url": "https://understat.com/getLeagueData/Bundesliga/2026",
+      "http_status": 200,
+      "match_id": "32262",
+      "reason": "Prior xG only (excluded_target=true). home_n=5 away_n=5 source=getLeagueData",
+      "observation_count": 8,
+      "xg_values": [
+        {
+          "key": "home_xg_l5",
+          "value": 1.58,
+          "available_at": null,
+          "enters_model": false
+        },
+        {
+          "key": "away_xg_l5",
+          "value": 2.844,
+          "available_at": null,
+          "enters_model": false
+        },
+        {
+          "key": "home_xga_l5",
+          "value": 1.962,
+          "available_at": null,
+          "enters_model": false
+        },
+        {
+          "key": "away_xga_l5",
+          "value": 1.402,
+          "available_at": null,
+          "enters_model": false
+        },
+        {
+          "key": "home_xg_prematch",
+          "value": 1.58,
+          "available_at": null,
+          "enters_model": false
+        },
+        {
+          "key": "away_xg_prematch",
+          "value": 2.844,
+          "available_at": null,
+          "enters_model": false
+        },
+        {
+          "key": "home_xga_prematch",
+          "value": 1.962,
+          "available_at": null,
+          "enters_model": false
+        },
+        {
+          "key": "away_xga_prematch",
+          "value": 1.402,
+          "available_at": null,
+          "enters_model": false
+        }
+      ],
+      "feature_bag_xg": [
+        {
+          "key": "home_xg_prematch",
+          "value": 1.58,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        },
+        {
+          "key": "home_xg_l5",
+          "value": 1.58,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        },
+        {
+          "key": "away_xg_l5",
+          "value": 2.844,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        },
+        {
+          "key": "home_xga_l5",
+          "value": 1.962,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        },
+        {
+          "key": "away_xga_l5",
+          "value": 1.402,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        },
+        {
+          "key": "away_xg_prematch",
+          "value": 2.844,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        },
+        {
+          "key": "home_xga_prematch",
+          "value": 1.962,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        },
+        {
+          "key": "away_xga_prematch",
+          "value": 1.402,
+          "status": "NOT_ELIGIBLE",
+          "entered_model": false
+        }
+      ],
+      "italian_xg": {
+        "light": "PARTIAL",
+        "note_it": "xG: parzialmente trovato. I dati restano nel dossier anche se non tutti entrano nel modello."
+      },
+      "found_lines": [
+        "Expected Goals (xG) di Eintracht Frankfurt nelle ultime 5 partite (media Understat) = 1.58 (understat, archivio storico, 2026-09-11T07:44:27.316Z)",
+        "Expected Goals (xG) di Augsburg nelle ultime 5 partite (media Understat) = 2.844 (understat, archivio storico, 2026-09-11T07:44:27.316Z)",
+        "Expected Goals against (xGA) di Eintracht Frankfurt nelle ultime 5 partite (media Understat) = 1.962 (understat, archivio storico, 2026-09-11T07:44:27.316Z)",
+        "Expected Goals against (xGA) di Augsburg nelle ultime 5 partite (media Understat) = 1.402 (understat, archivio storico, 2026-09-11T07:44:27.316Z)",
+        "Expected Goals pre-partita di Eintracht Frankfurt (priors Understat, non nel modello) = 1.58 (understat, archivio storico, 2026-09-11T07:44:27.316Z)",
+        "Expected Goals pre-partita di Augsburg (priors Understat, non nel modello) = 2.844 (understat, archivio storico, 2026-09-11T07:44:27.316Z)"
+      ]
+    }
+  ]
+}

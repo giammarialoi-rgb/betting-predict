@@ -21,6 +21,7 @@ import { hasIndependentModel } from "@/domain/eval/permanent-044/prediction-prec
 import { computeDataQualityScore, type DataQualityResult } from "@/domain/eval/data-intelligence/research/data-quality";
 import { detectConflicts, type FeatureConflict } from "@/domain/eval/data-intelligence/research/conflict-engine";
 import { loadResearchObservationsForEvent } from "@/domain/eval/data-intelligence/research/observations-store";
+import { overlayUnderstatXgOnFeatureData } from "@/domain/eval/data-intelligence/research/understat-league";
 
 export type UiFeatureStatus =
   | "ELIGIBLE"
@@ -271,7 +272,17 @@ export function buildAnalysisDossier(
       ? (pred.probability_market as Record<string, number>)
       : null;
 
-  const featureData = (reasoning?.feature_data as FeatureDatum[] | undefined) ?? [];
+  const obsForExplain = loadResearchObservationsForEvent(String(event.event_id ?? ""), labB);
+  const rawFeatureData = (reasoning?.feature_data as FeatureDatum[] | undefined) ?? [];
+  const featureData =
+    rawFeatureData.length > 0
+      ? overlayUnderstatXgOnFeatureData({
+          featureData: rawFeatureData,
+          observations: obsForExplain,
+          eventId: String(event.event_id ?? eventId),
+          featureTime: new Date().toISOString(),
+        })
+      : rawFeatureData;
   const featureSnapshot =
     (reasoning?.feature_snapshot as Record<string, number | null> | undefined) ?? {};
   const features: DossierFeatureRow[] = [];
@@ -302,6 +313,33 @@ export function buildAnalysisDossier(
         status: v == null ? "INSUFFICIENT" : "ELIGIBLE",
         entered_model: v != null,
       });
+    }
+  }
+  const xgOverlay = overlayUnderstatXgOnFeatureData({
+    featureData: [],
+    observations: obsForExplain,
+    eventId: String(event.event_id ?? eventId),
+    featureTime: new Date().toISOString(),
+  });
+  for (const d of xgOverlay) {
+    const idx = features.findIndex((f) => f.name === d.key);
+    const row: DossierFeatureRow = {
+      name: d.key,
+      value: d.value,
+      source: d.source,
+      observed_at: d.feature_time ?? null,
+      available_at: d.available_at,
+      status: mapFeatureStatus(d),
+      entered_model: false,
+      derived_from: d.derived_from ?? [],
+      calculation: d.calculation ?? null,
+      origin: d.origin,
+    };
+    if (idx >= 0) {
+      if (features[idx]!.entered_model) continue;
+      if (features[idx]!.value == null && row.value != null) features[idx] = row;
+    } else {
+      features.push(row);
     }
   }
 
@@ -533,7 +571,6 @@ export function buildAnalysisDossier(
     }
   }
 
-  const obsForExplain = loadResearchObservationsForEvent(String(event.event_id ?? ""), labB);
   const human_explanation = buildHumanExplanation({
     home: homeName,
     away: awayName,

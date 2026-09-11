@@ -53,6 +53,8 @@ const ROLLING_METRIC: Record<
     tpl: (t, n) => `Cartellini di ${t} nelle ultime ${n} partite (media, giallo + 2x rosso)`,
   },
   cs: { group: "DIFESA", tpl: (t, n) => `Clean sheet di ${t} nelle ultime ${n} partite (quota)` },
+  xg: { group: "ATTACCO", tpl: (t, n) => `Expected Goals (xG) di ${t} nelle ultime ${n} partite (media Understat)` },
+  xga: { group: "DIFESA", tpl: (t, n) => `Expected Goals against (xGA) di ${t} nelle ultime ${n} partite (media Understat)` },
   score_cons: {
     group: "ATTACCO",
     tpl: (t, n) =>
@@ -144,13 +146,23 @@ const STATIC: Record<
   elo_diff: { group: "FORZA", quality: "DERIVED", label: () => "Differenza Elo (casa - trasferta)" },
   home_xg_prematch: {
     group: "ATTACCO",
-    quality: "REAL",
-    label: (h) => `Expected Goals pre-partita di ${h}`,
+    quality: "HISTORICAL_PRIOR",
+    label: (h) => `Expected Goals pre-partita di ${h} (priors Understat, non nel modello)`,
   },
   away_xg_prematch: {
     group: "ATTACCO",
-    quality: "REAL",
-    label: (_h, a) => `Expected Goals pre-partita di ${a}`,
+    quality: "HISTORICAL_PRIOR",
+    label: (_h, a) => `Expected Goals pre-partita di ${a} (priors Understat, non nel modello)`,
+  },
+  home_xga_prematch: {
+    group: "DIFESA",
+    quality: "HISTORICAL_PRIOR",
+    label: (h) => `Expected Goals against pre-partita di ${h} (priors Understat, non nel modello)`,
+  },
+  away_xga_prematch: {
+    group: "DIFESA",
+    quality: "HISTORICAL_PRIOR",
+    label: (_h, a) => `Expected Goals against pre-partita di ${a} (priors Understat, non nel modello)`,
   },
   home_injuries_n: {
     group: "SQUADRA",
@@ -184,7 +196,7 @@ const STATIC: Record<
   },
 };
 
-const ROLLING_RE = /^(home|away)_(gf|ga|pts|shots|sot|corners|cards|cs|score_cons)_l(3|5|10)$/;
+const ROLLING_RE = /^(home|away)_(gf|ga|pts|shots|sot|corners|cards|cs|score_cons|xg|xga)_l(3|5|10)$/;
 
 export function parseRollingFeature(key: string): {
   side: "home" | "away";

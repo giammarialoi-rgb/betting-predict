@@ -264,7 +264,8 @@ describe("data-intelligence", () => {
     assert.ok(FEATURE_MANIFEST_P0.length >= 10);
     assert.ok(sum.by_readiness.ACTIVE.includes("home_injuries_n"));
     assert.ok(sum.by_readiness.CONTEXT_ONLY.includes("weather_temp_c"));
-    assert.ok(sum.stub_or_missing_families.includes("xg"));
+    assert.ok(sum.by_readiness.CONTEXT_ONLY.includes("home_xg_prematch"));
+    assert.ok(!sum.stub_or_missing_families.includes("xg"));
   });
 
   it("toFeatureDatum blocks available_at after decisionTime", () => {

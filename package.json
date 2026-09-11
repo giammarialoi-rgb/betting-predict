@@ -133,6 +133,7 @@
     "phase6:research": "tsx src/scripts/phase-6-research-once.ts",
     "phase7:research": "tsx src/scripts/phase-7-research-once.ts",
     "phase8:research": "tsx src/scripts/phase-8-research-once.ts",
+    "phase8:xg": "tsx src/scripts/phase-8-xg-verify.ts",
     "brain:install": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/install-brain.ps1",
     "brain:uninstall": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/uninstall-brain.ps1",
     "brain:watchdog": "tsx src/scripts/brain-watchdog.ts",
