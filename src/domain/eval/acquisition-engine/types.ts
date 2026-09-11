@@ -22,7 +22,8 @@ export type AcquisitionKind =
   | "research_dataset"
   | "meta"
   | "news"
-  | "catalog";
+  | "catalog"
+  | "market";
 
 export type AcquisitionTemporalPrecision =
   | "exact"
@@ -84,12 +85,21 @@ export type SourceLaneResult = {
     features_stored: number;
     reason: string | null;
   };
+  /** Optional honest coverage (leagues/sports parsed). Never invented. */
+  coverage?: {
+    leagues: string[];
+    sports?: string[];
+    market_quotes?: number;
+  };
 };
 
 export type AcquisitionCycleInput = {
   nowIso?: string;
   cwd?: string;
   persistNeon?: boolean;
+  /** Persist compare-only quotes into Lab B quotes.jsonl (never MODEL). */
+  persistLabB?: boolean;
+  labBRoot?: string;
   fetchImpl?: typeof fetch;
   /** Skip live HTTP; adapters use fixtures when provided. */
   fixtures?: AcquisitionFixtures;
@@ -110,6 +120,10 @@ export type AcquisitionFixtures = {
   statsbombJson?: string;
   footballDataCoUkCsv?: string;
   rssXml?: string;
+  espnJson?: string;
+  openFootballJson?: string;
+  apiFootballJson?: string;
+  oddsApiJson?: string;
 };
 
 export type AcquisitionCycleResult = {
@@ -125,4 +139,13 @@ export type AcquisitionCycleResult = {
     status: string;
     reason_it: string;
   }>;
+  coverage: {
+    sources_ok: string[];
+    sources_failed: string[];
+    sources_auth_required: string[];
+    sources_blocked: string[];
+    leagues: string[];
+    sports: string[];
+    market_quotes: number;
+  };
 };

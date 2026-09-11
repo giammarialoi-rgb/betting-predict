@@ -3,10 +3,12 @@
  * Registers real data_sources. Elo snapshots for ClubElo. Feature rows only
  * when a football sport + event UUID can be created without inventing scores.
  */
+import { createHash } from "node:crypto";
 import { eq } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { dataSources } from "@/db/schema";
 import type { LicenseClass } from "@/domain/alignment-ids";
+import { appendQuote044, loadStore044 } from "@/domain/eval/permanent-044/store";
 import {
   ensureClubEloDataSource,
   getFootballSportId,
@@ -178,6 +180,81 @@ export async function persistAcquisitionFeatures(input: {
         featureStatus: rec.feature_status,
       });
       if (res.stored) stored += 1;
+    }
+    return { stored, reason: null };
+  } catch (e) {
+    return { stored: 0, reason: e instanceof Error ? e.message : String(e) };
+  }
+}
+
+export async function registerAcquisitionSource(input: {
+  slug: string;
+  name: string;
+  licenseClass: LicenseClass;
+}): Promise<{ source_registered: boolean; elo_stored: number; features_stored: number; reason: string | null }> {
+  try {
+    const id = await ensureAcquisitionDataSource(input);
+    return {
+      source_registered: Boolean(id),
+      elo_stored: 0,
+      features_stored: 0,
+      reason: id ? null : "DATABASE_URL not set or insert failed",
+    };
+  } catch (e) {
+    return {
+      source_registered: false,
+      elo_stored: 0,
+      features_stored: 0,
+      reason: e instanceof Error ? e.message : String(e),
+    };
+  }
+}
+
+/**
+ * Compare-only 1X2 into Lab B quotes.jsonl. Never MODEL. Never invents a missing leg.
+ */
+export function persistCompareOnlyQuotes(input: {
+  labBRoot: string;
+  eventId: string;
+  bookmaker: string;
+  source: string;
+  home: number;
+  draw: number;
+  away: number;
+  collectedAt: string;
+}): { stored: number; reason: string | null } {
+  if (!(input.home > 1) || !(input.draw > 1) || !(input.away > 1)) {
+    return { stored: 0, reason: "incomplete_1x2" };
+  }
+  try {
+    const store = loadStore044(input.labBRoot);
+    let stored = 0;
+    for (const [selection, price] of [
+      ["HOME", input.home],
+      ["DRAW", input.draw],
+      ["AWAY", input.away],
+    ] as const) {
+      const fingerprint = createHash("sha256")
+        .update(
+          ["acq-market", input.eventId, input.bookmaker, selection, String(price), input.collectedAt, input.source].join("|"),
+        )
+        .digest("hex");
+      const res = appendQuote044(store, {
+        event_id: input.eventId,
+        bookmaker: input.bookmaker,
+        market: "1X2",
+        market_group: "1X2",
+        market_type: "1X2",
+        selection,
+        line: null,
+        price,
+        available_at_utc: null,
+        collected_at_utc: input.collectedAt,
+        source: input.source,
+        market_available: true,
+        fingerprint,
+      });
+      if (res === "ok") stored += 1;
     }
     return { stored, reason: null };
   } catch (e) {

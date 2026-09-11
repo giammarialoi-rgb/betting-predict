@@ -47,7 +47,7 @@ export async function runStatsBombLane(input: {
     const got = await acquisitionGet({
       url: input.url,
       sourceId: "statsbomb",
-      minIntervalMs: 800,
+      minIntervalMs: input.fetchImpl ? 0 : 800,
       fetchImpl: input.fetchImpl,
       maxRetries: input.maxRetries,
     });
@@ -138,10 +138,14 @@ export async function runStatsBombLane(input: {
     url,
     records,
     fields_extracted: ["statsbomb_competitions"],
-    reason: `competitions=${comps.length}; NOT_ELIGIBLE historical`,
-    reason_it: `StatsBomb Open Data: ${comps.length} competizioni storiche. Non live, non nel modello indipendente.`,
+    reason: `competitions=${comps.length}; seasons=${new Set(comps.map((c) => `${c.competition_id}:${c.season_id}`)).size}; NOT_ELIGIBLE historical`,
+    reason_it: `StatsBomb Open Data: ${comps.length} pacchetti storici (non live). available_at sconosciuto; esclusi dal modello pre-match.`,
     retries,
     cache_path: cachePath,
     neon,
+    coverage: {
+      leagues: [...new Set(comps.map((c) => c.competition_name).filter(Boolean) as string[])].slice(0, 24),
+      sports: ["football"],
+    },
   };
 }

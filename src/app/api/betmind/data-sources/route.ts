@@ -15,6 +15,10 @@ import {
   type OperationalOverlay,
 } from "@/domain/eval/betmind-runtime/production-mirror";
 import type { SourceEntry } from "@/domain/eval/data-intelligence/types";
+import {
+  overlayRegistryWithAcquisitionCycle,
+  readLastAcquisitionCycle,
+} from "@/domain/eval/acquisition-engine/coverage-overlay";
 
 export const dynamic = "force-dynamic";
 
@@ -75,9 +79,12 @@ export async function GET() {
         testScrapeEnabled: testScrape,
       });
 
-  const sources = overlayRegistryWithOperational(
-    registry,
-    operational as OperationalOverlay[],
+  const sources = overlayRegistryWithAcquisitionCycle(
+    overlayRegistryWithOperational(
+      registry,
+      operational as OperationalOverlay[],
+    ),
+    readLastAcquisitionCycle(process.cwd()),
   );
   const neonSignal = operationalSource === "neon" && operationalHasNeonSignal(operational);
   const source =

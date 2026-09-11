@@ -20,6 +20,7 @@ async function main() {
         sources_ok: result.sources_ok,
         sources_failed: result.sources_failed,
         records: result.records,
+        coverage: result.coverage,
         neon_sources: result.neon_sources,
         lanes: result.lanes.map((l) => ({
           source_id: l.source_id,

@@ -3,8 +3,9 @@
  */
 import { getFootballDataOrgToken } from "@/providers/football-data-org/adapter";
 import { emptyLane } from "@/domain/eval/acquisition-engine/blocked-audit";
-import { ensureAcquisitionDataSource } from "@/domain/eval/acquisition-engine/persist";
+import { registerAcquisitionSource } from "@/domain/eval/acquisition-engine/persist";
 import { acquisitionGet } from "@/domain/eval/acquisition-engine/http";
+import { FOOTBALL_DATA_ORG_COMPETITIONS } from "@/domain/eval/acquisition-engine/catalog";
 import type { SourceLaneResult } from "@/domain/eval/acquisition-engine/types";
 
 export async function runFootballDataOrgLane(input: {
@@ -30,7 +31,7 @@ export async function runFootballDataOrgLane(input: {
   const got = await acquisitionGet({
     url: input.url,
     sourceId: "football-data-org",
-    minIntervalMs: 7_000,
+    minIntervalMs: input.fetchImpl ? 0 : 7_000,
     headers: { "X-Auth-Token": token },
     fetchImpl: input.fetchImpl,
     maxRetries: input.maxRetries,
@@ -69,21 +70,11 @@ export async function runFootballDataOrgLane(input: {
 
   let neon = { source_registered: false, elo_stored: 0, features_stored: 0, reason: null as string | null };
   if (input.persistNeon) {
-    try {
-      const id = await ensureAcquisitionDataSource({
-        slug: "football-data-org",
-        name: "football-data.org",
-        licenseClass: "official_api",
-      });
-      neon = {
-        source_registered: Boolean(id),
-        elo_stored: 0,
-        features_stored: 0,
-        reason: id ? null : "DATABASE_URL not set or insert failed",
-      };
-    } catch (e) {
-      neon.reason = e instanceof Error ? e.message : String(e);
-    }
+    neon = await registerAcquisitionSource({
+      slug: "football-data-org",
+      name: "football-data.org",
+      licenseClass: "official_api",
+    });
   }
 
   return {
@@ -116,10 +107,11 @@ export async function runFootballDataOrgLane(input: {
       },
     ],
     fields_extracted: count > 0 ? ["football_data_org_matches"] : [],
-    reason: `matches=${count}`,
-    reason_it: `football-data.org: ${count} partite. Rate limit rispettato.`,
+    reason: `matches=${count}; competitions=${FOOTBALL_DATA_ORG_COMPETITIONS.join(",")}`,
+    reason_it: `football-data.org: ${count} partite (${FOOTBALL_DATA_ORG_COMPETITIONS.join(", ")}). Rate limit rispettato.`,
     retries: got.retries,
     cache_path: null,
     neon,
+    coverage: { leagues: [...FOOTBALL_DATA_ORG_COMPETITIONS], sports: ["football"] },
   };
 }

@@ -24,7 +24,7 @@ export function blockedProtectedAudit(): Array<{
 export function laneReasonIt(lane: SourceLaneResult): string {
   const title = FREE_SOURCE_CATALOG.find((s) => s.source_id === lane.source_id)?.title_it ?? lane.source_id;
   if (lane.status === "AUTH_REQUIRED") {
-    return `${title} richiede un token gratuito (FOOTBALL_DATA_ORG_TOKEN). Nessun accesso non autorizzato.`;
+    return lane.reason_it || `${title} richiede autenticazione. Nessun accesso non autorizzato. Nessun dato inventato.`;
   }
   if (lane.status === "BLOCKED" && lane.http_status === 403) {
     return `Abbiamo tentato di consultare ${title}, ma il sito ha restituito HTTP 403. Nessun dato di questa fonte e stato utilizzato.`;
