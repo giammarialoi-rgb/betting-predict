@@ -43,3 +43,19 @@ No positive result may justify weakening this rule.
 Implementation: `.cursor/rules/historical-decision-time.mdc` and `src/domain/eval/capital-020/`.
 
 <!-- END:historical-decision-time-rules -->
+
+<!-- BEGIN:context7-docs-first-rules -->
+
+# Context7 Docs-First (integrations)
+
+Before implementing or modifying integrations with Next.js, Vercel, Playwright, Drizzle, Neon, sports/odds APIs, third-party SDKs, or scraping libraries:
+
+1. Resolve the library on Context7 (prefer verified / high-trust IDs).
+2. Fetch focused current docs for the exact topic being changed.
+3. Implement only APIs and patterns present in that documentation (plus repo-local vendor docs such as `node_modules/next/dist/docs/` when required above).
+4. If Context7 MCP is unavailable, use the Context7 HTTP API — do not skip the lookup.
+5. Do not invent APIs, methods, options, or package names from memory.
+
+Implementation: `.cursor/rules/context7-docs-first.mdc`.
+
+<!-- END:context7-docs-first-rules -->
