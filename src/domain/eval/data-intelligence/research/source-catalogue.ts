@@ -24,7 +24,7 @@ export type CatalogueSource = {
 
 /**
  * Full catalogue from project + Phase 3D request.
- * Adapters that exist today are marked; others MISSING_ADAPTER or POLICY_DENIED.
+ * Adapters that exist today are marked; remaining catalogue rows are POLICY_DENIED or TEST_PROBE.
  */
 export const RESEARCH_SOURCE_CATALOGUE: CatalogueSource[] = [
   {
