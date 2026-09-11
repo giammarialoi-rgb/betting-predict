@@ -182,6 +182,7 @@ const SYNONYMS: Record<string, string> = {
   "borussia dortmund": "dortmund",
   dortmund: "dortmund",
   "bayer leverkusen": "leverkusen",
+  "bayer 04 leverkusen": "leverkusen",
   leverkusen: "leverkusen",
   "eintracht frankfurt": "frankfurt",
   frankfurt: "frankfurt",

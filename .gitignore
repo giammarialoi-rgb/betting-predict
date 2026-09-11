@@ -40,6 +40,11 @@
 # Phase 8 Understat JSON cache from local xG verification
 /artifacts/phase-8/xg-verify-cache/
 
+# Free acquisition engine caches (ClubElo CSV, OpenLigaDB JSON, …)
+/data/clubelo/*.csv
+/data/acquisition/
+/artifacts/acquisition-engine/
+
 # debug
 npm-debug.log*
 yarn-debug.log*

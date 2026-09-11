@@ -23,7 +23,7 @@ export type FeatureFamilyId =
 
 export const FEATURE_SOURCE_PRIORITY: Record<FeatureFamilyId, string[]> = {
   xg: ["understat", "the-analyst", "opta", "fbref"],
-  form_results: ["football-data-co-uk", "club-football-match-data", "api-sports"],
+  form_results: ["football-data-co-uk", "openligadb", "club-football-match-data", "api-sports"],
   shots: ["football-data-co-uk", "fbref", "api-sports"],
   corners: ["football-data-co-uk", "api-sports"],
   cards: ["football-data-co-uk", "api-sports"],
