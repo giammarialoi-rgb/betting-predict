@@ -12,11 +12,12 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import {
-  namesEqual,
+  identityKey,
   normalizeTeamName,
   resolveCompetitionMatrix,
   europeanSeasonYear,
 } from "@/domain/eval/data-intelligence/research/identity-normalize";
+import { pickUniqueTeam } from "@/domain/eval/data-intelligence/research/identity-match";
 import { mergeSourceEventIdentity } from "@/domain/eval/data-intelligence/research/source-identity-cache";
 import { upsertTeamIdentity } from "@/domain/eval/data-intelligence/research/identity-registry";
 import { readScrapeCache, writeScrapeCache } from "@/domain/eval/data-intelligence/research/scrape-cache";
@@ -163,6 +164,24 @@ function kickMs(iso: string): number {
   return Number.isFinite(t) ? t : NaN;
 }
 
+function uniqueTeamTitles(matches: UnderstatMatch[]): string[] {
+  const seen = new Set<string>();
+  const out: string[] = [];
+  for (const m of matches) {
+    for (const title of [m.home, m.away]) {
+      const k = identityKey(title);
+      if (!k || seen.has(k)) continue;
+      seen.add(k);
+      out.push(title);
+    }
+  }
+  return out;
+}
+
+function sameIdentity(candidate: string, key: string | null): boolean {
+  return Boolean(key && identityKey(candidate) === key);
+}
+
 export function rollingPriorXg(input: {
   matches: UnderstatMatch[];
   home: string;
@@ -181,17 +200,27 @@ export function rollingPriorXg(input: {
   prior_away_ids: string[];
   home_team_id: string | null;
   away_team_id: string | null;
+  home_identity: ReturnType<typeof pickUniqueTeam>;
+  away_identity: ReturnType<typeof pickUniqueTeam>;
 } {
   const window = input.window ?? 5;
   const cutoff = Date.parse(input.kickoffIso);
   const day = input.kickoffIso.slice(0, 10);
+  const titles = uniqueTeamTitles(input.matches);
+  const homeIdentity = pickUniqueTeam(input.home, titles);
+  const awayIdentity = pickUniqueTeam(input.away, titles);
+  const homeKey = homeIdentity.matched ? homeIdentity.identity_key : null;
+  const awayKey = awayIdentity.matched ? awayIdentity.identity_key : null;
+
   const target =
-    input.matches.find(
-      (m) =>
-        namesEqual(m.home, input.home) &&
-        namesEqual(m.away, input.away) &&
-        (m.datetime.slice(0, 10) === day || Math.abs(kickMs(m.datetime) - cutoff) < 36 * 3600_000),
-    ) ?? null;
+    homeKey && awayKey
+      ? (input.matches.find(
+          (m) =>
+            sameIdentity(m.home, homeKey) &&
+            sameIdentity(m.away, awayKey) &&
+            (m.datetime.slice(0, 10) === day || Math.abs(kickMs(m.datetime) - cutoff) < 36 * 3600_000),
+        ) ?? null)
+      : null;
 
   const priorsHome: { xg: number; xga: number; t: number; id: string }[] = [];
   const priorsAway: { xg: number; xga: number; t: number; id: string }[] = [];
@@ -202,17 +231,17 @@ export function rollingPriorXg(input: {
     const t = kickMs(m.datetime);
     if (!Number.isFinite(t) || !Number.isFinite(cutoff) || t >= cutoff) continue;
     if (m.home_xg == null || m.away_xg == null) continue;
-    if (namesEqual(m.home, input.home)) {
+    if (sameIdentity(m.home, homeKey)) {
       priorsHome.push({ xg: m.home_xg, xga: m.away_xg, t, id: m.id });
       homeTeamId = homeTeamId ?? m.home_id;
-    } else if (namesEqual(m.away, input.home)) {
+    } else if (sameIdentity(m.away, homeKey)) {
       priorsHome.push({ xg: m.away_xg, xga: m.home_xg, t, id: m.id });
       homeTeamId = homeTeamId ?? m.away_id;
     }
-    if (namesEqual(m.home, input.away)) {
+    if (sameIdentity(m.home, awayKey)) {
       priorsAway.push({ xg: m.home_xg, xga: m.away_xg, t, id: m.id });
       awayTeamId = awayTeamId ?? m.home_id;
-    } else if (namesEqual(m.away, input.away)) {
+    } else if (sameIdentity(m.away, awayKey)) {
       priorsAway.push({ xg: m.away_xg, xga: m.home_xg, t, id: m.id });
       awayTeamId = awayTeamId ?? m.away_id;
     }
@@ -233,6 +262,8 @@ export function rollingPriorXg(input: {
     prior_away_ids: a.map((x) => x.id),
     home_team_id: homeTeamId,
     away_team_id: awayTeamId,
+    home_identity: homeIdentity,
+    away_identity: awayIdentity,
   };
 }
 
@@ -611,14 +642,23 @@ export async function researchUnderstatLeague(input: {
   push("home_xga_prematch", roll.home_xga_l5);
   push("away_xga_prematch", roll.away_xga_l5);
 
+  const identityNote = `home_identity=${roll.home_identity.status} away_identity=${roll.away_identity.status}`;
+  const identityIt = [roll.home_identity.reason_it, roll.away_identity.reason_it].filter(Boolean).join(" ");
   if (!obs.length && !roll.target) {
+    const blocked =
+      roll.home_identity.status === "SHORT_NAME_BLOCKED" ||
+      roll.away_identity.status === "SHORT_NAME_BLOCKED" ||
+      roll.home_identity.status === "AMBIGUOUS" ||
+      roll.away_identity.status === "AMBIGUOUS";
     return {
       status: "NO_EVENT",
       http_status: http,
       url,
       match_id: null,
       observations: [],
-      reason: "NO_EVENT — teams not found on Understat league payload",
+      reason: blocked
+        ? `NO_EVENT — ${identityNote}. ${roll.home_identity.reason}; ${roll.away_identity.reason}. ${identityIt}`
+        : `NO_EVENT — teams not found on Understat league payload. ${identityNote}. ${identityIt}`,
       fetched: true,
     };
   }
@@ -629,7 +669,7 @@ export async function researchUnderstatLeague(input: {
       url,
       match_id: roll.target?.id ?? null,
       observations: [],
-      reason: "Event listed but no prior xG rows before kickoff",
+      reason: `Event listed but no prior xG rows before kickoff. ${identityNote}. ${identityIt}`,
       fetched: true,
     };
   }
@@ -639,7 +679,7 @@ export async function researchUnderstatLeague(input: {
     url,
     match_id: roll.target?.id ?? null,
     observations: obs,
-    reason: `Prior xG only (excluded_target=true). home_n=${roll.prior_n_home} away_n=${roll.prior_n_away} source=getLeagueData`,
+    reason: `Prior xG only (excluded_target=true). home_n=${roll.prior_n_home} away_n=${roll.prior_n_away} source=getLeagueData. ${identityNote}. ${identityIt}`,
     fetched: true,
   };
 }

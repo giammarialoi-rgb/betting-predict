@@ -45,7 +45,8 @@ function significantTokens(name: string): string[] {
     .replace(/[\u0300-\u036f]/g, "")
     .replace(/\b(fc|afc|cf|sc|club|as|ss|ac|ud|us)\b/g, " ")
     .split(/[^a-z0-9]+/)
-    .filter((t) => t.length >= 4);
+    .filter((t) => t.length >= 4)
+    .filter((t) => t !== "villa" && t !== "united" && t !== "city" && t !== "real" && t !== "sporting");
 }
 
 export function rssItemMentionsBoth(text: string, home: string, away: string): boolean {

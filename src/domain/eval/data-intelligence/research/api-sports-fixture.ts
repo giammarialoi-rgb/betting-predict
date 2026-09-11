@@ -4,7 +4,8 @@
  */
 import { apiSportsGet057 } from "@/domain/data-sources/api-sports/client";
 import { normalizeFixtures057 } from "@/domain/data-sources/api-sports/normalize";
-import { namesEqual, resolveCompetitionMatrix, europeanSeasonYear } from "@/domain/eval/data-intelligence/research/identity-normalize";
+import { resolveCompetitionMatrix, europeanSeasonYear } from "@/domain/eval/data-intelligence/research/identity-normalize";
+import { matchEventPair } from "@/domain/eval/data-intelligence/research/identity-match";
 import {
   getSourceEventIdentity,
   mergeSourceEventIdentity,
@@ -63,15 +64,35 @@ function matchFixture(
   away: string,
 ): { status: FixtureResolveStatus; row: ReturnType<typeof normalizeFixtures057>[number] | null; reason: string } {
   const all = normalizeFixtures057(body);
-  const hits = all.filter((e) => namesEqual(e.home_team, home) && namesEqual(e.away_team, away));
+  const hits = all.filter((e) => matchEventPair(home, away, e.home_team, e.away_team).matched);
   if (hits.length === 1) {
-    return { status: "RESOLVED", row: hits[0]!, reason: `matched fixture ${hits[0]!.provider_event_id}` };
+    const pair = matchEventPair(home, away, hits[0]!.home_team, hits[0]!.away_team);
+    return {
+      status: "RESOLVED",
+      row: hits[0]!,
+      reason: `matched fixture ${hits[0]!.provider_event_id} (${pair.method})`,
+    };
   }
   if (hits.length > 1) {
-    return { status: "AMBIGUOUS_EVENT", row: null, reason: `AMBIGUOUS_EVENT — ${hits.length} fixtures matched names` };
+    return {
+      status: "AMBIGUOUS_EVENT",
+      row: null,
+      reason: `AMBIGUOUS_EVENT — ${hits.length} fixtures matched names. Identità ambigua: nessun aggancio.`,
+    };
   }
-  // swapped names are a different event — do not bind
-  return { status: "NO_EVENT", row: null, reason: "NO_EVENT — date payload did not contain this home/away pair" };
+  // swapped names / short-name collisions are a different event — do not bind
+  const short = all.some(
+    (e) =>
+      matchEventPair(home, away, e.home_team, e.away_team).status === "SHORT_NAME_BLOCKED" ||
+      matchEventPair(home, away, e.home_team, e.away_team).status === "AMBIGUOUS",
+  );
+  return {
+    status: "NO_EVENT",
+    row: null,
+    reason: short
+      ? "NO_EVENT — IDENTITY_SHORT_NAME / IDENTITY_AMBIGUOUS — home/away not unique. Nessun aggancio."
+      : "NO_EVENT — date payload did not contain this home/away pair",
+  };
 }
 
 export async function resolveApiSportsFixture(input: {

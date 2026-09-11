@@ -12,7 +12,7 @@ import {
   parseLineups,
 } from "@/domain/eval/data-intelligence/adapters/api-sports-prematch";
 import { availabilityFromApiSportsInjury } from "@/domain/eval/data-intelligence/research/availability";
-import { namesEqual } from "@/domain/eval/data-intelligence/research/identity-normalize";
+import { assignEventSide } from "@/domain/eval/data-intelligence/research/identity-match";
 import { upsertTeamIdentity } from "@/domain/eval/data-intelligence/research/identity-registry";
 import { researchUnderstatLeague } from "@/domain/eval/data-intelligence/research/understat-league";
 import { extractCalendarObservations } from "@/domain/eval/data-intelligence/research/calendar-observations";
@@ -163,11 +163,7 @@ export async function runApiSportsPhase8Lane(input: {
 
   const injRows = injuriesBody ? parseInjuries(injuriesBody) : [];
   for (const r of injRows) {
-    const side = namesEqual(r.teamName, ev.home_or_a)
-      ? "home"
-      : namesEqual(r.teamName, ev.away_or_b)
-        ? "away"
-        : null;
+    const side = assignEventSide(r.teamName, ev.home_or_a, ev.away_or_b).side;
     if (!side) continue;
     const av = availabilityFromApiSportsInjury({
       team: r.teamName,
@@ -198,11 +194,7 @@ export async function runApiSportsPhase8Lane(input: {
 
   const lineRows = lineupsBody ? parseLineups(lineupsBody) : [];
   for (const side of lineRows) {
-    const which = namesEqual(side.teamName, ev.home_or_a)
-      ? "home"
-      : namesEqual(side.teamName, ev.away_or_b)
-        ? "away"
-        : null;
+    const which = assignEventSide(side.teamName, ev.home_or_a, ev.away_or_b).side;
     if (!which) continue;
     observations.push({
       event_id: ev.event_id,

@@ -5,6 +5,7 @@
  */
 import { existsSync, readFileSync } from "node:fs";
 import { CLUB_FOOTBALL_MATCHES_CSV } from "@/audit/club-football-match-data/paths";
+import { namesEqual } from "@/domain/eval/data-intelligence/research/identity-normalize";
 
 const ODDS_COLS = new Set([
   "OddHome",
@@ -32,23 +33,6 @@ export type ClubFootballBind = {
   reason: string;
   odds_columns_ignored: string[];
 };
-
-function slug(s: string): string {
-  return s
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .replace(/\b(fc|afc|cf|sc|united|city|club)\b/g, " ")
-    .replace(/[^a-z0-9]+/g, " ")
-    .trim();
-}
-
-function mentions(cell: string, name: string): boolean {
-  const a = slug(cell);
-  const b = slug(name);
-  if (!a || !b) return false;
-  return a === b || a.includes(b) || b.includes(a);
-}
 
 function parseDate(raw: string): number {
   const t = raw.trim();
@@ -150,17 +134,17 @@ export function bindClubFootballEvent(input: {
     const away = cols[iAway] ?? "";
     const dt = parseDate(cols[iDate] ?? "");
     if (!Number.isFinite(dt) || dt >= cutoffDay) continue;
-    const homeHit = mentions(home, input.home) || mentions(away, input.home);
-    const awayHit = mentions(home, input.away) || mentions(away, input.away);
+    const homeHit = namesEqual(home, input.home) || namesEqual(away, input.home);
+    const awayHit = namesEqual(home, input.away) || namesEqual(away, input.away);
     if (!homeHit && !awayHit) continue;
     prior_n += 1;
     const fth = iFth >= 0 ? Number(cols[iFth]) : NaN;
     const fta = iFta >= 0 ? Number(cols[iFta]) : NaN;
     if (!Number.isFinite(fth) || !Number.isFinite(fta)) continue;
-    if (mentions(home, input.home)) homePriors.push(fth);
-    if (mentions(away, input.home)) homePriors.push(fta);
-    if (mentions(home, input.away)) awayPriors.push(fth);
-    if (mentions(away, input.away)) awayPriors.push(fta);
+    if (namesEqual(home, input.home)) homePriors.push(fth);
+    if (namesEqual(away, input.home)) homePriors.push(fta);
+    if (namesEqual(home, input.away)) awayPriors.push(fth);
+    if (namesEqual(away, input.away)) awayPriors.push(fta);
   }
   const last5 = (xs: number[]) => {
     if (xs.length === 0) return null;

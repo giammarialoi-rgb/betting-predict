@@ -5,7 +5,7 @@
 import { FOOTBALL_DATA_CO_UK_TEAM_ALIASES } from "@/providers/football-data-co-uk/team-aliases";
 import type { PiMatchRow } from "@/domain/eval/predictive-intelligence/types";
 import type { PiDivision } from "@/domain/eval/predictive-intelligence/config";
-import { resolveCompetitionMatrix } from "@/domain/eval/data-intelligence/research/identity-normalize";
+import { identitySlug, resolveCompetitionMatrix } from "@/domain/eval/data-intelligence/research/identity-normalize";
 
 /** Odds API / Lab B competition keys → football-data.co.uk division codes. */
 const COMPETITION_TO_DIVISION: Record<string, PiDivision> = {
@@ -102,9 +102,25 @@ const LIVE_NAME_TO_ID: Record<string, string> = {
   sunderland: "sunderland",
   "sunderland afc": "sunderland",
   "borussia dortmund": "dortmund",
-  "psg": "paris-sg",
+  psg: "paris-sg",
   "paris saint germain": "paris-sg",
   "paris saint-germain": "paris-sg",
+  "ca osasuna": "osasuna",
+  osasuna: "osasuna",
+  "deportivo alaves": "alaves",
+  alaves: "alaves",
+  "real betis": "betis",
+  betis: "betis",
+  "celta vigo": "celta-vigo",
+  "olympique lyonnais": "lyon",
+  lyon: "lyon",
+  "stade rennais": "rennes",
+  rennes: "rennes",
+  "hellas verona": "verona",
+  verona: "verona",
+  "le havre": "le-havre",
+  "ogc nice": "nice",
+  "rc lens": "lens",
 };
 
 function slugify(name: string): string {
@@ -121,13 +137,17 @@ function slugify(name: string): string {
 /** Build lowercased lookup from published football-data alias table. */
 function aliasLookup(): Map<string, string> {
   const m = new Map<string, string>();
-  for (const [raw, id] of Object.entries(FOOTBALL_DATA_CO_UK_TEAM_ALIASES)) {
+  const index = (raw: string, id: string) => {
     m.set(raw.toLowerCase(), id);
     m.set(slugify(raw), id);
+    const ident = identitySlug(raw);
+    if (ident) m.set(ident, id);
+  };
+  for (const [raw, id] of Object.entries(FOOTBALL_DATA_CO_UK_TEAM_ALIASES)) {
+    index(raw, id);
   }
   for (const [raw, id] of Object.entries(LIVE_NAME_TO_ID)) {
-    m.set(raw.toLowerCase(), id);
-    m.set(slugify(raw), id);
+    index(raw, id);
   }
   return m;
 }
@@ -164,8 +184,9 @@ export function resolveLiveTeamId(
 
   const lc = raw.toLowerCase();
   const slug = slugify(raw);
+  const ident = identitySlug(raw);
 
-  const fromAlias = ALIAS_LC.get(lc) ?? ALIAS_LC.get(slug);
+  const fromAlias = ALIAS_LC.get(lc) ?? ALIAS_LC.get(slug) ?? (ident ? ALIAS_LC.get(ident) : undefined);
   if (fromAlias) {
     const present = matches.some(
       (m) => m.home_team_id === fromAlias || m.away_team_id === fromAlias,
@@ -175,8 +196,11 @@ export function resolveLiveTeamId(
     return { team_id: fromAlias, matched: true, method: "alias_unverified" };
   }
 
-  // Exact team_id hit
+  // Exact team_id hit — identity slug first, then display slug. No substring.
   for (const m of matches) {
+    if (ident && (m.home_team_id === ident || m.away_team_id === ident)) {
+      return { team_id: ident, matched: true, method: "identity_slug" };
+    }
     if (m.home_team_id === slug || m.away_team_id === slug) {
       return { team_id: slug, matched: true, method: "slug_id" };
     }
@@ -187,23 +211,6 @@ export function resolveLiveTeamId(
         method: "exact_name",
       };
     }
-  }
-
-  // Token containment on known ids (conservative: prefer longer id matches)
-  const ids = new Set<string>();
-  for (const m of matches) {
-    ids.add(m.home_team_id);
-    ids.add(m.away_team_id);
-  }
-  let best: string | null = null;
-  for (const id of ids) {
-    if (id.startsWith("raw:")) continue;
-    if (slug.includes(id) || id.includes(slug)) {
-      if (!best || id.length > best.length) best = id;
-    }
-  }
-  if (best && best.length >= 5) {
-    return { team_id: best, matched: true, method: "slug_contains" };
   }
 
   return { team_id: `live:${slug || lc}`, matched: false, method: "unresolved" };

@@ -33,6 +33,9 @@ describe("Phase 8 event intelligence", () => {
     assert.ok(namesEqual("Bayern Munchen", "Bayern Munich"));
     assert.equal(namesEqual("Villa", "Aston Villa"), false);
     assert.equal(namesEqual("Villa", "Villarreal"), false);
+    assert.equal(namesEqual("CA Osasuna", "Osasuna"), true);
+    assert.equal(namesEqual("Wolves", "Wolverhampton Wanderers"), true);
+    assert.equal(namesEqual("Paris FC", "PSG"), false);
     const a = resolveTeamIdentity("Man Utd");
     const b = resolveTeamIdentity("Manchester United");
     assert.equal(a.canonical_id, b.canonical_id);
