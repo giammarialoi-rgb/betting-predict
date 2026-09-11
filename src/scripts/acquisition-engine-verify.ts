@@ -11,7 +11,7 @@ import { runAcquisitionEngineCycle } from "@/domain/eval/acquisition-engine/engi
 import { labEventsForAcquisition } from "@/domain/eval/acquisition-engine/lab-events";
 import { FREE_SOURCE_CATALOG, BLOCKED_PROTECTED_SOURCES } from "@/domain/eval/acquisition-engine/catalog";
 import { listCalendarEvents, todayCalendarDay } from "@/domain/eval/betmind-runtime/calendar";
-import { summarizeMarketAttach } from "@/domain/eval/betmind-runtime/market-attach";
+import { probeCachedOddsAttach, summarizeMarketAttach } from "@/domain/eval/betmind-runtime/market-attach";
 import { localLabStorePresent } from "@/domain/eval/betmind-runtime/production-mirror";
 import { permanentRoot044 } from "@/domain/eval/permanent-044/config";
 
@@ -89,7 +89,8 @@ async function main() {
     coverage: result.coverage,
     odds_ui: {
       note: "Compare-only book 1X2 on calendar/board. Never MODEL. Missing stays honest — no mock prices.",
-      ...oddsAttach,
+      calendar: oddsAttach,
+      cache_probe: probeCachedOddsAttach(cwd),
       sample_attached: sampleAttached,
       sample_missing: sampleMissing,
     },

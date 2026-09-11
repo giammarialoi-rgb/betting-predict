@@ -207,6 +207,73 @@ export function resolveCompareBook(input: {
   });
 }
 
+/** Prove the attach path on real cached books (same home/away/day). Never invents a price. */
+export function probeCachedOddsAttach(
+  cwd = process.cwd(),
+  limit = 20,
+): {
+  cache_complete_books: number;
+  probed: number;
+  attached: number;
+  missing_honest: number;
+  mock_sold_as_real: 0;
+  samples: Array<{
+    home: string;
+    away: string;
+    date: string | null;
+    bookmaker: string;
+    odds_home: number;
+    odds_draw: number;
+    odds_away: number;
+    source: string;
+  }>;
+} {
+  const candidates = loadCachedMarketCandidates(cwd);
+  const fd = candidates.filter((c) => c.source === "football-data-co-uk");
+  const slice = fd.slice(0, limit);
+  const samples: Array<{
+    home: string;
+    away: string;
+    date: string | null;
+    bookmaker: string;
+    odds_home: number;
+    odds_draw: number;
+    odds_away: number;
+    source: string;
+  }> = [];
+  let attached = 0;
+  for (const c of slice) {
+    const hit = attachCachedCompareBook({
+      home: c.home,
+      away: c.away,
+      calendar_day: c.date,
+      candidates,
+    });
+    if (!hit) continue;
+    attached += 1;
+    if (samples.length < 5) {
+      samples.push({
+        home: c.home,
+        away: c.away,
+        date: c.date,
+        bookmaker: hit.book.bookmaker,
+        odds_home: hit.book.odds_home,
+        odds_draw: hit.book.odds_draw,
+        odds_away: hit.book.odds_away,
+        source: hit.source,
+      });
+    }
+  }
+  return {
+    cache_complete_books: candidates.length,
+    probed: slice.length,
+    attached,
+    missing_honest: slice.length - attached,
+    mock_sold_as_real: 0,
+    samples,
+  };
+}
+
 export function summarizeMarketAttach(input: {
   events: Array<{
     event_id: string;

@@ -14,6 +14,7 @@ import { buildLiteNextEvents } from "@/domain/eval/betmind-runtime/board";
 import {
   attachCachedCompareBook,
   loadCachedMarketCandidates,
+  probeCachedOddsAttach,
   summarizeMarketAttach,
 } from "@/domain/eval/betmind-runtime/market-attach";
 import { parseFdoukDate } from "@/domain/eval/acquisition-engine/sources/football-data-co-uk";
@@ -258,6 +259,11 @@ describe("calendar attaches compare-only odds without touching the model", () =>
     });
     assert.equal(summary.with_real_book, 1);
     assert.equal(summary.mock_sold_as_real, 0);
+    const probe = probeCachedOddsAttach(cwd, 5);
+    assert.ok(probe.cache_complete_books >= 1);
+    assert.equal(probe.attached, probe.probed);
+    assert.equal(probe.mock_sold_as_real, 0);
+    assert.equal(probe.samples[0]?.odds_home, 1.85);
   });
 
   it("does not attach another date of the same pair", () => {
