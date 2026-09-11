@@ -1,7 +1,7 @@
 /**
  * Compact list leans from already-computed light markets. Never invents a %.
  */
-import { LIGHT_INSUFFICIENT_IT, type LightMarketEstimate } from "@/domain/eval/light-analysis/types";
+import { LIGHT_MISSING_UI, type LightMarketEstimate } from "@/domain/eval/light-analysis/types";
 import type { OneXTwoKey } from "@/domain/eval/light-analysis/favorite";
 
 export type LeanGroup = "1x2" | "ou" | "btts" | "goals" | "corners";
@@ -12,6 +12,8 @@ export type ListLean = {
   text: string;
   favorite: boolean;
   group: LeanGroup;
+  /** Hide extra-market chips when there is no sample. 1X2 still shows an em-dash. */
+  hidden?: boolean;
 };
 
 function pct(p: number): string {
@@ -37,9 +39,9 @@ function lean(
   favorite = false,
 ): ListLean {
   if (!row || row.status !== "OK" || row.probability == null) {
-    return { key, label_it, text: LIGHT_INSUFFICIENT_IT, favorite: false, group };
+    return { key, label_it, text: LIGHT_MISSING_UI, favorite: false, group, hidden: true };
   }
-  return { key, label_it, text: pct(row.probability), favorite, group };
+  return { key, label_it, text: pct(row.probability), favorite, group, hidden: false };
 }
 
 export function listMarketLeans(

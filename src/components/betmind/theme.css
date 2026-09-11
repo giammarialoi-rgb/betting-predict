@@ -540,7 +540,75 @@
   }
 }
 
-/* Sports-ticker list language (Diretta.it density — no third-party marks) */
+/* Analizzati — light sports ticker (Diretta.it density, no third-party marks) */
+.bm-analyzed {
+  background: #f4f6f8;
+  color: #141414;
+  margin: -1rem -1rem 0;
+  padding: 0.85rem 0.85rem 1.4rem;
+  min-height: calc(100% + 1rem);
+}
+
+@media (min-width: 1024px) {
+  .bm-analyzed {
+    margin: -1.5rem -1.5rem 0;
+    padding: 1.1rem 1.1rem 1.6rem;
+  }
+}
+
+.bm-analyzed-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.bm-analyzed-head h1 {
+  font-size: 1.35rem;
+  font-weight: 750;
+  letter-spacing: -0.02em;
+  color: #111;
+}
+
+.bm-analyzed-head p {
+  margin-top: 0.2rem;
+  font-size: 0.82rem;
+  color: #5c6570;
+  max-width: 28rem;
+}
+
+.bm-analyzed-note {
+  margin: 0 0 0.7rem;
+  font-size: 0.8rem;
+  color: #3d4650;
+}
+
+.bm-analyzed-note.is-err {
+  color: #b42318;
+}
+
+.bm-analyzed .bm-btn-primary {
+  background: #1a7f37;
+  color: #fff;
+}
+
+.bm-analyzed .bm-empty {
+  background: #fff;
+  border-color: #d5dbe3;
+}
+
+.bm-analyzed .bm-empty h3,
+.bm-analyzed .bm-empty p {
+  color: #3d4650;
+}
+
+.bm-analyzed .bm-prose-muted,
+.bm-analyzed .bm-muted {
+  color: #5c6570;
+}
+
 .bm-ticker {
   border: 1px solid #d5dbe3;
   border-radius: 4px;

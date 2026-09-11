@@ -88,7 +88,7 @@ export function computeLightAnalysis(input: LightComputeInput): LightAnalysis {
     score_away: input.score_away ?? null,
     analyzed_at: nowIso,
     mode: "light",
-    mode_label_it: "Analisi light",
+    mode_label_it: "Light",
     sources_used,
     attach,
     markets,
@@ -104,10 +104,9 @@ export function computeLightAnalysis(input: LightComputeInput): LightAnalysis {
     },
     identity_fail_closed: true,
     odds_entered_model: false,
+    light_match: "alias",
     strong_available,
-    strong_unavailable_it: strong_available
-      ? null
-      : "Analisi forte non disponibile: i requisiti del modello indipendente (copertura, feature, gate) non sono soddisfatti. Quella sopra è solo l’analisi light.",
+    strong_unavailable_it: strong_available ? null : "Forte non disponibile.",
   };
 }
 

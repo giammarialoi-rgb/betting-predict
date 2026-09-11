@@ -3,9 +3,12 @@
  * Never invents percentages. Odds stay MARKET / compare-only.
  */
 
-export const LIGHT_MIN_N = 8;
-export const LIGHT_MIN_N_SOFT = 5;
+/** Light-only sample floor. Strong coverage / missing_keys gates stay untouched. */
+export const LIGHT_MIN_N = 4;
+export const LIGHT_MIN_N_SOFT = 3;
+/** Internal status label — consumer UI must show an em-dash, not this sentence. */
 export const LIGHT_INSUFFICIENT_IT = "dato insufficiente";
+export const LIGHT_MISSING_UI = "—";
 export const LIGHT_MODE = "light" as const;
 export const STRONG_MODE = "strong" as const;
 
@@ -69,7 +72,7 @@ export type LightAnalysis = {
   score_away: number | null;
   analyzed_at: string;
   mode: LightMode;
-  mode_label_it: "Analisi light";
+  mode_label_it: "Light";
   sources_used: string[];
   attach: LightAttachHit[];
   markets: LightMarketEstimate[];
@@ -80,6 +83,7 @@ export type LightAnalysis = {
   odds_entered_model: false;
   strong_available: boolean;
   strong_unavailable_it: string | null;
+  light_match: "alias";
 };
 
 export type AnalyzedListRow = {
@@ -95,8 +99,8 @@ export type AnalyzedListRow = {
   analyzed_at: string | null;
   light: boolean;
   strong: boolean;
-  light_label_it: "Analisi light" | null;
-  strong_label_it: "Analisi forte" | null;
+  light_label_it: "Light" | null;
+  strong_label_it: "Forte" | null;
   strong_unavailable_it: string | null;
   favorite_1x2: "home" | "draw" | "away" | null;
   markets: LightMarketEstimate[];
@@ -118,6 +122,12 @@ export type RefreshEventsReport = {
     timed_out: boolean;
     sources_ok: string[];
     sources_failed: string[];
+    note_it: string;
+  };
+  history: {
+    rows: number;
+    cache: string;
+    from_cache: boolean;
     note_it: string;
   };
   brain_ran: false;

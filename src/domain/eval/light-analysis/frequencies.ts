@@ -10,7 +10,7 @@ import {
   type LightEstimateStatus,
   type LightMarketEstimate,
 } from "@/domain/eval/light-analysis/types";
-import { namesEqual } from "@/domain/eval/data-intelligence/research/identity-normalize";
+import { lightNamesMatch } from "@/domain/eval/light-analysis/aliases";
 
 export type RateEstimate = {
   probability: number | null;
@@ -183,10 +183,10 @@ export function splitPriors(
   const any: HistoricalMatchRow[] = [];
   for (const row of rows) {
     if (!matchBeforeCutoff(row.date, cutoffDay)) continue;
-    const homeIsHome = namesEqual(row.home, home);
-    const awayIsAway = namesEqual(row.away, away);
-    const involvesHome = homeIsHome || namesEqual(row.away, home);
-    const involvesAway = awayIsAway || namesEqual(row.home, away);
+    const homeIsHome = lightNamesMatch(row.home, home);
+    const awayIsAway = lightNamesMatch(row.away, away);
+    const involvesHome = homeIsHome || lightNamesMatch(row.away, home);
+    const involvesAway = awayIsAway || lightNamesMatch(row.home, away);
     if (involvesHome || involvesAway) any.push(row);
     if (homeIsHome) homeHome.push(row);
     if (awayIsAway) awayAway.push(row);

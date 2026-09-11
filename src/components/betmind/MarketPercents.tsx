@@ -1,5 +1,5 @@
 import { favoriteClassName, favoriteTone, pickFavorite1x2 } from "@/domain/eval/light-analysis/favorite";
-import { LIGHT_INSUFFICIENT_IT } from "@/domain/eval/light-analysis/types";
+import { LIGHT_MISSING_UI } from "@/domain/eval/light-analysis/types";
 import { fmtPct } from "@/components/betmind/ui";
 
 export type MarketPct = {
@@ -15,9 +15,17 @@ export type MarketPct = {
 
 function pctText(m: MarketPct): string {
   if (m.status === "INSUFFICIENT" || m.probability == null) {
-    return m.insufficient_it ?? LIGHT_INSUFFICIENT_IT;
+    return LIGHT_MISSING_UI;
   }
   return fmtPct(m.probability);
+}
+
+function visibleItems(items: MarketPct[], keepEmpty1x2: boolean): MarketPct[] {
+  return items.filter((m) => {
+    const ok = m.status === "OK" && m.probability != null;
+    if (ok) return true;
+    return keepEmpty1x2 && m.market === "1x2";
+  });
 }
 
 export function MarketPercents({
@@ -41,14 +49,11 @@ export function MarketPercents({
     })();
 
   const groups: Array<{ title: string; items: MarketPct[] }> = [
-    { title: "1X2", items: oneXTwo },
-    {
-      title: "Over / Under",
-      items: markets.filter((m) => m.market === "over_under"),
-    },
-    { title: "BTTS", items: markets.filter((m) => m.market === "btts") },
-    { title: "Gol squadra", items: markets.filter((m) => m.market === "team_goals") },
-    { title: "Calci d’angolo", items: markets.filter((m) => m.market === "corners") },
+    { title: "1X2", items: visibleItems(oneXTwo, true) },
+    { title: "Over / Under", items: visibleItems(markets.filter((m) => m.market === "over_under"), false) },
+    { title: "Gol + gol", items: visibleItems(markets.filter((m) => m.market === "btts"), false) },
+    { title: "Gol squadra", items: visibleItems(markets.filter((m) => m.market === "team_goals"), false) },
+    { title: "Calci d’angolo", items: visibleItems(markets.filter((m) => m.market === "corners"), false) },
   ];
 
   return (

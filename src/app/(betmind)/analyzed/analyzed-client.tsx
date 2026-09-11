@@ -3,8 +3,7 @@
 import { useCallback, useState } from "react";
 import { AnalyzedTicker } from "@/components/betmind/AnalyzedTicker";
 import { RefreshEventsButton } from "@/components/betmind/RefreshEventsButton";
-import { Card, EmptyState, SnapshotBadge } from "@/components/betmind/ui";
-import { useBetMindData } from "@/components/betmind/DataProvider";
+import { EmptyState } from "@/components/betmind/ui";
 import type { AnalyzedListRow } from "@/domain/eval/light-analysis/types";
 
 export function AnalyzedClient({
@@ -14,7 +13,6 @@ export function AnalyzedClient({
   initialEvents: AnalyzedListRow[];
   initialNote: string | null;
 }) {
-  const { updating, lastUpdate } = useBetMindData();
   const [events, setEvents] = useState<AnalyzedListRow[]>(initialEvents);
   const [note, setNote] = useState<string | null>(initialNote);
   const [error, setError] = useState<string | null>(null);
@@ -39,69 +37,38 @@ export function AnalyzedClient({
   }, []);
 
   return (
-    <div className="mx-auto flex max-w-5xl flex-col gap-4">
-      <div className="flex flex-wrap items-end justify-between gap-3">
+    <div className="bm-analyzed">
+      <div className="bm-analyzed-head">
         <div>
-          <div className="bm-section-label">Lista partite</div>
-          <h1 className="text-2xl font-bold">Eventi analizzati</h1>
-          <p className="bm-prose-muted mt-1 max-w-xl">
-            Solo incontri con un’analisi reale (light e/o forte). Lista densa per campionato:
-            orario, casa / ospite, stato, 1X2 (favorito in verde), over 1.5 / 2.5 / 3.5, BTTS,
-            gol squadra e angoli.
-          </p>
+          <h1>Analizzati</h1>
+          <p>Percentuali dalle partite già giocate. Il favorito 1X2 è in verde.</p>
         </div>
-        <div className="flex flex-col items-end gap-2">
-          <div className="flex items-center gap-2 text-xs">
-            <SnapshotBadge updating={updating} />
-            <span className="bm-muted">
-              {lastUpdate ? new Date(lastUpdate).toLocaleTimeString("it-IT") : "—"}
-            </span>
-          </div>
-          <RefreshEventsButton
-            onProgress={(msg, err) => {
-              setRefreshNote(msg);
-              setRefreshErr(err);
-            }}
-            onDone={() => void load()}
-          />
-        </div>
+        <RefreshEventsButton
+          hideStatus
+          onProgress={(msg, err) => {
+            setRefreshNote(msg);
+            setRefreshErr(err);
+          }}
+          onDone={() => void load()}
+        />
       </div>
 
-      <Card>
-        <p className="text-sm">
-          <strong>Analisi light</strong> — modello magro sulle fonti gratuite già cablate
-          (frequenze da storico club-football / football-data.co.uk, xG Understat se presente,
-          fixture ESPN / OpenLigaDB / OpenFootball / TheSportsDB, meteo se ci sono coordinate,
-          RSS solo contesto). Meno gate della forte: può mostrare % quando la forte è NO BET.
-        </p>
-        <p className="mt-2 text-sm">
-          <strong>Analisi forte</strong> — modello indipendente attuale, gate invariati
-          (copertura ≥ 35%, missing_keys ≤ 45). Se manca, la riga lo dice. Le quote restano
-          solo confronto mercato.
-        </p>
-      </Card>
-
       {(refreshNote || refreshErr) && (
-        <Card>
-          {refreshNote ? <p className="text-sm">{refreshNote}</p> : null}
-          {refreshErr ? <p className="text-sm text-[var(--bm-danger)]">{refreshErr}</p> : null}
-        </Card>
+        <p className={`bm-analyzed-note${refreshErr ? " is-err" : ""}`}>
+          {refreshErr ?? refreshNote}
+        </p>
       )}
 
-      {error && (
-        <Card className="border-[rgba(255,77,77,0.4)]">
-          <p className="text-sm text-[var(--bm-danger)]">{error}</p>
-        </Card>
-      )}
+      {error && <p className="bm-analyzed-note is-err">{error}</p>}
 
       {events.length > 0 && <AnalyzedTicker events={events} />}
 
       {events.length === 0 && (
         <EmptyState
-          title="Nessun evento analizzato"
+          title="Nessuna analisi"
           reason={
             note ??
-            "Non c’è ancora un’analisi light o forte persistita. Premi «Aggiorna eventi» per ricalcolare dai dati già disponibili. Niente di inventato."
+            "Premi «Aggiorna eventi» per calcolare le percentuali dalle partite già giocate."
           }
         />
       )}

@@ -339,17 +339,7 @@ export function EventDetailClient({ initialData = null }: { initialData?: Detail
           </header>
 
           {data.light_analysis && (
-            <Card title="Analisi light" glow>
-              <p className="mb-3 text-sm bm-muted">
-                Modello magro sulle fonti gratuite già disponibili. Frequenze da storico reale
-                (n partite prima del giorno dell’incontro). Se una % non si può stimare:
-                «dato insufficiente». Quote mai usate come feature.
-              </p>
-              {data.light_analysis.sources_used.length > 0 && (
-                <p className="mb-3 text-xs bm-muted">
-                  Fonti usate: {data.light_analysis.sources_used.join(", ")}
-                </p>
-              )}
+            <Card title="Light" glow>
               <MarketPercents
                 markets={data.light_analysis.markets}
                 favorite={data.light_analysis.favorite_1x2}
@@ -357,39 +347,15 @@ export function EventDetailClient({ initialData = null }: { initialData?: Detail
               {data.light_analysis.prose.length > 0 && (
                 <ul className="mt-3 space-y-1 text-sm">
                   {data.light_analysis.prose.map((line) => (
-                    <li key={line}>• {line}</li>
+                    <li key={line}>{line}</li>
                   ))}
                 </ul>
               )}
             </Card>
           )}
 
-          <Card
-            title="Analisi forte"
-            right={
-              data.analysis_modes?.strong.available ? (
-                <span className="bm-pill bm-pill-accent">Disponibile</span>
-              ) : (
-                <span className="bm-pill">Non disponibile</span>
-              )
-            }
-          >
-            {data.analysis_modes?.strong.available ? (
-              <p className="mb-3 text-sm bm-muted">
-                Modello indipendente attuale. I gate non sono stati abbassati.
-              </p>
-            ) : (
-              <p className="mb-3 text-sm">
-                {data.analysis_modes?.strong.unavailable_it ??
-                  "Analisi forte non disponibile: i requisiti del modello indipendente non sono soddisfatti. Quella sopra è solo l’analisi light."}
-              </p>
-            )}
-          </Card>
-
-          <Card title="Previsione BetMind (forte / dossier)" glow>
-            {hx?.insufficient ? (
-              <p className="text-sm leading-relaxed">{hx.insufficient}</p>
-            ) : modelProbs ? (
+          {modelProbs ? (
+            <Card title="Forte" glow>
               <MarketPercents
                 markets={[
                   {
@@ -418,26 +384,12 @@ export function EventDetailClient({ initialData = null }: { initialData?: Detail
                   },
                 ]}
               />
-            ) : (
-              <EmptyState
-                title="Nessuna previsione indipendente"
-                reason={
-                  hx?.insufficient ??
-                  dossier?.independent_model.note ??
-                  "I dati disponibili non hanno raggiunto i requisiti del modello."
-                }
-              />
-            )}
-            {hx?.model_card && (
-              <p className="mt-3 text-sm bm-muted">
-                Modello statistico indipendente · {hx.model_card.name_it}
-                {hx.model_card.coverage_pct ? ` · copertura dei dati ${hx.model_card.coverage_pct}` : ""}
-                {hx.model_card.inputs ? ` · ${hx.model_card.inputs} informazioni usate` : ""}
-              </p>
-            )}
-            {hx?.poisson && <p className="mt-2 text-sm">{hx.poisson}</p>}
-          </Card>
+              {hx?.poisson && <p className="mt-2 text-sm">{hx.poisson}</p>}
+            </Card>
+          ) : null}
 
+          <details className="bm-ops">
+            <summary>Dettaglio tecnico</summary>
           {hx && (
             <Card title="Cosa ha fatto BetMind">
               <p className="mb-2 text-sm leading-relaxed">{hx.did}</p>
@@ -650,6 +602,7 @@ export function EventDetailClient({ initialData = null }: { initialData?: Detail
               </ul>
             </Card>
           )}
+          </details>
 
           <div className="grid gap-3 sm:grid-cols-2">
             <Card title="Modello indipendente">

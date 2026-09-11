@@ -27,19 +27,19 @@ export function proseFromMarkets(markets: readonly LightMarketEstimate[]): strin
   const lines: string[] = [];
   const over25 = find(markets, "over_under", "OVER", 2.5);
   if (over25?.probability != null && over25.probability >= 0.55) {
-    lines.push(`Probabile over 2.5 (${pct(over25.probability)}, n=${over25.n} partite storiche).`);
+    lines.push(`Spesso over 2.5 (${pct(over25.probability)}, su ${over25.n} partite).`);
   } else if (over25?.probability != null && over25.probability <= 0.45) {
-    lines.push(`Più spesso under 2.5 (${pct(1 - over25.probability)}, n=${over25.n}).`);
+    lines.push(`Più spesso under 2.5 (${pct(1 - over25.probability)}, su ${over25.n} partite).`);
   }
 
   const home15 = find(markets, "team_goals", "HOME_OVER", 1.5);
   if (home15?.probability != null && home15.probability >= 0.55) {
-    lines.push(`Casa di solito >1.5 gol in casa (${pct(home15.probability)}, n=${home15.n}).`);
+    lines.push(`La casa segna spesso più di 1.5 gol (${pct(home15.probability)}, su ${home15.n} partite).`);
   }
 
   const away15 = find(markets, "team_goals", "AWAY_OVER", 1.5);
   if (away15?.probability != null && away15.probability >= 0.55) {
-    lines.push(`Ospiti di solito >1.5 gol in trasferta (${pct(away15.probability)}, n=${away15.n}).`);
+    lines.push(`Gli ospiti segnano spesso più di 1.5 gol (${pct(away15.probability)}, su ${away15.n} partite).`);
   }
 
   const homeCorners = find(markets, "corners", "HOME_MORE");
@@ -49,18 +49,14 @@ export function proseFromMarkets(markets: readonly LightMarketEstimate[]): strin
     awayCorners.probability >= 0.55 &&
     (homeCorners?.probability == null || awayCorners.probability > homeCorners.probability)
   ) {
-    lines.push(
-      `Ospiti probabilmente più calci d’angolo (${pct(awayCorners.probability)}, n=${awayCorners.n}).`,
-    );
+    lines.push(`Più calci d’angolo per gli ospiti (${pct(awayCorners.probability)}).`);
   } else if (homeCorners?.probability != null && homeCorners.probability >= 0.55) {
-    lines.push(
-      `Casa probabilmente più calci d’angolo (${pct(homeCorners.probability)}, n=${homeCorners.n}).`,
-    );
+    lines.push(`Più calci d’angolo per la casa (${pct(homeCorners.probability)}).`);
   }
 
   const btts = find(markets, "btts", "YES");
   if (btts?.probability != null && btts.probability >= 0.55) {
-    lines.push(`Entrambe le squadre hanno segnato spesso (${pct(btts.probability)}, n=${btts.n}).`);
+    lines.push(`Entrambe hanno segnato spesso (${pct(btts.probability)}).`);
   }
 
   const home = find(markets, "1x2", "HOME");
@@ -73,7 +69,7 @@ export function proseFromMarkets(markets: readonly LightMarketEstimate[]): strin
         : draw.probability >= away.probability
           ? `X ${pct(draw.probability)}`
           : `2 (trasferta) ${pct(away.probability)}`;
-    lines.push(`Frequenze 1X2 (campione n=${home.n}): favorito ${fav}.`);
+    lines.push(`Favorito 1X2: ${fav}.`);
   }
 
   return lines;
