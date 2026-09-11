@@ -7,6 +7,7 @@ This is not a claim that the product is “fully working.” It is an evidence r
 | Field | Value |
 |---|---|
 | Branch | `cursor/phase-8-mega-neon-free-db12` |
+| HEAD | `2e0e4e82409c5ff862a3609d0c8594f97ecb9b49` |
 | Base | `main` @ `dc360a2` |
 | Report written | 2026-09-11 |
 | Storage | filesystem `StorageProvider` → Lab B JSONL + `data/` + `mirror/` |
@@ -19,9 +20,7 @@ Atomic series on this branch:
 1. `736fbb7` — STEP1–2 StorageProvider + audit (`docs/PHASE_8_STORAGE_AUDIT.md`)
 2. `d801856` — STEP2 Neon removed from worker / light / dossier / runtime mirror
 3. `0013884` — STEP3–20 queue, capabilities, models, value gate, `/conclusi`, tests
-4. (this report + verification artifact + verify-script expansion)
-
-Exact HEAD is the last commit on the PR after this file lands.
+4. `2e0e4e8` — STEP21–22 real cycle + this report
 
 ## 2. Tests / build / lint
 
