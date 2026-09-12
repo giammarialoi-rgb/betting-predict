@@ -26,6 +26,7 @@ import {
   discoverGoldenCandidates,
   type DiscoveredCandidate,
 } from "@/domain/eval/betmind-runtime/golden-e2e/discover";
+import { mapCompetitionToPiDivision } from "@/domain/eval/predictive-intelligence/live-resolve";
 import { auditExistingSources } from "@/domain/eval/betmind-runtime/golden-e2e/source-audit";
 import {
   assertPreMatchData,
@@ -86,7 +87,8 @@ function pickFutureOnly(
       return Number.isFinite(ko) && ko > nowMs && Boolean(c.event.home_or_a && c.event.away_or_b);
     })
     .sort((a, b) => Date.parse(a.event.kickoff_utc ?? "") - Date.parse(b.event.kickoff_utc ?? ""));
-  return upcoming[0] ?? null;
+  const piUniverse = upcoming.filter((c) => mapCompetitionToPiDivision(c.event.competition));
+  return piUniverse[0] ?? upcoming[0] ?? null;
 }
 
 function latestDecision(root: string, eventId: string): DecisionRecord048 | null {

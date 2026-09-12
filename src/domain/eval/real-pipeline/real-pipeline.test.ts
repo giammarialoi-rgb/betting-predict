@@ -4,6 +4,8 @@ import { NEON_IN_USE } from "@/domain/storage";
 import { assertPreMatchData, buildAsOfSnapshot, PreMatchLeakageError } from "@/domain/eval/real-pipeline/as-of-snapshot";
 import { toSourceResultStatus } from "@/domain/eval/real-pipeline/source-status";
 import { sliceDecisionFrom048 } from "@/domain/eval/real-pipeline/decision-label";
+import { resolveLiveTeamId } from "@/domain/eval/predictive-intelligence/live-resolve";
+import type { PiMatchRow } from "@/domain/eval/predictive-intelligence/types";
 import type { PermanentEvent044 } from "@/domain/eval/permanent-044/types";
 import type { AsOfSnapshot } from "@/domain/eval/real-pipeline/types";
 
@@ -33,6 +35,24 @@ function event(partial: Partial<PermanentEvent044> = {}): PermanentEvent044 {
 describe("real-pipeline unit", () => {
   it("never uses Neon", () => {
     assert.equal(NEON_IN_USE, false);
+  });
+
+  it("resolves OpenLiga display names onto football-data raw team ids", () => {
+    const matches = [
+      {
+        home_team: "Wolfsburg",
+        away_team: "St Pauli",
+        home_team_id: "raw:wolfsburg",
+        away_team_id: "raw:st pauli",
+        league: "D1",
+      },
+    ] as unknown as PiMatchRow[];
+    const home = resolveLiveTeamId("FC St. Pauli", matches);
+    const away = resolveLiveTeamId("VfL Wolfsburg", matches);
+    assert.equal(home.matched, true);
+    assert.equal(home.team_id, "raw:st pauli");
+    assert.equal(away.matched, true);
+    assert.equal(away.team_id, "raw:wolfsburg");
   });
 
   it("does not map UNAVAILABLE or NOT_CONFIGURED to ACTIVE", () => {
