@@ -1,0 +1,71 @@
+{
+  "at": "2026-09-12T14:49:43.137Z",
+  "neon_in_use": false,
+  "neon_status_it": "NEON NON UTILIZZATO",
+  "blob_credentials": "KEY_MISSING",
+  "remote_backend": "memory",
+  "event_id": "de3b08b74a8249c647ee0e42",
+  "source": "espn",
+  "live": {
+    "available": true,
+    "status": "LIVE",
+    "home_goals": 1,
+    "away_goals": 1,
+    "minute": "45'+4'",
+    "reason": "espn_live written=1"
+  },
+  "settlement": {
+    "available": false,
+    "result": null,
+    "reason": "event_not_finished"
+  },
+  "learning": {
+    "written": false,
+    "reason": "not_settled"
+  },
+  "settle_deferred": true,
+  "settle_command": "pnpm betmind:e2e:live -- --event de3b08b74a8249c647ee0e42",
+  "mirror": {
+    "pushed": false,
+    "reason": "local_only"
+  },
+  "checklist": [
+    {
+      "step": "neon_excluded",
+      "ok": true,
+      "evidence": "NEON NON UTILIZZATO",
+      "count": null
+    },
+    {
+      "step": "identity",
+      "ok": true,
+      "evidence": "AFC Bournemouth vs Brentford · de3b08b74a8249c647ee0e42",
+      "count": null
+    },
+    {
+      "step": "live",
+      "ok": true,
+      "evidence": "espn_live written=1 http=200 parsed=16 matched=1",
+      "count": 1
+    },
+    {
+      "step": "settlement",
+      "ok": true,
+      "evidence": "event_not_finished",
+      "count": 0
+    },
+    {
+      "step": "learning",
+      "ok": true,
+      "evidence": "not_settled",
+      "count": 0
+    },
+    {
+      "step": "publish_merge",
+      "ok": true,
+      "evidence": "board=0 dossiers=0 remote=false",
+      "count": null
+    }
+  ],
+  "errors": []
+}

@@ -23,7 +23,7 @@ This report uses only numbers produced by the pre-match Golden Event run plus a 
 | Pre-match status | UPCOMING (PR #21 run at 13:43Z) |
 | Live source at close-out | ESPN `site.api` scoreboard — **WORKING** HTTP 200 |
 
-ESPN event id `401879285` (`Brentford at AFC Bournemouth`). At the live probe: **0–1**, `STATUS_FIRST_HALF`, `displayClock=37'`, `state=in`, `completed=false`. Kevin Schade header 34' is in the ESPN payload; we persist **score / minute / status only**, not invented xG.
+ESPN event id `401879285` (`Brentford at AFC Bournemouth`). `pnpm betmind:e2e:live` @ 2026-09-12T14:49:43.137Z: **LIVE 1–1**, minute `45'+4'`, ESPN HTTP 200, `parsed=16` `matched=1`. Earlier parser fixture used the 1H 0–1 / `37'` shape. We persist **score / minute / status only**. `completed=false` — no FT invented.
 
 ---
 
@@ -62,7 +62,7 @@ From `artifacts/golden-e2e/e2e-report.json` @ 2026-09-12T13:43:00.118Z:
 
 | Step | Status | Evidence |
 |---|---|---|
-| Live ingest path | **wired + proven on fixture + ESPN 200** | Parser + StorageProvider + remote merge tests; ESPN scoreboard returned BOU 0–1 BRE, 37' 1H |
+| Live ingest path | **wired + proven on real ESPN 200** | `artifacts/golden-e2e/e2e-live-report.json`: BOU 1–1 BRE, `45'+4'`, `status=LIVE`, `http=200` |
 | `/live` | **ready** | Board rows get `status=LIVE` + score + minute from overlay. Filter already matches `/live\|in_play\|playing/i` |
 | Settlement | **ready, deferred** | Match was **not FT** at probe. Do not invent 90' score. Re-run `pnpm betmind:e2e:live` after ESPN `STATUS_FINAL` |
 | `/conclusi` | **ready** | Reads `recent_settlements` or artifact `settlements` from Blob |
@@ -76,6 +76,8 @@ pnpm betmind:e2e:live -- --event de3b08b74a8249c647ee0e42
 ```
 
 When ESPN publishes `completed=true` and both scores, that command writes settlement + learning and merge-publishes them. Until then, settlement count stays 0 for an honest reason: **event_not_finished**.
+
+Live E2E on this agent VM used `remote_backend=memory` because `BLOB_READ_WRITE_TOKEN` is `KEY_MISSING` here. Lab PC must run the same command (or `runtime:publish`) so Vercel Blob gets the live slice. The merge protocol is proven in tests.
 
 ---
 
@@ -112,7 +114,7 @@ Board-only heartbeat with empty arrays **must not** drop dossiers, live rows, or
 | Independent PREDICTION | Failed gates (`independent_model`, `predict_ok`, `feature_coverage`, `no_failed_research_as_model`) | Do not lower gates |
 | Vercel Blob write in this cloud environment | `BLOB_READ_WRITE_TOKEN` often `KEY_MISSING` here | Protocol proven in-memory; PC publisher must POST ingest |
 | SofaScore / FBref / WhoScored | HTTP 403 WAF | Not probed, not revived |
-| Settlement / Conclusi row for Golden Event | Match in play (0–1, 1H) — no FT | Re-run live E2E after FT |
+| Settlement / Conclusi row for Golden Event | Match still in play (1–1, 45'+4') — no FT | Re-run live E2E after FT |
 | Neon | Banned | Filesystem + Blob only |
 
 ---
