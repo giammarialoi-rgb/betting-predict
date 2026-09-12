@@ -6,12 +6,12 @@ export const dynamic = "force-dynamic";
 export default async function AnalyzedPage() {
   let events: Awaited<ReturnType<typeof listAnalyzedEvents>> = [];
   let note: string | null =
-    "Nessun analysis_dossier. Esegui pnpm analyze:event su una partita futura. Light storico è etichettato a parte.";
+    "Nessun analysis_dossier. Esegui pnpm analyze:board (o analyze:event). Light storico è etichettato a parte.";
   try {
     events = await listAnalyzedEvents();
     note =
       events.length === 0
-        ? "Nessun analysis_dossier. Esegui pnpm analyze:event su una partita futura. Light storico è etichettato a parte."
+        ? "Nessun analysis_dossier. Esegui pnpm analyze:board (o analyze:event). Light storico è etichettato a parte."
         : null;
   } catch {
     note = "Lettura analizzati non disponibile su questo host. Niente di inventato.";

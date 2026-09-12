@@ -25,6 +25,17 @@ export type OpenLigaMatch = {
   matchResults?: Array<{ resultTypeID?: number; pointsTeam1?: number; pointsTeam2?: number }>;
 };
 
+/** Published OpenLiga score. Never invents digits when results are absent. */
+export function openLigaPublishedScore(m: OpenLigaMatch): { home: number; away: number } | null {
+  const results = m.matchResults ?? [];
+  const final =
+    results.find((r) => r.resultTypeID === 2) ??
+    results.find((r) => r.pointsTeam1 != null && r.pointsTeam2 != null);
+  if (final?.pointsTeam1 == null || final.pointsTeam2 == null) return null;
+  if (!Number.isFinite(final.pointsTeam1) || !Number.isFinite(final.pointsTeam2)) return null;
+  return { home: final.pointsTeam1, away: final.pointsTeam2 };
+}
+
 export function parseOpenLigaMatches(jsonText: string): OpenLigaMatch[] {
   let parsed: unknown;
   try {

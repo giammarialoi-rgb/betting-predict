@@ -3,11 +3,22 @@
  * Persist on Lab B filesystem; never invent scores or minutes.
  */
 import { getStorage } from "@/domain/storage";
-import type { LiveStateMirrorRow } from "@/domain/storage/types";
+import type { BoardEventMirrorRow, LiveStateMirrorRow } from "@/domain/storage/types";
 import { permanentRoot044 } from "@/domain/eval/permanent-044/config";
-import { ESPN_SCOREBOARDS, espnScoreboardUrl } from "@/domain/eval/acquisition-engine/catalog";
+import {
+  ESPN_SCOREBOARDS,
+  OPENLIGA_LEAGUES,
+  espnScoreboardUrl,
+  openLigaMatchUrl,
+} from "@/domain/eval/acquisition-engine/catalog";
 import { parseEspnScoreboard, type EspnEvent } from "@/domain/eval/acquisition-engine/sources/espn";
+import {
+  openLigaPublishedScore,
+  parseOpenLigaMatches,
+  type OpenLigaMatch,
+} from "@/domain/eval/acquisition-engine/sources/openligadb";
 import { matchEventPair } from "@/domain/eval/data-intelligence/research/identity-match";
+import { unwrapEventLike } from "@/domain/eval/betmind-runtime/analyzed-board";
 import { appendJsonl044 } from "@/domain/eval/permanent-044/store";
 import { join } from "node:path";
 
@@ -177,6 +188,35 @@ export function latestLiveTimestamp(rows: LiveStateMirrorRow[] | undefined): str
   return latest;
 }
 
+export function overlayLiveOnBoardRows(
+  rows: BoardEventMirrorRow[] | undefined,
+  live: LiveStateMirrorRow[] | undefined,
+  nowIso?: string,
+): BoardEventMirrorRow[] {
+  if (!rows?.length) return rows ?? [];
+  const flat = overlayLiveOnEvents(
+    rows.map((row) => unwrapEventLike(row) ?? { event_id: row.event_id }),
+    live,
+  );
+  const byLive = new Map((live ?? []).map((r) => [r.event_id, r]));
+  return rows.map((row, i) => {
+    const overlaid = (flat[i] ?? {}) as Record<string, unknown>;
+    const hit = byLive.get(row.event_id);
+    const prev = unwrapEventLike(row) ?? {};
+    return {
+      event_id: row.event_id,
+      bucket: String(prev.bucket ?? row.bucket ?? "DISCOVERED"),
+      published_at: hit && nowIso ? nowIso : row.published_at,
+      payload: {
+        ...prev,
+        ...overlaid,
+        event_id: row.event_id,
+        bucket: prev.bucket ?? row.bucket,
+      },
+    };
+  });
+}
+
 export function overlayLiveOnEvents(
   events: unknown[] | undefined,
   live: LiveStateMirrorRow[] | undefined,
@@ -243,7 +283,7 @@ async function fetchEspnBoard(
 
 export type LiveIngestResult = {
   ok: boolean;
-  source: "espn";
+  source: "espn" | "openligadb" | "espn+openligadb";
   http_status: number | null;
   parsed: number;
   matched: number;
@@ -341,4 +381,128 @@ export function findLiveState(
 ): LiveStateMirrorRow | null {
   if (!rows?.length || !eventId) return null;
   return rows.find((r) => r.event_id === eventId) ?? null;
+}
+
+export function liveStateFromOpenLiga(
+  eventId: string,
+  m: OpenLigaMatch,
+  nowIso: string,
+  nowMs = Date.parse(nowIso),
+): LiveStateMirrorRow {
+  const finished = m.matchIsFinished === true;
+  const score = openLigaPublishedScore(m);
+  const raw = m.matchDateTimeUTC || m.matchDateTime;
+  const ko = raw
+    ? Date.parse(raw.endsWith("Z") || raw.includes("+") ? raw : `${raw}Z`)
+    : NaN;
+  let status: ClassifiedLiveStatus = "UNKNOWN";
+  if (finished) status = "FT";
+  else if (Number.isFinite(ko) && ko > nowMs) status = "UPCOMING";
+  else if (score != null || (Number.isFinite(ko) && ko <= nowMs)) status = "LIVE";
+  return {
+    event_id: eventId,
+    published_at: nowIso,
+    status,
+    home: m.team1?.teamName ?? null,
+    away: m.team2?.teamName ?? null,
+    home_goals: score?.home ?? null,
+    away_goals: score?.away ?? null,
+    minute: null,
+    period: null,
+    source: "openligadb",
+    source_status: finished ? "FINISHED" : m.matchIsFinished === false ? "IN_PLAY" : null,
+    source_detail: null,
+    observed_at: nowIso,
+    finished,
+  };
+}
+
+function matchOpenLigaToTarget(targets: LiveMatchTarget[], m: OpenLigaMatch): LiveMatchTarget | null {
+  const home = m.team1?.teamName;
+  const away = m.team2?.teamName;
+  if (!home || !away) return null;
+  const hits = targets.filter((t) => matchEventPair(t.home, t.away, home, away).matched);
+  if (hits.length === 1) return hits[0]!;
+  if (hits.length > 1) {
+    const raw = m.matchDateTimeUTC || m.matchDateTime;
+    const day = raw ? String(raw).slice(0, 10) : "";
+    const dated = hits.filter((t) => (t.kickoff_utc ?? "").slice(0, 10) === day);
+    if (dated.length === 1) return dated[0]!;
+  }
+  return null;
+}
+
+export async function ingestOpenLigaLiveStates(opts: {
+  targets: LiveMatchTarget[];
+  labBRoot?: string;
+  nowIso?: string;
+  jsonText?: string;
+  fetchImpl?: typeof fetch;
+}): Promise<LiveIngestResult> {
+  const root = opts.labBRoot ?? permanentRoot044();
+  const nowIso = opts.nowIso ?? new Date().toISOString();
+  const nowMs = Date.parse(nowIso);
+  const store = getStorage(root);
+  const states: LiveStateMirrorRow[] = [];
+  let parsed = 0;
+  let http: number | null = null;
+  const matches: OpenLigaMatch[] = [];
+
+  if (opts.jsonText != null) {
+    const rows = parseOpenLigaMatches(opts.jsonText);
+    parsed += rows.length;
+    matches.push(...rows);
+    http = 200;
+  } else {
+    const fetchImpl = opts.fetchImpl ?? fetch;
+    for (const league of OPENLIGA_LEAGUES.slice(0, 4)) {
+      const url = openLigaMatchUrl(league.shortcut);
+      try {
+        const got = await fetchEspnBoard(url, fetchImpl);
+        http = got.status;
+        if (got.status !== 200) continue;
+        const rows = parseOpenLigaMatches(got.text);
+        parsed += rows.length;
+        matches.push(...rows);
+      } catch {
+        http = http ?? 0;
+      }
+    }
+  }
+
+  for (const m of matches) {
+    const target = matchOpenLigaToTarget(opts.targets, m);
+    if (!target) continue;
+    const row = liveStateFromOpenLiga(target.event_id, m, nowIso, nowMs);
+    if (row.status === "UPCOMING" && row.home_goals == null) continue;
+    store.upsertLiveState(row);
+    appendJsonl044(join(root, "updates.jsonl"), {
+      event_id: row.event_id,
+      kind: "live_update",
+      at: nowIso,
+      source: "openligadb",
+      status: row.status,
+      home_goals: row.home_goals,
+      away_goals: row.away_goals,
+      minute: row.minute,
+      note: "live state from OpenLigaDB; not a replacement prediction",
+    });
+    states.push(row);
+  }
+
+  return {
+    ok: parsed > 0,
+    source: "openligadb",
+    http_status: http,
+    parsed,
+    matched: states.length,
+    written: states.length,
+    states,
+    reason:
+      parsed === 0
+        ? "openliga_empty_or_blocked"
+        : states.length === 0
+          ? "openliga_events_unmatched"
+          : `openliga_live written=${states.length}`,
+  };
 }

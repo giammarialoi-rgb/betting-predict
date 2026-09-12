@@ -9,6 +9,8 @@ import { permanentRoot044 } from "@/domain/eval/permanent-044/config";
 import {
   GOLDEN_EVENT_ID,
   ingestLiveStates,
+  ingestOpenLigaLiveStates,
+  overlayLiveOnBoardRows,
   overlayLiveOnEvents,
   type LiveIngestResult,
   type LiveMatchTarget,
@@ -70,27 +72,41 @@ function targetFromRecord(raw: unknown): LiveMatchTarget | null {
   };
 }
 
-/** Cheap targets — remote board + golden. Never scans events.jsonl. */
+const LIVE_STATUS_RE = /live|in_play|playing|\bht\b|halftime|first_half|second_half|in_progress/i;
+
+function targetLooksInPlayOrRecent(
+  raw: unknown,
+  nowMs: number,
+): boolean {
+  if (!raw || typeof raw !== "object") return true;
+  const rec = raw as Record<string, unknown>;
+  const payload =
+    rec.payload && typeof rec.payload === "object" ? (rec.payload as Record<string, unknown>) : rec;
+  if (LIVE_STATUS_RE.test(String(payload.status ?? rec.status ?? ""))) return true;
+  const ko = Date.parse(String(payload.kickoff_utc ?? rec.kickoff_utc ?? ""));
+  if (!Number.isFinite(ko)) return true;
+  const recent = 4 * 60 * 60 * 1000;
+  const soon = 15 * 60 * 1000;
+  return ko <= nowMs + soon && nowMs - ko <= recent;
+}
+
+/** Cheap targets — remote board events. Never scans events.jsonl. */
 export function targetsFromRemoteAndBoard(
   remote: RemoteMirrorArtifact | null,
   root: string,
   eventId?: string,
+  nowMs = Date.now(),
 ): LiveMatchTarget[] {
   const by = new Map<string, LiveMatchTarget>();
-  by.set(GOLDEN_EVENT_ID, GOLDEN_LIVE_TARGET);
-  for (const raw of remote?.payload?.observatory?.next_events ?? []) {
+  const consider = (raw: unknown) => {
+    if (!targetLooksInPlayOrRecent(raw, nowMs) && !eventId) return;
     const t = targetFromRecord(raw);
     if (t) by.set(t.event_id, t);
-  }
-  for (const row of remote?.board_events ?? []) {
-    const t = targetFromRecord(row);
-    if (t) by.set(t.event_id, t);
-  }
+  };
+  for (const raw of remote?.payload?.observatory?.next_events ?? []) consider(raw);
+  for (const row of remote?.board_events ?? []) consider(row);
   try {
-    for (const row of getStorage(root).loadBoardEvents()) {
-      const t = targetFromRecord(row);
-      if (t) by.set(t.event_id, t);
-    }
+    for (const row of getStorage(root).loadBoardEvents()) consider(row);
   } catch {
     /* board optional */
   }
@@ -127,6 +143,7 @@ export async function publishLiveSliceLight(opts: {
     (existing.payload.observatory?.next_events as unknown[] | undefined) ?? [],
     opts.live,
   );
+  const board = overlayLiveOnBoardRows(existing.board_events, opts.live, opts.nowIso);
   const payload: RuntimeIngestPayload = {
     ...existing.payload,
     published_at: opts.nowIso,
@@ -151,7 +168,7 @@ export async function publishLiveSliceLight(opts: {
       ...opts.learning_cases.map((c) => c.payload),
     ];
   }
-  const written = await writeRemoteMirror(payload, existing.board_events, existing.dossiers ?? [], {
+  const written = await writeRemoteMirror(payload, board, existing.dossiers ?? [], {
     live_states: opts.live,
     settlements: opts.settlements,
     learning_cases: opts.learning_cases,
@@ -159,7 +176,7 @@ export async function publishLiveSliceLight(opts: {
   if (!written.ok) {
     return { ok: false, error: written.error, mode: "light" };
   }
-  const remote = await pushRuntimeToRemoteIngest(payload, existing.board_events, {
+  const remote = await pushRuntimeToRemoteIngest(payload, board, {
     dossiers: existing.dossiers ?? [],
     live_states: opts.live,
     settlements: opts.settlements ?? [],
@@ -186,12 +203,42 @@ export async function refreshInPlayFromEspn(opts?: {
   const nowIso = opts?.nowIso ?? new Date().toISOString();
   const existing = await readRemoteMirror();
   const targets = targetsFromRemoteAndBoard(existing, root, opts?.eventId);
-  const ingest = await ingestLiveStates({
+  const espn = await ingestLiveStates({
     targets,
     labBRoot: root,
     nowIso,
     jsonText: opts?.jsonText,
   });
+  const matchedIds = new Set(espn.states.map((s) => s.event_id));
+  const leftover = targets.filter((t) => !matchedIds.has(t.event_id));
+  const openliga =
+    leftover.length && opts?.jsonText == null
+      ? await ingestOpenLigaLiveStates({
+          targets: leftover,
+          labBRoot: root,
+          nowIso,
+        })
+      : {
+          ok: false,
+          source: "openligadb" as const,
+          http_status: null,
+          parsed: 0,
+          matched: 0,
+          written: 0,
+          states: [],
+          reason: leftover.length ? "espn_fixture_skip_openliga" : "espn_covered",
+        };
+  const states = [...espn.states, ...openliga.states];
+  const ingest: LiveIngestResult = {
+    ok: espn.ok || openliga.ok,
+    source: openliga.states.length && espn.states.length ? "espn+openligadb" : openliga.states.length ? "openligadb" : "espn",
+    http_status: espn.http_status ?? openliga.http_status,
+    parsed: espn.parsed + openliga.parsed,
+    matched: states.length,
+    written: states.length,
+    states,
+    reason: [espn.reason, openliga.reason].filter(Boolean).join(" | "),
+  };
 
   const settlements: SettlementLearnResult[] = [];
   for (const live of ingest.states) {

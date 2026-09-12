@@ -38,43 +38,46 @@ function toRow(analysis: LightAnalysis): AnalyzedListRow | null {
   };
 }
 
-function dossierToRow(dossier: AnalysisDossier): AnalyzedListRow {
-  const im = dossier.independent_model;
-  const p = im?.probability;
-  const favorite =
-    p && typeof p.HOME === "number" && typeof p.DRAW === "number" && typeof p.AWAY === "number"
-      ? p.HOME >= p.DRAW && p.HOME >= p.AWAY
-        ? "home"
-        : p.AWAY >= p.DRAW
-          ? "away"
-          : "draw"
-      : null;
-  return {
-    event_id: dossier.event.event_id,
-    home: dossier.event.home,
-    away: dossier.event.away,
-    competition: dossier.event.competition,
-    kickoff_utc: dossier.event.kickoff_utc,
-    sport: dossier.event.sport,
-    status: dossier.event.status,
-    score_home: null,
-    score_away: null,
-    analyzed_at: dossier.analyzed_at,
-    light: false,
-    strong: true,
-    light_label_it: null,
-    strong_label_it: "Forte",
-    strong_unavailable_it: p
-      ? null
-      : "NO_PREDICTION / INSUFFICIENT DATA — nessuna probabilità inventata",
-    favorite_1x2: favorite,
-    markets: [],
-    prose: [
-      im?.note ?? "",
-      im?.decision ? `decision=${im.decision}` : "",
-    ].filter(Boolean),
-    sources_used: dossier.lineage?.sources_consulted ?? [],
-  };
+function dossierToRow(dossier: AnalysisDossier): AnalyzedListRow | null {
+  try {
+    const event = dossier.event;
+    if (!event?.event_id || !event.home || !event.away) return null;
+    const im = dossier.independent_model;
+    const p = im?.probability;
+    const favorite =
+      p && typeof p.HOME === "number" && typeof p.DRAW === "number" && typeof p.AWAY === "number"
+        ? p.HOME >= p.DRAW && p.HOME >= p.AWAY
+          ? "home"
+          : p.AWAY >= p.DRAW
+            ? "away"
+            : "draw"
+        : null;
+    return {
+      event_id: event.event_id,
+      home: event.home,
+      away: event.away,
+      competition: event.competition ?? null,
+      kickoff_utc: event.kickoff_utc,
+      sport: event.sport,
+      status: event.status,
+      score_home: null,
+      score_away: null,
+      analyzed_at: dossier.analyzed_at,
+      light: false,
+      strong: true,
+      light_label_it: null,
+      strong_label_it: "Forte",
+      strong_unavailable_it: p
+        ? null
+        : "NO_PREDICTION / INSUFFICIENT DATA — nessuna probabilità inventata",
+      favorite_1x2: favorite,
+      markets: [],
+      prose: [im?.note ?? "", im?.decision ? `decision=${im.decision}` : ""].filter(Boolean),
+      sources_used: dossier.lineage?.sources_consulted ?? [],
+    };
+  } catch {
+    return null;
+  }
 }
 
 export async function listAnalyzedEvents(cwd = process.cwd()): Promise<AnalyzedListRow[]> {
@@ -93,6 +96,7 @@ export async function listAnalyzedEvents(cwd = process.cwd()): Promise<AnalyzedL
     for (const listed of storage.listDossiers()) {
       if (!isRealAnalysisDossier(listed.payload)) continue;
       const strong = dossierToRow(listed.payload as AnalysisDossier);
+      if (!strong) continue;
       const prev = byId.get(strong.event_id);
       byId.set(
         strong.event_id,
@@ -117,6 +121,7 @@ export async function listAnalyzedEvents(cwd = process.cwd()): Promise<AnalyzedL
     for (const row of remote?.dossiers ?? []) {
       if (!isRealAnalysisDossier(row.dossier)) continue;
       const strong = dossierToRow(row.dossier as AnalysisDossier);
+      if (!strong) continue;
       const prev = byId.get(strong.event_id);
       byId.set(strong.event_id, prev ? { ...prev, strong: true, strong_label_it: "Forte" } : strong);
     }

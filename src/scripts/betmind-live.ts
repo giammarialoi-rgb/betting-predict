@@ -1,7 +1,8 @@
 /**
- * pnpm betmind:live — ESPN live refresh for board events, merge-safe publish.
- * Settles only when ESPN publishes completed/FT. Does not invent scores.
- * Default publish is LIGHT (patch remote live_snapshots / next_events).
+ * pnpm betmind:live — ESPN + OpenLiga live refresh for in-play board events.
+ * No --event = all in-play / recently kicked-off board targets.
+ * Settles only when the source publishes completed/FT. Does not invent scores.
+ * Default publish is LIGHT (patch remote live_snapshots / next_events / board).
  * Full Lab B rebuild (can hang on Windows): --full-publish
  * Loop: pnpm betmind:live -- --loop --interval 60
  */

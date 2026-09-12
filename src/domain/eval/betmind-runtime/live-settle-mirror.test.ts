@@ -387,6 +387,9 @@ describe("light live refresh publish", () => {
     const next = art?.payload.observatory?.next_events as Array<{ status?: string; result?: string }>;
     assert.equal(next?.[0]?.status, "LIVE");
     assert.match(String(next?.[0]?.result ?? ""), /0/);
+    const boardPayload = art?.board_events?.[0]?.payload as { status?: string; home_goals?: number; result?: string };
+    assert.equal(boardPayload?.status, "LIVE");
+    assert.equal(boardPayload?.home_goals, 0);
   });
 
   it("does not settle while ESPN is still in play", async () => {

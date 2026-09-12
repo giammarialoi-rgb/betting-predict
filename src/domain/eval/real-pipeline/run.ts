@@ -117,6 +117,8 @@ export async function runRealAnalysisPipeline(opts?: {
   labBRoot?: string;
   nowMs?: number;
   ensureHistoricalPriors?: boolean;
+  /** Board-wide runs skip the catalog HTTP audit after the first event. */
+  skipSourceCatalogAudit?: boolean;
 }): Promise<RealPipelineReport> {
   const nowMs = opts?.nowMs ?? Date.now();
   const nowIso = new Date(nowMs).toISOString();
@@ -132,7 +134,7 @@ export async function runRealAnalysisPipeline(opts?: {
   const store = loadStore044(root);
   const sourceCoverage: SourceResult[] = [];
 
-  const sourceAudit = await auditExistingSources();
+  const sourceAudit = opts?.skipSourceCatalogAudit ? [] : await auditExistingSources();
   for (const row of sourceAudit) {
     const envGuess =
       row.source_id === "the-odds-api" || row.source_id === "odds-api"

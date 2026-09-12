@@ -11,3 +11,14 @@ export { toSourceResultStatus, classifyConfiguredSource } from "@/domain/eval/re
 export { sliceDecisionFrom048 } from "@/domain/eval/real-pipeline/decision-label";
 export { publishAnalysis } from "@/domain/eval/real-pipeline/publish";
 export { runRealAnalysisPipeline, formatPipelineReport } from "@/domain/eval/real-pipeline/run";
+export {
+  selectEligibleBoardEvents,
+  collectCandidatesFromRemote,
+  isEligibleBoardEvent,
+} from "@/domain/eval/real-pipeline/board-select";
+export {
+  runBoardAnalysis,
+  selectBoardEventsForAnalyze,
+  formatBoardRunTable,
+  writeBoardRunReport,
+} from "@/domain/eval/real-pipeline/board-run";

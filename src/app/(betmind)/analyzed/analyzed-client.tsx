@@ -68,7 +68,7 @@ export function AnalyzedClient({
           title="Nessuna analisi"
           reason={
             note ??
-            "Nessun analysis_dossier. Esegui pnpm analyze:event."
+            "Nessun analysis_dossier. Esegui pnpm analyze:board."
           }
         />
       )}
