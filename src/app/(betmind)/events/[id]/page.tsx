@@ -1,6 +1,7 @@
 import { EventDetailClient } from "@/app/(betmind)/events/[id]/event-detail-client";
 import { loadEventAnalyses } from "@/domain/eval/light-analysis/list";
 import { loadBoardEventNeon } from "@/domain/eval/betmind-runtime/dossier";
+import { boardSummaryFromBoard } from "@/domain/eval/betmind-runtime/event-detail-view";
 
 export const dynamic = "force-dynamic";
 
@@ -13,7 +14,12 @@ export default async function EventDetailPage({
   const { light, strong_available } = await loadEventAnalyses(id);
   const board = light ? null : await loadBoardEventNeon(id);
   if (!light) {
-    return <EventDetailClient initialData={null} />;
+    return (
+      <EventDetailClient
+        initialData={null}
+        initialBoardSummary={board ? boardSummaryFromBoard(id, board) : null}
+      />
+    );
   }
   const initialData = {
     event: {

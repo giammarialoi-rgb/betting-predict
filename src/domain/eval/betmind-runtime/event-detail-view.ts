@@ -1,0 +1,148 @@
+/**
+ * Event-detail honesty helpers.
+ *
+ * Choice (documented): HTTP 200 when the board row exists but the full dossier
+ * is not mirrored. 404 stays reserved for true `not_found` (board missing).
+ * The client still accepts a 404 + `dossier_not_mirrored` + `board_summary`
+ * so a reverted status code cannot empty the page.
+ *
+ * Never invent HDA / features / lineage from board lite fields.
+ */
+
+export const EVENT_DETAIL_BOARD_ONLY_NOTICE_IT =
+  "Partita trovata sullo specchio remoto. Il dossier completo (probabilità HDA, features, lineage) non è pubblicato — esiste solo su Lab B / locale. Niente di inventato.";
+
+export type BoardSummary = {
+  event_id: string;
+  bucket: string | null;
+  label: string | null;
+  competition: string | null;
+  kickoff_utc: string | null;
+  model_version: string | null;
+  decision: string | null;
+  prediction_status: string | null;
+  feature_coverage: number | null;
+  analyzed_at: string | null;
+  home_or_a: string | null;
+  away_or_b: string | null;
+};
+
+export type EventDetailApiJson = {
+  error?: string;
+  reason?: string;
+  notice_it?: string;
+  present?: Record<string, unknown>;
+  missing?: unknown;
+  board_summary?: Record<string, unknown> | BoardSummary | null;
+  dossier?: unknown;
+  event?: unknown;
+};
+
+export type ClassifiedEventDetail =
+  | { kind: "ok" }
+  | { kind: "board_only"; summary: BoardSummary; notice_it: string; reason: string }
+  | { kind: "not_found"; message: string }
+  | { kind: "error"; message: string };
+
+function nullableString(v: unknown): string | null {
+  if (v == null) return null;
+  const s = String(v).trim();
+  return s.length ? s : null;
+}
+
+function nullableNumber(v: unknown): number | null {
+  if (typeof v === "number" && Number.isFinite(v)) return v;
+  if (typeof v === "string" && v.trim() && Number.isFinite(Number(v))) return Number(v);
+  return null;
+}
+
+export function teamsFromBoardLabel(label: unknown): {
+  home_or_a: string | null;
+  away_or_b: string | null;
+} {
+  const s = String(label ?? "");
+  if (!s.includes(" vs ")) return { home_or_a: null, away_or_b: null };
+  const [home, away] = s.split(" vs ").map((part) => part.trim());
+  return { home_or_a: home || null, away_or_b: away || null };
+}
+
+export function boardSummaryFromBoard(eventId: string, board: Record<string, unknown>): BoardSummary {
+  const label = nullableString(board.label);
+  const teams = teamsFromBoardLabel(label);
+  return {
+    event_id: eventId,
+    bucket: nullableString(board.bucket),
+    label,
+    competition: nullableString(board.competition),
+    kickoff_utc: nullableString(board.kickoff_utc),
+    model_version: nullableString(board.model_version),
+    decision: nullableString(board.decision),
+    prediction_status: nullableString(board.prediction_status),
+    feature_coverage: nullableNumber(board.feature_coverage),
+    analyzed_at: nullableString(board.analyzed_at),
+    home_or_a: nullableString(board.home_or_a) ?? teams.home_or_a,
+    away_or_b: nullableString(board.away_or_b) ?? teams.away_or_b,
+  };
+}
+
+export function normalizeBoardSummary(raw: unknown): BoardSummary | null {
+  if (!raw || typeof raw !== "object") return null;
+  const row = raw as Record<string, unknown>;
+  const eventId = nullableString(row.event_id);
+  if (!eventId) return null;
+  return boardSummaryFromBoard(eventId, row);
+}
+
+export function matchTitleFromBoard(summary: BoardSummary): string {
+  if (summary.home_or_a && summary.away_or_b) {
+    return `${summary.home_or_a} vs ${summary.away_or_b}`;
+  }
+  return summary.label || summary.event_id || "Partita";
+}
+
+export function formatEventDetailError(json: EventDetailApiJson, status: number): string {
+  const missing = Array.isArray(json.missing) ? json.missing.filter((x) => typeof x === "string") : [];
+  return [
+    json.reason ?? `HTTP ${status}`,
+    json.error ? `(${json.error})` : null,
+    missing.length ? `Missing: ${missing.join(", ")}` : null,
+  ]
+    .filter(Boolean)
+    .join(" — ");
+}
+
+export function isDossierNotMirroredWithBoard(json: EventDetailApiJson): boolean {
+  return json.error === "dossier_not_mirrored" && normalizeBoardSummary(json.board_summary) != null;
+}
+
+/**
+ * Classify GET /api/betmind/event/:id for the UI.
+ * `dossier_not_mirrored` + board_summary is never a fatal empty page,
+ * whether the route answers 200 or 404.
+ */
+export function classifyEventDetailResponse(
+  res: { ok: boolean; status: number },
+  json: EventDetailApiJson,
+): ClassifiedEventDetail {
+  if (isDossierNotMirroredWithBoard(json)) {
+    const summary = normalizeBoardSummary(json.board_summary);
+    if (summary) {
+      return {
+        kind: "board_only",
+        summary,
+        notice_it: json.notice_it ?? EVENT_DETAIL_BOARD_ONLY_NOTICE_IT,
+        reason: json.reason ?? EVENT_DETAIL_BOARD_ONLY_NOTICE_IT,
+      };
+    }
+  }
+
+  if (json.error === "not_found" || res.status === 404) {
+    return { kind: "not_found", message: formatEventDetailError(json, res.status) };
+  }
+
+  if (!res.ok) {
+    return { kind: "error", message: formatEventDetailError(json, res.status) };
+  }
+
+  return { kind: "ok" };
+}

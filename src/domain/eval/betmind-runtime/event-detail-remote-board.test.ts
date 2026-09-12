@@ -174,20 +174,27 @@ describe("Vercel-like event detail (no Lab B disk)", () => {
       assert.equal(board?.label, "Alpha vs Beta");
 
       const res = await detail(EVENT_ID);
-      assert.equal(res.status, 404);
+      // 200: board found. 404 is reserved for true not_found.
+      assert.equal(res.status, 200);
       const json = (await res.json()) as {
         error: string;
         reason: string;
+        notice_it?: string;
         present: { board_event: boolean; analysis_dossier: boolean; lab_b_disk: boolean };
-        board_summary?: { event_id?: string; label?: string };
+        board_summary?: { event_id?: string; label?: string; home_or_a?: string; away_or_b?: string };
+        dossier: unknown;
       };
       assert.equal(json.error, "dossier_not_mirrored");
       assert.equal(json.present.board_event, true);
       assert.equal(json.present.analysis_dossier, false);
       assert.equal(json.present.lab_b_disk, false);
+      assert.equal(json.dossier, null);
       assert.equal(json.board_summary?.event_id, EVENT_ID);
       assert.equal(json.board_summary?.label, "Alpha vs Beta");
+      assert.equal(json.board_summary?.home_or_a, "Alpha");
+      assert.equal(json.board_summary?.away_or_b, "Beta");
       assert.equal(json.reason, EVENT_DETAIL_DOSSIER_NOT_MIRRORED_IT);
+      assert.match(String(json.notice_it), /specchio remoto/);
       assert.doesNotMatch(json.reason, /Neon/i);
     });
   });

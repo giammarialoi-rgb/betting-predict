@@ -18,7 +18,19 @@ import {
 import { OddsBlock } from "@/components/betmind/OddsBlock";
 import { MarketPercents } from "@/components/betmind/MarketPercents";
 import { useBmLocale } from "@/components/betmind/useBmLocale";
-import { eventStatusIt, selectionLabelIt } from "@/domain/eval/betmind-runtime/status-copy";
+import {
+  EVENT_DETAIL_BOARD_ONLY_NOTICE_IT,
+  classifyEventDetailResponse,
+  matchTitleFromBoard,
+  type BoardSummary,
+  type EventDetailApiJson,
+} from "@/domain/eval/betmind-runtime/event-detail-view";
+import {
+  bucketLabelIt,
+  decisionLabelIt,
+  eventStatusIt,
+  selectionLabelIt,
+} from "@/domain/eval/betmind-runtime/status-copy";
 import { leagueTitleIt } from "@/domain/eval/light-analysis/league-label";
 import type { LightAnalysis } from "@/domain/eval/light-analysis/types";
 
@@ -241,10 +253,20 @@ function statusIt(s: string, t: ReturnType<typeof useBmLocale>["t"]): string {
   }
 }
 
-export function EventDetailClient({ initialData = null }: { initialData?: Detail | null }) {
+export function EventDetailClient({
+  initialData = null,
+  initialBoardSummary = null,
+}: {
+  initialData?: Detail | null;
+  initialBoardSummary?: BoardSummary | null;
+}) {
   const { t } = useBmLocale();
   const params = useParams<{ id: string }>();
   const [data, setData] = useState<Detail | null>(initialData);
+  const [boardOnly, setBoardOnly] = useState<BoardSummary | null>(initialBoardSummary);
+  const [boardNotice, setBoardNotice] = useState<string | null>(
+    initialBoardSummary ? EVENT_DETAIL_BOARD_ONLY_NOTICE_IT : null,
+  );
   const [err, setErr] = useState<string | null>(null);
   const [updating, setUpdating] = useState(false);
   const [lastUpdate, setLastUpdate] = useState<string | null>(null);
@@ -255,28 +277,32 @@ export function EventDetailClient({ initialData = null }: { initialData?: Detail
       setUpdating(true);
       try {
         const res = await fetch(`/api/betmind/event/${params.id}`, { cache: "no-store" });
-        const json = (await res.json()) as Detail & {
-          error?: string;
-          reason?: string;
-          present?: Record<string, unknown>;
-          missing?: string[];
-          board_summary?: Record<string, unknown>;
-        };
-        if (!res.ok) {
-          const parts = [
-            json.reason ?? `HTTP ${res.status}`,
-            json.error ? `(${json.error})` : null,
-            Array.isArray(json.missing) && json.missing.length
-              ? `Missing: ${json.missing.join(", ")}`
-              : null,
-          ].filter(Boolean);
-          throw new Error(parts.join(" — "));
-        }
-        if (alive) {
-          setData(json);
+        const json = (await res.json()) as Detail & EventDetailApiJson;
+        const classified = classifyEventDetailResponse(
+          { ok: res.ok, status: res.status },
+          json,
+        );
+        if (!alive) return;
+        if (classified.kind === "board_only") {
+          setBoardOnly(classified.summary);
+          setBoardNotice(classified.notice_it);
+          setData(null);
           setErr(null);
           setLastUpdate(new Date().toISOString());
+          return;
         }
+        if (classified.kind === "not_found" || classified.kind === "error") {
+          setErr(classified.message);
+          setData(null);
+          setBoardOnly(null);
+          setBoardNotice(null);
+          return;
+        }
+        setData(json);
+        setBoardOnly(null);
+        setBoardNotice(null);
+        setErr(null);
+        setLastUpdate(new Date().toISOString());
       } catch (e) {
         if (alive) setErr(e instanceof Error ? e.message : "fetch fallito");
       } finally {
@@ -318,10 +344,67 @@ export function EventDetailClient({ initialData = null }: { initialData?: Detail
           <p className="text-sm text-[var(--bm-danger)]">{err}</p>
         </Card>
       )}
-      {!data && !err && (
+      {!data && !boardOnly && !err && (
         <Card>
           <Unknown label={t.loading} />
         </Card>
+      )}
+
+      {boardOnly && !data && (
+        <>
+          <header className="bm-hero text-center">
+            <div className="bm-section-label">
+              {boardOnly.competition ? leagueTitleIt(boardOnly.competition) : "Specchio remoto"}
+            </div>
+            <h1 className="mt-2 text-3xl font-bold leading-tight">
+              {boardOnly.home_or_a && boardOnly.away_or_b ? (
+                <>
+                  {boardOnly.home_or_a}
+                  <div className="my-1 text-base font-medium bm-muted">{t.vs}</div>
+                  {boardOnly.away_or_b}
+                </>
+              ) : (
+                matchTitleFromBoard(boardOnly)
+              )}
+            </h1>
+            <p className="mt-2 text-sm bm-muted">
+              {boardOnly.kickoff_utc ? fmtWhen(boardOnly.kickoff_utc) : "Orario non disponibile"}
+            </p>
+          </header>
+
+          <Card title="Partita sullo specchio">
+            <p className="text-sm leading-relaxed">{boardNotice ?? EVENT_DETAIL_BOARD_ONLY_NOTICE_IT}</p>
+            <div className="mt-4 grid grid-cols-2 gap-3">
+              <Metric
+                label="Competizione"
+                value={boardOnly.competition ? leagueTitleIt(boardOnly.competition) : "—"}
+              />
+              <Metric
+                label="Bucket"
+                value={boardOnly.bucket ? bucketLabelIt(boardOnly.bucket) : "—"}
+              />
+              <Metric
+                label="Decisione"
+                value={decisionLabelIt(boardOnly.decision)}
+              />
+              <Metric
+                label="Stato previsione"
+                value={decisionLabelIt(boardOnly.prediction_status)}
+              />
+              <Metric
+                label={t.model_version}
+                value={boardOnly.model_version ?? "—"}
+              />
+              <Metric
+                label="Analizzata"
+                value={boardOnly.analyzed_at ? fmtWhen(boardOnly.analyzed_at) : "—"}
+              />
+            </div>
+            <p className="mt-4 text-xs bm-muted">
+              Probabilità HDA, features e lineage assenti — non inventate dal board lite.
+            </p>
+          </Card>
+        </>
       )}
 
       {data && (
