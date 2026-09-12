@@ -1,0 +1,42 @@
+[
+  {
+    "event_id": "de3b08b74a8249c647ee0e42",
+    "feature_key": "temp_c",
+    "value": 19.2,
+    "source": "open-meteo",
+    "status": "CONTEXT",
+    "kind": "EVENT_RESEARCH",
+    "available_at": "2026-09-12T14:00:00.000Z",
+    "observed_at": "2026-09-12T13:43:00.118Z"
+  },
+  {
+    "event_id": "de3b08b74a8249c647ee0e42",
+    "feature_key": "precip_mm",
+    "value": 0,
+    "source": "open-meteo",
+    "status": "CONTEXT",
+    "kind": "EVENT_RESEARCH",
+    "available_at": "2026-09-12T14:00:00.000Z",
+    "observed_at": "2026-09-12T13:43:00.118Z"
+  },
+  {
+    "event_id": "de3b08b74a8249c647ee0e42",
+    "feature_key": "wind_kmh",
+    "value": 24.1,
+    "source": "open-meteo",
+    "status": "CONTEXT",
+    "kind": "EVENT_RESEARCH",
+    "available_at": "2026-09-12T14:00:00.000Z",
+    "observed_at": "2026-09-12T13:43:00.118Z"
+  },
+  {
+    "event_id": "de3b08b74a8249c647ee0e42",
+    "feature_key": "news_other",
+    "value": "Schuster makes Brentford PL debut at unchanged Bournemouth LIVE!",
+    "source": "sky-sports",
+    "status": "CONTEXT",
+    "kind": "EVENT_RESEARCH",
+    "available_at": "Sat, 12 Sep 2026 13:20:00 BST",
+    "observed_at": "2026-09-12T13:43:00.118Z"
+  }
+]
