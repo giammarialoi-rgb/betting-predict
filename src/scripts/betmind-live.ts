@@ -1,6 +1,8 @@
 /**
  * pnpm betmind:live — ESPN live refresh for board events, merge-safe publish.
  * Settles only when ESPN publishes completed/FT. Does not invent scores.
+ * Default publish is LIGHT (patch remote live_snapshots / next_events).
+ * Full Lab B rebuild (can hang on Windows): --full-publish
  * Loop: pnpm betmind:live -- --loop --interval 60
  */
 import { config } from "dotenv";
@@ -14,7 +16,10 @@ function arg(flag: string): string | undefined {
 
 async function once() {
   const eventId = arg("--event");
-  const report = await refreshInPlayFromEspn({ eventId });
+  const report = await refreshInPlayFromEspn({
+    eventId,
+    fullPublish: process.argv.includes("--full-publish"),
+  });
   const live = report.ingest.states[0];
   console.log(
     JSON.stringify(
@@ -45,6 +50,7 @@ async function once() {
           reason: s.reason,
         })),
         settle_deferred: report.settle_deferred,
+        publish_mode: report.publish_mode,
         published: report.published,
         settle_command: `pnpm betmind:live -- --event ${eventId ?? GOLDEN_EVENT_ID}`,
       },
