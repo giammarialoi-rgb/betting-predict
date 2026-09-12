@@ -265,7 +265,9 @@ export function decisionLabelIt(raw: string | null | undefined): string {
   const u = String(raw ?? "").toUpperCase();
   if (!u || u === "N/A" || u === "UNKNOWN") return "Non ancora valutata";
   if (u.includes("INSUFFICIENT")) return "Dati insufficienti";
-  if (u === "NO_BET" || u.includes("NO_BET") || u === "HOLD") return "Nessuna scommessa";
+  if (u === "BET" || u === "BET_CANDIDATE" || u === "STRONG_CANDIDATE") return "BET";
+  if (u === "WATCH" || u === "MODEL_UNCERTAIN" || u === "TOP_WATCHLIST") return "WATCH";
+  if (u === "NO BET" || u === "NO_BET" || u.includes("NO_BET") || u === "HOLD") return "Nessuna scommessa";
   if (u.includes("SKIP")) return "Saltata";
   if (u.includes("UNAVAILABLE") || u.includes("TEMPORAL")) return "Non disponibile";
   if (

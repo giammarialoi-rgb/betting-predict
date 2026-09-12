@@ -95,7 +95,7 @@ export function deriveSystemStrip(input: {
 }): SystemStrip {
   const c = input.health?.components ?? {};
   return {
-    webApp: "ONLINE",
+    webApp: input.health || input.snapshotOk ? "ONLINE" : "UNKNOWN",
     dataPipeline: componentState(c.data_pipeline) !== "UNKNOWN"
       ? componentState(c.data_pipeline)
       : input.snapshotOk

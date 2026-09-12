@@ -16,7 +16,7 @@ function ShellWithStatus({ children }: { children: ReactNode }) {
           : "UNKNOWN";
   return (
     <AppShell
-      webOnline={true}
+      webOnline={strip.webApp === "ONLINE"}
       runtimeState={runtime}
       engineState={strip.predictiveEngine}
       brainState={strip.brain}

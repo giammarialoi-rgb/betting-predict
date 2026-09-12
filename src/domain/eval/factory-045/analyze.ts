@@ -81,6 +81,8 @@ function nextSeq(store: Store044, eventId: string): number {
 export function analyzeAllLabB045(input: {
   store: Store044;
   nowIso: string;
+  /** When set, only these event ids are analyzed (vertical slice). */
+  eventIds?: string[];
 }): {
   predicted: number;
   locked: number;
@@ -119,7 +121,9 @@ export function analyzeAllLabB045(input: {
 
   const nowMs = Date.parse(input.nowIso);
 
+  const allow = input.eventIds?.length ? new Set(input.eventIds) : null;
   for (const ev of input.store.events) {
+    if (allow && !allow.has(ev.event_id)) continue;
     const qs = quotesByEvent.get(ev.event_id) ?? [];
     const q039 = qs.map(toQuote039);
     const cutoffMs = ev.kickoff_utc ? t1hCutoffMs039(ev.kickoff_utc) : null;
