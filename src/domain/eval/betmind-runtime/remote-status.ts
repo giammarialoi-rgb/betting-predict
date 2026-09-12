@@ -560,7 +560,7 @@ export async function loadRuntimeStatus(
     const remote = await readRemoteMirror();
     if (!remote?.payload) return null;
     const published_at = remote.published_at || remote.payload.published_at;
-    return loadedFromRecord(published_at, remote.payload, nowMs, staleMs);
+    return loadedFromRecord(published_at, remote.payload as BetMindRuntimePayload, nowMs, staleMs);
   } catch {
     return null;
   }

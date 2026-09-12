@@ -164,7 +164,7 @@ export async function GET() {
       api_calls_ui: 0 as const,
       real_money: false as const,
       cache_hit: false,
-      mirror_source: "local_disk" as const,
+      mirror_source: storePresent ? ("local_disk" as const) : ("none" as const),
       observatory,
       health,
       challengers: loadChallengerRegistry053(root),

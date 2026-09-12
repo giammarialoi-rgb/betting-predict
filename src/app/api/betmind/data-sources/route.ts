@@ -38,7 +38,7 @@ export async function GET() {
     eventLabels = new Map();
   }
 
-  let operationalSource: "disk" | "remote" | "neon" | "none" = "none";
+  let operationalSource: "disk" | "remote" | "none" = "none";
   let operational = localLabStorePresent(root)
     ? buildOperationalSourceEngine({ labBRoot: root, eventLabels })
     : [];
@@ -88,8 +88,7 @@ export async function GET() {
     readLastAcquisitionCycle(process.cwd()),
   );
   const remoteSignal =
-    (operationalSource === "remote" || operationalSource === "neon") &&
-    operationalHasNeonSignal(operational);
+    operationalSource === "remote" && operationalHasNeonSignal(operational);
   const source =
     registryFromDisk && localLabStorePresent(root)
       ? "disk"
