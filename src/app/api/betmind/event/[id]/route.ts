@@ -90,7 +90,13 @@ function categorizeWhy(codes: string[], explanation: Record<string, unknown> | n
   return Object.fromEntries(Object.entries(buckets).filter(([, v]) => v.length > 0));
 }
 
-/** Event analysis dossier — disk first, Neon mirror on Vercel. */
+export const EVENT_DETAIL_NOT_FOUND_IT =
+  "NO DATA AVAILABLE — Lab B assente, nessun dossier su filesystem/specchio remoto, nessun board event, nessuna analisi light";
+
+export const EVENT_DETAIL_DOSSIER_NOT_MIRRORED_IT =
+  "Evento presente sul board (filesystem/specchio remoto) ma nessun dossier specchiato. Il dossier completo (HDA, features, lineage) richiede Lab B — non inventabile dai campi lite del board.";
+
+/** Event analysis dossier — Lab B disk first, then remote Blob board/light mirror. Never Neon. */
 export async function GET(_req: Request, ctx: { params: Promise<{ id: string }> }) {
   const { id } = await ctx.params;
   const root = permanentRoot044();
@@ -135,15 +141,14 @@ export async function GET(_req: Request, ctx: { params: Promise<{ id: string }> 
         {
           error: "dossier_not_mirrored",
           event_id: id,
-          reason:
-            "Event exists on betmind_board_events but betmind_analysis_dossiers has no row. Full dossier (HDA, features, lineage) requires Lab B mirror — not inventable from board lite fields.",
+          reason: EVENT_DETAIL_DOSSIER_NOT_MIRRORED_IT,
           present: {
             lab_b_disk: false,
             board_event: true,
             analysis_dossier: false,
             light_analysis: false,
           },
-          missing: ["betmind_analysis_dossiers.payload"],
+          missing: ["analysis_dossier"],
           board_summary: {
             event_id: id,
             bucket: board.bucket ?? null,
@@ -167,15 +172,14 @@ export async function GET(_req: Request, ctx: { params: Promise<{ id: string }> 
       {
         error: "not_found",
         event_id: id,
-        reason:
-          "NO DATA AVAILABLE — Lab B assente, nessun dossier su Neon, nessun board event, nessuna analisi light",
+        reason: EVENT_DETAIL_NOT_FOUND_IT,
         present: {
           lab_b_disk: false,
           board_event: false,
           analysis_dossier: false,
           light_analysis: false,
         },
-        missing: ["betmind_analysis_dossiers", "betmind_board_events", "betmind_light_analyses"],
+        missing: ["analysis_dossier", "board_event", "light_analysis"],
       },
       { status: 404 },
     );
