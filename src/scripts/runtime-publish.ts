@@ -1,5 +1,7 @@
 /**
- * One-shot: publish local Lab B runtime status to the filesystem mirror.
+ * One-shot: write Lab B heartbeat + board to the local filesystem (SoT on the PC).
+ * If BETMIND_RUNTIME_INGEST_URL + BETMIND_RUNTIME_PUBLISH_SECRET are set,
+ * also POST the same payload to the Vercel ingest API (Blob mirror).
  * Usage: pnpm runtime:publish
  */
 import { config } from "dotenv";
@@ -27,6 +29,7 @@ async function main() {
         store_present_local: payload.store_present_local,
         analysis: payload.analysis,
         board_events: next.length,
+        remote: "remote" in result ? result.remote : undefined,
         sample_event: next[0] ?? null,
       },
       null,

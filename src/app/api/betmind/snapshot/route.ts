@@ -82,7 +82,7 @@ function buildLiteObservatory(root: string, nowIso: string) {
   };
 }
 
-/** Disk-first BetMind snapshot; Neon mirror when Lab B FS absent (Vercel). Zero Odds/API-Sports. */
+/** Disk-first BetMind snapshot; Blob remote mirror when Lab B FS absent (Vercel). Zero Odds/API-Sports. */
 export async function GET() {
   const now = Date.now();
   const cached = readSnapshotCache(now);
@@ -105,7 +105,7 @@ export async function GET() {
           api_calls_ui: 0 as const,
           real_money: false as const,
           cache_hit: false,
-          mirror_source: "neon" as const,
+          mirror_source: "remote" as const,
           mirror_published_at: remote.published_at,
           mirror_age_ms: remote.age_ms,
           mirror_stale: !remote.fresh,
@@ -117,7 +117,7 @@ export async function GET() {
               ...remote.payload.detail,
               store_present: false,
               store_present_local_on_publisher: remote.payload.store_present_local,
-              mirror_source: "neon",
+              mirror_source: "remote",
               mirror_published_at: remote.published_at,
               mirror_age_ms: remote.age_ms,
               mirror_stale: !remote.fresh,
@@ -164,7 +164,7 @@ export async function GET() {
       api_calls_ui: 0 as const,
       real_money: false as const,
       cache_hit: false,
-      mirror_source: "local_disk" as const,
+      mirror_source: storePresent ? ("local_disk" as const) : ("none" as const),
       observatory,
       health,
       challengers: loadChallengerRegistry053(root),

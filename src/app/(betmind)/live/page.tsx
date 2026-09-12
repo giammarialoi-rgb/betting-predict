@@ -52,7 +52,7 @@ export default function LivePage() {
       <Card title="Cosa sta facendo ora">
         {stale ? (
           <p className="bm-prose">
-            Specchio Neon scaduto. Il PC può essere acceso, ma Vercel non ha un battito recente —
+            Specchio scaduto. Il PC può essere acceso, ma Vercel non ha un battito recente —
             non mostriamo il sistema come online.
           </p>
         ) : idle || !phase ? (
@@ -94,7 +94,7 @@ export default function LivePage() {
         {decisions.length === 0 ? (
           <EmptyState
             title="Nessuna decisione sul board"
-            reason="Il board è vuoto. Se lo specchio Neon è spento o scaduto, le decisioni restano assenti."
+            reason="Il board è vuoto. Se lo specchio remoto è spento o scaduto, le decisioni restano assenti."
           />
         ) : (
           <div className="grid gap-3">

@@ -15,6 +15,27 @@ export function formatAgeIt(ageMs: number | null | undefined): string {
   return d === 1 ? "1 giorno fa" : `${d} giorni fa`;
 }
 
+export function isRemoteMirrorSource(src: unknown): boolean {
+  const s = String(src ?? "");
+  return s === "remote" || s === "vercel_blob" || s === "memory" || s === "neon";
+}
+
+/** App online ≠ Runtime offline ≠ Specchio scaduto. Never collapse these. */
+export function honestyLayersIt(input: {
+  webOnline: boolean;
+  runtimeState?: string | null;
+  mirrorStale?: boolean;
+  mirrorMissing?: boolean;
+}): string {
+  const app = input.webOnline ? "App online" : "App offline";
+  if (input.mirrorStale) return `${app} · Specchio scaduto`;
+  const rt = String(input.runtimeState ?? "").toUpperCase();
+  if (rt === "ONLINE") return `${app} · Runtime online`;
+  if (rt === "OFFLINE" || input.mirrorMissing) return `${app} · Runtime offline`;
+  if (rt === "DEGRADED") return `${app} · Runtime degradato`;
+  return `${app} · Runtime sconosciuto`;
+}
+
 export function statusWordIt(
   state: string | null | undefined,
 ): "Online" | "Offline" | "Degradato" | "Sconosciuto" {
@@ -30,7 +51,7 @@ export function brainStatusIt(raw: string | null | undefined): string {
   if (!s || s === "—" || s === "UNKNOWN") return "Stato sconosciuto";
   const u = s.toUpperCase();
   if (u === "STALE_MIRROR") {
-    return "Specchio filesystem scaduto — il PC non pubblica un battito recente";
+    return "Specchio scaduto — il PC non pubblica un battito recente";
   }
   if (u === "RUNNING" || u === "HEALTHY" || u === "WORKING") return "In esecuzione sul PC";
   if (u === "IDLE" || u === "PAUSED") return "In pausa / in attesa del prossimo ciclo";

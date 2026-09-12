@@ -100,7 +100,7 @@ export async function GET(req: Request) {
   });
   return NextResponse.json({
     ok: true,
-    source: remote ? "neon" : "none",
+    source: remote ? "remote" : "none",
     date,
     from: from ?? date,
     to: to ?? date,

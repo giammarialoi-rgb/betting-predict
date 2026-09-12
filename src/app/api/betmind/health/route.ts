@@ -60,7 +60,7 @@ function degraded(started: number, error: unknown) {
 }
 
 /**
- * Production BetMind health — disk first; Neon remote mirror when Lab B FS absent (Vercel).
+ * Production BetMind health — disk first; Blob remote mirror when Lab B FS absent (Vercel).
  * Zero Odds API / API-Sports calls from this endpoint.
  * Never throws 500 when Lab B store is missing.
  */
@@ -89,7 +89,7 @@ export async function GET() {
             ...remote.payload.detail,
             store_present: false,
             store_present_local_on_publisher: remote.payload.store_present_local,
-            mirror_source: "neon",
+            mirror_source: "remote",
             mirror_published_at: remote.published_at,
             mirror_age_ms: remote.age_ms,
             mirror_host: remote.payload.host,
@@ -110,7 +110,7 @@ export async function GET() {
             ...remote.payload.detail,
             store_present: false,
             store_present_local_on_publisher: remote.payload.store_present_local,
-            mirror_source: "neon",
+            mirror_source: "remote",
             mirror_published_at: remote.published_at,
             mirror_age_ms: remote.age_ms,
             mirror_stale: true,
@@ -193,6 +193,9 @@ export async function GET() {
         store_present: storePresent,
         pi_verdict_present: Boolean(verdict),
         mirror_source: storePresent ? "local_disk" : "none",
+        mirror_reason_it: storePresent
+          ? undefined
+          : "Nessuno specchio remoto. App online ≠ Runtime online. Senza publish dal PC, Vercel resta OFFLINE.",
       },
     });
   } catch (error) {

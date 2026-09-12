@@ -70,7 +70,7 @@ export type OverlaySourceCard = SourceEntry & {
   last_event_label?: string | null;
   capabilities?: string[];
   missing_adapter?: boolean;
-  overlay: "neon_operational" | "registry_only";
+  overlay: "remote_operational" | "neon_operational" | "registry_only";
 };
 
 function opId(row: OperationalOverlay): string {
@@ -116,7 +116,7 @@ export function overlayRegistryWithOperational(
       last_event_label: op.last_event_label ?? null,
       capabilities: op.capabilities?.length ? op.capabilities : undefined,
       missing_adapter: op.missing_adapter,
-      overlay: "neon_operational",
+      overlay: "remote_operational",
     };
   });
 }
@@ -139,7 +139,7 @@ function operationalReason(op: OperationalOverlay, fallback: string): string {
   const events = Number(op.events_found ?? 0);
   const obs = Number(op.observations_found ?? 0);
   const parts = [
-    `Specchio filesystem: ${operationalStatusIt(op.status)}`,
+    `Specchio remoto: ${operationalStatusIt(op.status)}`,
     events ? `${events} eventi con dati` : null,
     obs ? `${obs} osservazioni` : null,
     op.last_event_label ? `ultimo: ${op.last_event_label}` : null,
@@ -157,14 +157,14 @@ export function neonEventsEmptyReason(input: {
   storePresentLocalOnPublisher?: boolean | null;
 }): string {
   if (!input.remotePresent) {
-    return "Nessuno specchio filesystem: il PC non ha ancora pubblicato eventi. Vercel non ha lo store Lab B in locale — nessuna partita inventata.";
+    return "Nessuno specchio remoto: il PC non ha ancora pubblicato eventi. Vercel non ha lo store Lab B in locale — nessuna partita inventata.";
   }
   if (input.universeCount === 0) {
-    const stale = input.remoteFresh === false ? " Specchio non aggiornato." : "";
+    const stale = input.remoteFresh === false ? " Specchio scaduto." : "";
     const local = input.storePresentLocalOnPublisher
       ? " Sul PC lo store c’è, ma questo specchio non contiene righe calendario."
       : " Store Lab B assente anche sul publisher.";
-    return `Nessuna partita nello specchio filesystem.${stale}${local}`;
+    return `Nessuna partita nello specchio remoto.${stale}${local}`;
   }
   if (input.filteredCount === 0) {
     return `Nessuna partita per ${input.date}${input.sport && input.sport !== "ALL" ? ` · ${input.sport}` : ""} (${input.universeCount} eventi in altre date/sport nello specchio).`;

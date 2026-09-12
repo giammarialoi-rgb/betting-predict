@@ -22,6 +22,8 @@ import { PredictionOddsCard } from "@/components/betmind/PredictionOddsCard";
 import {
   brainStatusIt,
   formatAgeIt,
+  honestyLayersIt,
+  isRemoteMirrorSource,
   statusWordIt,
 } from "@/domain/eval/betmind-runtime/status-copy";
 
@@ -146,7 +148,9 @@ export default function BetMindHomePage() {
 
   const storePresent =
     detail?.store_present === true || detail?.store_present_local_on_publisher === true;
-  const mirrored = detail?.mirror_source === "neon" || (data as { mirror_source?: string } | null)?.mirror_source === "neon";
+  const mirrored =
+    isRemoteMirrorSource(detail?.mirror_source) ||
+    isRemoteMirrorSource((data as { mirror_source?: string } | null)?.mirror_source);
   const mirrorStale =
     detail?.mirror_stale === true || (data as { mirror_stale?: boolean } | null)?.mirror_stale === true;
   const mirrorAge = Number(detail?.mirror_age_ms ?? (data as { mirror_age_ms?: number } | null)?.mirror_age_ms);
@@ -188,7 +192,7 @@ export default function BetMindHomePage() {
       name: "Runtime (PC)",
       state: rt,
       detail: mirrored
-        ? `Specchio Neon da ${String(detail?.mirror_host ?? "giamm")} · ultimo segnale ${formatAgeIt(mirrorAge)}${mirrorStale ? " — scaduto" : ""}`
+        ? `Specchio remoto da ${String(detail?.mirror_host ?? "PC")} · ultimo segnale ${formatAgeIt(mirrorAge)}${mirrorStale ? " — scaduto" : ""}`
         : storePresent
           ? "Store Lab B su questo host"
           : "Nessun battito runtime ricevuto",
@@ -202,9 +206,9 @@ export default function BetMindHomePage() {
       name: "Pipeline dati",
       state: strip.dataPipeline,
       detail: storePresent
-        ? "Eventi presenti sul PC (publisher) — elenco via specchio Neon"
+        ? "Eventi presenti sul PC (publisher) — elenco via specchio remoto"
         : mirrored
-          ? "Vercel non ha Lab B in locale; elenco da specchio Neon"
+          ? "Vercel non ha Lab B in locale; elenco da specchio remoto"
           : "Store Lab B assente su Vercel e nessuno specchio",
     },
     {
@@ -229,7 +233,7 @@ export default function BetMindHomePage() {
   const blockers: string[] = [];
   if (mirrorStale) {
     blockers.push(
-      `Specchio Neon scaduto (${formatAgeIt(mirrorAge)}). Il cervello sul PC può essere acceso, ma Vercel non ha un battito recente — non lo mostriamo come Online.`,
+      `Specchio scaduto (${formatAgeIt(mirrorAge)}). Il cervello sul PC può essere acceso, ma Vercel non ha un battito recente — non lo mostriamo come Online.`,
     );
   }
   if (rt === "OFFLINE" && !mirrorStale) {
@@ -290,10 +294,13 @@ export default function BetMindHomePage() {
       <section className="bm-hero space-y-3">
         <div className="bm-section-label">Stato</div>
         <p className="bm-prose">
-          L’app web è {statusWordIt(strip.webApp).toLowerCase()}. Il runtime sul PC è{" "}
-          {statusWordIt(rt).toLowerCase()}
-          {mirrorStale ? " — specchio Neon scaduto, non lo mostriamo come online" : ""}. Il motore
-          predittivo è {statusWordIt(engine).toLowerCase()}. Il cervello è{" "}
+          {honestyLayersIt({
+            webOnline: strip.webApp === "ONLINE",
+            runtimeState: rt,
+            mirrorStale,
+            mirrorMissing: !mirrored && !storePresent,
+          })}
+          . Il motore predittivo è {statusWordIt(engine).toLowerCase()}. Il cervello è{" "}
           {statusWordIt(strip.brain).toLowerCase()}.
         </p>
         <div className="flex flex-wrap gap-2">
