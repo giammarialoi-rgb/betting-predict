@@ -41,7 +41,7 @@ export function AnalyzedClient({
       <div className="bm-analyzed-head">
         <div>
           <h1>Analizzati</h1>
-          <p>Percentuali dalle partite già giocate. Il favorito 1X2 è in verde.</p>
+          <p>Dossier reali del pipeline (Forte) e, se presenti, frequenze light da storico. Niente probabilità inventate.</p>
         </div>
         <RefreshEventsButton
           hideStatus
@@ -68,7 +68,7 @@ export function AnalyzedClient({
           title="Nessuna analisi"
           reason={
             note ??
-            "Premi «Aggiorna eventi» per calcolare le percentuali dalle partite già giocate."
+            "Nessun analysis_dossier. Esegui pnpm analyze:event."
           }
         />
       )}

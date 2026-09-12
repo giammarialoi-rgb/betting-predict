@@ -13,7 +13,7 @@ export async function GET() {
       real_money: false as const,
       note_it:
         events.length === 0
-          ? "Premi «Aggiorna eventi» per calcolare le percentuali dalle partite già giocate."
+          ? "Nessun analysis_dossier in store o specchio. Esegui pnpm analyze:event. Niente di inventato."
           : undefined,
     });
   } catch (e) {

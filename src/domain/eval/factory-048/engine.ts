@@ -85,6 +85,8 @@ export type EngineResult048 = {
 export function runDecisionEngine048(input: {
   store: Store044;
   nowIso: string;
+  /** When set, only these event ids are decided (vertical slice). */
+  eventIds?: string[];
 }): EngineResult048 {
   const root = input.store.root;
   const existingDec = loadDecisionIds(root);
@@ -112,7 +114,9 @@ export function runDecisionEngine048(input: {
     }
   }
 
+  const allow = input.eventIds?.length ? new Set(input.eventIds) : null;
   for (const ev of input.store.events) {
+    if (allow && !allow.has(ev.event_id)) continue;
     const p = latestPred.get(ev.event_id);
     if (!p) continue;
     const dispersion = estimateDispersion(input.store, ev.event_id);

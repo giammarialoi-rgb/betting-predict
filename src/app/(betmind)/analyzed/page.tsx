@@ -10,7 +10,7 @@ export default async function AnalyzedPage() {
       initialEvents={events}
       initialNote={
         events.length === 0
-          ? "Premi «Aggiorna eventi» per calcolare le percentuali dalle partite già giocate."
+          ? "Nessun analysis_dossier. Esegui pnpm analyze:event su una partita futura. Light storico è etichettato a parte."
           : null
       }
     />

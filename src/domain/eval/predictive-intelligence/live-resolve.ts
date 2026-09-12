@@ -5,7 +5,11 @@
 import { FOOTBALL_DATA_CO_UK_TEAM_ALIASES } from "@/providers/football-data-co-uk/team-aliases";
 import type { PiMatchRow } from "@/domain/eval/predictive-intelligence/types";
 import type { PiDivision } from "@/domain/eval/predictive-intelligence/config";
-import { identitySlug, resolveCompetitionMatrix } from "@/domain/eval/data-intelligence/research/identity-normalize";
+import {
+  identityKey,
+  identitySlug,
+  resolveCompetitionMatrix,
+} from "@/domain/eval/data-intelligence/research/identity-normalize";
 
 /** Odds API / Lab B competition keys → football-data.co.uk division codes. */
 const COMPETITION_TO_DIVISION: Record<string, PiDivision> = {
@@ -25,6 +29,9 @@ const COMPETITION_TO_DIVISION: Record<string, PiDivision> = {
   "la liga": "SP1",
   soccer_germany_bundesliga: "D1",
   bundesliga: "D1",
+  "1. bundesliga": "D1",
+  "1. fußball-bundesliga": "D1",
+  "1. fussball-bundesliga": "D1",
   d1: "D1",
   soccer_france_ligue_one: "F1",
   ligue_1: "F1",
@@ -175,6 +182,31 @@ export function mapCompetitionToPiDivision(competition?: string | null): PiDivis
  * Resolve Odds/live team display name to PI home_team_id / away_team_id.
  * Prefers alias table, then exact id presence in matches, then slug equality.
  */
+function datasetTeamId(
+  matches: readonly PiMatchRow[],
+  needles: string[],
+): string | null {
+  const want = new Set(
+    needles
+      .filter(Boolean)
+      .map((n) => n.toLowerCase())
+      .flatMap((n) => (n.startsWith("raw:") ? [n, n.slice(4)] : [n, `raw:${n}`])),
+  );
+  for (const m of matches) {
+    for (const [id, name] of [
+      [m.home_team_id, m.home_team],
+      [m.away_team_id, m.away_team],
+    ] as const) {
+      const idLc = id.toLowerCase();
+      const stripped = idLc.startsWith("raw:") ? idLc.slice(4) : idLc;
+      if (want.has(idLc) || want.has(stripped) || want.has(name.toLowerCase())) {
+        return id;
+      }
+    }
+  }
+  return null;
+}
+
 export function resolveLiveTeamId(
   rawName: string | null | undefined,
   matches: readonly PiMatchRow[],
@@ -185,32 +217,18 @@ export function resolveLiveTeamId(
   const lc = raw.toLowerCase();
   const slug = slugify(raw);
   const ident = identitySlug(raw);
-
   const fromAlias = ALIAS_LC.get(lc) ?? ALIAS_LC.get(slug) ?? (ident ? ALIAS_LC.get(ident) : undefined);
-  if (fromAlias) {
-    const present = matches.some(
-      (m) => m.home_team_id === fromAlias || m.away_team_id === fromAlias,
-    );
-    if (present) return { team_id: fromAlias, matched: true, method: "alias" };
-    // Alias known even if not in current division slice — still use canonical id
-    return { team_id: fromAlias, matched: true, method: "alias_unverified" };
-  }
 
-  // Exact team_id hit — identity slug first, then display slug. No substring.
-  for (const m of matches) {
-    if (ident && (m.home_team_id === ident || m.away_team_id === ident)) {
-      return { team_id: ident, matched: true, method: "identity_slug" };
-    }
-    if (m.home_team_id === slug || m.away_team_id === slug) {
-      return { team_id: slug, matched: true, method: "slug_id" };
-    }
-    if (m.home_team.toLowerCase() === lc || m.away_team.toLowerCase() === lc) {
-      return {
-        team_id: m.home_team.toLowerCase() === lc ? m.home_team_id : m.away_team_id,
-        matched: true,
-        method: "exact_name",
-      };
-    }
+  const hit = datasetTeamId(matches, [fromAlias ?? "", ident, slug, lc, identityKey(raw)]);
+  if (hit) {
+    return {
+      team_id: hit,
+      matched: true,
+      method: fromAlias ? "alias_dataset" : "dataset_id",
+    };
+  }
+  if (fromAlias) {
+    return { team_id: fromAlias, matched: true, method: "alias_unverified" };
   }
 
   return { team_id: `live:${slug || lc}`, matched: false, method: "unresolved" };
