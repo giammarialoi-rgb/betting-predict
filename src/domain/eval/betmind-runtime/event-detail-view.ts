@@ -35,6 +35,18 @@ export type DossierState =
   | "board_only"
   | "not_found";
 
+export type EventLiveView = {
+  status: string;
+  home_goals: number | null;
+  away_goals: number | null;
+  minute: string | null;
+  period: number | null;
+  source: string;
+  source_status: string | null;
+  observed_at: string;
+  finished: boolean;
+};
+
 export type EventDetailApiJson = {
   error?: string;
   reason?: string;
@@ -46,6 +58,8 @@ export type EventDetailApiJson = {
   event?: unknown;
   dossier_state?: DossierState;
   research_state?: string | null;
+  live?: EventLiveView | null;
+  settlement?: unknown;
 };
 
 export type ClassifiedEventDetail =
@@ -144,6 +158,31 @@ export function isDossierNotMirroredWithBoard(json: EventDetailApiJson): boolean
  */
 function hasRenderableDossier(json: EventDetailApiJson): boolean {
   return json.dossier != null && typeof json.dossier === "object";
+}
+
+export function liveViewFromRow(row: {
+  status?: string;
+  home_goals?: number | null;
+  away_goals?: number | null;
+  minute?: string | null;
+  period?: number | null;
+  source?: string;
+  source_status?: string | null;
+  observed_at?: string;
+  finished?: boolean;
+} | null | undefined): EventLiveView | null {
+  if (!row) return null;
+  return {
+    status: String(row.status ?? "UNKNOWN"),
+    home_goals: typeof row.home_goals === "number" ? row.home_goals : null,
+    away_goals: typeof row.away_goals === "number" ? row.away_goals : null,
+    minute: row.minute ?? null,
+    period: typeof row.period === "number" ? row.period : null,
+    source: String(row.source ?? "unknown"),
+    source_status: row.source_status ?? null,
+    observed_at: String(row.observed_at ?? ""),
+    finished: Boolean(row.finished),
+  };
 }
 
 export function classifyEventDetailResponse(

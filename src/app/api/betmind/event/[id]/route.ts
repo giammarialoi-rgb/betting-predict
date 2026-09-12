@@ -11,11 +11,19 @@ import {
 import {
   EVENT_DETAIL_BOARD_ONLY_NOTICE_IT,
   boardSummaryFromBoard,
+  liveViewFromRow,
 } from "@/domain/eval/betmind-runtime/event-detail-view";
 import { loadEventAnalyses } from "@/domain/eval/light-analysis/list";
 import type { LightAnalysis } from "@/domain/eval/light-analysis/types";
+import {
+  findDossierInRemoteMirror,
+  findLearningInRemoteMirror,
+  findLiveInRemoteMirror,
+  findSettlementInRemoteMirror,
+  readRemoteMirror,
+} from "@/domain/eval/betmind-runtime/remote-mirror";
+import { getStorage } from "@/domain/storage";
 import { loadResearchQueue } from "@/domain/eval/data-intelligence/research/queue";
-import { findDossierInRemoteMirror, readRemoteMirror } from "@/domain/eval/betmind-runtime/remote-mirror";
 import type { DossierState } from "@/domain/eval/betmind-runtime/event-detail-view";
 import {
   EVENT_DETAIL_LOCAL_ONLY_NOTICE_IT,
@@ -133,12 +141,35 @@ export async function GET(_req: Request, ctx: { params: Promise<{ id: string }> 
   const lightBundle = await loadEventAnalyses(id);
 
   if (!storePresent) {
+    const art = await readRemoteMirror();
     const remote = await loadDossierNeon(id);
+    const live = liveViewFromRow(findLiveInRemoteMirror(art, id));
+    const remoteSettlement = findSettlementInRemoteMirror(art, id);
+    const remoteLearning = findLearningInRemoteMirror(art, id);
     if (remote) {
+      const shaped = legacyShapeFromDossier(remote);
+      const noPred = remote.independent_model.probability == null;
       return NextResponse.json({
-        ...legacyShapeFromDossier(remote),
+        ...shaped,
+        event: {
+          ...shaped.event,
+          status: live?.status ?? shaped.event.status,
+        },
         dossier: remote,
         dossier_state: "ok" as const,
+        live,
+        settlement: remoteSettlement
+          ? {
+              result: String(remoteSettlement.result ?? "N/A"),
+              outcome: String(remoteSettlement.outcome ?? "N/A"),
+              settled_at: String(remoteSettlement.settled_at ?? "N/A"),
+              market: String(remoteSettlement.market ?? "N/A"),
+              selection: (remoteSettlement.selection as string | null) ?? null,
+            }
+          : shaped.settlement,
+        learning_case: remoteLearning,
+        finished: Boolean(live?.finished || remoteSettlement),
+        prediction_kind: noPred ? "NO_PREDICTION" : "PREDICTION",
         light_analysis: lightBundle.light,
         analysis_modes: analysisModesPayload(lightBundle.light, Boolean(remote.independent_model.probability)),
         mirror_source: "remote_dossier",
@@ -180,7 +211,14 @@ export async function GET(_req: Request, ctx: { params: Promise<{ id: string }> 
         board_summary,
         dossier: null,
         predictions: [],
-        settlement: null,
+        live,
+        settlement: remoteSettlement
+          ? {
+              result: String(remoteSettlement.result ?? "N/A"),
+              outcome: String(remoteSettlement.outcome ?? "N/A"),
+              settled_at: String(remoteSettlement.settled_at ?? "N/A"),
+            }
+          : null,
         light_analysis: null,
         mirror_source: "remote_board",
         api_calls_ui: 0 as const,
@@ -278,10 +316,19 @@ export async function GET(_req: Request, ctx: { params: Promise<{ id: string }> 
   const edge_status = edge == null ? "UNKNOWN" : "KNOWN";
 
   const learn0 = learning[0] ?? null;
+  let live = liveViewFromRow(getStorage(root).loadLiveState(id));
+  if (!live) {
+    try {
+      live = liveViewFromRow(findLiveInRemoteMirror(await readRemoteMirror(), id));
+    } catch {
+      live = null;
+    }
+  }
   const finished =
     Boolean(settlement) ||
     Boolean(learn0?.actual) ||
-    /FT|FINAL|ENDED|FINISHED/i.test(String(event.status ?? ""));
+    Boolean(live?.finished) ||
+    /FT|FINAL|ENDED|FINISHED/i.test(String(event.status ?? live?.status ?? ""));
 
   return NextResponse.json({
     event: {
@@ -292,8 +339,9 @@ export async function GET(_req: Request, ctx: { params: Promise<{ id: string }> 
       away_or_b: String(event.away_or_b ?? "N/A"),
       kickoff_utc: (event.kickoff_utc as string | null) ?? null,
       semantic_level: String(event.semantic_level ?? "N/A"),
-      status: String(event.status ?? "N/A"),
+      status: String(live?.status ?? event.status ?? "N/A"),
     },
+    live,
     predictions: [
       {
         selection:
@@ -423,6 +471,10 @@ export async function GET(_req: Request, ctx: { params: Promise<{ id: string }> 
       Boolean(dossier?.independent_model.probability) || lightBundle.strong_available,
     ),
     finished,
+    prediction_kind:
+      pred?.model_version === "NO_PREDICTION" || probability_model == null
+        ? "NO_PREDICTION"
+        : "PREDICTION",
     mirror_source: "local_disk",
     api_calls_ui: 0 as const,
     real_money: false as const,

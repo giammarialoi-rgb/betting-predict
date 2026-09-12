@@ -9,6 +9,7 @@ import { permanentRoot044 } from "@/domain/eval/permanent-044/config";
 import { NEON_IN_USE, STORAGE_BACKEND, assertNeonBanned } from "@/domain/storage/neon-ban";
 import type {
   BoardEventMirrorRow,
+  LiveStateMirrorRow,
   RuntimeMirrorRecord,
   StorageProvider,
 } from "@/domain/storage/types";
@@ -209,6 +210,26 @@ export class FilesystemStorageProvider implements StorageProvider {
 
   loadLightHistory(): unknown | null {
     return readJsonFile(join(this.mirrorDir(), "light-history.json"));
+  }
+
+  upsertLiveState(row: LiveStateMirrorRow): void {
+    rewriteLatestById(join(this.mirrorDir(), "live-states.jsonl"), row);
+  }
+
+  loadLiveState(eventId: string): LiveStateMirrorRow | null {
+    return this.listLiveStates().find((r) => r.event_id === eventId) ?? null;
+  }
+
+  listLiveStates(): LiveStateMirrorRow[] {
+    const by = new Map<string, LiveStateMirrorRow>();
+    for (const row of readJsonlFile<LiveStateMirrorRow>(join(this.mirrorDir(), "live-states.jsonl"))) {
+      if (!row?.event_id) continue;
+      const prev = by.get(row.event_id);
+      if (!prev || String(row.published_at ?? "") >= String(prev.published_at ?? "")) {
+        by.set(row.event_id, row);
+      }
+    }
+    return [...by.values()];
   }
 }
 

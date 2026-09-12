@@ -1,12 +1,11 @@
-# BetMind FINAL E2E Report — Golden Event
+# BetMind FINAL E2E Report — Golden Event (live path)
 
-**Run at:** 2026-09-12T13:43:00.118Z  
-**Branch:** `cursor/final-e2e-golden-event-8b24` (from `main` @ `b3a0cbd`, after PR #20)  
-**Command:** `pnpm betmind:e2e`  
-**Artifact:** `artifacts/golden-e2e/e2e-report.json`  
-**Neon:** `NEON NON UTILIZZATO` (`neon_in_use=false`). No `DATABASE_URL`. StorageProvider = filesystem JSONL + in-process remote mirror.
+**Updated:** 2026-09-12 (live ingest wired; FT not invented)  
+**Branch:** `cursor/betmind-live-settle-learn-55f4` (from `main` @ `2f06885`, after PR #21 + #22)  
+**Commands:** `pnpm betmind:e2e` · `pnpm betmind:e2e:live`  
+**Neon:** `NEON NON UTILIZZATO`. No `DATABASE_URL`. Lab B filesystem JSONL is SoT; Vercel reads Blob `betmind/runtime-mirror.json`.
 
-This report uses only numbers produced by that run. Nothing below is padded or guessed.
+This report uses only numbers produced by the pre-match Golden Event run plus a real ESPN scoreboard read during this close-out. Nothing below is padded or guessed.
 
 ---
 
@@ -20,14 +19,33 @@ This report uses only numbers produced by that run. Nothing below is padded or g
 | Competition | `eng.1` (ESPN Premier League scoreboard) |
 | Kickoff | `2026-09-12T14:00:00.000Z` |
 | Sport | soccer |
-| Source | espn |
-| Status at run | UPCOMING |
+| Source (identity) | espn |
+| Pre-match status | UPCOMING (PR #21 run at 13:43Z) |
+| Live source at close-out | ESPN `site.api` scoreboard — **WORKING** HTTP 200 |
 
-Discovery scanned OpenLigaDB + ESPN + TheSportsDB and found **79** identified candidates. The picker took the earliest upcoming match with home/away/kickoff. Identity was not invented.
+ESPN event id `401879285` (`Brentford at AFC Bournemouth`). Honest live probes (no invented FT):
+
+- Lab PC publish (folded in): **LIVE 0–1**, ~39', `STATUS_FIRST_HALF`, source `espn_scoreboard`. Blob already had `dossiers=1` after merge. Payload fields: `observatory.next_events.status=LIVE` + `payload.live_snapshots` (1 row). Event API stayed `dossier_state=ok` / NO_PREDICTION.
+- Agent `pnpm betmind:e2e:live` @ 2026-09-12T14:49:43.137Z: **LIVE 1–1**, minute `45'+4'`, ESPN HTTP 200, `parsed=16` `matched=1`.
+
+Vercel snapshot now reads **both** artifact `live_states` and Lab `payload.live_snapshots`, overlays `/live` board rows, and treats a recent live snapshot as freshness so health is not falsely OFFLINE. `completed=false` — no FT invented.
 
 ---
 
-## Pipeline counts (this event)
+## What shipped in this close-out
+
+1. **Live** — ESPN parser now extracts published score, clock, period, and status. `ingestLiveStates` matches board identity (exact/alias pair, no guessing), writes `mirror/live-states.jsonl` + `updates.jsonl`, overlays `status` / score / minute on board rows so `/live` can list in-play matches.
+2. **Settlement** — `settleFromLiveState` runs **only** when ESPN (or another adapter) publishes `completed/post` **and** both scores. NO_PREDICTION still writes a settlement (`selection=null`, `outcome=UNSETTLED`) plus a learning record. No invented FT.
+3. **Conclusi / Learning** — remote artifact slices `settlements` + `learning_cases` are merge-safe. Snapshot on Vercel reads payload arrays, then those slices. `/conclusi` and `/learn` therefore show Blob-backed rows, not only local FS.
+4. **Event detail (iPhone)** — SSR and `/api/betmind/event/:id` load the **dossier from Blob** (`dossier_state=ok`) when present. They also attach live / settlement. A present dossier is never classified as red `dossier_not_mirrored`. Honest **NO PREDICTION** is rendered as its own card.
+5. **Publish safety** — `runtime:publish` / ingest merge **dossiers + live_states + settlements + learning_cases**. Empty incoming arrays do not wipe remote rows. Unreadable existing artifact → fail closed (same as PR #22).
+6. **E2E / Lab refresh** — `pnpm betmind:e2e` probes ESPN live after pre-match. `pnpm betmind:e2e:live` is the Golden Event live→settle→learn command. `pnpm betmind:live` (and `betmind:live:loop`) refresh in-play board events from ESPN and merge-publish without wiping dossiers. Lab temp `src/scripts/_live_golden_espn.ts` is kept as an alias (`pnpm betmind:live:golden`).
+
+---
+
+## Pipeline counts (pre-match run — unchanged, honest)
+
+From `artifacts/golden-e2e/e2e-report.json` @ 2026-09-12T13:43:00.118Z:
 
 | Step | Count | Evidence |
 |---|---:|---|
@@ -37,165 +55,89 @@ Discovery scanned OpenLigaDB + ESPN + TheSportsDB and found **79** identified ca
 | Sources WORKING | 4 | OpenLigaDB, ESPN, TheSportsDB, Open-Meteo |
 | Observations persisted | 4 | open-meteo CONTEXT (3) + sky-sports CONTEXT (1) |
 | Dossiers local | 1 | `mirror/dossiers/de3b08b74a8249c647ee0e42.json` |
-| Dossiers remote (verified readback) | 1 | in-process memory artifact (`repairMirror`) |
-| Brain cycles | 1 | focused single-event path |
 | PREDICTION | 0 | gates failed — not bypassed |
 | NO PREDICTION | 1 | `failed_gates` recorded |
-| Live updates | 0 | no in-play feed for this match at run time |
-| Settlements | 0 | event not finished |
-| Learning records | 0 | not settled |
-
-Research batch: `fetches=2`, `observations_created=4`, `data_yield=0.211`.  
-Dossier: `features=0` (no independent feature snapshot), `research_rows=19`, `data_quality_score=0.305`.
+| Live updates (that run) | 0 | match was UPCOMING |
+| Settlements (that run) | 0 | event not finished |
+| Learning records (that run) | 0 | not settled |
 
 ---
 
-## Checklist (honest)
+## Live / settlement / learning (this close-out)
 
-- [x] Neon excluded
-- [x] One real event discovered and persisted
-- [x] Research job created and executed
-- [x] Real sources queried (existing adapters only)
-- [x] Observations persisted (CONTEXT only; none entered independent MODEL)
-- [x] `analysis_dossier` generated, validated, stored locally
-- [x] Remote mirror protocol: persist → verify local → write remote → read back
-- [x] Board row written separately (not used as a dossier)
-- [x] Event-detail states: dossier OK (local + remote protocol); not faked from board
-- [x] Brain path executed
-- [x] Gates applied
-- [x] **NO PREDICTION** — failed gates, no invented HDA
-- [x] Live: unavailable (`no_in_play_feed`)
-- [x] Settlement: unavailable (`event_not_finished`)
-- [x] Learning: unavailable (`not_settled`)
-- [x] `pnpm betmind:e2e` exits 0 with this checklist
+| Step | Status | Evidence |
+|---|---|---|
+| Live ingest path | **wired + proven on real ESPN 200** | `artifacts/golden-e2e/e2e-live-report.json`: BOU 1–1 BRE, `45'+4'`, `status=LIVE`, `http=200` |
+| `/live` | **ready** | Board rows get `status=LIVE` + score + minute from overlay. Filter already matches `/live\|in_play\|playing/i` |
+| Settlement | **ready, deferred** | Match was **not FT** at probe. Do not invent 90' score. Re-run `pnpm betmind:e2e:live` after ESPN `STATUS_FINAL` |
+| `/conclusi` | **ready** | Reads `recent_settlements` or artifact `settlements` from Blob |
+| `/learning` (`/learn`) | **ready** | Reads `learning_cases` slice the same way |
+| Event detail | **ready** | Dossier from Blob + NO PREDICTION + live section; board-only only if dossier truly missing |
 
-Integrity tests (34/34): dossier-mirror, remote-mirror, event-detail-view, event-detail-remote-board, storage, golden-e2e-integrity.
+### SETTLE DEFERRED
 
----
+```
+pnpm betmind:e2e:live -- --event de3b08b74a8249c647ee0e42
+```
 
-## Source audit (existing adapters only)
+When ESPN publishes `completed=true` and both scores, that command writes settlement + learning and merge-publishes them. Until then, settlement count stays 0 for an honest reason: **event_not_finished**.
 
-Capability matrix is **extractable-only**. SofaScore / FBref / WhoScored were **not probed** and remain BLOCKED (WAF). No revive.
-
-| source_id | status | http | extractable | key | probed |
-|---|---|---:|---|---|---|
-| openligadb | WORKING | 200 | matchID, team1, team2, matchDateTimeUTC | NOT_REQUIRED | yes |
-| espn | WORKING | 200 | events, competitions | NOT_REQUIRED | yes |
-| thesportsdb | WORKING | 200 | idEvent, strHomeTeam, strAwayTeam | NOT_REQUIRED | yes |
-| open-meteo | WORKING | 200 | current_weather | NOT_REQUIRED | yes |
-| clubelo | FAILED | 502 | — | NOT_REQUIRED | yes |
-| sofascore | BLOCKED | 403 | — | NOT_REQUIRED | no |
-| fbref | BLOCKED | 403 | — | NOT_REQUIRED | no |
-| whoscored | BLOCKED | 403 | — | NOT_REQUIRED | no |
-| football-data-co-uk | PARTIAL | — | — | NOT_REQUIRED | no (CACHE_ONLY) |
-| club-football-match-data | PARTIAL | — | — | NOT_REQUIRED | no (CACHE_ONLY) |
-| api-sports / the-odds-api | not in this probe set | — | — | KEY_MISSING on research (`API_KEY_NOT_CONFIGURED`) | — |
-| remaining catalogue (RSS, Understat, OpenFootball, StatsBomb, …) | PARTIAL | — | — | NOT_REQUIRED | catalogued, not live-probed this cycle |
-
-Research rows for the Golden Event recorded per-source UNAVAILABLE / NO_DATA / NO_EVENT honestly (e.g. RSS 200 but neither team pair in the item; ClubElo 502; Understat slug not guessed).
+Live E2E on this agent VM used `remote_backend=memory` because `BLOB_READ_WRITE_TOKEN` is `KEY_MISSING` here. Lab PC must run the same command (or `runtime:publish`) so Vercel Blob gets the live slice. The merge protocol is proven in tests.
 
 ---
 
-## Observations (all CONTEXT)
+## Remote mirror slices (merge-safe)
 
-| feature_key | value | source | status | available_at |
-|---|---|---|---|---|
-| temp_c | 19.2 | open-meteo | CONTEXT | 2026-09-12T14:00:00.000Z |
-| precip_mm | 0 | open-meteo | CONTEXT | 2026-09-12T14:00:00.000Z |
-| wind_kmh | 24.1 | open-meteo | CONTEXT | 2026-09-12T14:00:00.000Z |
-| news_other | Schuster makes Brentford PL debut at unchanged Bournemouth LIVE! | sky-sports | CONTEXT | Sat, 12 Sep 2026 13:20:00 BST (as returned by RSS) |
+| Slice | Wipe-safe | Reader |
+|---|---|---|
+| `dossiers` | yes (PR #22 + this PR) | `/api/betmind/event/:id` |
+| `live_states` | yes | `/live`, event detail, snapshot overlay |
+| `payload.live_snapshots` | yes (merged with `live_states`) | Lab PC already published this field — Vercel reads it |
+| `settlements` | yes | `/conclusi`, event detail |
+| `learning_cases` | yes | `/learn`, event detail |
+| `board_events` | replaced by latest board (intended) | `/events` |
 
-News stays `CONTEXT_ONLY`. It did not become a probability or a supporting causal claim.
-
----
-
-## Dossier vs board
-
-- **Board** has lite identity: Bournemouth vs Brentford, `eng.1`, kickoff, bucket `ANALYZED`.
-- **analysis_dossier** has event identity + 19 research rows with lineage + data quality 0.305 + independent_model.probability = `null` + explicit `NO DATA AVAILABLE` note.
-- Validator rejected board-shaped objects as dossiers (tests).
-- Event detail can show this dossier; it does not invent HDA from the board.
+Board-only heartbeat with empty arrays **must not** drop dossiers, live rows, or settled rows.
 
 ---
 
-## Prediction / gates
+## UI routes on Blob-backed Vercel
 
-`predictIndependentForEvent` did not produce an independent model (feature coverage unavailable / INSUFFICIENT_DATA).
-
-Failed gates (not bypassed):
-
-1. `independent_model`
-2. `predict_ok`
-3. `feature_coverage`
-4. `no_failed_research_as_model`
-
-Outcome: **NO PREDICTION**. Journal + `predictions.jsonl` row with `model_version=NO_PREDICTION`, `probability_model=null`, `reason_codes` listing the failed gates. No Poisson/DC/NegBin/Logistic/GBM auto-promote.
-
----
-
-## Live / settlement / learning
-
-The Golden Event was **upcoming** at run time (kickoff 14:00Z). There was no real in-play feed and no finished score, so:
-
-- live = unavailable
-- settlement = unavailable
-- `/conclusi` has nothing new from this event
-- learning_record = not written (no single-match weight hack)
-
-That is the correct firewall: a historical or live result was not invented to “complete” the path.
-
----
-
-## Remote mirror
-
-| Item | Result |
+| Route | Expected when Blob is published |
 |---|---|
-| Local persist + verify | YES |
-| `BLOB_READ_WRITE_TOKEN` | **KEY_MISSING** |
-| Remote backend used | `memory` (in-process), so the write→read protocol could be proven |
-| Vercel Blob write | **not performed** |
-| `repairMirror` | YES on the memory artifact (local YES, remote NO → write → readback YES) |
-
-### ERROR / CAUSE / EVIDENCE / REMEDIATION
-
-**ERROR:** Vercel Blob dossier publish not executed in this environment.  
-**CAUSE:** `BLOB_READ_WRITE_TOKEN` KEY_MISSING (and no OIDC + `BLOB_STORE_ID`).  
-**EVIDENCE:** e2e report `blob_credentials=KEY_MISSING`, `remote_backend=memory`; ingest without override still returns `blob_token_missing` / 503 (test).  
-**REMEDIATION:** Set Blob credentials + `BETMIND_RUNTIME_INGEST_URL` + publish secret on the PC publisher; `publishRuntimeStatus` now includes local dossiers in the ingest body; board-only publish merges and does not wipe dossiers. Re-run `pnpm betmind:e2e` or `repairMirror(event_id)` after keys are present. Do not treat memory-protocol success as a production Blob write.
-
-**ERROR:** Independent PREDICTION not produced.  
-**CAUSE:** Feature coverage / independent model gates failed; PI priors + event features insufficient.  
-**EVIDENCE:** `failed_gates` list; dossier `features=[]`; `independent_model.probability=null`.  
-**REMEDIATION:** Acquire pre-kickoff eligible features (ClubElo CSV, FD archive, mapped Understat) with real `available_at`. Do not invent xG or promote a model without OOS evidence.
-
-**ERROR:** Live / settlement / learning not written.  
-**CAUSE:** Event not finished; no in-play snapshot from the source.  
-**EVIDENCE:** status `UPCOMING`, kickoff `2026-09-12T14:00:00.000Z`.  
-**REMEDIATION:** Re-run after FT with the same `event_id` when ESPN/OpenLigaDB publish a real score. Do not synthesize live or settle from news copy.
+| `/events/de3b08b74a8249c647ee0e42` | Dossier + independent **NO PREDICTION** + live score/minute if mirrored. Not a red-only `dossier_not_mirrored` page when the dossier is on Blob |
+| `/live` | Golden Event listed as in corso when live overlay is present |
+| `/conclusi` | Empty until real FT settlement is published |
+| `/learn` | Empty until learning_record after FT |
+| `/events` | Board identity (not a synthesized dossier) |
 
 ---
 
-## Home health (distinct layers)
+## What remains blocked / deferred
 
-Control Center now reports six separate layers (not one “online” blob):
+| Item | Why | Not a bypass |
+|---|---|---|
+| Independent PREDICTION | Failed gates (`independent_model`, `predict_ok`, `feature_coverage`, `no_failed_research_as_model`) | Do not lower gates |
+| Vercel Blob write in this cloud environment | `BLOB_READ_WRITE_TOKEN` often `KEY_MISSING` here | Protocol proven in-memory; PC publisher must POST ingest |
+| SofaScore / FBref / WhoScored | HTTP 403 WAF | Not probed, not revived |
+| Settlement / Conclusi row for Golden Event | Match still in play (1–1, 45'+4') — no FT | Re-run live E2E after FT |
+| Neon | Banned | Filesystem + Blob only |
 
-1. **App** — this Next.js process  
-2. **Runtime** — PC heartbeat / remote mirror freshness  
-3. **Brain** — worker cycle state  
-4. **Sources** — adapter overlay (`/sources`)  
-5. **Research** — queue queued vs researched  
-6. **Dossier-mirror** — local count vs remote count vs `KEY_PRESENT`/`KEY_MISSING`
+---
 
-App online ≠ Runtime online ≠ Brain online ≠ dossier on Blob.
+## Integrity
+
+Tests added: ESPN live/FT parse, live ingest + overlay, NO_PREDICTION settlement, merge-safe remote slices, Vercel event-detail `dossier_state=ok` + live.
+
+Pre-match integrity from PR #21 still applies (34 tests + this file).
 
 ---
 
 ## What this does **not** claim
 
 - Not a demonstrated betting edge  
-- Not a Vercel Blob production write (token missing here)  
 - Not a model promotion  
-- Not a finished-match settlement  
-- Not thousands of events — **one** Golden Event, as specified  
+- Not an invented final score  
+- Not a production Blob write from this agent VM unless credentials are present  
 
-Next scale step is the same path on more events only after this `event_id` can settle from a real score.
+The complete **code path** is on main via this PR. The complete **data path** for settlement waits on a real ESPN FT for `de3b08b74a8249c647ee0e42`.

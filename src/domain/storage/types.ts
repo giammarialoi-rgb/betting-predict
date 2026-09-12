@@ -45,4 +45,26 @@ export type StorageProvider = {
 
   upsertLightHistory(blob: unknown): void;
   loadLightHistory(): unknown | null;
+
+  upsertLiveState(row: LiveStateMirrorRow): void;
+  loadLiveState(eventId: string): LiveStateMirrorRow | null;
+  listLiveStates(): LiveStateMirrorRow[];
+};
+
+/** In-play / FT snapshot persisted on Lab B and mirrored remotely. Never invented. */
+export type LiveStateMirrorRow = {
+  event_id: string;
+  published_at: string;
+  status: string;
+  home: string | null;
+  away: string | null;
+  home_goals: number | null;
+  away_goals: number | null;
+  minute: string | null;
+  period: number | null;
+  source: string;
+  source_status: string | null;
+  source_detail: string | null;
+  observed_at: string;
+  finished: boolean;
 };

@@ -10,8 +10,13 @@
  * DATABASE_URL is ignored.
  */
 import { timingSafeEqual } from "node:crypto";
-import type { BoardEventMirrorRow } from "@/domain/storage/types";
+import type { BoardEventMirrorRow, LiveStateMirrorRow } from "@/domain/storage/types";
 import { NEON_IN_USE } from "@/domain/storage/neon-ban";
+import {
+  collectLiveRows,
+  latestLiveTimestamp,
+  overlayLiveOnEvents,
+} from "@/domain/eval/betmind-runtime/live-state";
 
 /** Structural payload — avoid importing remote-status (cycle). */
 export type RuntimeIngestPayload = {
@@ -36,6 +41,19 @@ export type RemoteDossierMirrorRow = {
   dossier_version: string | null;
 };
 
+export type RemoteKeyedSliceRow = {
+  event_id: string;
+  published_at: string;
+  payload: Record<string, unknown>;
+};
+
+export type RemoteMirrorSlices = {
+  dossiers?: RemoteDossierMirrorRow[];
+  live_states?: LiveStateMirrorRow[];
+  settlements?: RemoteKeyedSliceRow[];
+  learning_cases?: RemoteKeyedSliceRow[];
+};
+
 export type RemoteMirrorArtifact = {
   schema: typeof REMOTE_MIRROR_SCHEMA;
   published_at: string;
@@ -43,6 +61,9 @@ export type RemoteMirrorArtifact = {
   board_events: BoardEventMirrorRow[];
   /** Optional — older artifacts omit this. Board publish must not wipe existing rows. */
   dossiers?: RemoteDossierMirrorRow[];
+  live_states?: LiveStateMirrorRow[];
+  settlements?: RemoteKeyedSliceRow[];
+  learning_cases?: RemoteKeyedSliceRow[];
   neon_in_use: false;
   backend: RemoteMirrorBackend;
 };
@@ -199,6 +220,48 @@ export function mergeDossierRows(
   return [...by.values()];
 }
 
+export function mergeByEventId<T extends { event_id: string; published_at?: string }>(
+  existing: T[] | undefined,
+  incoming: T[] | undefined,
+): T[] {
+  const by = new Map<string, T>();
+  for (const row of existing ?? []) {
+    if (!row?.event_id) continue;
+    by.set(row.event_id, row);
+  }
+  for (const row of incoming ?? []) {
+    if (!row?.event_id) continue;
+    const prev = by.get(row.event_id);
+    if (!prev || String(row.published_at ?? "") >= String(prev.published_at ?? "")) {
+      by.set(row.event_id, row);
+    }
+  }
+  return [...by.values()];
+}
+
+function mergePayloadArrayByEventId(existing: unknown, incoming: unknown): unknown[] {
+  const asRows = (v: unknown): Array<Record<string, unknown>> =>
+    Array.isArray(v) ? v.filter((r): r is Record<string, unknown> => Boolean(r && typeof r === "object")) : [];
+  const ex = asRows(existing);
+  const inc = asRows(incoming);
+  if (!inc.length) return ex;
+  if (!ex.length) return inc;
+  const by = new Map<string, Record<string, unknown>>();
+  for (const row of ex) {
+    const id = String(row.event_id ?? "");
+    if (id) by.set(id, row);
+  }
+  for (const row of inc) {
+    const id = String(row.event_id ?? "");
+    if (!id) continue;
+    const prev = by.get(id);
+    if (!prev || String(row.published_at ?? row.settled_at ?? "") >= String(prev.published_at ?? prev.settled_at ?? "")) {
+      by.set(id, row);
+    }
+  }
+  return [...by.values()];
+}
+
 export function findDossierInRemoteMirror(
   remote: RemoteMirrorArtifact | null,
   eventId: string,
@@ -212,19 +275,52 @@ export function findDossierInRemoteMirror(
   return null;
 }
 
+export function liveRowsFromRemoteArtifact(
+  remote: Pick<RemoteMirrorArtifact, "live_states" | "payload"> | null | undefined,
+): LiveStateMirrorRow[] {
+  const payload = (remote?.payload ?? {}) as RuntimeIngestPayload;
+  const next = payload.observatory?.next_events;
+  const fromBoard = Array.isArray(next)
+    ? next.filter((row) => {
+        if (!row || typeof row !== "object") return false;
+        const rec = row as Record<string, unknown>;
+        return /live|ht|ft|in_play|playing|first_half|second_half/i.test(String(rec.status ?? ""));
+      })
+    : [];
+  return collectLiveRows(remote?.live_states, payload.live_states, payload.live_snapshots, fromBoard);
+}
+
 export function buildRemoteMirrorArtifact(
   payload: RuntimeIngestPayload,
   boardEvents?: BoardEventMirrorRow[],
   backend: RemoteMirrorBackend = "vercel_blob",
   dossiers?: RemoteDossierMirrorRow[],
+  slices?: Omit<RemoteMirrorSlices, "dossiers">,
 ): RemoteMirrorArtifact {
+  const live = Array.isArray(slices?.live_states) ? slices!.live_states : [];
+  const observatory = payload.observatory;
+  const next = overlayLiveOnEvents(
+    (observatory?.next_events as unknown[] | undefined) ?? [],
+    live,
+  );
+  const mergedPayload: RuntimeIngestPayload = {
+    ...payload,
+    observatory: observatory
+      ? { ...observatory, next_events: next.length ? next : observatory.next_events }
+      : observatory,
+    // Lab PC already writes this field; keep it in lockstep with live_states.
+    live_snapshots: live,
+  };
   return {
     schema: REMOTE_MIRROR_SCHEMA,
     published_at: payload.published_at,
-    payload,
-    board_events: boardEvents?.length ? boardEvents : extractBoardEventsFromPayload(payload),
+    payload: mergedPayload,
+    board_events: boardEvents?.length ? boardEvents : extractBoardEventsFromPayload(mergedPayload),
     // Caller must pass mergeDossierRows(...) — never invent dossiers here.
     dossiers: Array.isArray(dossiers) ? dossiers : [],
+    live_states: live,
+    settlements: Array.isArray(slices?.settlements) ? slices!.settlements : [],
+    learning_cases: Array.isArray(slices?.learning_cases) ? slices!.learning_cases : [],
     neon_in_use: false,
     backend,
   };
@@ -281,6 +377,9 @@ function vercelBlobStore(): RemoteMirrorStore {
         backend: "vercel_blob",
         board_events: Array.isArray(parsed.board_events) ? parsed.board_events : [],
         dossiers: Array.isArray(parsed.dossiers) ? parsed.dossiers : [],
+        live_states: Array.isArray(parsed.live_states) ? parsed.live_states : [],
+        settlements: Array.isArray(parsed.settlements) ? parsed.settlements : [],
+        learning_cases: Array.isArray(parsed.learning_cases) ? parsed.learning_cases : [],
       };
     },
     async write(art) {
@@ -314,8 +413,16 @@ export async function writeRemoteMirror(
   payload: RuntimeIngestPayload,
   boardEvents?: BoardEventMirrorRow[],
   dossiers?: RemoteDossierMirrorRow[],
+  slices?: Omit<RemoteMirrorSlices, "dossiers">,
 ): Promise<
-  | { ok: true; backend: RemoteMirrorBackend; dossiers: number }
+  | {
+      ok: true;
+      backend: RemoteMirrorBackend;
+      dossiers: number;
+      live_states: number;
+      settlements: number;
+      learning_cases: number;
+    }
   | { ok: false; error: string }
 > {
   const store = getRemoteMirrorStore();
@@ -338,12 +445,58 @@ export async function writeRemoteMirror(
     if ((existing?.dossiers?.length ?? 0) > 0 && merged.length === 0) {
       return { ok: false, error: "dossier_merge_empty" };
     }
-    const art = buildRemoteMirrorArtifact(payload, boardEvents, store.kind, merged);
+    const existingPayload = (existing?.payload ?? {}) as RuntimeIngestPayload;
+    const incomingPayload = payload;
+    const existingLive = collectLiveRows(
+      existing?.live_states,
+      existingPayload.live_states,
+      existingPayload.live_snapshots,
+    );
+    const incomingLive = collectLiveRows(
+      slices?.live_states,
+      incomingPayload.live_states,
+      incomingPayload.live_snapshots,
+    );
+    const mergedLive = mergeByEventId(existingLive, incomingLive);
+    const mergedSettlements = mergeByEventId(existing?.settlements, slices?.settlements);
+    const mergedLearning = mergeByEventId(existing?.learning_cases, slices?.learning_cases);
+    if (existingLive.length > 0 && mergedLive.length === 0) {
+      return { ok: false, error: "live_merge_empty" };
+    }
+    if ((existing?.settlements?.length ?? 0) > 0 && mergedSettlements.length === 0) {
+      return { ok: false, error: "settlement_merge_empty" };
+    }
+    if ((existing?.learning_cases?.length ?? 0) > 0 && mergedLearning.length === 0) {
+      return { ok: false, error: "learning_merge_empty" };
+    }
+    const mergedPayload: RuntimeIngestPayload = {
+      ...payload,
+      recent_settlements: mergePayloadArrayByEventId(
+        existingPayload.recent_settlements,
+        payload.recent_settlements,
+      ),
+      learning_cases: mergePayloadArrayByEventId(
+        existingPayload.learning_cases,
+        payload.learning_cases,
+      ),
+    };
+    const art = buildRemoteMirrorArtifact(mergedPayload, boardEvents, store.kind, merged, {
+      live_states: mergedLive,
+      settlements: mergedSettlements,
+      learning_cases: mergedLearning,
+    });
     if (art.neon_in_use !== false || NEON_IN_USE) {
       return { ok: false, error: "neon_banned" };
     }
     await store.write(art);
-    return { ok: true, backend: store.kind, dossiers: merged.length };
+    return {
+      ok: true,
+      backend: store.kind,
+      dossiers: merged.length,
+      live_states: mergedLive.length,
+      settlements: mergedSettlements.length,
+      learning_cases: mergedLearning.length,
+    };
   } catch (e) {
     return { ok: false, error: e instanceof Error ? e.message : String(e) };
   }
@@ -355,6 +508,9 @@ export function ingestRuntimeMirrorBody(body: unknown): {
   payload?: RuntimeIngestPayload;
   board_events?: BoardEventMirrorRow[];
   dossiers?: RemoteDossierMirrorRow[];
+  live_states?: LiveStateMirrorRow[];
+  settlements?: RemoteKeyedSliceRow[];
+  learning_cases?: RemoteKeyedSliceRow[];
   error?: string;
   error_it?: string;
 } {
@@ -370,6 +526,9 @@ export function ingestRuntimeMirrorBody(body: unknown): {
     payload?: RuntimeIngestPayload;
     board_events?: BoardEventMirrorRow[];
     dossiers?: RemoteDossierMirrorRow[];
+    live_states?: LiveStateMirrorRow[];
+    settlements?: RemoteKeyedSliceRow[];
+    learning_cases?: RemoteKeyedSliceRow[];
   };
   const payload = rec.payload;
   if (!payload || typeof payload !== "object" || !payload.published_at || !payload.components) {
@@ -386,7 +545,32 @@ export function ingestRuntimeMirrorBody(body: unknown): {
   const dossiers = Array.isArray(rec.dossiers)
     ? rec.dossiers.filter((row) => row?.event_id && isRealAnalysisDossier(row.dossier))
     : [];
-  return { ok: true, status: 200, payload, board_events: board, dossiers };
+  const live_states = collectLiveRows(
+    rec.live_states,
+    rec.payload && typeof rec.payload === "object"
+      ? (rec.payload as RuntimeIngestPayload).live_snapshots
+      : null,
+    rec.payload && typeof rec.payload === "object"
+      ? (rec.payload as RuntimeIngestPayload).live_states
+      : null,
+    (rec as { live_snapshots?: unknown }).live_snapshots,
+  );
+  const settlements = Array.isArray(rec.settlements)
+    ? rec.settlements.filter((row) => row?.event_id && row.payload)
+    : [];
+  const learning_cases = Array.isArray(rec.learning_cases)
+    ? rec.learning_cases.filter((row) => row?.event_id && row.payload)
+    : [];
+  return {
+    ok: true,
+    status: 200,
+    payload,
+    board_events: board,
+    dossiers,
+    live_states,
+    settlements,
+    learning_cases,
+  };
 }
 
 export async function acceptRuntimeIngest(body: unknown): Promise<{
@@ -395,6 +579,9 @@ export async function acceptRuntimeIngest(body: unknown): Promise<{
   published_at?: string;
   board?: number;
   dossiers?: number;
+  live_states?: number;
+  settlements?: number;
+  learning_cases?: number;
   backend?: RemoteMirrorBackend;
   neon_in_use: false;
   error?: string;
@@ -420,7 +607,11 @@ export async function acceptRuntimeIngest(body: unknown): Promise<{
         "Specchio remoto non configurato (manca BLOB_READ_WRITE_TOKEN). Modalità solo locale: Vercel resta OFFLINE.",
     };
   }
-  const written = await writeRemoteMirror(parsed.payload, parsed.board_events, parsed.dossiers);
+  const written = await writeRemoteMirror(parsed.payload, parsed.board_events, parsed.dossiers, {
+    live_states: parsed.live_states,
+    settlements: parsed.settlements,
+    learning_cases: parsed.learning_cases,
+  });
   if (!written.ok) {
     return {
       ok: false,
@@ -436,6 +627,9 @@ export async function acceptRuntimeIngest(body: unknown): Promise<{
     published_at: parsed.payload.published_at,
     board: parsed.board_events?.length ?? 0,
     dossiers: written.dossiers,
+    live_states: written.live_states,
+    settlements: written.settlements,
+    learning_cases: written.learning_cases,
     backend: written.backend,
     neon_in_use: false,
   };
@@ -449,6 +643,9 @@ export async function pushRuntimeToRemoteIngest(
     url?: string;
     secret?: string;
     dossiers?: RemoteDossierMirrorRow[];
+    live_states?: LiveStateMirrorRow[];
+    settlements?: RemoteKeyedSliceRow[];
+    learning_cases?: RemoteKeyedSliceRow[];
   },
 ): Promise<RemotePushResult> {
   const url = (deps?.url ?? process.env.BETMIND_RUNTIME_INGEST_URL)?.trim();
@@ -468,6 +665,9 @@ export async function pushRuntimeToRemoteIngest(
         payload,
         board_events: boardEvents ?? extractBoardEventsFromPayload(payload),
         dossiers: deps?.dossiers ?? [],
+        live_states: deps?.live_states ?? [],
+        settlements: deps?.settlements ?? [],
+        learning_cases: deps?.learning_cases ?? [],
       }),
     });
     if (!res.ok) {
@@ -582,4 +782,64 @@ export function findLightAnalysisInRemoteMirror(
   }
   const board = findBoardEventInRemoteMirror(remote, eventId);
   return asLightAnalysisRecord(board?.light_analysis);
+}
+
+export function findLiveInRemoteMirror(
+  remote: RemoteMirrorArtifact | null,
+  eventId: string,
+): LiveStateMirrorRow | null {
+  if (!remote || !eventId) return null;
+  return liveRowsFromRemoteArtifact(remote).find((row) => row.event_id === eventId) ?? null;
+}
+
+/** Latest of artifact published_at and any live snapshot — a live write keeps the mirror fresh. */
+export function remoteMirrorActivityAt(remote: RemoteMirrorArtifact | null): string | null {
+  if (!remote) return null;
+  const liveAt = latestLiveTimestamp(liveRowsFromRemoteArtifact(remote));
+  const published = remote.published_at || remote.payload?.published_at || null;
+  if (!liveAt) return published;
+  if (!published) return liveAt;
+  return Date.parse(liveAt) >= Date.parse(published) ? liveAt : published;
+}
+
+export function findSettlementInRemoteMirror(
+  remote: RemoteMirrorArtifact | null,
+  eventId: string,
+): Record<string, unknown> | null {
+  if (!remote || !eventId) return null;
+  for (const row of remote.settlements ?? []) {
+    if (String(row.event_id) === eventId && row.payload && typeof row.payload === "object") {
+      return row.payload;
+    }
+  }
+  const list = remote.payload?.recent_settlements;
+  if (Array.isArray(list)) {
+    for (const raw of list) {
+      if (raw && typeof raw === "object" && String((raw as { event_id?: unknown }).event_id) === eventId) {
+        return raw as Record<string, unknown>;
+      }
+    }
+  }
+  return null;
+}
+
+export function findLearningInRemoteMirror(
+  remote: RemoteMirrorArtifact | null,
+  eventId: string,
+): Record<string, unknown> | null {
+  if (!remote || !eventId) return null;
+  for (const row of remote.learning_cases ?? []) {
+    if (String(row.event_id) === eventId && row.payload && typeof row.payload === "object") {
+      return row.payload;
+    }
+  }
+  const list = remote.payload?.learning_cases;
+  if (Array.isArray(list)) {
+    for (const raw of list) {
+      if (raw && typeof raw === "object" && String((raw as { event_id?: unknown }).event_id) === eventId) {
+        return raw as Record<string, unknown>;
+      }
+    }
+  }
+  return null;
 }
