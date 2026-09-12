@@ -14,7 +14,7 @@ import {
   formatBoardRunTable,
   runBoardAnalysis,
   writeBoardRunReport,
-} from "@/domain/eval/real-pipeline/board-run";
+} from "@/domain/eval/real-pipeline";
 import { setRemoteMirrorStoreOverride } from "@/domain/eval/betmind-runtime/remote-mirror";
 
 function flag(name: string): boolean {

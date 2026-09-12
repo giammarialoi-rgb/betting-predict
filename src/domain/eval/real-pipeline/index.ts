@@ -10,6 +10,7 @@ export { assertPreMatchData, buildAsOfSnapshot, PreMatchLeakageError } from "@/d
 export { toSourceResultStatus, classifyConfiguredSource } from "@/domain/eval/real-pipeline/source-status";
 export { sliceDecisionFrom048 } from "@/domain/eval/real-pipeline/decision-label";
 export { publishAnalysis } from "@/domain/eval/real-pipeline/publish";
+/** Same entry `pnpm analyze:event` calls. There is no `runRealAnalysisSlice`. */
 export { runRealAnalysisPipeline, formatPipelineReport } from "@/domain/eval/real-pipeline/run";
 export {
   selectEligibleBoardEvents,

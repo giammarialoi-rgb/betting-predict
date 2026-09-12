@@ -12,6 +12,7 @@ import {
 } from "@/domain/eval/real-pipeline/board-select";
 import { runBoardAnalysis } from "@/domain/eval/real-pipeline/board-run";
 import { publishAnalysis } from "@/domain/eval/real-pipeline/publish";
+import * as realPipeline from "@/domain/eval/real-pipeline";
 import {
   createMemoryRemoteMirrorStore,
   findBoardEventInRemoteMirror,
@@ -176,6 +177,16 @@ describe("analyze:board selection", () => {
     assert.equal(NEON_IN_USE, false);
   });
 
+  it("barrel exports runRealAnalysisPipeline (same as analyze:event), not runRealAnalysisSlice", () => {
+    assert.equal(typeof realPipeline.runRealAnalysisPipeline, "function");
+    assert.equal(typeof realPipeline.runBoardAnalysis, "function");
+    assert.equal(
+      "runRealAnalysisSlice" in realPipeline,
+      false,
+      "Lab must call runRealAnalysisPipeline — runRealAnalysisSlice does not exist",
+    );
+  });
+
   it("selects multiple upcoming and live events and skips settled FT", () => {
     const nowMs = Date.parse("2026-09-12T19:00:00.000Z");
     const rows = [
@@ -240,6 +251,7 @@ describe("analyze:board selection", () => {
     assert.ok(report.selected >= 3, `expected ≥3 selected, got ${report.selected}`);
     assert.ok(report.rows.every((r) => r.status === "dry_run"));
     assert.ok(report.rows.every((r) => r.decision == null));
+    assert.equal(report.live_overlay, null);
   });
 });
 

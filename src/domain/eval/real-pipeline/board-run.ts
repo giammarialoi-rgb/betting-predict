@@ -1,6 +1,7 @@
 /**
  * Analyze every eligible board event through the real ANALYZE_EVENT slice.
- * Compose runRealAnalysisPipeline — do not invent a second path.
+ * Compose runRealAnalysisPipeline (the analyze:event export).
+ * Do not import runRealAnalysisSlice — that name does not exist.
  */
 import { mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
@@ -10,6 +11,7 @@ import { appendEvent044, loadStore044 } from "@/domain/eval/permanent-044/store"
 import { discoverGoldenCandidates } from "@/domain/eval/betmind-runtime/golden-e2e/discover";
 import { readRemoteMirror } from "@/domain/eval/betmind-runtime/remote-mirror";
 import { runRealAnalysisPipeline, type RealPipelineReport } from "@/domain/eval/real-pipeline/run";
+import { refreshInPlayFromEspn } from "@/domain/eval/betmind-runtime/live-refresh";
 import {
   candidateToPermanentEvent,
   loadBoardCandidates,
@@ -39,6 +41,13 @@ export type BoardRunReport = {
   include_finished: boolean;
   include_discovery: boolean;
   rows: BoardEventRunRow[];
+  live_overlay: {
+    ok: boolean;
+    publish_mode: "light";
+    targets: number;
+    matched: number;
+    reason: string;
+  } | null;
 };
 
 export type RunBoardAnalysisOptions = {
@@ -148,6 +157,7 @@ export async function runBoardAnalysis(opts: RunBoardAnalysisOptions = {}): Prom
     include_finished: opts.includeFinished === true,
     include_discovery: opts.includeDiscovery !== false,
     rows: [],
+    live_overlay: null,
   };
 
   if (dryRun) {
@@ -162,14 +172,15 @@ export async function runBoardAnalysis(opts: RunBoardAnalysisOptions = {}): Prom
 
   const rows = await mapPool(selected, concurrency, async (c, index) => {
     try {
-      const slice = await runRealAnalysisPipeline({
+      // Same function as `pnpm analyze:event` — not `runRealAnalysisSlice`.
+      const pipelineReport = await runRealAnalysisPipeline({
         eventId: c.event_id,
         labBRoot: root,
         nowMs,
         ensureHistoricalPriors: index === 0,
         skipSourceCatalogAudit: index > 0,
       });
-      return rowFromPipeline(c, slice);
+      return rowFromPipeline(c, pipelineReport);
     } catch (e) {
       return rowFromCandidate(c, {
         status: "failed",
@@ -182,6 +193,29 @@ export async function runBoardAnalysis(opts: RunBoardAnalysisOptions = {}): Prom
   report.rows = rows;
   report.analyzed = rows.filter((r) => r.status === "ok").length;
   report.failed = rows.filter((r) => r.status === "failed").length;
+
+  try {
+    const live = await refreshInPlayFromEspn({
+      labBRoot: root,
+      nowIso,
+      fullPublish: false,
+    });
+    report.live_overlay = {
+      ok: live.published.ok,
+      publish_mode: "light",
+      targets: live.targets,
+      matched: live.ingest.matched,
+      reason: live.published.error ?? live.ingest.reason,
+    };
+  } catch (e) {
+    report.live_overlay = {
+      ok: false,
+      publish_mode: "light",
+      targets: 0,
+      matched: 0,
+      reason: e instanceof Error ? e.message : String(e),
+    };
+  }
   return report;
 }
 
@@ -210,6 +244,9 @@ export function formatBoardRunTable(report: BoardRunReport): string {
   lines.push(
     "",
     `selected=${report.selected} analyzed=${report.analyzed} failed=${report.failed} skipped_finished=${report.skipped_finished} concurrency=${report.concurrency} dry_run=${report.dry_run}`,
+    report.live_overlay
+      ? `live_overlay ok=${report.live_overlay.ok} mode=${report.live_overlay.publish_mode} targets=${report.live_overlay.targets} matched=${report.live_overlay.matched} ${report.live_overlay.reason}`
+      : "live_overlay skipped (dry-run)",
   );
   return lines.join("\n");
 }
