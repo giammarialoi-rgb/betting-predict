@@ -177,6 +177,67 @@ export function latestLiveTimestamp(rows: LiveStateMirrorRow[] | undefined): str
   return latest;
 }
 
+export function publishedScoreLine(row: {
+  home_goals?: number | null;
+  away_goals?: number | null;
+  score?: unknown;
+  result?: unknown;
+}): string | null {
+  if (typeof row.home_goals === "number" && typeof row.away_goals === "number") {
+    return `${row.home_goals}–${row.away_goals}`;
+  }
+  const parsed = parsePublishedScorePair(row.score ?? row.result);
+  return parsed ? `${parsed.home}–${parsed.away}` : null;
+}
+
+export type EventLiveDisplay = {
+  status: string | null;
+  score: string | null;
+  home_goals: number | null;
+  away_goals: number | null;
+  minute: string | null;
+  is_live: boolean;
+};
+
+/** Read published live fields from a board row or nested `live` object. Never invents digits. */
+export function eventLiveDisplay(raw: unknown): EventLiveDisplay {
+  const rec = raw && typeof raw === "object" ? (raw as Record<string, unknown>) : {};
+  const nested = rec.live && typeof rec.live === "object" ? (rec.live as Record<string, unknown>) : {};
+  const merged = { ...nested, ...rec };
+  const scorePair =
+    parsePublishedScorePair({
+      home_goals: merged.home_goals,
+      away_goals: merged.away_goals,
+      score: merged.score,
+      result: merged.result,
+    }) ?? parsePublishedScorePair(merged.score ?? merged.result);
+  const home_goals =
+    typeof merged.home_goals === "number"
+      ? merged.home_goals
+      : typeof merged.home_goals === "string" && Number.isFinite(Number(merged.home_goals))
+        ? Number(merged.home_goals)
+        : (scorePair?.home ?? null);
+  const away_goals =
+    typeof merged.away_goals === "number"
+      ? merged.away_goals
+      : typeof merged.away_goals === "string" && Number.isFinite(Number(merged.away_goals))
+        ? Number(merged.away_goals)
+        : (scorePair?.away ?? null);
+  const minute =
+    (typeof merged.minute === "string" && merged.minute.trim() ? merged.minute.trim() : null) ??
+    clockLike(merged.note) ??
+    clockLike(merged.source_detail);
+  const status = String(merged.status ?? nested.status ?? "").trim() || null;
+  return {
+    status,
+    score: publishedScoreLine({ home_goals, away_goals, score: merged.score, result: merged.result }),
+    home_goals,
+    away_goals,
+    minute,
+    is_live: /live|in_play|playing|1h|2h|ht/i.test(status ?? ""),
+  };
+}
+
 export function overlayLiveOnEvents(
   events: unknown[] | undefined,
   live: LiveStateMirrorRow[] | undefined,

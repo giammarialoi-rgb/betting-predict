@@ -35,6 +35,7 @@ import {
 import { getStorage } from "@/domain/storage";
 import {
   extractBoardEventsFromPayload,
+  liveRowsFromRemoteArtifact,
   overlayAnalyzedDossiersOntoEvents,
   pushRuntimeToRemoteIngest,
   readRemoteMirror,
@@ -805,6 +806,7 @@ export async function loadBoardEventsFromStore(q: {
       }
     }
     events = overlayAnalyzedDossiersOntoEvents(events, remote);
+    events = overlayLiveOnEvents(events, liveRowsFromRemoteArtifact(remote));
     if (!events.length && !rows.length) return null;
     const filtered = events.filter((e) =>
       matchesCalendarQuery(e as { calendar_day?: string; kickoff_utc?: string; sport?: string }, q),

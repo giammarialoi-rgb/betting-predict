@@ -14,7 +14,12 @@ import {
   localLabStorePresent,
   neonEventsEmptyReason,
 } from "@/domain/eval/betmind-runtime/production-mirror";
-import { overlayAnalyzedDossiersOntoEvents, readRemoteMirror } from "@/domain/eval/betmind-runtime/remote-mirror";
+import { overlayLiveOnEvents } from "@/domain/eval/betmind-runtime/live-state";
+import {
+  liveRowsFromRemoteArtifact,
+  overlayAnalyzedDossiersOntoEvents,
+  readRemoteMirror,
+} from "@/domain/eval/betmind-runtime/remote-mirror";
 
 export const dynamic = "force-dynamic";
 
@@ -89,7 +94,10 @@ export async function GET(req: Request) {
     next_events?: unknown[];
   };
   const art = await readRemoteMirror();
-  const universe = overlayAnalyzedDossiersOntoEvents(collectNeonUniverse(obs), art);
+  const universe = overlayLiveOnEvents(
+    overlayAnalyzedDossiersOntoEvents(collectNeonUniverse(obs), art),
+    liveRowsFromRemoteArtifact(art),
+  );
   const events = filterNeonUniverse(universe, query);
   const note = neonEventsEmptyReason({
     remotePresent: Boolean(remote),

@@ -5,6 +5,7 @@ import {
   boardSummaryFromBoard,
   classifyEventDetailResponse,
   isDossierNotMirroredWithBoard,
+  liveViewFromRow,
   matchTitleFromBoard,
   normalizeBoardSummary,
 } from "@/domain/eval/betmind-runtime/event-detail-view";
@@ -97,6 +98,31 @@ describe("event-detail board-only view", () => {
       },
     );
     assert.equal(classified.kind, "ok");
+  });
+
+  it("renders a published 0-0 + minute without inventing goals", () => {
+    const live = liveViewFromRow({
+      status: "LIVE",
+      home_goals: 0,
+      away_goals: 0,
+      minute: "37'",
+      source: "espn",
+      observed_at: "2026-09-12T19:10:00.000Z",
+      finished: false,
+    });
+    assert.ok(live);
+    assert.equal(live.home_goals, 0);
+    assert.equal(live.away_goals, 0);
+    assert.equal(live.minute, "37'");
+    assert.equal(`${live.home_goals}–${live.away_goals}`, "0–0");
+    const fromScore = liveViewFromRow({
+      status: "LIVE",
+      score: "0-0",
+      minute: "37'",
+      source: "espn",
+    });
+    assert.equal(fromScore?.home_goals, 0);
+    assert.equal(fromScore?.away_goals, 0);
   });
 
   it("does not treat a naked error as board_only without board_summary", () => {

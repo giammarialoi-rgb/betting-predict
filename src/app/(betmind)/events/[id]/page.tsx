@@ -89,6 +89,7 @@ export default async function EventDetailPage({
       <EventDetailClient
         initialData={null}
         initialBoardSummary={board ? boardSummaryFromBoard(id, board) : null}
+        initialLive={live}
       />
     );
   }

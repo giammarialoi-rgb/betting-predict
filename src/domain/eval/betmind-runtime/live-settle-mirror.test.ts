@@ -6,6 +6,7 @@ import { afterEach, describe, it } from "node:test";
 import { parseEspnScoreboard } from "@/domain/eval/acquisition-engine/sources/espn";
 import {
   classifyEspnLiveStatus,
+  eventLiveDisplay,
   ingestLiveStates,
   liveStateFromEspn,
   overlayLiveOnEvents,
@@ -178,6 +179,54 @@ describe("live ingest + overlay", () => {
     assert.equal((fromLab[0] as { home_goals: number }).home_goals, 0);
     assert.equal((fromLab[0] as { away_goals: number }).away_goals, 1);
     assert.equal((fromLab[0] as { minute: string }).minute, "39'");
+  });
+
+  it("surfaces 0-0 and 37' from board or nested live — never invents", () => {
+    const fromBoard = eventLiveDisplay({
+      event_id: "719d874c61e33ab20d7f730f",
+      status: "LIVE",
+      home_goals: 0,
+      away_goals: 0,
+      minute: "37'",
+    });
+    assert.equal(fromBoard.score, "0–0");
+    assert.equal(fromBoard.minute, "37'");
+    assert.equal(fromBoard.is_live, true);
+    const fromNested = eventLiveDisplay({
+      event_id: "719d874c61e33ab20d7f730f",
+      bucket: "ANALYZED",
+      live: { status: "LIVE", home_goals: 0, away_goals: 0, minute: "37'" },
+    });
+    assert.equal(fromNested.score, "0–0");
+    assert.equal(fromNested.minute, "37'");
+    const empty = eventLiveDisplay({ event_id: "x", bucket: "ANALYZED" });
+    assert.equal(empty.score, null);
+    assert.equal(empty.minute, null);
+    const overlaid = overlayLiveOnEvents(
+      [{ event_id: "719d874c61e33ab20d7f730f", bucket: "ANALYZED", label: "FC St. Pauli vs VfL Wolfsburg" }],
+      [
+        {
+          event_id: "719d874c61e33ab20d7f730f",
+          published_at: "2026-09-12T19:10:00.000Z",
+          status: "LIVE",
+          home: "FC St. Pauli",
+          away: "VfL Wolfsburg",
+          home_goals: 0,
+          away_goals: 0,
+          minute: "37'",
+          period: 1,
+          source: "espn",
+          source_status: "STATUS_FIRST_HALF",
+          source_detail: "37'",
+          observed_at: "2026-09-12T19:10:00.000Z",
+          finished: false,
+        },
+      ],
+    );
+    const ev = eventLiveDisplay(overlaid[0]);
+    assert.equal(ev.score, "0–0");
+    assert.equal(ev.minute, "37'");
+    assert.equal(ev.status, "LIVE");
   });
 });
 

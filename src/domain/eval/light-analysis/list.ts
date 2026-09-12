@@ -4,7 +4,11 @@
  */
 import { loadDossierNeon } from "@/domain/eval/betmind-runtime/dossier";
 import type { AnalysisDossier } from "@/domain/eval/betmind-runtime/dossier";
-import { isRealAnalysisDossier, readRemoteMirror } from "@/domain/eval/betmind-runtime/remote-mirror";
+import {
+  isRealAnalysisDossier,
+  liveRowsFromRemoteArtifact,
+  readRemoteMirror,
+} from "@/domain/eval/betmind-runtime/remote-mirror";
 import { getStorage } from "@/domain/storage";
 import { permanentRoot044 } from "@/domain/eval/permanent-044/config";
 import { lightHasEstimableMarket } from "@/domain/eval/light-analysis/compute";
@@ -23,6 +27,7 @@ function toRow(analysis: LightAnalysis): AnalyzedListRow | null {
     kickoff_utc: analysis.kickoff_utc,
     sport: analysis.sport,
     status: analysis.status,
+    minute: null,
     score_home: analysis.score_home,
     score_away: analysis.score_away,
     analyzed_at: analysis.analyzed_at,
@@ -57,6 +62,7 @@ function dossierToRow(dossier: AnalysisDossier): AnalyzedListRow {
     kickoff_utc: dossier.event.kickoff_utc,
     sport: dossier.event.sport,
     status: dossier.event.status,
+    minute: null,
     score_home: null,
     score_away: null,
     analyzed_at: dossier.analyzed_at,
@@ -119,6 +125,17 @@ export async function listAnalyzedEvents(cwd = process.cwd()): Promise<AnalyzedL
       const strong = dossierToRow(row.dossier as AnalysisDossier);
       const prev = byId.get(strong.event_id);
       byId.set(strong.event_id, prev ? { ...prev, strong: true, strong_label_it: "Forte" } : strong);
+    }
+    for (const live of liveRowsFromRemoteArtifact(remote)) {
+      const prev = byId.get(live.event_id);
+      if (!prev) continue;
+      byId.set(live.event_id, {
+        ...prev,
+        status: live.status || prev.status,
+        minute: live.minute ?? prev.minute,
+        score_home: live.home_goals ?? prev.score_home,
+        score_away: live.away_goals ?? prev.score_away,
+      });
     }
   } catch {
     /* Blob unread — return whatever we have, including empty */
