@@ -8,6 +8,10 @@ import {
   loadBoardEventNeon,
   loadDossierNeon,
 } from "@/domain/eval/betmind-runtime/dossier";
+import {
+  EVENT_DETAIL_BOARD_ONLY_NOTICE_IT,
+  boardSummaryFromBoard,
+} from "@/domain/eval/betmind-runtime/event-detail-view";
 import { loadEventAnalyses } from "@/domain/eval/light-analysis/list";
 import type { LightAnalysis } from "@/domain/eval/light-analysis/types";
 
@@ -133,39 +137,29 @@ export async function GET(_req: Request, ctx: { params: Promise<{ id: string }> 
       });
     }
     if (board) {
-      const label = String(board.label ?? "");
-      const [homeGuess, awayGuess] = label.includes(" vs ")
-        ? label.split(" vs ").map((s) => s.trim())
-        : [null, null];
-      return NextResponse.json(
-        {
-          error: "dossier_not_mirrored",
-          event_id: id,
-          reason: EVENT_DETAIL_DOSSIER_NOT_MIRRORED_IT,
-          present: {
-            lab_b_disk: false,
-            board_event: true,
-            analysis_dossier: false,
-            light_analysis: false,
-          },
-          missing: ["analysis_dossier"],
-          board_summary: {
-            event_id: id,
-            bucket: board.bucket ?? null,
-            label: board.label ?? null,
-            competition: board.competition ?? null,
-            kickoff_utc: board.kickoff_utc ?? null,
-            model_version: board.model_version ?? null,
-            decision: board.decision ?? null,
-            prediction_status: board.prediction_status ?? null,
-            feature_coverage: board.feature_coverage ?? null,
-            analyzed_at: board.analyzed_at ?? null,
-            home_or_a: homeGuess,
-            away_or_b: awayGuess,
-          },
+      // 200: board exists. 404 is only true not_found. No invented HDA/features.
+      const board_summary = boardSummaryFromBoard(id, board);
+      return NextResponse.json({
+        error: "dossier_not_mirrored",
+        event_id: id,
+        reason: EVENT_DETAIL_DOSSIER_NOT_MIRRORED_IT,
+        notice_it: EVENT_DETAIL_BOARD_ONLY_NOTICE_IT,
+        present: {
+          lab_b_disk: false,
+          board_event: true,
+          analysis_dossier: false,
+          light_analysis: false,
         },
-        { status: 404 },
-      );
+        missing: ["analysis_dossier"],
+        board_summary,
+        dossier: null,
+        predictions: [],
+        settlement: null,
+        light_analysis: null,
+        mirror_source: "remote_board",
+        api_calls_ui: 0 as const,
+        real_money: false as const,
+      });
     }
 
     return NextResponse.json(
