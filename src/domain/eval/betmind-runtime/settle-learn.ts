@@ -29,6 +29,7 @@ export type SettlementLearnResult = {
   settled: boolean;
   learning_written: boolean;
   settlement: PermanentSettlement044 | null;
+  learning_case: Record<string, unknown> | null;
   result: string | null;
   reason: string;
 };
@@ -76,6 +77,7 @@ export function settleFromLiveState(opts: {
       settled: false,
       learning_written: false,
       settlement: null,
+      learning_case: null,
       result: null,
       reason: live.finished ? "ft_score_unavailable" : "event_not_finished",
     };
@@ -88,6 +90,7 @@ export function settleFromLiveState(opts: {
       settled: true,
       learning_written: false,
       settlement: existing,
+      learning_case: null,
       result: existing?.result ?? `${live.home_goals}-${live.away_goals}`,
       reason: "already_settled",
     };
@@ -166,6 +169,7 @@ export function settleFromLiveState(opts: {
     settled: true,
     learning_written: true,
     settlement,
+    learning_case: learningCase,
     result,
     reason: `real finished score from ${live.source}`,
   };

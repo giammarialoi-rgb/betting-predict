@@ -14,7 +14,10 @@ function arg(flag: string): string | undefined {
 
 async function once() {
   const eventId = arg("--event") ?? GOLDEN_EVENT_ID;
-  const report = await refreshInPlayFromEspn({ eventId });
+  const report = await refreshInPlayFromEspn({
+    eventId,
+    fullPublish: process.argv.includes("--full-publish"),
+  });
   const live = report.ingest.states[0];
   console.log(
     JSON.stringify(
@@ -45,6 +48,7 @@ async function once() {
           reason: s.reason,
         })),
         settle_deferred: report.settle_deferred,
+        publish_mode: report.publish_mode,
         published: report.published,
         settle_command: `pnpm betmind:live -- --event ${eventId}`,
       },

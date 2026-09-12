@@ -1,14 +1,15 @@
 /**
  * Lab / scheduled ESPN live refresh for in-play board events.
- * Merge-publishes live (and FT settlement) without wiping remote dossiers.
+ * Default publish is LIGHT: patch the existing remote artifact.
+ * Full Lab B rebuild (`publishRuntimeStatus`) only with fullPublish / --full-publish.
  */
-import { getStorage } from "@/domain/storage";
-import { NEON_IN_USE } from "@/domain/storage";
+import { getStorage, NEON_IN_USE } from "@/domain/storage";
+import type { LiveStateMirrorRow } from "@/domain/storage/types";
 import { permanentRoot044 } from "@/domain/eval/permanent-044/config";
-import { loadStore044 } from "@/domain/eval/permanent-044/store";
 import {
   GOLDEN_EVENT_ID,
   ingestLiveStates,
+  overlayLiveOnEvents,
   type LiveIngestResult,
   type LiveMatchTarget,
 } from "@/domain/eval/betmind-runtime/live-state";
@@ -18,7 +19,15 @@ import {
   buildRuntimePayloadFromLocal,
   publishRuntimeStatus,
 } from "@/domain/eval/betmind-runtime/remote-status";
-import type { RemotePushResult } from "@/domain/eval/betmind-runtime/remote-mirror";
+import {
+  pushRuntimeToRemoteIngest,
+  readRemoteMirror,
+  writeRemoteMirror,
+  type RemoteKeyedSliceRow,
+  type RemoteMirrorArtifact,
+  type RemotePushResult,
+  type RuntimeIngestPayload,
+} from "@/domain/eval/betmind-runtime/remote-mirror";
 
 export type LiveRefreshReport = {
   at: string;
@@ -27,55 +36,142 @@ export type LiveRefreshReport = {
   ingest: LiveIngestResult;
   settlements: SettlementLearnResult[];
   settle_deferred: boolean;
-  published: { ok: boolean; dossiers?: number; remote?: RemotePushResult; error?: string };
+  publish_mode: "light" | "full";
+  published: {
+    ok: boolean;
+    dossiers?: number;
+    live_states?: number;
+    remote?: RemotePushResult;
+    error?: string;
+  };
 };
 
-function targetsFromLocal(root: string): LiveMatchTarget[] {
+export const GOLDEN_LIVE_TARGET: LiveMatchTarget = {
+  event_id: GOLDEN_EVENT_ID,
+  home: "AFC Bournemouth",
+  away: "Brentford",
+  kickoff_utc: "2026-09-12T14:00:00.000Z",
+};
+
+function targetFromRecord(raw: unknown): LiveMatchTarget | null {
+  if (!raw || typeof raw !== "object") return null;
+  const rec = raw as Record<string, unknown>;
+  const payload =
+    rec.payload && typeof rec.payload === "object" ? (rec.payload as Record<string, unknown>) : rec;
+  const event_id = String(rec.event_id ?? payload.event_id ?? "");
+  const home = String(payload.home_or_a ?? payload.home ?? rec.home_or_a ?? rec.home ?? "");
+  const away = String(payload.away_or_b ?? payload.away ?? rec.away_or_b ?? rec.away ?? "");
+  if (!event_id || !home || !away) return null;
+  return {
+    event_id,
+    home,
+    away,
+    kickoff_utc: (payload.kickoff_utc as string | null) ?? (rec.kickoff_utc as string | null) ?? null,
+  };
+}
+
+/** Cheap targets — remote board + golden. Never scans events.jsonl. */
+export function targetsFromRemoteAndBoard(
+  remote: RemoteMirrorArtifact | null,
+  root: string,
+  eventId?: string,
+): LiveMatchTarget[] {
   const by = new Map<string, LiveMatchTarget>();
-  try {
-    for (const ev of loadStore044(root).events) {
-      if (!ev.event_id || !ev.home_or_a || !ev.away_or_b) continue;
-      by.set(ev.event_id, {
-        event_id: ev.event_id,
-        home: ev.home_or_a,
-        away: ev.away_or_b,
-        kickoff_utc: ev.kickoff_utc,
-      });
-    }
-  } catch {
-    /* store optional */
+  by.set(GOLDEN_EVENT_ID, GOLDEN_LIVE_TARGET);
+  for (const raw of remote?.payload?.observatory?.next_events ?? []) {
+    const t = targetFromRecord(raw);
+    if (t) by.set(t.event_id, t);
+  }
+  for (const row of remote?.board_events ?? []) {
+    const t = targetFromRecord(row);
+    if (t) by.set(t.event_id, t);
   }
   try {
     for (const row of getStorage(root).loadBoardEvents()) {
-      const p =
-        row.payload && typeof row.payload === "object"
-          ? (row.payload as Record<string, unknown>)
-          : {};
-      const id = String(row.event_id || p.event_id || "");
-      const home = String(p.home_or_a ?? p.home ?? "");
-      const away = String(p.away_or_b ?? p.away ?? "");
-      if (!id || !home || !away) continue;
-      if (!by.has(id)) {
-        by.set(id, {
-          event_id: id,
-          home,
-          away,
-          kickoff_utc: (p.kickoff_utc as string | null) ?? null,
-        });
-      }
+      const t = targetFromRecord(row);
+      if (t) by.set(t.event_id, t);
     }
   } catch {
     /* board optional */
   }
-  if (!by.has(GOLDEN_EVENT_ID)) {
-    by.set(GOLDEN_EVENT_ID, {
-      event_id: GOLDEN_EVENT_ID,
-      home: "AFC Bournemouth",
-      away: "Brentford",
-      kickoff_utc: "2026-09-12T14:00:00.000Z",
-    });
+  if (eventId) {
+    const hit = by.get(eventId);
+    return hit ? [hit] : eventId === GOLDEN_EVENT_ID ? [GOLDEN_LIVE_TARGET] : [];
   }
   return [...by.values()];
+}
+
+export async function publishLiveSliceLight(opts: {
+  existing?: RemoteMirrorArtifact | null;
+  live: LiveStateMirrorRow[];
+  settlements?: RemoteKeyedSliceRow[];
+  learning_cases?: RemoteKeyedSliceRow[];
+  nowIso: string;
+}): Promise<{
+  ok: boolean;
+  dossiers?: number;
+  live_states?: number;
+  remote?: RemotePushResult;
+  error?: string;
+  mode: "light";
+}> {
+  const existing = opts.existing === undefined ? await readRemoteMirror() : opts.existing;
+  if (!existing?.payload) {
+    return {
+      ok: false,
+      error: "light_publish_requires_existing_mirror",
+      mode: "light",
+    };
+  }
+  const next = overlayLiveOnEvents(
+    (existing.payload.observatory?.next_events as unknown[] | undefined) ?? [],
+    opts.live,
+  );
+  const payload: RuntimeIngestPayload = {
+    ...existing.payload,
+    published_at: opts.nowIso,
+    observatory: existing.payload.observatory
+      ? { ...existing.payload.observatory, next_events: next }
+      : { next_events: next },
+    live_snapshots: opts.live,
+  };
+  if (opts.settlements?.length) {
+    payload.recent_settlements = [
+      ...((Array.isArray(existing.payload.recent_settlements)
+        ? existing.payload.recent_settlements
+        : []) as unknown[]),
+      ...opts.settlements.map((s) => s.payload),
+    ];
+  }
+  if (opts.learning_cases?.length) {
+    payload.learning_cases = [
+      ...((Array.isArray(existing.payload.learning_cases)
+        ? existing.payload.learning_cases
+        : []) as unknown[]),
+      ...opts.learning_cases.map((c) => c.payload),
+    ];
+  }
+  const written = await writeRemoteMirror(payload, existing.board_events, existing.dossiers ?? [], {
+    live_states: opts.live,
+    settlements: opts.settlements,
+    learning_cases: opts.learning_cases,
+  });
+  if (!written.ok) {
+    return { ok: false, error: written.error, mode: "light" };
+  }
+  const remote = await pushRuntimeToRemoteIngest(payload, existing.board_events, {
+    dossiers: existing.dossiers ?? [],
+    live_states: opts.live,
+    settlements: opts.settlements ?? [],
+    learning_cases: opts.learning_cases ?? [],
+  });
+  return {
+    ok: true,
+    dossiers: written.dossiers,
+    live_states: written.live_states,
+    remote,
+    mode: "light",
+  };
 }
 
 export async function refreshInPlayFromEspn(opts?: {
@@ -83,13 +179,13 @@ export async function refreshInPlayFromEspn(opts?: {
   nowIso?: string;
   jsonText?: string;
   eventId?: string;
+  fullPublish?: boolean;
 }): Promise<LiveRefreshReport> {
   if (NEON_IN_USE) throw new Error("NEON_BANNED");
   const root = opts?.labBRoot ?? permanentRoot044();
   const nowIso = opts?.nowIso ?? new Date().toISOString();
-  const targets = targetsFromLocal(root).filter((t) =>
-    opts?.eventId ? t.event_id === opts.eventId : true,
-  );
+  const existing = await readRemoteMirror();
+  const targets = targetsFromRemoteAndBoard(existing, root, opts?.eventId);
   const ingest = await ingestLiveStates({
     targets,
     labBRoot: root,
@@ -110,7 +206,44 @@ export async function refreshInPlayFromEspn(opts?: {
     );
   }
 
-  const published = await publishRuntimeStatus(buildRuntimePayloadFromLocal(root));
+  const settlementSlices: RemoteKeyedSliceRow[] = settlements
+    .filter((s) => s.settlement)
+    .map((s) => ({
+      event_id: String(s.settlement!.event_id),
+      published_at: String(s.settlement!.settled_at),
+      payload: s.settlement as unknown as Record<string, unknown>,
+    }));
+  const learningSlices: RemoteKeyedSliceRow[] = settlements
+    .filter((s) => s.learning_case && s.settlement)
+    .map((s) => ({
+      event_id: String(s.settlement!.event_id),
+      published_at: String(s.settlement!.settled_at),
+      payload: s.learning_case!,
+    }));
+
+  if (opts?.fullPublish) {
+    const published = await publishRuntimeStatus(buildRuntimePayloadFromLocal(root));
+    return {
+      at: nowIso,
+      neon_in_use: false,
+      targets: targets.length,
+      ingest,
+      settlements,
+      settle_deferred: ingest.states.some((s) => !s.finished) || settlements.every((s) => !s.settled),
+      publish_mode: "full",
+      published: published.ok
+        ? { ok: true, dossiers: published.dossiers, remote: published.remote }
+        : { ok: false, error: published.error },
+    };
+  }
+
+  const published = await publishLiveSliceLight({
+    existing,
+    live: ingest.states,
+    settlements: settlementSlices,
+    learning_cases: learningSlices,
+    nowIso,
+  });
   return {
     at: nowIso,
     neon_in_use: false,
@@ -118,8 +251,13 @@ export async function refreshInPlayFromEspn(opts?: {
     ingest,
     settlements,
     settle_deferred: ingest.states.some((s) => !s.finished) || settlements.every((s) => !s.settled),
-    published: published.ok
-      ? { ok: true, dossiers: published.dossiers, remote: published.remote }
-      : { ok: false, error: published.error },
+    publish_mode: "light",
+    published: {
+      ok: published.ok,
+      dossiers: published.dossiers,
+      live_states: published.live_states,
+      remote: published.remote,
+      error: published.error,
+    },
   };
 }

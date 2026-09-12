@@ -335,6 +335,83 @@ describe("remote mirror merge-safe live/settlement/learning slices", () => {
   });
 });
 
+describe("light live refresh publish", () => {
+  it("patches next_events + live_snapshots and keeps dossiers without a full rebuild", async () => {
+    const { publishLiveSliceLight } = await import("@/domain/eval/betmind-runtime/live-refresh");
+    const { findDossierInRemoteMirror } = await import("@/domain/eval/betmind-runtime/remote-mirror");
+    const mem = createMemoryRemoteMirrorStore();
+    setRemoteMirrorStoreOverride(mem);
+    const dossier = {
+      event: { event_id: "de3b08b74a8249c647ee0e42", home: "AFC Bournemouth", away: "Brentford" },
+      independent_model: { probability: null, note: "NO PREDICTION" },
+      features: [],
+    };
+    await writeRemoteMirror(
+      samplePayload("2026-09-12T14:00:00.000Z"),
+      [
+        {
+          event_id: "de3b08b74a8249c647ee0e42",
+          bucket: "ANALYZED",
+          published_at: "2026-09-12T13:40:00.000Z",
+          payload: {
+            event_id: "de3b08b74a8249c647ee0e42",
+            label: "AFC Bournemouth vs Brentford",
+            home_or_a: "AFC Bournemouth",
+            away_or_b: "Brentford",
+            status: "UPCOMING",
+          },
+        },
+      ],
+      [
+        {
+          event_id: "de3b08b74a8249c647ee0e42",
+          published_at: "2026-09-12T13:40:00.000Z",
+          dossier,
+          dossier_version: null,
+        },
+      ],
+    );
+    const ev = parseEspnScoreboard(ESPN_LIVE, "eng.1")[0]!;
+    const live = liveStateFromEspn("de3b08b74a8249c647ee0e42", ev, "2026-09-12T14:39:00.000Z");
+    const published = await publishLiveSliceLight({
+      live: [live],
+      nowIso: "2026-09-12T14:39:00.000Z",
+    });
+    assert.equal(published.ok, true);
+    assert.equal(published.mode, "light");
+    const art = await mem.read();
+    assert.ok(findDossierInRemoteMirror(art, "de3b08b74a8249c647ee0e42"));
+    const row = findLiveInRemoteMirror(art, "de3b08b74a8249c647ee0e42");
+    assert.equal(row?.home_goals, 0);
+    assert.equal(row?.away_goals, 1);
+    const next = art?.payload.observatory?.next_events as Array<{ status?: string; result?: string }>;
+    assert.equal(next?.[0]?.status, "LIVE");
+    assert.match(String(next?.[0]?.result ?? ""), /0/);
+  });
+
+  it("does not settle while ESPN is still in play", async () => {
+    const root = mkdtempSync(join(tmpdir(), "bm-light-"));
+    const ev = parseEspnScoreboard(ESPN_LIVE, "eng.1")[0]!;
+    const live = liveStateFromEspn("de3b08b74a8249c647ee0e42", ev, "2026-09-12T14:39:00.000Z");
+    const result = settleFromLiveState({ live, labBRoot: root });
+    assert.equal(result.settled, false);
+    assert.equal(result.reason, "event_not_finished");
+    assert.equal(result.learning_case, null);
+  });
+
+  it("refuses light publish when no remote artifact exists", async () => {
+    const { publishLiveSliceLight } = await import("@/domain/eval/betmind-runtime/live-refresh");
+    const mem = createMemoryRemoteMirrorStore();
+    setRemoteMirrorStoreOverride(mem);
+    const published = await publishLiveSliceLight({
+      live: [],
+      nowIso: "2026-09-12T14:39:00.000Z",
+    });
+    assert.equal(published.ok, false);
+    assert.equal(published.error, "light_publish_requires_existing_mirror");
+  });
+});
+
 describe("Vercel event detail shows remote dossier + live, not only dossier_not_mirrored", () => {
   it("returns dossier_state=ok and live when Blob has both", async () => {
     const mem = createMemoryRemoteMirrorStore();
