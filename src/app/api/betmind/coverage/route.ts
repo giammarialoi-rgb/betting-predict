@@ -36,7 +36,7 @@ export async function GET() {
     const analysis = remote?.payload?.analysis;
     return NextResponse.json({
       ok: true,
-      source: analysis?.data_coverage != null ? "neon" : "memory",
+      source: analysis?.data_coverage != null ? "remote" : "memory",
       real_money: false,
       test_scrape_enabled: testScrape,
       DATA_COVERAGE: analysis?.data_coverage ?? null,
@@ -49,7 +49,7 @@ export async function GET() {
       feature_manifest_p0: FEATURE_MANIFEST_P0,
       note:
         analysis?.data_coverage != null
-          ? "Copertura dallo specchio Neon (analysis.data_coverage). Report Lab B assente su questo host."
+          ? "Copertura dallo specchio remoto (analysis.data_coverage). Report Lab B assente su questo host."
           : "Nessun report di copertura Lab B su questo host — solo manifesto P0",
       coverage: analysis ? { DATA_COVERAGE: analysis.data_coverage } : null,
       feature_availability: null,

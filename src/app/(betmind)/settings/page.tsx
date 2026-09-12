@@ -4,7 +4,7 @@ import Link from "next/link";
 import { Card, Pill, StatusPill } from "@/components/betmind/ui";
 import { useBetMindData } from "@/components/betmind/DataProvider";
 import { asRecord } from "@/components/betmind/ui";
-import { brainStatusIt, formatAgeIt, statusWordIt } from "@/domain/eval/betmind-runtime/status-copy";
+import { brainStatusIt, formatAgeIt, isRemoteMirrorSource, statusWordIt } from "@/domain/eval/betmind-runtime/status-copy";
 
 export default function SettingsPage() {
   const { data, strip, health } = useBetMindData();
@@ -55,9 +55,9 @@ export default function SettingsPage() {
         <p className="mt-3 text-sm">
           {stale
             ? brainStatusIt("STALE_MIRROR")
-            : detail?.mirror_source === "neon"
-              ? `Specchio Neon da ${String(detail?.mirror_host ?? "PC")} · ultimo segnale ${formatAgeIt(mirrorAge)}.`
-              : "Nessuno specchio Neon su questo host."}
+            : isRemoteMirrorSource(detail?.mirror_source)
+              ? `Specchio remoto da ${String(detail?.mirror_host ?? "PC")} · ultimo segnale ${formatAgeIt(mirrorAge)}.`
+              : "Nessuno specchio remoto su questo host."}
         </p>
         <p className="mt-2 text-xs bm-muted">
           Store Lab B su Vercel: {detail?.store_present === true ? "presente" : "assente"}.

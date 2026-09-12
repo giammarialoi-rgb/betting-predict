@@ -240,7 +240,7 @@ function EventsInner() {
       {(calendar?.stale || asRecord(health?.detail)?.mirror_stale === true) && (
         <Card>
           <p className="text-sm">
-            Elenco dall’ultimo specchio Neon
+            Elenco dall’ultimo specchio remoto
             {typeof asRecord(health?.detail)?.mirror_age_ms === "number"
               ? ` (${formatAgeIt(asRecord(health?.detail)?.mirror_age_ms as number)})`
               : ""}
@@ -311,8 +311,8 @@ function EventsInner() {
               (analysis?.no_events_reason
                 ? String(analysis.no_events_reason)
                 : calendar?.stale
-                  ? "Specchio Neon scaduto e calendario vuoto per questa data. Il PC non ha pubblicato partite recenti — niente di inventato."
-                  : "Nessuna partita trovata. Vercel non inventa incontri: o lo specchio Neon è vuoto per questa data, o il PC non ha ancora pubblicato il calendario.")
+                  ? "Specchio scaduto e calendario vuoto per questa data. Il PC non ha pubblicato partite recenti — niente di inventato."
+                  : "Nessuna partita trovata. Vercel non inventa incontri: o lo specchio remoto è vuoto per questa data, o il PC non ha ancora pubblicato il calendario.")
             }
           />
         )}

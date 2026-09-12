@@ -59,13 +59,16 @@ The intelligence catalog (`src/domain/sources`) describes origins. It does **not
 
 - UI: `/` (Control Center). Health: `GET /api/betmind/health`. Snapshot: `GET /api/betmind/snapshot`.
 - Analytical worker runs on the PC (Lab B under `audit/external/task-044`). Vercel is the API/UI layer.
-- Runtime mirror writes `audit/external/task-044/mirror/` (filesystem). No Neon publish.
+- **Local SoT:** `pnpm runtime:publish` always writes `audit/external/task-044/mirror/` on the PC.
+- **Remote bridge (no Neon):** when `BETMIND_RUNTIME_PUBLISH_SECRET` and `BETMIND_RUNTIME_INGEST_URL` are set on the PC, publish also POSTs to `POST /api/betmind/runtime/ingest`. Vercel stores one JSON artifact in **Vercel Blob** (`BLOB_READ_WRITE_TOKEN` or connected Blob OIDC). Snapshot/health read that artifact. Stale (>10 min / `RUNTIME_STALE_MS`) → components stay **OFFLINE**.
+- If Blob is not configured, Vercel stays **OFFLINE** (local-only). App online ≠ Runtime online ≠ Specchio scaduto. `DATABASE_URL` is ignored.
 
 ```bash
-pnpm brain:start          # watchdog + worker loop
+# On the PC — after setting the secret + ingest URL in .env.local
+pnpm runtime:publish      # local FS write + optional remote POST
+pnpm brain:start          # watchdog + worker loop (heartbeats also push when configured)
 pnpm brain:once           # one real cycle (add -- --discover to force Odds discovery)
 pnpm brain:status
-pnpm runtime:publish      # write heartbeat + board to the filesystem mirror
 pnpm phase8:mega-verify   # real research cycle (≥20 upcoming when sources return them)
 ```
 

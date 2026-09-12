@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import {
   eventStatusIt,
+  honestyLayersIt,
   operationalStatusIt,
   roleLabelIt,
   sourceBlurbIt,
@@ -39,6 +40,17 @@ describe("status-copy Italian honesty", () => {
     assert.equal(
       sourceBlurbIt("OK", "RSS pubblico. Solo contesto; nessun infortunio inventato dai titoli."),
       "RSS pubblico. Solo contesto; nessun infortunio inventato dai titoli.",
+    );
+  });
+
+  it("keeps App online, Runtime offline, and Specchio scaduto as distinct phrases", () => {
+    assert.equal(
+      honestyLayersIt({ webOnline: true, runtimeState: "OFFLINE" }),
+      "App online · Runtime offline",
+    );
+    assert.equal(
+      honestyLayersIt({ webOnline: true, runtimeState: "ONLINE", mirrorStale: true }),
+      "App online · Specchio scaduto",
     );
   });
 

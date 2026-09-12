@@ -23,7 +23,7 @@ import { isActiveFontiSource, isPrunedFontiSource } from "@/domain/eval/acquisit
 
 export const dynamic = "force-dynamic";
 
-/** Source registry — disk if present, else Neon operational overlay, else in-memory catalog. */
+/** Source registry — disk if present, else remote operational overlay, else in-memory catalog. */
 export async function GET() {
   const root = permanentRoot044();
   const path = join(dataIntelligenceRoot(root), "source-registry.json");
@@ -38,7 +38,7 @@ export async function GET() {
     eventLabels = new Map();
   }
 
-  let operationalSource: "disk" | "neon" | "none" = "none";
+  let operationalSource: "disk" | "remote" | "neon" | "none" = "none";
   let operational = localLabStorePresent(root)
     ? buildOperationalSourceEngine({ labBRoot: root, eventLabels })
     : [];
@@ -48,14 +48,14 @@ export async function GET() {
   if (operational.length === 0) {
     try {
       remote = await loadRuntimeStatus();
-      const fromNeon = (remote?.payload?.observatory as { source_engine?: unknown } | undefined)
+      const fromRemote = (remote?.payload?.observatory as { source_engine?: unknown } | undefined)
         ?.source_engine;
-      if (Array.isArray(fromNeon) && fromNeon.length > 0) {
-        operational = fromNeon as typeof operational;
-        operationalSource = "neon";
+      if (Array.isArray(fromRemote) && fromRemote.length > 0) {
+        operational = fromRemote as typeof operational;
+        operationalSource = "remote";
       }
     } catch {
-      /* Neon mirror optional */
+      /* remote mirror optional */
     }
   }
 
@@ -87,21 +87,23 @@ export async function GET() {
     ),
     readLastAcquisitionCycle(process.cwd()),
   );
-  const neonSignal = operationalSource === "neon" && operationalHasNeonSignal(operational);
+  const remoteSignal =
+    (operationalSource === "remote" || operationalSource === "neon") &&
+    operationalHasNeonSignal(operational);
   const source =
     registryFromDisk && localLabStorePresent(root)
       ? "disk"
-      : neonSignal
-        ? "neon"
+      : remoteSignal
+        ? "remote"
         : registryFromDisk
           ? "disk"
           : "memory";
 
-  const note = neonSignal
-    ? "Stato fonti dallo specchio Neon (rendimento reale). Il catalogo nomi è di registro; i numeri non sono inventati."
+  const note = remoteSignal
+    ? "Stato fonti dallo specchio remoto (rendimento reale). Il catalogo nomi è di registro; i numeri non sono inventati."
     : registryFromDisk
       ? registryFromDisk.note
-      : "Lab B source-registry.json assente su questo host — registro in memoria. Overlay Neon assente o senza dati.";
+      : "Lab B source-registry.json assente su questo host — registro in memoria. Specchio remoto assente o senza dati.";
 
   const fontiOperational = operational.filter((s) => {
     const id = String((s as { source_id?: string; id?: string }).source_id ?? (s as { id?: string }).id ?? "");
