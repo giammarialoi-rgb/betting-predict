@@ -1,0 +1,2492 @@
+{
+  "at": "2026-09-12T05:10:14.861Z",
+  "neon_in_use": false,
+  "cells": [
+    {
+      "model_id": "INDEPENDENT_POISSON_v1",
+      "market_id": "1X2",
+      "n": 7156,
+      "log_loss": 1.1269775027292042,
+      "brier": 0.21775034948387884,
+      "accuracy": 0.4879821129122415,
+      "yield": null,
+      "n_bets": 0,
+      "has_odds": true,
+      "insufficient": false,
+      "note": "1X2 quality; value reported separately",
+      "auto_promote": false
+    },
+    {
+      "model_id": "INDEPENDENT_POISSON_v1",
+      "market_id": "DC",
+      "n": 7156,
+      "log_loss": 0.6456900746375964,
+      "brier": 0.21064327376467193,
+      "accuracy": 0.6938233650083846,
+      "yield": null,
+      "n_bets": 0,
+      "has_odds": false,
+      "insufficient": false,
+      "note": "no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI",
+      "auto_promote": false
+    },
+    {
+      "model_id": "INDEPENDENT_POISSON_v1",
+      "market_id": "DNB",
+      "n": 5341,
+      "log_loss": 0.7000947298156487,
+      "brier": 0.2277972444157145,
+      "accuracy": 0.6637333832615615,
+      "yield": null,
+      "n_bets": 0,
+      "has_odds": false,
+      "insufficient": false,
+      "note": "no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI",
+      "auto_promote": false
+    },
+    {
+      "model_id": "INDEPENDENT_POISSON_v1",
+      "market_id": "BTTS",
+      "n": 7156,
+      "log_loss": 0.7969295107152925,
+      "brier": 0.28522098458790535,
+      "accuracy": 0.5170486305198435,
+      "yield": null,
+      "n_bets": 0,
+      "has_odds": false,
+      "insufficient": false,
+      "note": "no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI",
+      "auto_promote": false
+    },
+    {
+      "model_id": "INDEPENDENT_POISSON_v1",
+      "market_id": "OU_0_5",
+      "n": 7156,
+      "log_loss": 0.28632868497760866,
+      "brier": 0.07365126214708483,
+      "accuracy": 0.9146171045276691,
+      "yield": null,
+      "n_bets": 0,
+      "has_odds": false,
+      "insufficient": false,
+      "note": "no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI",
+      "auto_promote": false
+    },
+    {
+      "model_id": "INDEPENDENT_POISSON_v1",
+      "market_id": "OU_1_5",
+      "n": 7156,
+      "log_loss": 0.633384569936378,
+      "brier": 0.20629779048482283,
+      "accuracy": 0.7146450531022918,
+      "yield": null,
+      "n_bets": 0,
+      "has_odds": false,
+      "insufficient": false,
+      "note": "no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI",
+      "auto_promote": false
+    },
+    {
+      "model_id": "INDEPENDENT_POISSON_v1",
+      "market_id": "OU_2_5",
+      "n": 7156,
+      "log_loss": 0.8158694385419598,
+      "brier": 0.28019886983394127,
+      "accuracy": 0.5489100055897149,
+      "yield": -0.02855477855477861,
+      "n_bets": 2574,
+      "has_odds": true,
+      "insufficient": false,
+      "note": "settlement-backed quality only unless odds exist",
+      "auto_promote": false
+    },
+    {
+      "model_id": "INDEPENDENT_POISSON_v1",
+      "market_id": "OU_3_5",
+      "n": 7156,
+      "log_loss": 0.7468454109333639,
+      "brier": 0.2429115539746843,
+      "accuracy": 0.6369480156512017,
+      "yield": null,
+      "n_bets": 0,
+      "has_odds": false,
+      "insufficient": false,
+      "note": "no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI",
+      "auto_promote": false
+    },
+    {
+      "model_id": "INDEPENDENT_POISSON_v1",
+      "market_id": "MULTIGOL_1_2",
+      "n": 7156,
+      "log_loss": 0.7127168991720958,
+      "brier": 0.2507268041335095,
+      "accuracy": 0.5712688652878704,
+      "yield": null,
+      "n_bets": 0,
+      "has_odds": false,
+      "insufficient": false,
+      "note": "no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI",
+      "auto_promote": false
+    },
+    {
+      "model_id": "INDEPENDENT_POISSON_v1",
+      "market_id": "MULTIGOL_1_3",
+      "n": 7156,
+      "log_loss": 0.7060196811643689,
+      "brier": 0.25057449725858577,
+      "accuracy": 0.5881777529346003,
+      "yield": null,
+      "n_bets": 0,
+      "has_odds": false,
+      "insufficient": false,
+      "note": "no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI",
+      "auto_promote": false
+    },
+    {
+      "model_id": "INDEPENDENT_POISSON_v1",
+      "market_id": "MULTIGOL_2_3",
+      "n": 7156,
+      "log_loss": 0.7333191324887548,
+      "brier": 0.261338004632327,
+      "accuracy": 0.5413638904415875,
+      "yield": null,
+      "n_bets": 0,
+      "has_odds": false,
+      "insufficient": false,
+      "note": "no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI",
+      "auto_promote": false
+    },
+    {
+      "model_id": "INDEPENDENT_POISSON_v1",
+      "market_id": "MULTIGOL_2_4",
+      "n": 7156,
+      "log_loss": 0.7326953363383152,
+      "brier": 0.26123738520971546,
+      "accuracy": 0.5620458356623812,
+      "yield": null,
+      "n_bets": 0,
+      "has_odds": false,
+      "insufficient": false,
+      "note": "no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI",
+      "auto_promote": false
+    },
+    {
+      "model_id": "INDEPENDENT_POISSON_v1",
+      "market_id": "TEAM_GOALS_HOME_O0_5",
+      "n": 7156,
+      "log_loss": 0.5867500657162046,
+      "brier": 0.19232690145881495,
+      "accuracy": 0.7287590832867524,
+      "yield": null,
+      "n_bets": 0,
+      "has_odds": false,
+      "insufficient": false,
+      "note": "no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI",
+      "auto_promote": false
+    },
+    {
+      "model_id": "INDEPENDENT_POISSON_v1",
+      "market_id": "TEAM_GOALS_HOME_O1_5",
+      "n": 7156,
+      "log_loss": 0.7691306436996606,
+      "brier": 0.2598345776358653,
+      "accuracy": 0.5961430967020682,
+      "yield": null,
+      "n_bets": 0,
+      "has_odds": false,
+      "insufficient": false,
+      "note": "no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI",
+      "auto_promote": false
+    },
+    {
+      "model_id": "INDEPENDENT_POISSON_v1",
+      "market_id": "TEAM_GOALS_AWAY_O0_5",
+      "n": 7156,
+      "log_loss": 0.681158681920827,
+      "brier": 0.2374215971985483,
+      "accuracy": 0.6340134153158189,
+      "yield": null,
+      "n_bets": 0,
+      "has_odds": false,
+      "insufficient": false,
+      "note": "no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI",
+      "auto_promote": false
+    },
+    {
+      "model_id": "INDEPENDENT_POISSON_v1",
+      "market_id": "TEAM_GOALS_AWAY_O1_5",
+      "n": 7156,
+      "log_loss": 0.7329430193674608,
+      "brier": 0.24076694298725096,
+      "accuracy": 0.652738960313024,
+      "yield": null,
+      "n_bets": 0,
+      "has_odds": false,
+      "insufficient": false,
+      "note": "no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI",
+      "auto_promote": false
+    },
+    {
+      "model_id": "INDEPENDENT_POISSON_v1",
+      "market_id": "CORNERS_O8_5",
+      "n": 7155,
+      "log_loss": null,
+      "brier": null,
+      "accuracy": null,
+      "yield": null,
+      "n_bets": 0,
+      "has_odds": false,
+      "insufficient": false,
+      "note": "no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI",
+      "auto_promote": false
+    },
+    {
+      "model_id": "INDEPENDENT_POISSON_v1",
+      "market_id": "CORNERS_O9_5",
+      "n": 7155,
+      "log_loss": null,
+      "brier": null,
+      "accuracy": null,
+      "yield": null,
+      "n_bets": 0,
+      "has_odds": false,
+      "insufficient": false,
+      "note": "no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI",
+      "auto_promote": false
+    },
+    {
+      "model_id": "INDEPENDENT_POISSON_v1",
+      "market_id": "CORNERS_O10_5",
+      "n": 7155,
+      "log_loss": null,
+      "brier": null,
+      "accuracy": null,
+      "yield": null,
+      "n_bets": 0,
+      "has_odds": false,
+      "insufficient": false,
+      "note": "no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI",
+      "auto_promote": false
+    },
+    {
+      "model_id": "INDEPENDENT_POISSON_v1",
+      "market_id": "CARDS_O3_5",
+      "n": 7155,
+      "log_loss": null,
+      "brier": null,
+      "accuracy": null,
+      "yield": null,
+      "n_bets": 0,
+      "has_odds": false,
+      "insufficient": false,
+      "note": "no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI",
+      "auto_promote": false
+    },
+    {
+      "model_id": "INDEPENDENT_POISSON_v1",
+      "market_id": "CARDS_O4_5",
+      "n": 7155,
+      "log_loss": null,
+      "brier": null,
+      "accuracy": null,
+      "yield": null,
+      "n_bets": 0,
+      "has_odds": false,
+      "insufficient": false,
+      "note": "no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI",
+      "auto_promote": false
+    },
+    {
+      "model_id": "DIXON_COLES_v1",
+      "market_id": "1X2",
+      "n": 7156,
+      "log_loss": 1.0579147980218482,
+      "brier": 0.2098893269333112,
+      "accuracy": 0.4857462269424259,
+      "yield": null,
+      "n_bets": 0,
+      "has_odds": true,
+      "insufficient": false,
+      "note": "1X2 quality; value reported separately",
+      "auto_promote": false
+    },
+    {
+      "model_id": "DIXON_COLES_v1",
+      "market_id": "DC",
+      "n": 7156,
+      "log_loss": 0.6036816809190557,
+      "brier": 0.20484013049784644,
+      "accuracy": 0.6920067076579094,
+      "yield": null,
+      "n_bets": 0,
+      "has_odds": false,
+      "insufficient": false,
+      "note": "no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI",
+      "auto_promote": false
+    },
+    {
+      "model_id": "DIXON_COLES_v1",
+      "market_id": "DNB",
+      "n": 5341,
+      "log_loss": 0.6545948358917554,
+      "brier": 0.22521707554337717,
+      "accuracy": 0.6519378393559259,
+      "yield": null,
+      "n_bets": 0,
+      "has_odds": false,
+      "insufficient": false,
+      "note": "no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI",
+      "auto_promote": false
+    },
+    {
+      "model_id": "DIXON_COLES_v1",
+      "market_id": "BTTS",
+      "n": 7156,
+      "log_loss": 1.2027074130843718,
+      "brier": 0.27377249521811814,
+      "accuracy": 0.5329793180547792,
+      "yield": null,
+      "n_bets": 0,
+      "has_odds": false,
+      "insufficient": false,
+      "note": "no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI",
+      "auto_promote": false
+    },
+    {
+      "model_id": "DIXON_COLES_v1",
+      "market_id": "OU_0_5",
+      "n": 7156,
+      "log_loss": 0.33336788090028385,
+      "brier": 0.06752478330301531,
+      "accuracy": 0.9308272778088318,
+      "yield": null,
+      "n_bets": 0,
+      "has_odds": false,
+      "insufficient": false,
+      "note": "no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI",
+      "auto_promote": false
+    },
+    {
+      "model_id": "DIXON_COLES_v1",
+      "market_id": "OU_1_5",
+      "n": 7156,
+      "log_loss": 0.6411985317416744,
+      "brier": 0.19254234406540277,
+      "accuracy": 0.7358859698155394,
+      "yield": null,
+      "n_bets": 0,
+      "has_odds": false,
+      "insufficient": false,
+      "note": "no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI",
+      "auto_promote": false
+    },
+    {
+      "model_id": "DIXON_COLES_v1",
+      "market_id": "OU_2_5",
+      "n": 7156,
+      "log_loss": 0.7713651203791893,
+      "brier": 0.26702350169784445,
+      "accuracy": 0.5458356623812186,
+      "yield": -0.05805945499587133,
+      "n_bets": 2422,
+      "has_odds": true,
+      "insufficient": false,
+      "note": "settlement-backed quality only unless odds exist",
+      "auto_promote": false
+    },
+    {
+      "model_id": "DIXON_COLES_v1",
+      "market_id": "OU_3_5",
+      "n": 7156,
+      "log_loss": 0.6930110741575971,
+      "brier": 0.23081444842343182,
+      "accuracy": 0.6546953605366126,
+      "yield": null,
+      "n_bets": 0,
+      "has_odds": false,
+      "insufficient": false,
+      "note": "no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI",
+      "auto_promote": false
+    },
+    {
+      "model_id": "DIXON_COLES_v1",
+      "market_id": "MULTIGOL_1_2",
+      "n": 7156,
+      "log_loss": 0.7411970904741686,
+      "brier": 0.24798356905316674,
+      "accuracy": 0.5743432084963667,
+      "yield": null,
+      "n_bets": 0,
+      "has_odds": false,
+      "insufficient": false,
+      "note": "no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI",
+      "auto_promote": false
+    },
+    {
+      "model_id": "DIXON_COLES_v1",
+      "market_id": "MULTIGOL_1_3",
+      "n": 7156,
+      "log_loss": 0.7402978974925233,
+      "brier": 0.24421660764145098,
+      "accuracy": 0.5936277249860257,
+      "yield": null,
+      "n_bets": 0,
+      "has_odds": false,
+      "insufficient": false,
+      "note": "no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI",
+      "auto_promote": false
+    },
+    {
+      "model_id": "DIXON_COLES_v1",
+      "market_id": "MULTIGOL_2_3",
+      "n": 7156,
+      "log_loss": 0.7441444330256428,
+      "brier": 0.25307213426543496,
+      "accuracy": 0.5413638904415875,
+      "yield": null,
+      "n_bets": 0,
+      "has_odds": false,
+      "insufficient": false,
+      "note": "no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI",
+      "auto_promote": false
+    },
+    {
+      "model_id": "DIXON_COLES_v1",
+      "market_id": "MULTIGOL_2_4",
+      "n": 7156,
+      "log_loss": 0.7422412630094143,
+      "brier": 0.24687977896979021,
+      "accuracy": 0.5844046953605366,
+      "yield": null,
+      "n_bets": 0,
+      "has_odds": false,
+      "insufficient": false,
+      "note": "no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI",
+      "auto_promote": false
+    },
+    {
+      "model_id": "DIXON_COLES_v1",
+      "market_id": "TEAM_GOALS_HOME_O0_5",
+      "n": 7156,
+      "log_loss": 0.8458799963721401,
+      "brier": 0.18558071771861961,
+      "accuracy": 0.7453884851872554,
+      "yield": null,
+      "n_bets": 0,
+      "has_odds": false,
+      "insufficient": false,
+      "note": "no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI",
+      "auto_promote": false
+    },
+    {
+      "model_id": "DIXON_COLES_v1",
+      "market_id": "TEAM_GOALS_HOME_O1_5",
+      "n": 7156,
+      "log_loss": 0.8237361589621506,
+      "brier": 0.24830521378824683,
+      "accuracy": 0.5933482392397987,
+      "yield": null,
+      "n_bets": 0,
+      "has_odds": false,
+      "insufficient": false,
+      "note": "no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI",
+      "auto_promote": false
+    },
+    {
+      "model_id": "DIXON_COLES_v1",
+      "market_id": "TEAM_GOALS_AWAY_O0_5",
+      "n": 7156,
+      "log_loss": 1.0257853170824835,
+      "brier": 0.2260475091226032,
+      "accuracy": 0.6583286752375629,
+      "yield": null,
+      "n_bets": 0,
+      "has_odds": false,
+      "insufficient": false,
+      "note": "no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI",
+      "auto_promote": false
+    },
+    {
+      "model_id": "DIXON_COLES_v1",
+      "market_id": "TEAM_GOALS_AWAY_O1_5",
+      "n": 7156,
+      "log_loss": 0.7996898652905389,
+      "brier": 0.23249367641839638,
+      "accuracy": 0.640860816098379,
+      "yield": null,
+      "n_bets": 0,
+      "has_odds": false,
+      "insufficient": false,
+      "note": "no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI",
+      "auto_promote": false
+    },
+    {
+      "model_id": "DIXON_COLES_v1",
+      "market_id": "CORNERS_O8_5",
+      "n": 7155,
+      "log_loss": null,
+      "brier": null,
+      "accuracy": null,
+      "yield": null,
+      "n_bets": 0,
+      "has_odds": false,
+      "insufficient": false,
+      "note": "no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI",
+      "auto_promote": false
+    },
+    {
+      "model_id": "DIXON_COLES_v1",
+      "market_id": "CORNERS_O9_5",
+      "n": 7155,
+      "log_loss": null,
+      "brier": null,
+      "accuracy": null,
+      "yield": null,
+      "n_bets": 0,
+      "has_odds": false,
+      "insufficient": false,
+      "note": "no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI",
+      "auto_promote": false
+    },
+    {
+      "model_id": "DIXON_COLES_v1",
+      "market_id": "CORNERS_O10_5",
+      "n": 7155,
+      "log_loss": null,
+      "brier": null,
+      "accuracy": null,
+      "yield": null,
+      "n_bets": 0,
+      "has_odds": false,
+      "insufficient": false,
+      "note": "no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI",
+      "auto_promote": false
+    },
+    {
+      "model_id": "DIXON_COLES_v1",
+      "market_id": "CARDS_O3_5",
+      "n": 7155,
+      "log_loss": null,
+      "brier": null,
+      "accuracy": null,
+      "yield": null,
+      "n_bets": 0,
+      "has_odds": false,
+      "insufficient": false,
+      "note": "no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI",
+      "auto_promote": false
+    },
+    {
+      "model_id": "DIXON_COLES_v1",
+      "market_id": "CARDS_O4_5",
+      "n": 7155,
+      "log_loss": null,
+      "brier": null,
+      "accuracy": null,
+      "yield": null,
+      "n_bets": 0,
+      "has_odds": false,
+      "insufficient": false,
+      "note": "no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI",
+      "auto_promote": false
+    },
+    {
+      "model_id": "NEGBIN_v1",
+      "market_id": "1X2",
+      "n": 0,
+      "log_loss": null,
+      "brier": null,
+      "accuracy": null,
+      "yield": null,
+      "n_bets": 0,
+      "has_odds": true,
+      "insufficient": true,
+      "note": "1X2 quality; value reported separately",
+      "auto_promote": false
+    },
+    {
+      "model_id": "INDEPENDENT_LOGISTIC_v1",
+      "market_id": "1X2",
+      "n": 7156,
+      "log_loss": 1.3161616578985924,
+      "brier": 0.24241279145274722,
+      "accuracy": 0.44955282280603687,
+      "yield": null,
+      "n_bets": 0,
+      "has_odds": true,
+      "insufficient": false,
+      "note": "1X2 quality; value reported separately",
+      "auto_promote": false
+    },
+    {
+      "model_id": "INDEPENDENT_LOGISTIC_v1",
+      "market_id": "DC",
+      "n": 7156,
+      "log_loss": null,
+      "brier": null,
+      "accuracy": null,
+      "yield": null,
+      "n_bets": 0,
+      "has_odds": false,
+      "insufficient": false,
+      "note": "model emits 1X2 only — no invented BTTS/O/U head; no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI",
+      "auto_promote": false
+    },
+    {
+      "model_id": "INDEPENDENT_LOGISTIC_v1",
+      "market_id": "DNB",
+      "n": 5341,
+      "log_loss": null,
+      "brier": null,
+      "accuracy": null,
+      "yield": null,
+      "n_bets": 0,
+      "has_odds": false,
+      "insufficient": false,
+      "note": "model emits 1X2 only — no invented BTTS/O/U head; no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI",
+      "auto_promote": false
+    },
+    {
+      "model_id": "INDEPENDENT_LOGISTIC_v1",
+      "market_id": "BTTS",
+      "n": 7156,
+      "log_loss": null,
+      "brier": null,
+      "accuracy": null,
+      "yield": null,
+      "n_bets": 0,
+      "has_odds": false,
+      "insufficient": false,
+      "note": "model emits 1X2 only — no invented BTTS/O/U head; no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI",
+      "auto_promote": false
+    },
+    {
+      "model_id": "INDEPENDENT_LOGISTIC_v1",
+      "market_id": "OU_0_5",
+      "n": 7156,
+      "log_loss": null,
+      "brier": null,
+      "accuracy": null,
+      "yield": null,
+      "n_bets": 0,
+      "has_odds": false,
+      "insufficient": false,
+      "note": "model emits 1X2 only — no invented BTTS/O/U head; no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI",
+      "auto_promote": false
+    },
+    {
+      "model_id": "INDEPENDENT_LOGISTIC_v1",
+      "market_id": "OU_1_5",
+      "n": 7156,
+      "log_loss": null,
+      "brier": null,
+      "accuracy": null,
+      "yield": null,
+      "n_bets": 0,
+      "has_odds": false,
+      "insufficient": false,
+      "note": "model emits 1X2 only — no invented BTTS/O/U head; no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI",
+      "auto_promote": false
+    },
+    {
+      "model_id": "INDEPENDENT_LOGISTIC_v1",
+      "market_id": "OU_2_5",
+      "n": 7156,
+      "log_loss": null,
+      "brier": null,
+      "accuracy": null,
+      "yield": null,
+      "n_bets": 0,
+      "has_odds": false,
+      "insufficient": false,
+      "note": "model emits 1X2 only — no invented BTTS/O/U head; no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI",
+      "auto_promote": false
+    },
+    {
+      "model_id": "INDEPENDENT_LOGISTIC_v1",
+      "market_id": "OU_3_5",
+      "n": 7156,
+      "log_loss": null,
+      "brier": null,
+      "accuracy": null,
+      "yield": null,
+      "n_bets": 0,
+      "has_odds": false,
+      "insufficient": false,
+      "note": "model emits 1X2 only — no invented BTTS/O/U head; no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI",
+      "auto_promote": false
+    },
+    {
+      "model_id": "INDEPENDENT_LOGISTIC_v1",
+      "market_id": "MULTIGOL_1_2",
+      "n": 7156,
+      "log_loss": null,
+      "brier": null,
+      "accuracy": null,
+      "yield": null,
+      "n_bets": 0,
+      "has_odds": false,
+      "insufficient": false,
+      "note": "model emits 1X2 only — no invented BTTS/O/U head; no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI",
+      "auto_promote": false
+    },
+    {
+      "model_id": "INDEPENDENT_LOGISTIC_v1",
+      "market_id": "MULTIGOL_1_3",
+      "n": 7156,
+      "log_loss": null,
+      "brier": null,
+      "accuracy": null,
+      "yield": null,
+      "n_bets": 0,
+      "has_odds": false,
+      "insufficient": false,
+      "note": "model emits 1X2 only — no invented BTTS/O/U head; no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI",
+      "auto_promote": false
+    },
+    {
+      "model_id": "INDEPENDENT_LOGISTIC_v1",
+      "market_id": "MULTIGOL_2_3",
+      "n": 7156,
+      "log_loss": null,
+      "brier": null,
+      "accuracy": null,
+      "yield": null,
+      "n_bets": 0,
+      "has_odds": false,
+      "insufficient": false,
+      "note": "model emits 1X2 only — no invented BTTS/O/U head; no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI",
+      "auto_promote": false
+    },
+    {
+      "model_id": "INDEPENDENT_LOGISTIC_v1",
+      "market_id": "MULTIGOL_2_4",
+      "n": 7156,
+      "log_loss": null,
+      "brier": null,
+      "accuracy": null,
+      "yield": null,
+      "n_bets": 0,
+      "has_odds": false,
+      "insufficient": false,
+      "note": "model emits 1X2 only — no invented BTTS/O/U head; no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI",
+      "auto_promote": false
+    },
+    {
+      "model_id": "INDEPENDENT_LOGISTIC_v1",
+      "market_id": "TEAM_GOALS_HOME_O0_5",
+      "n": 7156,
+      "log_loss": null,
+      "brier": null,
+      "accuracy": null,
+      "yield": null,
+      "n_bets": 0,
+      "has_odds": false,
+      "insufficient": false,
+      "note": "model emits 1X2 only — no invented BTTS/O/U head; no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI",
+      "auto_promote": false
+    },
+    {
+      "model_id": "INDEPENDENT_LOGISTIC_v1",
+      "market_id": "TEAM_GOALS_HOME_O1_5",
+      "n": 7156,
+      "log_loss": null,
+      "brier": null,
+      "accuracy": null,
+      "yield": null,
+      "n_bets": 0,
+      "has_odds": false,
+      "insufficient": false,
+      "note": "model emits 1X2 only — no invented BTTS/O/U head; no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI",
+      "auto_promote": false
+    },
+    {
+      "model_id": "INDEPENDENT_LOGISTIC_v1",
+      "market_id": "TEAM_GOALS_AWAY_O0_5",
+      "n": 7156,
+      "log_loss": null,
+      "brier": null,
+      "accuracy": null,
+      "yield": null,
+      "n_bets": 0,
+      "has_odds": false,
+      "insufficient": false,
+      "note": "model emits 1X2 only — no invented BTTS/O/U head; no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI",
+      "auto_promote": false
+    },
+    {
+      "model_id": "INDEPENDENT_LOGISTIC_v1",
+      "market_id": "TEAM_GOALS_AWAY_O1_5",
+      "n": 7156,
+      "log_loss": null,
+      "brier": null,
+      "accuracy": null,
+      "yield": null,
+      "n_bets": 0,
+      "has_odds": false,
+      "insufficient": false,
+      "note": "model emits 1X2 only — no invented BTTS/O/U head; no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI",
+      "auto_promote": false
+    },
+    {
+      "model_id": "INDEPENDENT_LOGISTIC_v1",
+      "market_id": "CORNERS_O8_5",
+      "n": 7155,
+      "log_loss": null,
+      "brier": null,
+      "accuracy": null,
+      "yield": null,
+      "n_bets": 0,
+      "has_odds": false,
+      "insufficient": false,
+      "note": "model emits 1X2 only — no invented BTTS/O/U head; no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI",
+      "auto_promote": false
+    },
+    {
+      "model_id": "INDEPENDENT_LOGISTIC_v1",
+      "market_id": "CORNERS_O9_5",
+      "n": 7155,
+      "log_loss": null,
+      "brier": null,
+      "accuracy": null,
+      "yield": null,
+      "n_bets": 0,
+      "has_odds": false,
+      "insufficient": false,
+      "note": "model emits 1X2 only — no invented BTTS/O/U head; no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI",
+      "auto_promote": false
+    },
+    {
+      "model_id": "INDEPENDENT_LOGISTIC_v1",
+      "market_id": "CORNERS_O10_5",
+      "n": 7155,
+      "log_loss": null,
+      "brier": null,
+      "accuracy": null,
+      "yield": null,
+      "n_bets": 0,
+      "has_odds": false,
+      "insufficient": false,
+      "note": "model emits 1X2 only — no invented BTTS/O/U head; no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI",
+      "auto_promote": false
+    },
+    {
+      "model_id": "INDEPENDENT_LOGISTIC_v1",
+      "market_id": "CARDS_O3_5",
+      "n": 7155,
+      "log_loss": null,
+      "brier": null,
+      "accuracy": null,
+      "yield": null,
+      "n_bets": 0,
+      "has_odds": false,
+      "insufficient": false,
+      "note": "model emits 1X2 only — no invented BTTS/O/U head; no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI",
+      "auto_promote": false
+    },
+    {
+      "model_id": "INDEPENDENT_LOGISTIC_v1",
+      "market_id": "CARDS_O4_5",
+      "n": 7155,
+      "log_loss": null,
+      "brier": null,
+      "accuracy": null,
+      "yield": null,
+      "n_bets": 0,
+      "has_odds": false,
+      "insufficient": false,
+      "note": "model emits 1X2 only — no invented BTTS/O/U head; no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI",
+      "auto_promote": false
+    },
+    {
+      "model_id": "GBM_STUMPS_v1",
+      "market_id": "1X2",
+      "n": 7156,
+      "log_loss": 1.0681306094735836,
+      "brier": 0.21523708484458098,
+      "accuracy": 0.43418110676355504,
+      "yield": null,
+      "n_bets": 0,
+      "has_odds": true,
+      "insufficient": false,
+      "note": "1X2 quality; value reported separately",
+      "auto_promote": false
+    },
+    {
+      "model_id": "GBM_STUMPS_v1",
+      "market_id": "DC",
+      "n": 7156,
+      "log_loss": null,
+      "brier": null,
+      "accuracy": null,
+      "yield": null,
+      "n_bets": 0,
+      "has_odds": false,
+      "insufficient": false,
+      "note": "model emits 1X2 only — no invented BTTS/O/U head; no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI",
+      "auto_promote": false
+    },
+    {
+      "model_id": "GBM_STUMPS_v1",
+      "market_id": "DNB",
+      "n": 5341,
+      "log_loss": null,
+      "brier": null,
+      "accuracy": null,
+      "yield": null,
+      "n_bets": 0,
+      "has_odds": false,
+      "insufficient": false,
+      "note": "model emits 1X2 only — no invented BTTS/O/U head; no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI",
+      "auto_promote": false
+    },
+    {
+      "model_id": "GBM_STUMPS_v1",
+      "market_id": "BTTS",
+      "n": 7156,
+      "log_loss": null,
+      "brier": null,
+      "accuracy": null,
+      "yield": null,
+      "n_bets": 0,
+      "has_odds": false,
+      "insufficient": false,
+      "note": "model emits 1X2 only — no invented BTTS/O/U head; no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI",
+      "auto_promote": false
+    },
+    {
+      "model_id": "GBM_STUMPS_v1",
+      "market_id": "OU_0_5",
+      "n": 7156,
+      "log_loss": null,
+      "brier": null,
+      "accuracy": null,
+      "yield": null,
+      "n_bets": 0,
+      "has_odds": false,
+      "insufficient": false,
+      "note": "model emits 1X2 only — no invented BTTS/O/U head; no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI",
+      "auto_promote": false
+    },
+    {
+      "model_id": "GBM_STUMPS_v1",
+      "market_id": "OU_1_5",
+      "n": 7156,
+      "log_loss": null,
+      "brier": null,
+      "accuracy": null,
+      "yield": null,
+      "n_bets": 0,
+      "has_odds": false,
+      "insufficient": false,
+      "note": "model emits 1X2 only — no invented BTTS/O/U head; no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI",
+      "auto_promote": false
+    },
+    {
+      "model_id": "GBM_STUMPS_v1",
+      "market_id": "OU_2_5",
+      "n": 7156,
+      "log_loss": null,
+      "brier": null,
+      "accuracy": null,
+      "yield": null,
+      "n_bets": 0,
+      "has_odds": false,
+      "insufficient": false,
+      "note": "model emits 1X2 only — no invented BTTS/O/U head; no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI",
+      "auto_promote": false
+    },
+    {
+      "model_id": "GBM_STUMPS_v1",
+      "market_id": "OU_3_5",
+      "n": 7156,
+      "log_loss": null,
+      "brier": null,
+      "accuracy": null,
+      "yield": null,
+      "n_bets": 0,
+      "has_odds": false,
+      "insufficient": false,
+      "note": "model emits 1X2 only — no invented BTTS/O/U head; no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI",
+      "auto_promote": false
+    },
+    {
+      "model_id": "GBM_STUMPS_v1",
+      "market_id": "MULTIGOL_1_2",
+      "n": 7156,
+      "log_loss": null,
+      "brier": null,
+      "accuracy": null,
+      "yield": null,
+      "n_bets": 0,
+      "has_odds": false,
+      "insufficient": false,
+      "note": "model emits 1X2 only — no invented BTTS/O/U head; no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI",
+      "auto_promote": false
+    },
+    {
+      "model_id": "GBM_STUMPS_v1",
+      "market_id": "MULTIGOL_1_3",
+      "n": 7156,
+      "log_loss": null,
+      "brier": null,
+      "accuracy": null,
+      "yield": null,
+      "n_bets": 0,
+      "has_odds": false,
+      "insufficient": false,
+      "note": "model emits 1X2 only — no invented BTTS/O/U head; no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI",
+      "auto_promote": false
+    },
+    {
+      "model_id": "GBM_STUMPS_v1",
+      "market_id": "MULTIGOL_2_3",
+      "n": 7156,
+      "log_loss": null,
+      "brier": null,
+      "accuracy": null,
+      "yield": null,
+      "n_bets": 0,
+      "has_odds": false,
+      "insufficient": false,
+      "note": "model emits 1X2 only — no invented BTTS/O/U head; no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI",
+      "auto_promote": false
+    },
+    {
+      "model_id": "GBM_STUMPS_v1",
+      "market_id": "MULTIGOL_2_4",
+      "n": 7156,
+      "log_loss": null,
+      "brier": null,
+      "accuracy": null,
+      "yield": null,
+      "n_bets": 0,
+      "has_odds": false,
+      "insufficient": false,
+      "note": "model emits 1X2 only — no invented BTTS/O/U head; no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI",
+      "auto_promote": false
+    },
+    {
+      "model_id": "GBM_STUMPS_v1",
+      "market_id": "TEAM_GOALS_HOME_O0_5",
+      "n": 7156,
+      "log_loss": null,
+      "brier": null,
+      "accuracy": null,
+      "yield": null,
+      "n_bets": 0,
+      "has_odds": false,
+      "insufficient": false,
+      "note": "model emits 1X2 only — no invented BTTS/O/U head; no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI",
+      "auto_promote": false
+    },
+    {
+      "model_id": "GBM_STUMPS_v1",
+      "market_id": "TEAM_GOALS_HOME_O1_5",
+      "n": 7156,
+      "log_loss": null,
+      "brier": null,
+      "accuracy": null,
+      "yield": null,
+      "n_bets": 0,
+      "has_odds": false,
+      "insufficient": false,
+      "note": "model emits 1X2 only — no invented BTTS/O/U head; no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI",
+      "auto_promote": false
+    },
+    {
+      "model_id": "GBM_STUMPS_v1",
+      "market_id": "TEAM_GOALS_AWAY_O0_5",
+      "n": 7156,
+      "log_loss": null,
+      "brier": null,
+      "accuracy": null,
+      "yield": null,
+      "n_bets": 0,
+      "has_odds": false,
+      "insufficient": false,
+      "note": "model emits 1X2 only — no invented BTTS/O/U head; no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI",
+      "auto_promote": false
+    },
+    {
+      "model_id": "GBM_STUMPS_v1",
+      "market_id": "TEAM_GOALS_AWAY_O1_5",
+      "n": 7156,
+      "log_loss": null,
+      "brier": null,
+      "accuracy": null,
+      "yield": null,
+      "n_bets": 0,
+      "has_odds": false,
+      "insufficient": false,
+      "note": "model emits 1X2 only — no invented BTTS/O/U head; no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI",
+      "auto_promote": false
+    },
+    {
+      "model_id": "GBM_STUMPS_v1",
+      "market_id": "CORNERS_O8_5",
+      "n": 7155,
+      "log_loss": null,
+      "brier": null,
+      "accuracy": null,
+      "yield": null,
+      "n_bets": 0,
+      "has_odds": false,
+      "insufficient": false,
+      "note": "model emits 1X2 only — no invented BTTS/O/U head; no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI",
+      "auto_promote": false
+    },
+    {
+      "model_id": "GBM_STUMPS_v1",
+      "market_id": "CORNERS_O9_5",
+      "n": 7155,
+      "log_loss": null,
+      "brier": null,
+      "accuracy": null,
+      "yield": null,
+      "n_bets": 0,
+      "has_odds": false,
+      "insufficient": false,
+      "note": "model emits 1X2 only — no invented BTTS/O/U head; no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI",
+      "auto_promote": false
+    },
+    {
+      "model_id": "GBM_STUMPS_v1",
+      "market_id": "CORNERS_O10_5",
+      "n": 7155,
+      "log_loss": null,
+      "brier": null,
+      "accuracy": null,
+      "yield": null,
+      "n_bets": 0,
+      "has_odds": false,
+      "insufficient": false,
+      "note": "model emits 1X2 only — no invented BTTS/O/U head; no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI",
+      "auto_promote": false
+    },
+    {
+      "model_id": "GBM_STUMPS_v1",
+      "market_id": "CARDS_O3_5",
+      "n": 7155,
+      "log_loss": null,
+      "brier": null,
+      "accuracy": null,
+      "yield": null,
+      "n_bets": 0,
+      "has_odds": false,
+      "insufficient": false,
+      "note": "model emits 1X2 only — no invented BTTS/O/U head; no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI",
+      "auto_promote": false
+    },
+    {
+      "model_id": "GBM_STUMPS_v1",
+      "market_id": "CARDS_O4_5",
+      "n": 7155,
+      "log_loss": null,
+      "brier": null,
+      "accuracy": null,
+      "yield": null,
+      "n_bets": 0,
+      "has_odds": false,
+      "insufficient": false,
+      "note": "model emits 1X2 only — no invented BTTS/O/U head; no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI",
+      "auto_promote": false
+    }
+  ],
+  "by_model": [
+    {
+      "model_id": "INDEPENDENT_POISSON_v1",
+      "quality": {
+        "n": 7156,
+        "log_loss": 1.1269775027292042,
+        "brier": 0.21775034948387884,
+        "accuracy": 0.4879821129122415,
+        "balanced_accuracy": 0.4274219922401335,
+        "calibration_error": 0.12181241892286143,
+        "roc_auc_ovr": 0.6181235786462587,
+        "confusion": {
+          "HOME": {
+            "HOME": 2348,
+            "DRAW": 185,
+            "AWAY": 574
+          },
+          "DRAW": {
+            "HOME": 1129,
+            "DRAW": 140,
+            "AWAY": 546
+          },
+          "AWAY": {
+            "HOME": 1074,
+            "DRAW": 156,
+            "AWAY": 1004
+          }
+        },
+        "binary_one_vs_rest": {
+          "HOME": {
+            "n": 7156,
+            "precision": 0.5566207309766327,
+            "recall": 0.5980045059542968,
+            "accuracy": 0.618641699273337,
+            "brier": 0.24427327076326544,
+            "log_loss": 0.7194904055441298,
+            "auc": 0.6573194969286364
+          },
+          "DRAW": {
+            "n": 7156,
+            "precision": 0.3116279069767442,
+            "recall": 0.03691460055096419,
+            "accuracy": 0.7350475125768586,
+            "brier": 0.1983345039236996,
+            "log_loss": 0.6044501198413686,
+            "auc": 0.5308417187483075
+          },
+          "AWAY": {
+            "n": 7156,
+            "precision": 0.517077045274027,
+            "recall": 0.29140555058191586,
+            "accuracy": 0.6938233650083846,
+            "brier": 0.21064327376467193,
+            "log_loss": 0.6456900746375964,
+            "auc": 0.6662095202618321
+          }
+        },
+        "goals": {
+          "n": 7156,
+          "mae_home": 1.157849214885131,
+          "mae_away": 0.9868303562987718,
+          "rmse_home": 1.534551961774517,
+          "rmse_away": 1.3278974320686665,
+          "poisson_deviance": 3.0393114298313004
+        },
+        "insufficient": false,
+        "insufficient_reason": null
+      },
+      "markets": [
+        {
+          "market_id": "1X2",
+          "settlement_n": 7156,
+          "coverage": 1,
+          "has_historical_odds": false,
+          "model_quality": null,
+          "value": null,
+          "note": "settlement-backed quality only unless odds exist"
+        },
+        {
+          "market_id": "DC",
+          "settlement_n": 7156,
+          "coverage": 1,
+          "has_historical_odds": false,
+          "model_quality": {
+            "n": 7156,
+            "precision": 0.7315584195353569,
+            "recall": 0.876472978464039,
+            "accuracy": 0.6938233650083846,
+            "brier": 0.21064327376467193,
+            "log_loss": 0.6456900746375964,
+            "auc": 0.6662095202618321
+          },
+          "value": null,
+          "note": "no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI"
+        },
+        {
+          "market_id": "DNB",
+          "settlement_n": 5341,
+          "coverage": 0.7463666852990497,
+          "has_historical_odds": false,
+          "model_quality": {
+            "n": 5341,
+            "precision": 0.6795398520953163,
+            "recall": 0.7985194721596395,
+            "accuracy": 0.6637333832615615,
+            "brier": 0.2277972444157145,
+            "log_loss": 0.7000947298156487,
+            "auc": 0.7019846311171326
+          },
+          "value": null,
+          "note": "no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI"
+        },
+        {
+          "market_id": "BTTS",
+          "settlement_n": 7156,
+          "coverage": 1,
+          "has_historical_odds": false,
+          "model_quality": {
+            "n": 7156,
+            "precision": 0.5829694323144105,
+            "recall": 0.40950920245398775,
+            "accuracy": 0.5170486305198435,
+            "brier": 0.28522098458790535,
+            "log_loss": 0.7969295107152925,
+            "auc": 0.5294158367563587
+          },
+          "value": null,
+          "note": "no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI"
+        },
+        {
+          "market_id": "OU_0_5",
+          "settlement_n": 7156,
+          "coverage": 1,
+          "has_historical_odds": false,
+          "model_quality": {
+            "n": 7156,
+            "precision": 0.9369175627240144,
+            "recall": 0.9745004473605726,
+            "accuracy": 0.9146171045276691,
+            "brier": 0.07365126214708483,
+            "log_loss": 0.28632868497760866,
+            "auc": 0.5273860887430825
+          },
+          "value": null,
+          "note": "no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI"
+        },
+        {
+          "market_id": "OU_1_5",
+          "settlement_n": 7156,
+          "coverage": 1,
+          "has_historical_odds": false,
+          "model_quality": {
+            "n": 7156,
+            "precision": 0.7799135031234983,
+            "recall": 0.8793570525555355,
+            "accuracy": 0.7146450531022918,
+            "brier": 0.20629779048482283,
+            "log_loss": 0.633384569936378,
+            "auc": 0.5536822697507018
+          },
+          "value": null,
+          "note": "no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI"
+        },
+        {
+          "market_id": "OU_2_5",
+          "settlement_n": 7156,
+          "coverage": 1,
+          "has_historical_odds": true,
+          "model_quality": {
+            "n": 7156,
+            "precision": 0.5777717976318623,
+            "recall": 0.5641093011035208,
+            "accuracy": 0.5489100055897149,
+            "brier": 0.28019886983394127,
+            "log_loss": 0.8158694385419598,
+            "auc": 0.5556650928228014
+          },
+          "value": {
+            "edge_threshold": 0.03,
+            "chosen_on": "GRID_REPORT_ONLY",
+            "n_bets": 2574,
+            "hit_rate": null,
+            "yield": -0.02855477855477861,
+            "roi": -0.02855477855477861,
+            "max_drawdown": null,
+            "profit": -73.50000000000014,
+            "longest_losing_streak": 0,
+            "longest_winning_streak": 0,
+            "insufficient": false,
+            "reason": null
+          },
+          "note": "settlement-backed quality only unless odds exist"
+        },
+        {
+          "market_id": "OU_3_5",
+          "settlement_n": 7156,
+          "coverage": 1,
+          "has_historical_odds": false,
+          "model_quality": {
+            "n": 7156,
+            "precision": 0.3804878048780488,
+            "recall": 0.24212860310421286,
+            "accuracy": 0.6369480156512017,
+            "brier": 0.2429115539746843,
+            "log_loss": 0.7468454109333639,
+            "auc": 0.5620309625032405
+          },
+          "value": null,
+          "note": "no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI"
+        },
+        {
+          "market_id": "MULTIGOL_1_2",
+          "settlement_n": 7156,
+          "coverage": 1,
+          "has_historical_odds": false,
+          "model_quality": {
+            "n": 7156,
+            "precision": 0.4582089552238806,
+            "recall": 0.3175862068965517,
+            "accuracy": 0.5712688652878704,
+            "brier": 0.2507268041335095,
+            "log_loss": 0.7127168991720958,
+            "auc": 0.5493618745138709
+          },
+          "value": null,
+          "note": "no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI"
+        },
+        {
+          "market_id": "MULTIGOL_1_3",
+          "settlement_n": 7156,
+          "coverage": 1,
+          "has_historical_odds": false,
+          "model_quality": {
+            "n": 7156,
+            "precision": 0.6414065438134637,
+            "recall": 0.766344641653561,
+            "accuracy": 0.5881777529346003,
+            "brier": 0.25057449725858577,
+            "log_loss": 0.7060196811643689,
+            "auc": 0.5510390611925045
+          },
+          "value": null,
+          "note": "no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI"
+        },
+        {
+          "market_id": "MULTIGOL_2_3",
+          "settlement_n": 7156,
+          "coverage": 1,
+          "has_historical_odds": false,
+          "model_quality": {
+            "n": 7156,
+            "precision": null,
+            "recall": 0,
+            "accuracy": 0.5413638904415875,
+            "brier": 0.261338004632327,
+            "log_loss": 0.7333191324887548,
+            "auc": 0.5124024851059439
+          },
+          "value": null,
+          "note": "no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI"
+        },
+        {
+          "market_id": "MULTIGOL_2_4",
+          "settlement_n": 7156,
+          "coverage": 1,
+          "has_historical_odds": false,
+          "model_quality": {
+            "n": 7156,
+            "precision": 0.6202651515151515,
+            "recall": 0.7436421435059037,
+            "accuracy": 0.5620458356623812,
+            "brier": 0.26123738520971546,
+            "log_loss": 0.7326953363383152,
+            "auc": 0.5020763530247344
+          },
+          "value": null,
+          "note": "no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI"
+        },
+        {
+          "market_id": "TEAM_GOALS_HOME_O0_5",
+          "settlement_n": 7156,
+          "coverage": 1,
+          "has_historical_odds": false,
+          "model_quality": {
+            "n": 7156,
+            "precision": 0.79189538262835,
+            "recall": 0.8826705056685262,
+            "accuracy": 0.7287590832867524,
+            "brier": 0.19232690145881495,
+            "log_loss": 0.5867500657162046,
+            "auc": 0.6169946845715049
+          },
+          "value": null,
+          "note": "no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI"
+        },
+        {
+          "market_id": "TEAM_GOALS_HOME_O1_5",
+          "settlement_n": 7156,
+          "coverage": 1,
+          "has_historical_odds": false,
+          "model_quality": {
+            "n": 7156,
+            "precision": 0.547478716437459,
+            "recall": 0.5257861635220126,
+            "accuracy": 0.5961430967020682,
+            "brier": 0.2598345776358653,
+            "log_loss": 0.7691306436996606,
+            "auc": 0.6183289991521456
+          },
+          "value": null,
+          "note": "no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI"
+        },
+        {
+          "market_id": "TEAM_GOALS_AWAY_O0_5",
+          "settlement_n": 7156,
+          "coverage": 1,
+          "has_historical_odds": false,
+          "model_quality": {
+            "n": 7156,
+            "precision": 0.7390368050117463,
+            "recall": 0.7459000197589409,
+            "accuracy": 0.6340134153158189,
+            "brier": 0.2374215971985483,
+            "log_loss": 0.681158681920827,
+            "auc": 0.5858135048352816
+          },
+          "value": null,
+          "note": "no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI"
+        },
+        {
+          "market_id": "TEAM_GOALS_AWAY_O1_5",
+          "settlement_n": 7156,
+          "coverage": 1,
+          "has_historical_odds": false,
+          "model_quality": {
+            "n": 7156,
+            "precision": 0.5341519570222564,
+            "recall": 0.2703962703962704,
+            "accuracy": 0.652738960313024,
+            "brier": 0.24076694298725096,
+            "log_loss": 0.7329430193674608,
+            "auc": 0.6132720279381126
+          },
+          "value": null,
+          "note": "no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI"
+        },
+        {
+          "market_id": "CORNERS_O8_5",
+          "settlement_n": 7155,
+          "coverage": 0.9998602571268865,
+          "has_historical_odds": false,
+          "model_quality": null,
+          "value": null,
+          "note": "no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI"
+        },
+        {
+          "market_id": "CORNERS_O9_5",
+          "settlement_n": 7155,
+          "coverage": 0.9998602571268865,
+          "has_historical_odds": false,
+          "model_quality": null,
+          "value": null,
+          "note": "no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI"
+        },
+        {
+          "market_id": "CORNERS_O10_5",
+          "settlement_n": 7155,
+          "coverage": 0.9998602571268865,
+          "has_historical_odds": false,
+          "model_quality": null,
+          "value": null,
+          "note": "no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI"
+        },
+        {
+          "market_id": "CARDS_O3_5",
+          "settlement_n": 7155,
+          "coverage": 0.9998602571268865,
+          "has_historical_odds": false,
+          "model_quality": null,
+          "value": null,
+          "note": "no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI"
+        },
+        {
+          "market_id": "CARDS_O4_5",
+          "settlement_n": 7155,
+          "coverage": 0.9998602571268865,
+          "has_historical_odds": false,
+          "model_quality": null,
+          "value": null,
+          "note": "no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI"
+        }
+      ]
+    },
+    {
+      "model_id": "DIXON_COLES_v1",
+      "quality": {
+        "n": 7156,
+        "log_loss": 1.0579147980218482,
+        "brier": 0.2098893269333112,
+        "accuracy": 0.4857462269424259,
+        "balanced_accuracy": 0.426061481936198,
+        "calibration_error": 0.039625058478448966,
+        "roc_auc_ovr": 0.6160068528063048,
+        "confusion": {
+          "HOME": {
+            "HOME": 2289,
+            "DRAW": 124,
+            "AWAY": 694
+          },
+          "DRAW": {
+            "HOME": 1125,
+            "DRAW": 98,
+            "AWAY": 592
+          },
+          "AWAY": {
+            "HOME": 1061,
+            "DRAW": 84,
+            "AWAY": 1089
+          }
+        },
+        "binary_one_vs_rest": {
+          "HOME": {
+            "n": 7156,
+            "precision": 0.5746896275530636,
+            "recall": 0.4618603154168008,
+            "accuracy": 0.6179429849077697,
+            "brier": 0.23469652149130393,
+            "log_loss": 0.6703197691957297,
+            "auc": 0.6444701028430055
+          },
+          "DRAW": {
+            "n": 7156,
+            "precision": 0.40350877192982454,
+            "recall": 0.012672176308539946,
+            "accuracy": 0.7448295136948015,
+            "brier": 0.1901313288107817,
+            "log_loss": 0.5693470201434432,
+            "auc": 0.5483637415842825
+          },
+          "AWAY": {
+            "n": 7156,
+            "precision": 0.514792899408284,
+            "recall": 0.23366159355416294,
+            "accuracy": 0.6920067076579094,
+            "brier": 0.20484013049784644,
+            "log_loss": 0.6036816809190556,
+            "auc": 0.6551867139916265
+          }
+        },
+        "goals": {
+          "n": 7156,
+          "mae_home": 1.043837777165164,
+          "mae_away": 0.9454618579994138,
+          "rmse_home": 1.33839294811968,
+          "rmse_away": 1.2142467873481433,
+          "poisson_deviance": 4.23710175370874
+        },
+        "insufficient": false,
+        "insufficient_reason": null
+      },
+      "markets": [
+        {
+          "market_id": "1X2",
+          "settlement_n": 7156,
+          "coverage": 1,
+          "has_historical_odds": false,
+          "model_quality": null,
+          "value": null,
+          "note": "settlement-backed quality only unless odds exist"
+        },
+        {
+          "market_id": "DC",
+          "settlement_n": 7156,
+          "coverage": 1,
+          "has_historical_odds": false,
+          "model_quality": {
+            "n": 7156,
+            "precision": 0.7212634321068055,
+            "recall": 0.9000406338886632,
+            "accuracy": 0.6920067076579094,
+            "brier": 0.20484013049784644,
+            "log_loss": 0.6036816809190557,
+            "auc": 0.6551867139916265
+          },
+          "value": null,
+          "note": "no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI"
+        },
+        {
+          "market_id": "DNB",
+          "settlement_n": 5341,
+          "coverage": 0.7463666852990497,
+          "has_historical_odds": false,
+          "model_quality": {
+            "n": 5341,
+            "precision": 0.6776765375854215,
+            "recall": 0.7660122304473769,
+            "accuracy": 0.6519378393559259,
+            "brier": 0.22521707554337717,
+            "log_loss": 0.6545948358917554,
+            "auc": 0.682956281178694
+          },
+          "value": null,
+          "note": "no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI"
+        },
+        {
+          "market_id": "BTTS",
+          "settlement_n": 7156,
+          "coverage": 1,
+          "has_historical_odds": false,
+          "model_quality": {
+            "n": 7156,
+            "precision": 0.5717522658610272,
+            "recall": 0.5805214723926381,
+            "accuracy": 0.5329793180547792,
+            "brier": 0.27377249521811814,
+            "log_loss": 1.2027074130843718,
+            "auc": 0.5250903272109718
+          },
+          "value": null,
+          "note": "no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI"
+        },
+        {
+          "market_id": "OU_0_5",
+          "settlement_n": 7156,
+          "coverage": 1,
+          "has_historical_odds": false,
+          "model_quality": {
+            "n": 7156,
+            "precision": 0.9368406245604164,
+            "recall": 0.9931404712198032,
+            "accuracy": 0.9308272778088318,
+            "brier": 0.06752478330301531,
+            "log_loss": 0.33336788090028385,
+            "auc": 0.5521504788415018
+          },
+          "value": null,
+          "note": "no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI"
+        },
+        {
+          "market_id": "OU_1_5",
+          "settlement_n": 7156,
+          "coverage": 1,
+          "has_historical_odds": false,
+          "model_quality": {
+            "n": 7156,
+            "precision": 0.7759951566520357,
+            "recall": 0.9259526819577388,
+            "accuracy": 0.7358859698155394,
+            "brier": 0.19254234406540277,
+            "log_loss": 0.6411985317416744,
+            "auc": 0.5544411602200392
+          },
+          "value": null,
+          "note": "no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI"
+        },
+        {
+          "market_id": "OU_2_5",
+          "settlement_n": 7156,
+          "coverage": 1,
+          "has_historical_odds": true,
+          "model_quality": {
+            "n": 7156,
+            "precision": 0.5737009544008483,
+            "recall": 0.5685759327377824,
+            "accuracy": 0.5458356623812186,
+            "brier": 0.26702350169784445,
+            "log_loss": 0.7713651203791893,
+            "auc": 0.56030082117003
+          },
+          "value": {
+            "edge_threshold": 0.03,
+            "chosen_on": "GRID_REPORT_ONLY",
+            "n_bets": 2422,
+            "hit_rate": null,
+            "yield": -0.05805945499587133,
+            "roi": -0.05805945499587133,
+            "max_drawdown": null,
+            "profit": -140.62000000000037,
+            "longest_losing_streak": 0,
+            "longest_winning_streak": 0,
+            "insufficient": false,
+            "reason": null
+          },
+          "note": "settlement-backed quality only unless odds exist"
+        },
+        {
+          "market_id": "OU_3_5",
+          "settlement_n": 7156,
+          "coverage": 1,
+          "has_historical_odds": false,
+          "model_quality": {
+            "n": 7156,
+            "precision": 0.40575916230366493,
+            "recall": 0.20620842572062084,
+            "accuracy": 0.6546953605366126,
+            "brier": 0.23081444842343182,
+            "log_loss": 0.6930110741575971,
+            "auc": 0.5651820457474853
+          },
+          "value": null,
+          "note": "no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI"
+        },
+        {
+          "market_id": "MULTIGOL_1_2",
+          "settlement_n": 7156,
+          "coverage": 1,
+          "has_historical_odds": false,
+          "model_quality": {
+            "n": 7156,
+            "precision": 0.4589887640449438,
+            "recall": 0.28172413793103446,
+            "accuracy": 0.5743432084963667,
+            "brier": 0.24798356905316674,
+            "log_loss": 0.7411970904741686,
+            "auc": 0.546151275278714
+          },
+          "value": null,
+          "note": "no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI"
+        },
+        {
+          "market_id": "MULTIGOL_1_3",
+          "settlement_n": 7156,
+          "coverage": 1,
+          "has_historical_odds": false,
+          "model_quality": {
+            "n": 7156,
+            "precision": 0.6373020110339919,
+            "recall": 0.804538305998652,
+            "accuracy": 0.5936277249860257,
+            "brier": 0.24421660764145098,
+            "log_loss": 0.7402978974925233,
+            "auc": 0.5444370016333118
+          },
+          "value": null,
+          "note": "no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI"
+        },
+        {
+          "market_id": "MULTIGOL_2_3",
+          "settlement_n": 7156,
+          "coverage": 1,
+          "has_historical_odds": false,
+          "model_quality": {
+            "n": 7156,
+            "precision": null,
+            "recall": 0,
+            "accuracy": 0.5413638904415875,
+            "brier": 0.25307213426543496,
+            "log_loss": 0.7441444330256428,
+            "auc": 0.5162307223550368
+          },
+          "value": null,
+          "note": "no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI"
+        },
+        {
+          "market_id": "MULTIGOL_2_4",
+          "settlement_n": 7156,
+          "coverage": 1,
+          "has_historical_odds": false,
+          "model_quality": {
+            "n": 7156,
+            "precision": 0.6196452476572959,
+            "recall": 0.8408265213442325,
+            "accuracy": 0.5844046953605366,
+            "brier": 0.24687977896979021,
+            "log_loss": 0.7422412630094143,
+            "auc": 0.5130968246361659
+          },
+          "value": null,
+          "note": "no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI"
+        },
+        {
+          "market_id": "TEAM_GOALS_HOME_O0_5",
+          "settlement_n": 7156,
+          "coverage": 1,
+          "has_historical_odds": false,
+          "model_quality": {
+            "n": 7156,
+            "precision": 0.7816317297541849,
+            "recall": 0.9326974986503509,
+            "accuracy": 0.7453884851872554,
+            "brier": 0.18558071771861961,
+            "log_loss": 0.8458799963721401,
+            "auc": 0.6050500228289613
+          },
+          "value": null,
+          "note": "no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI"
+        },
+        {
+          "market_id": "TEAM_GOALS_HOME_O1_5",
+          "settlement_n": 7156,
+          "coverage": 1,
+          "has_historical_odds": false,
+          "model_quality": {
+            "n": 7156,
+            "precision": 0.5507900677200903,
+            "recall": 0.46037735849056605,
+            "accuracy": 0.5933482392397987,
+            "brier": 0.24830521378824683,
+            "log_loss": 0.8237361589621506,
+            "auc": 0.6122233004947927
+          },
+          "value": null,
+          "note": "no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI"
+        },
+        {
+          "market_id": "TEAM_GOALS_AWAY_O0_5",
+          "settlement_n": 7156,
+          "coverage": 1,
+          "has_historical_odds": false,
+          "model_quality": {
+            "n": 7156,
+            "precision": 0.7115135834411385,
+            "recall": 0.8693934005137325,
+            "accuracy": 0.6583286752375629,
+            "brier": 0.2260475091226032,
+            "log_loss": 1.0257853170824835,
+            "auc": 0.5686122385653971
+          },
+          "value": null,
+          "note": "no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI"
+        },
+        {
+          "market_id": "TEAM_GOALS_AWAY_O1_5",
+          "settlement_n": 7156,
+          "coverage": 1,
+          "has_historical_odds": false,
+          "model_quality": {
+            "n": 7156,
+            "precision": 0.5013642564802183,
+            "recall": 0.28554778554778554,
+            "accuracy": 0.640860816098379,
+            "brier": 0.23249367641839638,
+            "log_loss": 0.7996898652905389,
+            "auc": 0.6069828069500701
+          },
+          "value": null,
+          "note": "no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI"
+        },
+        {
+          "market_id": "CORNERS_O8_5",
+          "settlement_n": 7155,
+          "coverage": 0.9998602571268865,
+          "has_historical_odds": false,
+          "model_quality": null,
+          "value": null,
+          "note": "no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI"
+        },
+        {
+          "market_id": "CORNERS_O9_5",
+          "settlement_n": 7155,
+          "coverage": 0.9998602571268865,
+          "has_historical_odds": false,
+          "model_quality": null,
+          "value": null,
+          "note": "no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI"
+        },
+        {
+          "market_id": "CORNERS_O10_5",
+          "settlement_n": 7155,
+          "coverage": 0.9998602571268865,
+          "has_historical_odds": false,
+          "model_quality": null,
+          "value": null,
+          "note": "no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI"
+        },
+        {
+          "market_id": "CARDS_O3_5",
+          "settlement_n": 7155,
+          "coverage": 0.9998602571268865,
+          "has_historical_odds": false,
+          "model_quality": null,
+          "value": null,
+          "note": "no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI"
+        },
+        {
+          "market_id": "CARDS_O4_5",
+          "settlement_n": 7155,
+          "coverage": 0.9998602571268865,
+          "has_historical_odds": false,
+          "model_quality": null,
+          "value": null,
+          "note": "no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI"
+        }
+      ]
+    },
+    {
+      "model_id": "NEGBIN_v1",
+      "quality": null,
+      "markets": []
+    },
+    {
+      "model_id": "INDEPENDENT_LOGISTIC_v1",
+      "quality": {
+        "n": 7156,
+        "log_loss": 1.3161616578985924,
+        "brier": 0.24241279145274722,
+        "accuracy": 0.44955282280603687,
+        "balanced_accuracy": 0.4074325373453649,
+        "calibration_error": 0.20844949737806256,
+        "roc_auc_ovr": 0.5868962400886203,
+        "confusion": {
+          "HOME": {
+            "HOME": 2003,
+            "DRAW": 497,
+            "AWAY": 607
+          },
+          "DRAW": {
+            "HOME": 947,
+            "DRAW": 331,
+            "AWAY": 537
+          },
+          "AWAY": {
+            "HOME": 952,
+            "DRAW": 399,
+            "AWAY": 883
+          }
+        },
+        "binary_one_vs_rest": {
+          "HOME": {
+            "n": 7156,
+            "precision": 0.5280487804878049,
+            "recall": 0.5574509172835532,
+            "accuracy": 0.5915315818893236,
+            "brier": 0.26552855932985386,
+            "log_loss": 0.7879826473735351,
+            "auc": 0.6229851839904841
+          },
+          "DRAW": {
+            "n": 7156,
+            "precision": 0.2748466257668712,
+            "recall": 0.12341597796143251,
+            "accuracy": 0.6950810508664058,
+            "brier": 0.22519109283560848,
+            "log_loss": 0.7261702155765508,
+            "auc": 0.5213743879536802
+          },
+          "AWAY": {
+            "n": 7156,
+            "precision": 0.4444444444444444,
+            "recall": 0.315129811996419,
+            "accuracy": 0.6632196757965344,
+            "brier": 0.2365187221927809,
+            "log_loss": 0.7438260350958544,
+            "auc": 0.6163291483216967
+          }
+        },
+        "goals": null,
+        "insufficient": false,
+        "insufficient_reason": null
+      },
+      "markets": [
+        {
+          "market_id": "1X2",
+          "settlement_n": 7156,
+          "coverage": 1,
+          "has_historical_odds": false,
+          "model_quality": null,
+          "value": null,
+          "note": "settlement-backed quality only unless odds exist"
+        },
+        {
+          "market_id": "DC",
+          "settlement_n": 7156,
+          "coverage": 1,
+          "has_historical_odds": false,
+          "model_quality": null,
+          "value": null,
+          "note": "model emits 1X2 only — no invented BTTS/O/U head; no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI"
+        },
+        {
+          "market_id": "DNB",
+          "settlement_n": 5341,
+          "coverage": 0.7463666852990497,
+          "has_historical_odds": false,
+          "model_quality": null,
+          "value": null,
+          "note": "model emits 1X2 only — no invented BTTS/O/U head; no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI"
+        },
+        {
+          "market_id": "BTTS",
+          "settlement_n": 7156,
+          "coverage": 1,
+          "has_historical_odds": false,
+          "model_quality": null,
+          "value": null,
+          "note": "model emits 1X2 only — no invented BTTS/O/U head; no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI"
+        },
+        {
+          "market_id": "OU_0_5",
+          "settlement_n": 7156,
+          "coverage": 1,
+          "has_historical_odds": false,
+          "model_quality": null,
+          "value": null,
+          "note": "model emits 1X2 only — no invented BTTS/O/U head; no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI"
+        },
+        {
+          "market_id": "OU_1_5",
+          "settlement_n": 7156,
+          "coverage": 1,
+          "has_historical_odds": false,
+          "model_quality": null,
+          "value": null,
+          "note": "model emits 1X2 only — no invented BTTS/O/U head; no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI"
+        },
+        {
+          "market_id": "OU_2_5",
+          "settlement_n": 7156,
+          "coverage": 1,
+          "has_historical_odds": false,
+          "model_quality": null,
+          "value": null,
+          "note": "model emits 1X2 only — no invented BTTS/O/U head; no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI"
+        },
+        {
+          "market_id": "OU_3_5",
+          "settlement_n": 7156,
+          "coverage": 1,
+          "has_historical_odds": false,
+          "model_quality": null,
+          "value": null,
+          "note": "model emits 1X2 only — no invented BTTS/O/U head; no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI"
+        },
+        {
+          "market_id": "MULTIGOL_1_2",
+          "settlement_n": 7156,
+          "coverage": 1,
+          "has_historical_odds": false,
+          "model_quality": null,
+          "value": null,
+          "note": "model emits 1X2 only — no invented BTTS/O/U head; no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI"
+        },
+        {
+          "market_id": "MULTIGOL_1_3",
+          "settlement_n": 7156,
+          "coverage": 1,
+          "has_historical_odds": false,
+          "model_quality": null,
+          "value": null,
+          "note": "model emits 1X2 only — no invented BTTS/O/U head; no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI"
+        },
+        {
+          "market_id": "MULTIGOL_2_3",
+          "settlement_n": 7156,
+          "coverage": 1,
+          "has_historical_odds": false,
+          "model_quality": null,
+          "value": null,
+          "note": "model emits 1X2 only — no invented BTTS/O/U head; no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI"
+        },
+        {
+          "market_id": "MULTIGOL_2_4",
+          "settlement_n": 7156,
+          "coverage": 1,
+          "has_historical_odds": false,
+          "model_quality": null,
+          "value": null,
+          "note": "model emits 1X2 only — no invented BTTS/O/U head; no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI"
+        },
+        {
+          "market_id": "TEAM_GOALS_HOME_O0_5",
+          "settlement_n": 7156,
+          "coverage": 1,
+          "has_historical_odds": false,
+          "model_quality": null,
+          "value": null,
+          "note": "model emits 1X2 only — no invented BTTS/O/U head; no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI"
+        },
+        {
+          "market_id": "TEAM_GOALS_HOME_O1_5",
+          "settlement_n": 7156,
+          "coverage": 1,
+          "has_historical_odds": false,
+          "model_quality": null,
+          "value": null,
+          "note": "model emits 1X2 only — no invented BTTS/O/U head; no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI"
+        },
+        {
+          "market_id": "TEAM_GOALS_AWAY_O0_5",
+          "settlement_n": 7156,
+          "coverage": 1,
+          "has_historical_odds": false,
+          "model_quality": null,
+          "value": null,
+          "note": "model emits 1X2 only — no invented BTTS/O/U head; no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI"
+        },
+        {
+          "market_id": "TEAM_GOALS_AWAY_O1_5",
+          "settlement_n": 7156,
+          "coverage": 1,
+          "has_historical_odds": false,
+          "model_quality": null,
+          "value": null,
+          "note": "model emits 1X2 only — no invented BTTS/O/U head; no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI"
+        },
+        {
+          "market_id": "CORNERS_O8_5",
+          "settlement_n": 7155,
+          "coverage": 0.9998602571268865,
+          "has_historical_odds": false,
+          "model_quality": null,
+          "value": null,
+          "note": "model emits 1X2 only — no invented BTTS/O/U head; no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI"
+        },
+        {
+          "market_id": "CORNERS_O9_5",
+          "settlement_n": 7155,
+          "coverage": 0.9998602571268865,
+          "has_historical_odds": false,
+          "model_quality": null,
+          "value": null,
+          "note": "model emits 1X2 only — no invented BTTS/O/U head; no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI"
+        },
+        {
+          "market_id": "CORNERS_O10_5",
+          "settlement_n": 7155,
+          "coverage": 0.9998602571268865,
+          "has_historical_odds": false,
+          "model_quality": null,
+          "value": null,
+          "note": "model emits 1X2 only — no invented BTTS/O/U head; no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI"
+        },
+        {
+          "market_id": "CARDS_O3_5",
+          "settlement_n": 7155,
+          "coverage": 0.9998602571268865,
+          "has_historical_odds": false,
+          "model_quality": null,
+          "value": null,
+          "note": "model emits 1X2 only — no invented BTTS/O/U head; no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI"
+        },
+        {
+          "market_id": "CARDS_O4_5",
+          "settlement_n": 7155,
+          "coverage": 0.9998602571268865,
+          "has_historical_odds": false,
+          "model_quality": null,
+          "value": null,
+          "note": "model emits 1X2 only — no invented BTTS/O/U head; no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI"
+        }
+      ]
+    },
+    {
+      "model_id": "GBM_STUMPS_v1",
+      "quality": {
+        "n": 7156,
+        "log_loss": 1.0681306094735836,
+        "brier": 0.21523708484458098,
+        "accuracy": 0.43418110676355504,
+        "balanced_accuracy": 0.3333333333333333,
+        "calibration_error": 0.004106273957034409,
+        "roc_auc_ovr": 0.5569571173374565,
+        "confusion": {
+          "HOME": {
+            "HOME": 3107,
+            "DRAW": 0,
+            "AWAY": 0
+          },
+          "DRAW": {
+            "HOME": 1815,
+            "DRAW": 0,
+            "AWAY": 0
+          },
+          "AWAY": {
+            "HOME": 2234,
+            "DRAW": 0,
+            "AWAY": 0
+          }
+        },
+        "binary_one_vs_rest": {
+          "HOME": {
+            "n": 7156,
+            "precision": null,
+            "recall": 0,
+            "accuracy": 0.565818893236445,
+            "brier": 0.24383390946494532,
+            "log_loss": 0.6807206893723368,
+            "auc": 0.5697698367193702
+          },
+          "DRAW": {
+            "n": 7156,
+            "precision": null,
+            "recall": 0,
+            "accuracy": 0.7463666852990497,
+            "brier": 0.18934950062342273,
+            "log_loss": 0.5664154843595999,
+            "auc": 0.5001308037052109
+          },
+          "AWAY": {
+            "n": 7156,
+            "precision": null,
+            "recall": 0,
+            "accuracy": 0.6878144214645053,
+            "brier": 0.2125278444453757,
+            "log_loss": 0.6157616829714363,
+            "auc": 0.6009707115877883
+          }
+        },
+        "goals": null,
+        "insufficient": false,
+        "insufficient_reason": null
+      },
+      "markets": [
+        {
+          "market_id": "1X2",
+          "settlement_n": 7156,
+          "coverage": 1,
+          "has_historical_odds": false,
+          "model_quality": null,
+          "value": null,
+          "note": "settlement-backed quality only unless odds exist"
+        },
+        {
+          "market_id": "DC",
+          "settlement_n": 7156,
+          "coverage": 1,
+          "has_historical_odds": false,
+          "model_quality": null,
+          "value": null,
+          "note": "model emits 1X2 only — no invented BTTS/O/U head; no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI"
+        },
+        {
+          "market_id": "DNB",
+          "settlement_n": 5341,
+          "coverage": 0.7463666852990497,
+          "has_historical_odds": false,
+          "model_quality": null,
+          "value": null,
+          "note": "model emits 1X2 only — no invented BTTS/O/U head; no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI"
+        },
+        {
+          "market_id": "BTTS",
+          "settlement_n": 7156,
+          "coverage": 1,
+          "has_historical_odds": false,
+          "model_quality": null,
+          "value": null,
+          "note": "model emits 1X2 only — no invented BTTS/O/U head; no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI"
+        },
+        {
+          "market_id": "OU_0_5",
+          "settlement_n": 7156,
+          "coverage": 1,
+          "has_historical_odds": false,
+          "model_quality": null,
+          "value": null,
+          "note": "model emits 1X2 only — no invented BTTS/O/U head; no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI"
+        },
+        {
+          "market_id": "OU_1_5",
+          "settlement_n": 7156,
+          "coverage": 1,
+          "has_historical_odds": false,
+          "model_quality": null,
+          "value": null,
+          "note": "model emits 1X2 only — no invented BTTS/O/U head; no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI"
+        },
+        {
+          "market_id": "OU_2_5",
+          "settlement_n": 7156,
+          "coverage": 1,
+          "has_historical_odds": false,
+          "model_quality": null,
+          "value": null,
+          "note": "model emits 1X2 only — no invented BTTS/O/U head; no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI"
+        },
+        {
+          "market_id": "OU_3_5",
+          "settlement_n": 7156,
+          "coverage": 1,
+          "has_historical_odds": false,
+          "model_quality": null,
+          "value": null,
+          "note": "model emits 1X2 only — no invented BTTS/O/U head; no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI"
+        },
+        {
+          "market_id": "MULTIGOL_1_2",
+          "settlement_n": 7156,
+          "coverage": 1,
+          "has_historical_odds": false,
+          "model_quality": null,
+          "value": null,
+          "note": "model emits 1X2 only — no invented BTTS/O/U head; no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI"
+        },
+        {
+          "market_id": "MULTIGOL_1_3",
+          "settlement_n": 7156,
+          "coverage": 1,
+          "has_historical_odds": false,
+          "model_quality": null,
+          "value": null,
+          "note": "model emits 1X2 only — no invented BTTS/O/U head; no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI"
+        },
+        {
+          "market_id": "MULTIGOL_2_3",
+          "settlement_n": 7156,
+          "coverage": 1,
+          "has_historical_odds": false,
+          "model_quality": null,
+          "value": null,
+          "note": "model emits 1X2 only — no invented BTTS/O/U head; no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI"
+        },
+        {
+          "market_id": "MULTIGOL_2_4",
+          "settlement_n": 7156,
+          "coverage": 1,
+          "has_historical_odds": false,
+          "model_quality": null,
+          "value": null,
+          "note": "model emits 1X2 only — no invented BTTS/O/U head; no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI"
+        },
+        {
+          "market_id": "TEAM_GOALS_HOME_O0_5",
+          "settlement_n": 7156,
+          "coverage": 1,
+          "has_historical_odds": false,
+          "model_quality": null,
+          "value": null,
+          "note": "model emits 1X2 only — no invented BTTS/O/U head; no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI"
+        },
+        {
+          "market_id": "TEAM_GOALS_HOME_O1_5",
+          "settlement_n": 7156,
+          "coverage": 1,
+          "has_historical_odds": false,
+          "model_quality": null,
+          "value": null,
+          "note": "model emits 1X2 only — no invented BTTS/O/U head; no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI"
+        },
+        {
+          "market_id": "TEAM_GOALS_AWAY_O0_5",
+          "settlement_n": 7156,
+          "coverage": 1,
+          "has_historical_odds": false,
+          "model_quality": null,
+          "value": null,
+          "note": "model emits 1X2 only — no invented BTTS/O/U head; no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI"
+        },
+        {
+          "market_id": "TEAM_GOALS_AWAY_O1_5",
+          "settlement_n": 7156,
+          "coverage": 1,
+          "has_historical_odds": false,
+          "model_quality": null,
+          "value": null,
+          "note": "model emits 1X2 only — no invented BTTS/O/U head; no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI"
+        },
+        {
+          "market_id": "CORNERS_O8_5",
+          "settlement_n": 7155,
+          "coverage": 0.9998602571268865,
+          "has_historical_odds": false,
+          "model_quality": null,
+          "value": null,
+          "note": "model emits 1X2 only — no invented BTTS/O/U head; no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI"
+        },
+        {
+          "market_id": "CORNERS_O9_5",
+          "settlement_n": 7155,
+          "coverage": 0.9998602571268865,
+          "has_historical_odds": false,
+          "model_quality": null,
+          "value": null,
+          "note": "model emits 1X2 only — no invented BTTS/O/U head; no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI"
+        },
+        {
+          "market_id": "CORNERS_O10_5",
+          "settlement_n": 7155,
+          "coverage": 0.9998602571268865,
+          "has_historical_odds": false,
+          "model_quality": null,
+          "value": null,
+          "note": "model emits 1X2 only — no invented BTTS/O/U head; no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI"
+        },
+        {
+          "market_id": "CARDS_O3_5",
+          "settlement_n": 7155,
+          "coverage": 0.9998602571268865,
+          "has_historical_odds": false,
+          "model_quality": null,
+          "value": null,
+          "note": "model emits 1X2 only — no invented BTTS/O/U head; no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI"
+        },
+        {
+          "market_id": "CARDS_O4_5",
+          "settlement_n": 7155,
+          "coverage": 0.9998602571268865,
+          "has_historical_odds": false,
+          "model_quality": null,
+          "value": null,
+          "note": "model emits 1X2 only — no invented BTTS/O/U head; no historical price — ROI NON DETERMINABILE CON I DATI DISPONIBILI"
+        }
+      ]
+    }
+  ],
+  "note": "ROI only where historical prices exist; otherwise NON DETERMINABILE CON I DATI DISPONIBILI"
+}

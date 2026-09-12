@@ -289,6 +289,7 @@ describe("Phase 9 — end-to-end synthetic OOS", () => {
       { code: "2223", year: 2022, n: 80 },
     ]);
     const root = mkdtempSync(join(tmpdir(), "p9-run-"));
+    process.env.PHASE9_ARTIFACTS_DIR = join(root, "artifacts");
     mkdirSync(join(root, "predictive-intelligence", "datasets"), { recursive: true });
     writeFileSync(
       join(root, "predictive-intelligence", "datasets", "matches.jsonl"),

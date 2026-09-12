@@ -15,7 +15,7 @@ import { importFootballDataDataset, loadPiMatches } from "@/domain/eval/predicti
 import { featureCutoffForMatch, priorMatchesAsOf } from "@/domain/eval/predictive-intelligence/features/asof";
 import { parseCsv, parseFootballDataCoUkDate } from "@/providers/football-data-co-uk/parser";
 import { resolveFootballDataCoUkTeamId } from "@/providers/football-data-co-uk/team-aliases";
-import { PHASE9_ARTIFACTS_DIR, PHASE9_DATASET_VERSION, phase9LabRoot } from "@/domain/eval/phase-9/config";
+import { PHASE9_DATASET_VERSION, phase9ArtifactsDir, phase9LabRoot } from "@/domain/eval/phase-9/config";
 import type { Phase9Match } from "@/domain/eval/phase-9/types";
 import { NEON_IN_USE } from "@/domain/storage";
 
@@ -245,8 +245,8 @@ export async function buildPhase9Dataset(input?: {
     notes,
   };
 
-  mkdirSync(PHASE9_ARTIFACTS_DIR, { recursive: true });
-  writeFileSync(join(PHASE9_ARTIFACTS_DIR, "dataset-manifest.json"), JSON.stringify(manifest, null, 2));
+  mkdirSync(phase9ArtifactsDir(), { recursive: true });
+  writeFileSync(join(phase9ArtifactsDir(), "dataset-manifest.json"), JSON.stringify(manifest, null, 2));
   return { matches, manifest };
 }
 

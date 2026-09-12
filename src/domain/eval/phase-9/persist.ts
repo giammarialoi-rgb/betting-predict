@@ -1,16 +1,17 @@
 import { mkdirSync, writeFileSync, readFileSync, existsSync } from "node:fs";
 import { join } from "node:path";
-import { PHASE9_ARTIFACTS_DIR } from "@/domain/eval/phase-9/config";
+import { phase9ArtifactsDir } from "@/domain/eval/phase-9/config";
 
 export function writePhase9Json(name: string, value: unknown): string {
-  mkdirSync(PHASE9_ARTIFACTS_DIR, { recursive: true });
-  const p = join(PHASE9_ARTIFACTS_DIR, name);
+  const dir = phase9ArtifactsDir();
+  mkdirSync(dir, { recursive: true });
+  const p = join(dir, name);
   writeFileSync(p, JSON.stringify(value, null, 2));
   return p;
 }
 
 export function readPhase9Json<T>(name: string): T | null {
-  const p = join(PHASE9_ARTIFACTS_DIR, name);
+  const p = join(phase9ArtifactsDir(), name);
   if (!existsSync(p)) return null;
   try {
     return JSON.parse(readFileSync(p, "utf8")) as T;

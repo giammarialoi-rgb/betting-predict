@@ -2,7 +2,11 @@ import { join } from "node:path";
 import { PI_MODEL_INDEPENDENT_ID } from "@/domain/eval/predictive-intelligence/config";
 import { permanentRoot044 } from "@/domain/eval/permanent-044/config";
 
-export const PHASE9_ARTIFACTS_DIR = join(process.cwd(), "artifacts", "phase-9");
+export const PHASE9_ARTIFACTS_DIR_DEFAULT = join(process.cwd(), "artifacts", "phase-9");
+
+export function phase9ArtifactsDir(): string {
+  return process.env.PHASE9_ARTIFACTS_DIR ?? PHASE9_ARTIFACTS_DIR_DEFAULT;
+}
 export const PHASE9_DATASET_VERSION = "dataset_phase9_v1";
 export const PHASE9_FEATURES_VERSION = "features_pi_v1";
 export const PHASE9_RANDOM_SEED = 42;

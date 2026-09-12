@@ -1,0 +1,1971 @@
+{
+  "at": "2026-09-12T05:10:14.861Z",
+  "neon_in_use": false,
+  "current_production": "INDEPENDENT_POISSON_v1",
+  "rows": 10707,
+  "windows": [
+    {
+      "window_id": "wf_train_1920_val_2021_oos_2122",
+      "kind": "walk_forward",
+      "train_seasons": [
+        "1920"
+      ],
+      "val_seasons": [
+        "2021"
+      ],
+      "oos_seasons": [
+        "2122"
+      ],
+      "train_start": "2019-08-09",
+      "train_end": "2020-08-02",
+      "val_start": "2020-08-21",
+      "val_end": "2021-05-23",
+      "oos_start": "2021-08-06",
+      "oos_end": "2022-05-22",
+      "train_n": 1725,
+      "val_n": 1826,
+      "oos_n": 1826
+    },
+    {
+      "window_id": "wf_train_1920+2021_val_2122_oos_2223",
+      "kind": "walk_forward",
+      "train_seasons": [
+        "1920",
+        "2021"
+      ],
+      "val_seasons": [
+        "2122"
+      ],
+      "oos_seasons": [
+        "2223"
+      ],
+      "train_start": "2019-08-09",
+      "train_end": "2021-05-23",
+      "val_start": "2021-08-06",
+      "val_end": "2022-05-22",
+      "oos_start": "2022-08-05",
+      "oos_end": "2023-06-04",
+      "train_n": 3551,
+      "val_n": 1826,
+      "oos_n": 1826
+    },
+    {
+      "window_id": "wf_train_1920+2021+2122_val_2223_oos_2324",
+      "kind": "walk_forward",
+      "train_seasons": [
+        "1920",
+        "2021",
+        "2122"
+      ],
+      "val_seasons": [
+        "2223"
+      ],
+      "oos_seasons": [
+        "2324"
+      ],
+      "train_start": "2019-08-09",
+      "train_end": "2022-05-22",
+      "val_start": "2022-08-05",
+      "val_end": "2023-06-04",
+      "oos_start": "2023-08-11",
+      "oos_end": "2024-06-02",
+      "train_n": 5377,
+      "val_n": 1826,
+      "oos_n": 1752
+    },
+    {
+      "window_id": "wf_train_1920+2021+2122+2223_val_2324_oos_2425",
+      "kind": "walk_forward",
+      "train_seasons": [
+        "1920",
+        "2021",
+        "2122",
+        "2223"
+      ],
+      "val_seasons": [
+        "2324"
+      ],
+      "oos_seasons": [
+        "2425"
+      ],
+      "train_start": "2019-08-09",
+      "train_end": "2023-06-04",
+      "val_start": "2023-08-11",
+      "val_end": "2024-06-02",
+      "oos_start": "2024-08-15",
+      "oos_end": "2025-05-25",
+      "train_n": 7203,
+      "val_n": 1752,
+      "oos_n": 1752
+    }
+  ],
+  "baselines_last_oos": {
+    "UNIFORM_1X2": {
+      "n": 1752,
+      "log_loss": 1.098612288668149,
+      "brier": 0.22222222222222737,
+      "accuracy": 0.4200913242009132,
+      "balanced_accuracy": 0.3333333333333333,
+      "calibration_error": 0.0867579908675819,
+      "roc_auc_ovr": 0.5,
+      "confusion": {
+        "HOME": {
+          "HOME": 736,
+          "DRAW": 0,
+          "AWAY": 0
+        },
+        "DRAW": {
+          "HOME": 437,
+          "DRAW": 0,
+          "AWAY": 0
+        },
+        "AWAY": {
+          "HOME": 579,
+          "DRAW": 0,
+          "AWAY": 0
+        }
+      },
+      "binary_one_vs_rest": {
+        "HOME": {
+          "n": 1752,
+          "precision": null,
+          "recall": 0,
+          "accuracy": 0.5799086757990868,
+          "brier": 0.2511415525114137,
+          "log_loss": 0.6966502250557423,
+          "auc": 0.5
+        },
+        "DRAW": {
+          "n": 1752,
+          "precision": null,
+          "recall": 0,
+          "accuracy": 0.7505707762557078,
+          "brier": 0.19425418569254013,
+          "log_loss": 0.5783562712957796,
+          "auc": 0.5
+        },
+        "AWAY": {
+          "n": 1752,
+          "precision": null,
+          "recall": 0,
+          "accuracy": 0.6695205479452054,
+          "brier": 0.22127092846270788,
+          "log_loss": 0.6345360085329526,
+          "auc": 0.5
+        }
+      },
+      "goals": null,
+      "insufficient": false,
+      "insufficient_reason": null
+    },
+    "HISTORICAL_HDA": {
+      "n": 1752,
+      "log_loss": 1.077111479938018,
+      "brier": 0.21748099563745457,
+      "accuracy": 0.4200913242009132,
+      "balanced_accuracy": 0.3333333333333333,
+      "calibration_error": 0.01057417547851458,
+      "roc_auc_ovr": 0.48284147699530583,
+      "confusion": {
+        "HOME": {
+          "HOME": 736,
+          "DRAW": 0,
+          "AWAY": 0
+        },
+        "DRAW": {
+          "HOME": 437,
+          "DRAW": 0,
+          "AWAY": 0
+        },
+        "AWAY": {
+          "HOME": 579,
+          "DRAW": 0,
+          "AWAY": 0
+        }
+      },
+      "binary_one_vs_rest": {
+        "HOME": {
+          "n": 1752,
+          "precision": null,
+          "recall": 0,
+          "accuracy": 0.5799086757990868,
+          "brier": 0.24374054537002204,
+          "log_loss": 0.6805787507207565,
+          "auc": 0.48631274606299213
+        },
+        "DRAW": {
+          "n": 1752,
+          "precision": null,
+          "recall": 0,
+          "accuracy": 0.7505707762557078,
+          "brier": 0.1872430654281167,
+          "log_loss": 0.5617834267649127,
+          "auc": 0.45856383395254546
+        },
+        "AWAY": {
+          "n": 1752,
+          "precision": null,
+          "recall": 0,
+          "accuracy": 0.6695205479452054,
+          "brier": 0.22145937611422667,
+          "log_loss": 0.6349686725943167,
+          "auc": 0.5036478509703799
+        }
+      },
+      "goals": null,
+      "insufficient": false,
+      "insufficient_reason": null
+    },
+    "LEAGUE_FREQ": {
+      "n": 1752,
+      "log_loss": 1.0834578748696517,
+      "brier": 0.21879075674558962,
+      "accuracy": 0.4172374429223744,
+      "balanced_accuracy": 0.33347215470530345,
+      "calibration_error": 0.025024179923262058,
+      "roc_auc_ovr": 0.4992447318242143,
+      "confusion": {
+        "HOME": {
+          "HOME": 716,
+          "DRAW": 5,
+          "AWAY": 15
+        },
+        "DRAW": {
+          "HOME": 423,
+          "DRAW": 3,
+          "AWAY": 11
+        },
+        "AWAY": {
+          "HOME": 558,
+          "DRAW": 9,
+          "AWAY": 12
+        }
+      },
+      "binary_one_vs_rest": {
+        "HOME": {
+          "n": 1752,
+          "precision": null,
+          "recall": 0,
+          "accuracy": 0.5799086757990868,
+          "brier": 0.24456433834449426,
+          "log_loss": 0.6822877755415231,
+          "auc": 0.5012349955066758
+        },
+        "DRAW": {
+          "n": 1752,
+          "precision": null,
+          "recall": 0,
+          "accuracy": 0.7505707762557078,
+          "brier": 0.1885891268962771,
+          "log_loss": 0.5651177401550006,
+          "auc": 0.5002906091480975
+        },
+        "AWAY": {
+          "n": 1752,
+          "precision": null,
+          "recall": 0,
+          "accuracy": 0.6695205479452054,
+          "brier": 0.22321880499599547,
+          "log_loss": 0.6392072272522648,
+          "auc": 0.49620859081786955
+        }
+      },
+      "goals": null,
+      "insufficient": false,
+      "insufficient_reason": null
+    },
+    "HOME_ADVANTAGE": {
+      "n": 1752,
+      "log_loss": 1.084406266446771,
+      "brier": 0.21933158885333418,
+      "accuracy": 0.4200913242009132,
+      "balanced_accuracy": 0.3333333333333333,
+      "calibration_error": 0.061072875025000584,
+      "roc_auc_ovr": 0.4793911317787403,
+      "confusion": {
+        "HOME": {
+          "HOME": 736,
+          "DRAW": 0,
+          "AWAY": 0
+        },
+        "DRAW": {
+          "HOME": 437,
+          "DRAW": 0,
+          "AWAY": 0
+        },
+        "AWAY": {
+          "HOME": 579,
+          "DRAW": 0,
+          "AWAY": 0
+        }
+      },
+      "binary_one_vs_rest": {
+        "HOME": {
+          "n": 1752,
+          "precision": null,
+          "recall": 0,
+          "accuracy": 0.5799086757990868,
+          "brier": 0.2473643320444811,
+          "log_loss": 0.6878735372295175,
+          "auc": 0.48631274606299213
+        },
+        "DRAW": {
+          "n": 1752,
+          "precision": null,
+          "recall": 0,
+          "accuracy": 0.7505707762557078,
+          "brier": 0.18758107547570105,
+          "log_loss": 0.5627226557066101,
+          "auc": 0.4480044548468211
+        },
+        "AWAY": {
+          "n": 1752,
+          "precision": null,
+          "recall": 0,
+          "accuracy": 0.6695205479452054,
+          "brier": 0.22304935903981912,
+          "log_loss": 0.6387566429782378,
+          "auc": 0.5038561944264076
+        }
+      },
+      "goals": null,
+      "insufficient": false,
+      "insufficient_reason": null
+    },
+    "MARKET_DEVIG_OPEN": {
+      "n": 1752,
+      "log_loss": 0.9647237829167192,
+      "brier": 0.19112196644636256,
+      "accuracy": 0.5342465753424658,
+      "balanced_accuracy": 0.4639480238291907,
+      "calibration_error": 0.024485532666513817,
+      "roc_auc_ovr": 0.688388892314585,
+      "confusion": {
+        "HOME": {
+          "HOME": 610,
+          "DRAW": 2,
+          "AWAY": 124
+        },
+        "DRAW": {
+          "HOME": 286,
+          "DRAW": 0,
+          "AWAY": 151
+        },
+        "AWAY": {
+          "HOME": 253,
+          "DRAW": 0,
+          "AWAY": 326
+        }
+      },
+      "binary_one_vs_rest": {
+        "HOME": {
+          "n": 1752,
+          "precision": 0.6362252663622526,
+          "recall": 0.5679347826086957,
+          "accuracy": 0.6820776255707762,
+          "brier": 0.20231829377796182,
+          "log_loss": 0.589522904838919,
+          "auc": 0.740475088796645
+        },
+        "DRAW": {
+          "n": 1752,
+          "precision": null,
+          "recall": 0,
+          "accuracy": 0.7505707762557078,
+          "brier": 0.18410306714372318,
+          "log_loss": 0.552654519266027,
+          "auc": 0.5836345285432128
+        },
+        "AWAY": {
+          "n": 1752,
+          "precision": 0.6479400749063671,
+          "recall": 0.2987910189982729,
+          "accuracy": 0.7146118721461188,
+          "brier": 0.1869445384174036,
+          "log_loss": 0.5530990691423237,
+          "auc": 0.7410570596038971
+        }
+      },
+      "goals": null,
+      "insufficient": false,
+      "insufficient_reason": null
+    }
+  },
+  "models": [
+    {
+      "model_id": "INDEPENDENT_POISSON_v1",
+      "status": "EXPERIMENTAL",
+      "supported": true,
+      "reason": "lambdas from historical goals",
+      "train_n": 7203,
+      "val_n": 7230,
+      "oos_n": 7156,
+      "oos_metrics": {
+        "n": 7156,
+        "log_loss": 1.1269775027292042,
+        "brier": 0.21775034948387884,
+        "accuracy": 0.4879821129122415,
+        "balanced_accuracy": 0.4274219922401335,
+        "calibration_error": 0.12181241892286143,
+        "roc_auc_ovr": 0.6181235786462587,
+        "confusion": {
+          "HOME": {
+            "HOME": 2348,
+            "DRAW": 185,
+            "AWAY": 574
+          },
+          "DRAW": {
+            "HOME": 1129,
+            "DRAW": 140,
+            "AWAY": 546
+          },
+          "AWAY": {
+            "HOME": 1074,
+            "DRAW": 156,
+            "AWAY": 1004
+          }
+        },
+        "binary_one_vs_rest": {
+          "HOME": {
+            "n": 7156,
+            "precision": 0.5566207309766327,
+            "recall": 0.5980045059542968,
+            "accuracy": 0.618641699273337,
+            "brier": 0.24427327076326544,
+            "log_loss": 0.7194904055441298,
+            "auc": 0.6573194969286364
+          },
+          "DRAW": {
+            "n": 7156,
+            "precision": 0.3116279069767442,
+            "recall": 0.03691460055096419,
+            "accuracy": 0.7350475125768586,
+            "brier": 0.1983345039236996,
+            "log_loss": 0.6044501198413686,
+            "auc": 0.5308417187483075
+          },
+          "AWAY": {
+            "n": 7156,
+            "precision": 0.517077045274027,
+            "recall": 0.29140555058191586,
+            "accuracy": 0.6938233650083846,
+            "brier": 0.21064327376467193,
+            "log_loss": 0.6456900746375964,
+            "auc": 0.6662095202618321
+          }
+        },
+        "goals": {
+          "n": 7156,
+          "mae_home": 1.157849214885131,
+          "mae_away": 0.9868303562987718,
+          "rmse_home": 1.534551961774517,
+          "rmse_away": 1.3278974320686665,
+          "poisson_deviance": 3.0393114298313004
+        },
+        "insufficient": false,
+        "insufficient_reason": null
+      },
+      "val_metrics": {
+        "n": 7230,
+        "log_loss": 1.1421570346278043,
+        "brier": 0.21964260114103257,
+        "accuracy": 0.48533886583679114,
+        "balanced_accuracy": 0.4286522373675092,
+        "calibration_error": 0.1237530014005814,
+        "roc_auc_ovr": 0.6134026902193493,
+        "confusion": {
+          "HOME": {
+            "HOME": 2292,
+            "DRAW": 179,
+            "AWAY": 628
+          },
+          "DRAW": {
+            "HOME": 1125,
+            "DRAW": 137,
+            "AWAY": 581
+          },
+          "AWAY": {
+            "HOME": 1068,
+            "DRAW": 140,
+            "AWAY": 1080
+          }
+        },
+        "binary_one_vs_rest": {
+          "HOME": {
+            "n": 7230,
+            "precision": 0.5510079413561393,
+            "recall": 0.5821232655695385,
+            "accuracy": 0.6175656984785616,
+            "brier": 0.24577595032088753,
+            "log_loss": 0.7271304194655279,
+            "auc": 0.6530407158461328
+          },
+          "DRAW": {
+            "n": 7230,
+            "precision": 0.3033175355450237,
+            "recall": 0.03472599023331525,
+            "accuracy": 0.733609958506224,
+            "brier": 0.19969996925615033,
+            "log_loss": 0.6101227664463835,
+            "auc": 0.5244117764667477
+          },
+          "AWAY": {
+            "n": 7230,
+            "precision": 0.5155010814708003,
+            "recall": 0.3125,
+            "accuracy": 0.6894882434301521,
+            "brier": 0.21345188384606253,
+            "log_loss": 0.6573357489976495,
+            "auc": 0.6627555783451676
+          }
+        },
+        "goals": {
+          "n": 7230,
+          "mae_home": 1.1627366547803981,
+          "mae_away": 1.007284798354436,
+          "rmse_home": 1.5632243718695704,
+          "rmse_away": 1.369912878247643,
+          "poisson_deviance": 3.109063228131562
+        },
+        "insufficient": false,
+        "insufficient_reason": null
+      },
+      "windows": [
+        {
+          "window_id": "wf_train_1920_val_2021_oos_2122",
+          "oos_n": 1826,
+          "oos_log_loss": 1.1382651658941518,
+          "oos_brier": 0.21792071195179025,
+          "beat_naive": false
+        },
+        {
+          "window_id": "wf_train_1920+2021_val_2122_oos_2223",
+          "oos_n": 1826,
+          "oos_log_loss": 1.141637762124561,
+          "oos_brier": 0.22071115824788237,
+          "beat_naive": false
+        },
+        {
+          "window_id": "wf_train_1920+2021+2122_val_2223_oos_2324",
+          "oos_n": 1752,
+          "oos_log_loss": 1.1213258971586857,
+          "oos_brier": 0.21644939240856548,
+          "beat_naive": false
+        },
+        {
+          "window_id": "wf_train_1920+2021+2122+2223_val_2324_oos_2425",
+          "oos_n": 1752,
+          "oos_log_loss": 1.1055852118413145,
+          "oos_brier": 0.21578788266108928,
+          "beat_naive": false
+        }
+      ],
+      "value_val_grid": [
+        {
+          "edge_threshold": 0.01,
+          "chosen_on": "VAL",
+          "n_bets": 5158,
+          "hit_rate": 0.4400930593253199,
+          "yield": -0.05913144629701425,
+          "roi": -0.05913144629701425,
+          "max_drawdown": 0.059197363319115834,
+          "profit": -304.9999999999995,
+          "longest_losing_streak": 11,
+          "longest_winning_streak": 9,
+          "insufficient": false,
+          "reason": null
+        },
+        {
+          "edge_threshold": 0.02,
+          "chosen_on": "VAL",
+          "n_bets": 4987,
+          "hit_rate": 0.43633446962101463,
+          "yield": -0.06112693001804682,
+          "roi": -0.06112693001804682,
+          "max_drawdown": 0.06133948265490264,
+          "profit": -304.83999999999946,
+          "longest_losing_streak": 11,
+          "longest_winning_streak": 9,
+          "insufficient": false,
+          "reason": null
+        },
+        {
+          "edge_threshold": 0.03,
+          "chosen_on": "VAL",
+          "n_bets": 4805,
+          "hit_rate": 0.43059313215400624,
+          "yield": -0.06627055150884481,
+          "roi": -0.06627055150884481,
+          "max_drawdown": 0.06649115504682608,
+          "profit": -318.4299999999993,
+          "longest_losing_streak": 11,
+          "longest_winning_streak": 8,
+          "insufficient": false,
+          "reason": null
+        },
+        {
+          "edge_threshold": 0.05,
+          "chosen_on": "VAL",
+          "n_bets": 4408,
+          "hit_rate": 0.4249092558983666,
+          "yield": -0.06294918330308524,
+          "roi": -0.06294918330308524,
+          "max_drawdown": 0.06341651542649722,
+          "profit": -277.47999999999973,
+          "longest_losing_streak": 11,
+          "longest_winning_streak": 7,
+          "insufficient": false,
+          "reason": null
+        },
+        {
+          "edge_threshold": 0.07,
+          "chosen_on": "VAL",
+          "n_bets": 3986,
+          "hit_rate": 0.41846462619167085,
+          "yield": -0.06204465629703961,
+          "roi": -0.06204465629703961,
+          "max_drawdown": 0.0628876066231811,
+          "profit": -247.3099999999999,
+          "longest_losing_streak": 12,
+          "longest_winning_streak": 8,
+          "insufficient": false,
+          "reason": null
+        },
+        {
+          "edge_threshold": 0.1,
+          "chosen_on": "VAL",
+          "n_bets": 3370,
+          "hit_rate": 0.4086053412462908,
+          "yield": -0.05413946587537094,
+          "roi": -0.05413946587537094,
+          "max_drawdown": 0.0561097922848665,
+          "profit": -182.45000000000007,
+          "longest_losing_streak": 14,
+          "longest_winning_streak": 9,
+          "insufficient": false,
+          "reason": null
+        }
+      ],
+      "value_threshold_reason": "chosen_on_VAL yield=-0.05413946587537094 n=3370",
+      "value_oos_chosen": {
+        "edge_threshold": 0.1,
+        "chosen_on": "VAL",
+        "n_bets": 3342,
+        "hit_rate": 0.41502094554159186,
+        "yield": -0.06355475763016159,
+        "roi": -0.06355475763016159,
+        "max_drawdown": 0.07330640335128669,
+        "profit": -212.40000000000006,
+        "longest_losing_streak": 14,
+        "longest_winning_streak": 9,
+        "insufficient": false,
+        "reason": null
+      },
+      "value_oos_grid": [
+        {
+          "edge_threshold": 0.01,
+          "chosen_on": "GRID_REPORT_ONLY",
+          "n_bets": 5085,
+          "hit_rate": 0.44601769911504424,
+          "yield": -0.05976204523107178,
+          "roi": -0.05976204523107178,
+          "max_drawdown": 0.06709341199606687,
+          "profit": -303.89,
+          "longest_losing_streak": 11,
+          "longest_winning_streak": 9,
+          "insufficient": false,
+          "reason": null
+        },
+        {
+          "edge_threshold": 0.02,
+          "chosen_on": "GRID_REPORT_ONLY",
+          "n_bets": 4923,
+          "hit_rate": 0.4424131627056673,
+          "yield": -0.06337395896810886,
+          "roi": -0.06337395896810886,
+          "max_drawdown": 0.07169002640666261,
+          "profit": -311.98999999999995,
+          "longest_losing_streak": 11,
+          "longest_winning_streak": 10,
+          "insufficient": false,
+          "reason": null
+        },
+        {
+          "edge_threshold": 0.03,
+          "chosen_on": "GRID_REPORT_ONLY",
+          "n_bets": 4738,
+          "hit_rate": 0.43731532292106373,
+          "yield": -0.06859856479527222,
+          "roi": -0.06859856479527222,
+          "max_drawdown": 0.07645631067961163,
+          "profit": -325.0199999999998,
+          "longest_losing_streak": 11,
+          "longest_winning_streak": 10,
+          "insufficient": false,
+          "reason": null
+        },
+        {
+          "edge_threshold": 0.05,
+          "chosen_on": "GRID_REPORT_ONLY",
+          "n_bets": 4360,
+          "hit_rate": 0.43004587155963303,
+          "yield": -0.07022935779816508,
+          "roi": -0.07022935779816508,
+          "max_drawdown": 0.07851605504587153,
+          "profit": -306.19999999999976,
+          "longest_losing_streak": 11,
+          "longest_winning_streak": 9,
+          "insufficient": false,
+          "reason": null
+        },
+        {
+          "edge_threshold": 0.07,
+          "chosen_on": "GRID_REPORT_ONLY",
+          "n_bets": 3943,
+          "hit_rate": 0.4250570631498859,
+          "yield": -0.06677149378645689,
+          "roi": -0.06677149378645689,
+          "max_drawdown": 0.075505959928988,
+          "profit": -263.2799999999995,
+          "longest_losing_streak": 11,
+          "longest_winning_streak": 9,
+          "insufficient": false,
+          "reason": null
+        },
+        {
+          "edge_threshold": 0.1,
+          "chosen_on": "GRID_REPORT_ONLY",
+          "n_bets": 3342,
+          "hit_rate": 0.41502094554159186,
+          "yield": -0.06355475763016159,
+          "roi": -0.06355475763016159,
+          "max_drawdown": 0.07330640335128669,
+          "profit": -212.40000000000006,
+          "longest_losing_streak": 14,
+          "longest_winning_streak": 9,
+          "insufficient": false,
+          "reason": null
+        }
+      ],
+      "robustness": {
+        "n": 7156,
+        "bootstrap_n": 200,
+        "log_loss_mean": 1.1264877918203344,
+        "log_loss_se": 0.0007178267923572945,
+        "log_loss_ci95": [
+          1.1049456799737898,
+          1.1476069909235316
+        ],
+        "brier_mean": 0.21768296751253843,
+        "brier_se": 0.0001316625085593282,
+        "brier_ci95": [
+          0.2138302275530968,
+          0.22185243339316627
+        ],
+        "yield_mean": -0.06410630437179154,
+        "yield_se": 0.001645405585011729,
+        "yield_ci95": [
+          -0.11878918254456045,
+          -0.020146007151370725
+        ],
+        "pnl_concentration_top10pct": 0.2324940501947202,
+        "max_single_bet_share": 0.0018931198615318007,
+        "snooping_thresholds_tested": 6,
+        "insufficient": false,
+        "reason": null
+      },
+      "versions": {
+        "model": "phase9-1.0.0",
+        "features": "features_pi_v1"
+      },
+      "auto_promotion": false,
+      "role": "CURRENT_PRODUCTION"
+    },
+    {
+      "model_id": "DIXON_COLES_v1",
+      "status": "CANDIDATE",
+      "supported": true,
+      "reason": "rho fit on TRAIN goals",
+      "train_n": 7203,
+      "val_n": 7230,
+      "oos_n": 7156,
+      "oos_metrics": {
+        "n": 7156,
+        "log_loss": 1.0579147980218482,
+        "brier": 0.2098893269333112,
+        "accuracy": 0.4857462269424259,
+        "balanced_accuracy": 0.426061481936198,
+        "calibration_error": 0.039625058478448966,
+        "roc_auc_ovr": 0.6160068528063048,
+        "confusion": {
+          "HOME": {
+            "HOME": 2289,
+            "DRAW": 124,
+            "AWAY": 694
+          },
+          "DRAW": {
+            "HOME": 1125,
+            "DRAW": 98,
+            "AWAY": 592
+          },
+          "AWAY": {
+            "HOME": 1061,
+            "DRAW": 84,
+            "AWAY": 1089
+          }
+        },
+        "binary_one_vs_rest": {
+          "HOME": {
+            "n": 7156,
+            "precision": 0.5746896275530636,
+            "recall": 0.4618603154168008,
+            "accuracy": 0.6179429849077697,
+            "brier": 0.23469652149130393,
+            "log_loss": 0.6703197691957297,
+            "auc": 0.6444701028430055
+          },
+          "DRAW": {
+            "n": 7156,
+            "precision": 0.40350877192982454,
+            "recall": 0.012672176308539946,
+            "accuracy": 0.7448295136948015,
+            "brier": 0.1901313288107817,
+            "log_loss": 0.5693470201434432,
+            "auc": 0.5483637415842825
+          },
+          "AWAY": {
+            "n": 7156,
+            "precision": 0.514792899408284,
+            "recall": 0.23366159355416294,
+            "accuracy": 0.6920067076579094,
+            "brier": 0.20484013049784644,
+            "log_loss": 0.6036816809190556,
+            "auc": 0.6551867139916265
+          }
+        },
+        "goals": {
+          "n": 7156,
+          "mae_home": 1.043837777165164,
+          "mae_away": 0.9454618579994138,
+          "rmse_home": 1.33839294811968,
+          "rmse_away": 1.2142467873481433,
+          "poisson_deviance": 4.23710175370874
+        },
+        "insufficient": false,
+        "insufficient_reason": null
+      },
+      "val_metrics": {
+        "n": 7230,
+        "log_loss": 1.062540187867394,
+        "brier": 0.21075541499518424,
+        "accuracy": 0.48077455048409407,
+        "balanced_accuracy": 0.42400358750265177,
+        "calibration_error": 0.04132466297520011,
+        "roc_auc_ovr": 0.6141660350040268,
+        "confusion": {
+          "HOME": {
+            "HOME": 2250,
+            "DRAW": 131,
+            "AWAY": 718
+          },
+          "DRAW": {
+            "HOME": 1119,
+            "DRAW": 96,
+            "AWAY": 628
+          },
+          "AWAY": {
+            "HOME": 1072,
+            "DRAW": 86,
+            "AWAY": 1130
+          }
+        },
+        "binary_one_vs_rest": {
+          "HOME": {
+            "n": 7230,
+            "precision": 0.5702547247329499,
+            "recall": 0.4478864149725718,
+            "accuracy": 0.6186721991701245,
+            "brier": 0.23464201162188575,
+            "log_loss": 0.6712637800212111,
+            "auc": 0.6435508865862744
+          },
+          "DRAW": {
+            "n": 7230,
+            "precision": 0.38596491228070173,
+            "recall": 0.011937059142702116,
+            "accuracy": 0.7432918395573997,
+            "brier": 0.19093646079531942,
+            "log_loss": 0.5716294058321886,
+            "auc": 0.5470442347239556
+          },
+          "AWAY": {
+            "n": 7230,
+            "precision": 0.51661918328585,
+            "recall": 0.23776223776223776,
+            "accuracy": 0.6883817427385892,
+            "brier": 0.2066877725683493,
+            "log_loss": 0.6079745933371187,
+            "auc": 0.6519029837018505
+          }
+        },
+        "goals": {
+          "n": 7230,
+          "mae_home": 1.0457524025769134,
+          "mae_away": 0.94874358810513,
+          "rmse_home": 1.3495281169503528,
+          "rmse_away": 1.217963875729964,
+          "poisson_deviance": 4.302544971093901
+        },
+        "insufficient": false,
+        "insufficient_reason": null
+      },
+      "windows": [
+        {
+          "window_id": "wf_train_1920_val_2021_oos_2122",
+          "oos_n": 1826,
+          "oos_log_loss": 1.0699082237528577,
+          "oos_brier": 0.21215382083845283,
+          "beat_naive": true
+        },
+        {
+          "window_id": "wf_train_1920+2021_val_2122_oos_2223",
+          "oos_n": 1826,
+          "oos_log_loss": 1.0594088003428954,
+          "oos_brier": 0.20978059769015356,
+          "beat_naive": true
+        },
+        {
+          "window_id": "wf_train_1920+2021+2122_val_2223_oos_2324",
+          "oos_n": 1752,
+          "oos_log_loss": 1.0472833112488265,
+          "oos_brier": 0.20776755922948884,
+          "beat_naive": true
+        },
+        {
+          "window_id": "wf_train_1920+2021+2122+2223_val_2324_oos_2425",
+          "oos_n": 1752,
+          "oos_log_loss": 1.054489182270304,
+          "oos_brier": 0.2097642759882856,
+          "beat_naive": true
+        }
+      ],
+      "value_val_grid": [
+        {
+          "edge_threshold": 0.01,
+          "chosen_on": "VAL",
+          "n_bets": 3686,
+          "hit_rate": 0.36516549104720564,
+          "yield": -0.07628323385784049,
+          "roi": -0.07628323385784049,
+          "max_drawdown": 0.07908301682040152,
+          "profit": -281.18,
+          "longest_losing_streak": 15,
+          "longest_winning_streak": 8,
+          "insufficient": false,
+          "reason": null
+        },
+        {
+          "edge_threshold": 0.02,
+          "chosen_on": "VAL",
+          "n_bets": 3515,
+          "hit_rate": 0.3621621621621622,
+          "yield": -0.07314366998577518,
+          "roi": -0.07314366998577518,
+          "max_drawdown": 0.07758748221906109,
+          "profit": -257.09999999999974,
+          "longest_losing_streak": 15,
+          "longest_winning_streak": 8,
+          "insufficient": false,
+          "reason": null
+        },
+        {
+          "edge_threshold": 0.03,
+          "chosen_on": "VAL",
+          "n_bets": 3361,
+          "hit_rate": 0.3588217792323713,
+          "yield": -0.0709223445403153,
+          "roi": -0.0709223445403153,
+          "max_drawdown": 0.0757988693841118,
+          "profit": -238.36999999999975,
+          "longest_losing_streak": 15,
+          "longest_winning_streak": 8,
+          "insufficient": false,
+          "reason": null
+        },
+        {
+          "edge_threshold": 0.05,
+          "chosen_on": "VAL",
+          "n_bets": 2987,
+          "hit_rate": 0.3542015400066957,
+          "yield": -0.06063943756277204,
+          "roi": -0.06063943756277204,
+          "max_drawdown": 0.06626046200200873,
+          "profit": -181.13000000000008,
+          "longest_losing_streak": 15,
+          "longest_winning_streak": 8,
+          "insufficient": false,
+          "reason": null
+        },
+        {
+          "edge_threshold": 0.07,
+          "chosen_on": "VAL",
+          "n_bets": 2603,
+          "hit_rate": 0.3484441029581252,
+          "yield": -0.05271993853246258,
+          "roi": -0.05271993853246258,
+          "max_drawdown": 0.05888205916250485,
+          "profit": -137.2300000000001,
+          "longest_losing_streak": 14,
+          "longest_winning_streak": 6,
+          "insufficient": false,
+          "reason": null
+        },
+        {
+          "edge_threshold": 0.1,
+          "chosen_on": "VAL",
+          "n_bets": 2078,
+          "hit_rate": 0.3310875842155919,
+          "yield": -0.0645909528392686,
+          "roi": -0.0645909528392686,
+          "max_drawdown": 0.07392204042348421,
+          "profit": -134.22000000000017,
+          "longest_losing_streak": 15,
+          "longest_winning_streak": 6,
+          "insufficient": false,
+          "reason": null
+        }
+      ],
+      "value_threshold_reason": "chosen_on_VAL yield=-0.05271993853246258 n=2603",
+      "value_oos_chosen": {
+        "edge_threshold": 0.07,
+        "chosen_on": "VAL",
+        "n_bets": 2589,
+        "hit_rate": 0.34916956353804557,
+        "yield": -0.06891077636152959,
+        "roi": -0.06891077636152959,
+        "max_drawdown": 0.07899961375048287,
+        "profit": -178.4100000000001,
+        "longest_losing_streak": 16,
+        "longest_winning_streak": 10,
+        "insufficient": false,
+        "reason": null
+      },
+      "value_oos_grid": [
+        {
+          "edge_threshold": 0.01,
+          "chosen_on": "GRID_REPORT_ONLY",
+          "n_bets": 3636,
+          "hit_rate": 0.3726622662266227,
+          "yield": -0.07411991199119908,
+          "roi": -0.07411991199119908,
+          "max_drawdown": 0.08186193619361933,
+          "profit": -269.49999999999983,
+          "longest_losing_streak": 13,
+          "longest_winning_streak": 11,
+          "insufficient": false,
+          "reason": null
+        },
+        {
+          "edge_threshold": 0.02,
+          "chosen_on": "GRID_REPORT_ONLY",
+          "n_bets": 3474,
+          "hit_rate": 0.3696027633851468,
+          "yield": -0.07191134139320665,
+          "roi": -0.07191134139320665,
+          "max_drawdown": 0.08059009786989056,
+          "profit": -249.8199999999999,
+          "longest_losing_streak": 13,
+          "longest_winning_streak": 11,
+          "insufficient": false,
+          "reason": null
+        },
+        {
+          "edge_threshold": 0.03,
+          "chosen_on": "GRID_REPORT_ONLY",
+          "n_bets": 3302,
+          "hit_rate": 0.36523319200484555,
+          "yield": -0.0711568746214416,
+          "roi": -0.0711568746214416,
+          "max_drawdown": 0.07766202301635372,
+          "profit": -234.96000000000015,
+          "longest_losing_streak": 13,
+          "longest_winning_streak": 11,
+          "insufficient": false,
+          "reason": null
+        },
+        {
+          "edge_threshold": 0.05,
+          "chosen_on": "GRID_REPORT_ONLY",
+          "n_bets": 2953,
+          "hit_rate": 0.35827971554351506,
+          "yield": -0.06837453437182531,
+          "roi": -0.06837453437182531,
+          "max_drawdown": 0.0735150694209279,
+          "profit": -201.91000000000014,
+          "longest_losing_streak": 13,
+          "longest_winning_streak": 11,
+          "insufficient": false,
+          "reason": null
+        },
+        {
+          "edge_threshold": 0.07,
+          "chosen_on": "GRID_REPORT_ONLY",
+          "n_bets": 2589,
+          "hit_rate": 0.34916956353804557,
+          "yield": -0.06891077636152959,
+          "roi": -0.06891077636152959,
+          "max_drawdown": 0.07899961375048287,
+          "profit": -178.4100000000001,
+          "longest_losing_streak": 16,
+          "longest_winning_streak": 10,
+          "insufficient": false,
+          "reason": null
+        },
+        {
+          "edge_threshold": 0.1,
+          "chosen_on": "GRID_REPORT_ONLY",
+          "n_bets": 2100,
+          "hit_rate": 0.3323809523809524,
+          "yield": -0.08616190476190484,
+          "roi": -0.08616190476190484,
+          "max_drawdown": 0.09473333333333343,
+          "profit": -180.94000000000017,
+          "longest_losing_streak": 15,
+          "longest_winning_streak": 8,
+          "insufficient": false,
+          "reason": null
+        }
+      ],
+      "robustness": {
+        "n": 7156,
+        "bootstrap_n": 200,
+        "log_loss_mean": 1.0576307689121203,
+        "log_loss_se": 0.0004122083554465064,
+        "log_loss_ci95": [
+          1.0446513611343968,
+          1.0698994880565016
+        ],
+        "brier_mean": 0.2098262388889847,
+        "brier_se": 0.00008721634510324227,
+        "brier_ci95": [
+          0.20713330355188278,
+          0.2122285878371182
+        ],
+        "yield_mean": -0.06752022399408983,
+        "yield_se": 0.0018299790985737642,
+        "yield_ci95": [
+          -0.1176917148362235,
+          -0.024429635437083513
+        ],
+        "pnl_concentration_top10pct": 0.2307188579986773,
+        "max_single_bet_share": 0.002193264172403093,
+        "snooping_thresholds_tested": 6,
+        "insufficient": false,
+        "reason": null
+      },
+      "versions": {
+        "model": "phase9-1.0.0",
+        "features": "features_pi_v1"
+      },
+      "auto_promotion": false,
+      "role": "CHALLENGER"
+    },
+    {
+      "model_id": "NEGBIN_v1",
+      "status": "INSUFFICIENT_EVIDENCE",
+      "supported": false,
+      "reason": "DATA_NOT_OVERDISPERSED_OR_N_LOW mean/var={\"mean\":1.395595891374701,\"variance\":1.555376366903495,\"overdispersed\":false}",
+      "train_n": 7203,
+      "val_n": 0,
+      "oos_n": 0,
+      "oos_metrics": null,
+      "val_metrics": null,
+      "windows": [],
+      "value_val_grid": [],
+      "value_threshold_reason": "no val",
+      "value_oos_chosen": null,
+      "value_oos_grid": [],
+      "robustness": null,
+      "versions": {
+        "model": "phase9-1.0.0",
+        "features": "features_pi_v1"
+      },
+      "auto_promotion": false,
+      "role": "CHALLENGER"
+    },
+    {
+      "model_id": "INDEPENDENT_LOGISTIC_v1",
+      "status": "EXPERIMENTAL",
+      "supported": true,
+      "reason": "trained weights",
+      "train_n": 7203,
+      "val_n": 7230,
+      "oos_n": 7156,
+      "oos_metrics": {
+        "n": 7156,
+        "log_loss": 1.3161616578985924,
+        "brier": 0.24241279145274722,
+        "accuracy": 0.44955282280603687,
+        "balanced_accuracy": 0.4074325373453649,
+        "calibration_error": 0.20844949737806256,
+        "roc_auc_ovr": 0.5868962400886203,
+        "confusion": {
+          "HOME": {
+            "HOME": 2003,
+            "DRAW": 497,
+            "AWAY": 607
+          },
+          "DRAW": {
+            "HOME": 947,
+            "DRAW": 331,
+            "AWAY": 537
+          },
+          "AWAY": {
+            "HOME": 952,
+            "DRAW": 399,
+            "AWAY": 883
+          }
+        },
+        "binary_one_vs_rest": {
+          "HOME": {
+            "n": 7156,
+            "precision": 0.5280487804878049,
+            "recall": 0.5574509172835532,
+            "accuracy": 0.5915315818893236,
+            "brier": 0.26552855932985386,
+            "log_loss": 0.7879826473735351,
+            "auc": 0.6229851839904841
+          },
+          "DRAW": {
+            "n": 7156,
+            "precision": 0.2748466257668712,
+            "recall": 0.12341597796143251,
+            "accuracy": 0.6950810508664058,
+            "brier": 0.22519109283560848,
+            "log_loss": 0.7261702155765508,
+            "auc": 0.5213743879536802
+          },
+          "AWAY": {
+            "n": 7156,
+            "precision": 0.4444444444444444,
+            "recall": 0.315129811996419,
+            "accuracy": 0.6632196757965344,
+            "brier": 0.2365187221927809,
+            "log_loss": 0.7438260350958544,
+            "auc": 0.6163291483216967
+          }
+        },
+        "goals": null,
+        "insufficient": false,
+        "insufficient_reason": null
+      },
+      "val_metrics": {
+        "n": 7230,
+        "log_loss": 1.2666770278965116,
+        "brier": 0.2373134500085855,
+        "accuracy": 0.4468879668049793,
+        "balanced_accuracy": 0.40765662220731613,
+        "calibration_error": 0.19834147102814634,
+        "roc_auc_ovr": 0.5943696139483169,
+        "confusion": {
+          "HOME": {
+            "HOME": 1964,
+            "DRAW": 480,
+            "AWAY": 655
+          },
+          "DRAW": {
+            "HOME": 978,
+            "DRAW": 336,
+            "AWAY": 529
+          },
+          "AWAY": {
+            "HOME": 992,
+            "DRAW": 365,
+            "AWAY": 931
+          }
+        },
+        "binary_one_vs_rest": {
+          "HOME": {
+            "n": 7230,
+            "precision": 0.5199391171993911,
+            "recall": 0.5511455308163924,
+            "accuracy": 0.5894882434301522,
+            "brier": 0.2618052483925055,
+            "log_loss": 0.7632545328206107,
+            "auc": 0.6232936511563182
+          },
+          "DRAW": {
+            "n": 7230,
+            "precision": 0.29085872576177285,
+            "recall": 0.11394465545306566,
+            "accuracy": 0.7033195020746889,
+            "brier": 0.21772559351813597,
+            "log_loss": 0.6904430665575926,
+            "auc": 0.5344483478996934
+          },
+          "AWAY": {
+            "n": 7230,
+            "precision": 0.46177558569667077,
+            "recall": 0.32736013986013984,
+            "accuracy": 0.6663900414937759,
+            "brier": 0.23240950811511282,
+            "log_loss": 0.7222785237665289,
+            "auc": 0.6253668427889391
+          }
+        },
+        "goals": null,
+        "insufficient": false,
+        "insufficient_reason": null
+      },
+      "windows": [
+        {
+          "window_id": "wf_train_1920_val_2021_oos_2122",
+          "oos_n": 1826,
+          "oos_log_loss": 1.318510509925458,
+          "oos_brier": 0.2463480089681269,
+          "beat_naive": false
+        },
+        {
+          "window_id": "wf_train_1920+2021_val_2122_oos_2223",
+          "oos_n": 1826,
+          "oos_log_loss": 1.3987854433640485,
+          "oos_brier": 0.2560090433203761,
+          "beat_naive": false
+        },
+        {
+          "window_id": "wf_train_1920+2021+2122_val_2223_oos_2324",
+          "oos_n": 1752,
+          "oos_log_loss": 1.2213027383967097,
+          "oos_brier": 0.2237407929784701,
+          "beat_naive": false
+        },
+        {
+          "window_id": "wf_train_1920+2021+2122+2223_val_2324_oos_2425",
+          "oos_n": 1752,
+          "oos_log_loss": 1.3224589129821127,
+          "oos_brier": 0.24281283610660848,
+          "beat_naive": false
+        }
+      ],
+      "value_val_grid": [
+        {
+          "edge_threshold": 0.01,
+          "chosen_on": "VAL",
+          "n_bets": 5851,
+          "hit_rate": 0.4074517176551017,
+          "yield": -0.06177063749786334,
+          "roi": -0.06177063749786334,
+          "max_drawdown": 0.06353785677661909,
+          "profit": -361.41999999999837,
+          "longest_losing_streak": 15,
+          "longest_winning_streak": 9,
+          "insufficient": false,
+          "reason": null
+        },
+        {
+          "edge_threshold": 0.02,
+          "chosen_on": "VAL",
+          "n_bets": 5761,
+          "hit_rate": 0.40496441590001736,
+          "yield": -0.06216802638430803,
+          "roi": -0.06216802638430803,
+          "max_drawdown": 0.064237111612567,
+          "profit": -358.14999999999856,
+          "longest_losing_streak": 15,
+          "longest_winning_streak": 9,
+          "insufficient": false,
+          "reason": null
+        },
+        {
+          "edge_threshold": 0.03,
+          "chosen_on": "VAL",
+          "n_bets": 5642,
+          "hit_rate": 0.4032258064516129,
+          "yield": -0.06058667139312282,
+          "roi": -0.06058667139312282,
+          "max_drawdown": 0.06313541297412245,
+          "profit": -341.82999999999896,
+          "longest_losing_streak": 15,
+          "longest_winning_streak": 9,
+          "insufficient": false,
+          "reason": null
+        },
+        {
+          "edge_threshold": 0.05,
+          "chosen_on": "VAL",
+          "n_bets": 5395,
+          "hit_rate": 0.3972196478220575,
+          "yield": -0.060765523632993354,
+          "roi": -0.060765523632993354,
+          "max_drawdown": 0.06377942539388305,
+          "profit": -327.82999999999913,
+          "longest_losing_streak": 15,
+          "longest_winning_streak": 9,
+          "insufficient": false,
+          "reason": null
+        },
+        {
+          "edge_threshold": 0.07,
+          "chosen_on": "VAL",
+          "n_bets": 5166,
+          "hit_rate": 0.39256678281068524,
+          "yield": -0.05866047231900876,
+          "roi": -0.05866047231900876,
+          "max_drawdown": 0.062491289198606116,
+          "profit": -303.0399999999993,
+          "longest_losing_streak": 15,
+          "longest_winning_streak": 9,
+          "insufficient": false,
+          "reason": null
+        },
+        {
+          "edge_threshold": 0.1,
+          "chosen_on": "VAL",
+          "n_bets": 4773,
+          "hit_rate": 0.3802639849151477,
+          "yield": -0.06705635868426547,
+          "roi": -0.06705635868426547,
+          "max_drawdown": 0.07309448983867567,
+          "profit": -320.0599999999991,
+          "longest_losing_streak": 15,
+          "longest_winning_streak": 11,
+          "insufficient": false,
+          "reason": null
+        }
+      ],
+      "value_threshold_reason": "chosen_on_VAL yield=-0.05866047231900876 n=5166",
+      "value_oos_chosen": {
+        "edge_threshold": 0.07,
+        "chosen_on": "VAL",
+        "n_bets": 5301,
+        "hit_rate": 0.389926428975665,
+        "yield": -0.06006602527824925,
+        "roi": -0.06006602527824925,
+        "max_drawdown": 0.06215053763440849,
+        "profit": -318.4099999999993,
+        "longest_losing_streak": 22,
+        "longest_winning_streak": 9,
+        "insufficient": false,
+        "reason": null
+      },
+      "value_oos_grid": [
+        {
+          "edge_threshold": 0.01,
+          "chosen_on": "GRID_REPORT_ONLY",
+          "n_bets": 5882,
+          "hit_rate": 0.4054743284597076,
+          "yield": -0.05818769126147554,
+          "roi": -0.05818769126147554,
+          "max_drawdown": 0.06158449506970408,
+          "profit": -342.25999999999914,
+          "longest_losing_streak": 23,
+          "longest_winning_streak": 10,
+          "insufficient": false,
+          "reason": null
+        },
+        {
+          "edge_threshold": 0.02,
+          "chosen_on": "GRID_REPORT_ONLY",
+          "n_bets": 5817,
+          "hit_rate": 0.40312876052948254,
+          "yield": -0.05876052948255098,
+          "roi": -0.05876052948255098,
+          "max_drawdown": 0.06223826714801431,
+          "profit": -341.80999999999904,
+          "longest_losing_streak": 23,
+          "longest_winning_streak": 10,
+          "insufficient": false,
+          "reason": null
+        },
+        {
+          "edge_threshold": 0.03,
+          "chosen_on": "GRID_REPORT_ONLY",
+          "n_bets": 5697,
+          "hit_rate": 0.40003510619624366,
+          "yield": -0.058757240652975135,
+          "roi": -0.058757240652975135,
+          "max_drawdown": 0.06123749341758811,
+          "profit": -334.7399999999993,
+          "longest_losing_streak": 23,
+          "longest_winning_streak": 10,
+          "insufficient": false,
+          "reason": null
+        },
+        {
+          "edge_threshold": 0.05,
+          "chosen_on": "GRID_REPORT_ONLY",
+          "n_bets": 5510,
+          "hit_rate": 0.3952813067150635,
+          "yield": -0.05983847549909243,
+          "roi": -0.05983847549909243,
+          "max_drawdown": 0.061749546279491724,
+          "profit": -329.7099999999993,
+          "longest_losing_streak": 22,
+          "longest_winning_streak": 10,
+          "insufficient": false,
+          "reason": null
+        },
+        {
+          "edge_threshold": 0.07,
+          "chosen_on": "GRID_REPORT_ONLY",
+          "n_bets": 5301,
+          "hit_rate": 0.389926428975665,
+          "yield": -0.06006602527824925,
+          "roi": -0.06006602527824925,
+          "max_drawdown": 0.06215053763440849,
+          "profit": -318.4099999999993,
+          "longest_losing_streak": 22,
+          "longest_winning_streak": 9,
+          "insufficient": false,
+          "reason": null
+        },
+        {
+          "edge_threshold": 0.1,
+          "chosen_on": "GRID_REPORT_ONLY",
+          "n_bets": 4918,
+          "hit_rate": 0.38003253355022365,
+          "yield": -0.06336518910126057,
+          "roi": -0.06336518910126057,
+          "max_drawdown": 0.06615900772671808,
+          "profit": -311.6299999999995,
+          "longest_losing_streak": 20,
+          "longest_winning_streak": 8,
+          "insufficient": false,
+          "reason": null
+        }
+      ],
+      "robustness": {
+        "n": 7156,
+        "bootstrap_n": 200,
+        "log_loss_mean": 1.3148453062615013,
+        "log_loss_se": 0.001007704577067335,
+        "log_loss_ci95": [
+          1.2896733530037432,
+          1.3487169763825684
+        ],
+        "brier_mean": 0.2423653321831625,
+        "brier_se": 0.00013972507144261278,
+        "brier_ci95": [
+          0.23874534608821632,
+          0.2462441168610727
+        ],
+        "yield_mean": -0.06001685798265566,
+        "yield_se": 0.0012056245677367703,
+        "yield_ci95": [
+          -0.09620169651272355,
+          -0.027105064247921435
+        ],
+        "pnl_concentration_top10pct": 0.24242917007475295,
+        "max_single_bet_share": 0.0017887371353212196,
+        "snooping_thresholds_tested": 6,
+        "insufficient": false,
+        "reason": null
+      },
+      "versions": {
+        "model": "phase9-1.0.0",
+        "features": "features_pi_v1"
+      },
+      "auto_promotion": false,
+      "role": "CHALLENGER"
+    },
+    {
+      "model_id": "GBM_STUMPS_v1",
+      "status": "CANDIDATE",
+      "supported": true,
+      "reason": "stumps trained",
+      "train_n": 7203,
+      "val_n": 7230,
+      "oos_n": 7156,
+      "oos_metrics": {
+        "n": 7156,
+        "log_loss": 1.0681306094735836,
+        "brier": 0.21523708484458098,
+        "accuracy": 0.43418110676355504,
+        "balanced_accuracy": 0.3333333333333333,
+        "calibration_error": 0.004106273957034409,
+        "roc_auc_ovr": 0.5569571173374565,
+        "confusion": {
+          "HOME": {
+            "HOME": 3107,
+            "DRAW": 0,
+            "AWAY": 0
+          },
+          "DRAW": {
+            "HOME": 1815,
+            "DRAW": 0,
+            "AWAY": 0
+          },
+          "AWAY": {
+            "HOME": 2234,
+            "DRAW": 0,
+            "AWAY": 0
+          }
+        },
+        "binary_one_vs_rest": {
+          "HOME": {
+            "n": 7156,
+            "precision": null,
+            "recall": 0,
+            "accuracy": 0.565818893236445,
+            "brier": 0.24383390946494532,
+            "log_loss": 0.6807206893723368,
+            "auc": 0.5697698367193702
+          },
+          "DRAW": {
+            "n": 7156,
+            "precision": null,
+            "recall": 0,
+            "accuracy": 0.7463666852990497,
+            "brier": 0.18934950062342273,
+            "log_loss": 0.5664154843595999,
+            "auc": 0.5001308037052109
+          },
+          "AWAY": {
+            "n": 7156,
+            "precision": null,
+            "recall": 0,
+            "accuracy": 0.6878144214645053,
+            "brier": 0.2125278444453757,
+            "log_loss": 0.6157616829714363,
+            "auc": 0.6009707115877883
+          }
+        },
+        "goals": null,
+        "insufficient": false,
+        "insufficient_reason": null
+      },
+      "val_metrics": {
+        "n": 7230,
+        "log_loss": 1.0704287527467846,
+        "brier": 0.21579536802338523,
+        "accuracy": 0.42863070539419085,
+        "balanced_accuracy": 0.3333333333333333,
+        "calibration_error": 0.005920013383717549,
+        "roc_auc_ovr": 0.5512373927139632,
+        "confusion": {
+          "HOME": {
+            "HOME": 3099,
+            "DRAW": 0,
+            "AWAY": 0
+          },
+          "DRAW": {
+            "HOME": 1843,
+            "DRAW": 0,
+            "AWAY": 0
+          },
+          "AWAY": {
+            "HOME": 2288,
+            "DRAW": 0,
+            "AWAY": 0
+          }
+        },
+        "binary_one_vs_rest": {
+          "HOME": {
+            "n": 7230,
+            "precision": null,
+            "recall": 0,
+            "accuracy": 0.5713692946058091,
+            "brier": 0.24326872994571572,
+            "log_loss": 0.6795803025823366,
+            "auc": 0.5647125453904787
+          },
+          "DRAW": {
+            "n": 7230,
+            "precision": null,
+            "recall": 0,
+            "accuracy": 0.7450899031811895,
+            "brier": 0.1899932438686067,
+            "log_loss": 0.5678312670462726,
+            "auc": 0.4921237306789793
+          },
+          "AWAY": {
+            "n": 7230,
+            "precision": null,
+            "recall": 0,
+            "accuracy": 0.6835408022130014,
+            "brier": 0.2141241302558375,
+            "log_loss": 0.6191296333824432,
+            "auc": 0.5968759020724318
+          }
+        },
+        "goals": null,
+        "insufficient": false,
+        "insufficient_reason": null
+      },
+      "windows": [
+        {
+          "window_id": "wf_train_1920_val_2021_oos_2122",
+          "oos_n": 1826,
+          "oos_log_loss": 1.0710291261316167,
+          "oos_brier": 0.21587011983531257,
+          "beat_naive": true
+        },
+        {
+          "window_id": "wf_train_1920+2021_val_2122_oos_2223",
+          "oos_n": 1826,
+          "oos_log_loss": 1.0594687848073145,
+          "oos_brier": 0.21325670080070172,
+          "beat_naive": true
+        },
+        {
+          "window_id": "wf_train_1920+2021+2122_val_2223_oos_2324",
+          "oos_n": 1752,
+          "oos_log_loss": 1.0709330447085224,
+          "oos_brier": 0.2158018970713562,
+          "beat_naive": true
+        },
+        {
+          "window_id": "wf_train_1920+2021+2122+2223_val_2324_oos_2425",
+          "oos_n": 1752,
+          "oos_log_loss": 1.0713349096399036,
+          "oos_brier": 0.21607653024968473,
+          "beat_naive": true
+        }
+      ],
+      "value_val_grid": [
+        {
+          "edge_threshold": 0.01,
+          "chosen_on": "VAL",
+          "n_bets": 3301,
+          "hit_rate": 0.2556800969403211,
+          "yield": -0.12399272947591633,
+          "roi": -0.12399272947591633,
+          "max_drawdown": 0.12485610421084514,
+          "profit": -409.2999999999998,
+          "longest_losing_streak": 24,
+          "longest_winning_streak": 6,
+          "insufficient": false,
+          "reason": null
+        },
+        {
+          "edge_threshold": 0.02,
+          "chosen_on": "VAL",
+          "n_bets": 3176,
+          "hit_rate": 0.24748110831234257,
+          "yield": -0.13277078085642313,
+          "roi": -0.13277078085642313,
+          "max_drawdown": 0.13329030226700245,
+          "profit": -421.67999999999984,
+          "longest_losing_streak": 23,
+          "longest_winning_streak": 6,
+          "insufficient": false,
+          "reason": null
+        },
+        {
+          "edge_threshold": 0.03,
+          "chosen_on": "VAL",
+          "n_bets": 3035,
+          "hit_rate": 0.23953871499176277,
+          "yield": -0.14008896210873137,
+          "roi": -0.14008896210873137,
+          "max_drawdown": 0.14096210873146614,
+          "profit": -425.16999999999973,
+          "longest_losing_streak": 23,
+          "longest_winning_streak": 5,
+          "insufficient": false,
+          "reason": null
+        },
+        {
+          "edge_threshold": 0.05,
+          "chosen_on": "VAL",
+          "n_bets": 2734,
+          "hit_rate": 0.225676664228237,
+          "yield": -0.1473226042428675,
+          "roi": -0.1473226042428675,
+          "max_drawdown": 0.14880395025603502,
+          "profit": -402.77999999999975,
+          "longest_losing_streak": 22,
+          "longest_winning_streak": 5,
+          "insufficient": false,
+          "reason": null
+        },
+        {
+          "edge_threshold": 0.07,
+          "chosen_on": "VAL",
+          "n_bets": 2452,
+          "hit_rate": 0.21084828711256118,
+          "yield": -0.1577732463295268,
+          "roi": -0.1577732463295268,
+          "max_drawdown": 0.1588132137030994,
+          "profit": -386.85999999999973,
+          "longest_losing_streak": 23,
+          "longest_winning_streak": 4,
+          "insufficient": false,
+          "reason": null
+        },
+        {
+          "edge_threshold": 0.1,
+          "chosen_on": "VAL",
+          "n_bets": 2025,
+          "hit_rate": 0.19555555555555557,
+          "yield": -0.15229629629629626,
+          "roi": -0.15229629629629626,
+          "max_drawdown": 0.15454320987654319,
+          "profit": -308.3999999999999,
+          "longest_losing_streak": 28,
+          "longest_winning_streak": 4,
+          "insufficient": false,
+          "reason": null
+        }
+      ],
+      "value_threshold_reason": "chosen_on_VAL yield=-0.12399272947591633 n=3301",
+      "value_oos_chosen": {
+        "edge_threshold": 0.01,
+        "chosen_on": "VAL",
+        "n_bets": 3179,
+        "hit_rate": 0.25322428436615285,
+        "yield": -0.14138408304498273,
+        "roi": -0.14138408304498273,
+        "max_drawdown": 0.1450393205410507,
+        "profit": -449.46000000000015,
+        "longest_losing_streak": 23,
+        "longest_winning_streak": 5,
+        "insufficient": false,
+        "reason": null
+      },
+      "value_oos_grid": [
+        {
+          "edge_threshold": 0.01,
+          "chosen_on": "GRID_REPORT_ONLY",
+          "n_bets": 3179,
+          "hit_rate": 0.25322428436615285,
+          "yield": -0.14138408304498273,
+          "roi": -0.14138408304498273,
+          "max_drawdown": 0.1450393205410507,
+          "profit": -449.46000000000015,
+          "longest_losing_streak": 23,
+          "longest_winning_streak": 5,
+          "insufficient": false,
+          "reason": null
+        },
+        {
+          "edge_threshold": 0.02,
+          "chosen_on": "GRID_REPORT_ONLY",
+          "n_bets": 3058,
+          "hit_rate": 0.2485284499672989,
+          "yield": -0.1424918247220406,
+          "roi": -0.1424918247220406,
+          "max_drawdown": 0.14629169391759325,
+          "profit": -435.7400000000002,
+          "longest_losing_streak": 25,
+          "longest_winning_streak": 5,
+          "insufficient": false,
+          "reason": null
+        },
+        {
+          "edge_threshold": 0.03,
+          "chosen_on": "GRID_REPORT_ONLY",
+          "n_bets": 2896,
+          "hit_rate": 0.24205801104972377,
+          "yield": -0.14414019337016581,
+          "roi": -0.14414019337016581,
+          "max_drawdown": 0.14839433701657465,
+          "profit": -417.4300000000002,
+          "longest_losing_streak": 24,
+          "longest_winning_streak": 5,
+          "insufficient": false,
+          "reason": null
+        },
+        {
+          "edge_threshold": 0.05,
+          "chosen_on": "GRID_REPORT_ONLY",
+          "n_bets": 2640,
+          "hit_rate": 0.2287878787878788,
+          "yield": -0.15453787878787878,
+          "roi": -0.15453787878787878,
+          "max_drawdown": 0.15958333333333333,
+          "profit": -407.97999999999996,
+          "longest_losing_streak": 31,
+          "longest_winning_streak": 4,
+          "insufficient": false,
+          "reason": null
+        },
+        {
+          "edge_threshold": 0.07,
+          "chosen_on": "GRID_REPORT_ONLY",
+          "n_bets": 2340,
+          "hit_rate": 0.21367521367521367,
+          "yield": -0.16502564102564105,
+          "roi": -0.16502564102564105,
+          "max_drawdown": 0.17071794871794874,
+          "profit": -386.16,
+          "longest_losing_streak": 26,
+          "longest_winning_streak": 4,
+          "insufficient": false,
+          "reason": null
+        },
+        {
+          "edge_threshold": 0.1,
+          "chosen_on": "GRID_REPORT_ONLY",
+          "n_bets": 1931,
+          "hit_rate": 0.1967892283790782,
+          "yield": -0.166053858104609,
+          "roi": -0.166053858104609,
+          "max_drawdown": 0.1720611082340756,
+          "profit": -320.65,
+          "longest_losing_streak": 26,
+          "longest_winning_streak": 4,
+          "insufficient": false,
+          "reason": null
+        }
+      ],
+      "robustness": {
+        "n": 7156,
+        "bootstrap_n": 200,
+        "log_loss_mean": 1.0681932989433023,
+        "log_loss_se": 0.00017806306753766617,
+        "log_loss_ci95": [
+          1.063496322222267,
+          1.0729602438588837
+        ],
+        "brier_mean": 0.21525305659459804,
+        "brier_se": 0.00004045985974975966,
+        "brier_ci95": [
+          0.2141866782261137,
+          0.21627616241149672
+        ],
+        "yield_mean": -0.1427655133540198,
+        "yield_se": 0.0019274071155611894,
+        "yield_ci95": [
+          -0.19633417243549414,
+          -0.08473733583489684
+        ],
+        "pnl_concentration_top10pct": 0.25678718820808893,
+        "max_single_bet_share": 0.0037221940472811645,
+        "snooping_thresholds_tested": 6,
+        "insufficient": false,
+        "reason": null
+      },
+      "versions": {
+        "model": "phase9-1.0.0",
+        "features": "features_pi_v1"
+      },
+      "auto_promotion": false,
+      "role": "CHALLENGER"
+    }
+  ],
+  "policy": {
+    "auto_promotion": false,
+    "promoted_by_code": false,
+    "single_positive_roi_insufficient": true,
+    "current_production_until_criteria": "INDEPENDENT_POISSON_v1",
+    "required_for_candidate": [
+      "leakage_pass",
+      "odds_not_in_features",
+      "train_n>=200",
+      "val_n>=80",
+      "oos_n>=80",
+      "beats_naive_logloss_and_brier_on_every_oos_window",
+      "calibration_error<0.08",
+      "threshold_chosen_on_val_only"
+    ],
+    "required_for_promoted": [
+      "all_candidate_criteria",
+      "human_approval",
+      "no_regression_vs_current_production",
+      "not_a_single_window_result"
+    ],
+    "note": "PROMOTED=0 is a valid and expected outcome."
+  },
+  "note": "Model quality is separate from betting profitability. PROMOTED=0 is valid."
+}
