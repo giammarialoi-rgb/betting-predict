@@ -20,6 +20,7 @@ import { MarketPercents } from "@/components/betmind/MarketPercents";
 import { useBmLocale } from "@/components/betmind/useBmLocale";
 import {
   EVENT_DETAIL_BOARD_ONLY_NOTICE_IT,
+  EVENT_DETAIL_LOCAL_ONLY_NOTICE_IT,
   classifyEventDetailResponse,
   matchTitleFromBoard,
   type BoardSummary,
@@ -283,11 +284,29 @@ export function EventDetailClient({
           json,
         );
         if (!alive) return;
-        if (classified.kind === "board_only") {
+        if (classified.kind === "local_only") {
+          setData(json);
+          setBoardOnly(null);
+          setBoardNotice(classified.notice_it ?? EVENT_DETAIL_LOCAL_ONLY_NOTICE_IT);
+          setErr(null);
+          setLastUpdate(new Date().toISOString());
+          return;
+        }
+        if (
+          classified.kind === "board_only" ||
+          classified.kind === "research_running" ||
+          classified.kind === "research_failed"
+        ) {
           setBoardOnly(classified.summary);
           setBoardNotice(classified.notice_it);
           setData(null);
-          setErr(null);
+          setErr(
+            classified.kind === "research_failed"
+              ? classified.reason
+              : classified.summary
+                ? null
+                : classified.notice_it,
+          );
           setLastUpdate(new Date().toISOString());
           return;
         }
@@ -421,6 +440,12 @@ export function EventDetailClient({
               {data.event.status ? ` · ${eventStatusIt(data.event.status)}` : ""}
             </p>
           </header>
+
+          {boardNotice && (
+            <Card>
+              <p className="text-sm leading-relaxed">{boardNotice}</p>
+            </Card>
+          )}
 
           {data.light_analysis && (
             <Card title="Light" glow>

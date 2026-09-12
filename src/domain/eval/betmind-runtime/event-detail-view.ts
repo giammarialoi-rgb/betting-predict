@@ -27,6 +27,14 @@ export type BoardSummary = {
   away_or_b: string | null;
 };
 
+export type DossierState =
+  | "ok"
+  | "research_running"
+  | "research_failed"
+  | "local_only"
+  | "board_only"
+  | "not_found";
+
 export type EventDetailApiJson = {
   error?: string;
   reason?: string;
@@ -36,13 +44,27 @@ export type EventDetailApiJson = {
   board_summary?: Record<string, unknown> | BoardSummary | null;
   dossier?: unknown;
   event?: unknown;
+  dossier_state?: DossierState;
+  research_state?: string | null;
 };
 
 export type ClassifiedEventDetail =
   | { kind: "ok" }
+  | { kind: "local_only"; notice_it: string }
+  | { kind: "research_running"; summary: BoardSummary | null; notice_it: string }
+  | { kind: "research_failed"; summary: BoardSummary | null; notice_it: string; reason: string }
   | { kind: "board_only"; summary: BoardSummary; notice_it: string; reason: string }
   | { kind: "not_found"; message: string }
   | { kind: "error"; message: string };
+
+export const EVENT_DETAIL_LOCAL_ONLY_NOTICE_IT =
+  "Dossier presente in locale (Lab B). Non ancora verificato sullo specchio remoto. Analisi reale — non inventata dal board.";
+
+export const EVENT_DETAIL_RESEARCH_RUNNING_IT =
+  "Ricerca in corso per questo evento. Nessun dossier ancora. Niente di inventato.";
+
+export const EVENT_DETAIL_RESEARCH_FAILED_IT =
+  "Ricerca fallita o incompleta. Nessun dossier valido. Niente di inventato.";
 
 function nullableString(v: unknown): string | null {
   if (v == null) return null;
@@ -120,11 +142,39 @@ export function isDossierNotMirroredWithBoard(json: EventDetailApiJson): boolean
  * `dossier_not_mirrored` + board_summary is never a fatal empty page,
  * whether the route answers 200 or 404.
  */
+function hasRenderableDossier(json: EventDetailApiJson): boolean {
+  return json.dossier != null && typeof json.dossier === "object";
+}
+
 export function classifyEventDetailResponse(
   res: { ok: boolean; status: number },
   json: EventDetailApiJson,
 ): ClassifiedEventDetail {
-  if (isDossierNotMirroredWithBoard(json)) {
+  if (hasRenderableDossier(json) && (json.dossier_state === "ok" || json.dossier_state === "local_only" || !json.dossier_state)) {
+    if (json.dossier_state === "local_only") {
+      return { kind: "local_only", notice_it: json.notice_it ?? EVENT_DETAIL_LOCAL_ONLY_NOTICE_IT };
+    }
+    return { kind: "ok" };
+  }
+
+  if (json.dossier_state === "research_running") {
+    return {
+      kind: "research_running",
+      summary: normalizeBoardSummary(json.board_summary),
+      notice_it: json.notice_it ?? EVENT_DETAIL_RESEARCH_RUNNING_IT,
+    };
+  }
+
+  if (json.dossier_state === "research_failed") {
+    return {
+      kind: "research_failed",
+      summary: normalizeBoardSummary(json.board_summary),
+      notice_it: json.notice_it ?? EVENT_DETAIL_RESEARCH_FAILED_IT,
+      reason: json.reason ?? EVENT_DETAIL_RESEARCH_FAILED_IT,
+    };
+  }
+
+  if (isDossierNotMirroredWithBoard(json) || json.dossier_state === "board_only") {
     const summary = normalizeBoardSummary(json.board_summary);
     if (summary) {
       return {
@@ -136,7 +186,7 @@ export function classifyEventDetailResponse(
     }
   }
 
-  if (json.error === "not_found" || res.status === 404) {
+  if (json.error === "not_found" || json.dossier_state === "not_found" || res.status === 404) {
     return { kind: "not_found", message: formatEventDetailError(json, res.status) };
   }
 

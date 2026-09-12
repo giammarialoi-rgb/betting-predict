@@ -74,6 +74,18 @@ describe("event-detail board-only view", () => {
     assert.equal(normalizeBoardSummary(null), null);
   });
 
+  it("classifies research_failed without turning it into ok", () => {
+    const classified = classifyEventDetailResponse(
+      { ok: true, status: 200 },
+      {
+        dossier_state: "research_failed",
+        reason: "adapters blocked",
+        board_summary: BOARD,
+      },
+    );
+    assert.equal(classified.kind, "research_failed");
+  });
+
   it("does not treat a naked error as board_only without board_summary", () => {
     const classified = classifyEventDetailResponse(
       { ok: false, status: 404 },

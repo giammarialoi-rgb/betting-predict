@@ -14,6 +14,14 @@ import {
 } from "@/domain/eval/betmind-runtime/event-detail-view";
 import { loadEventAnalyses } from "@/domain/eval/light-analysis/list";
 import type { LightAnalysis } from "@/domain/eval/light-analysis/types";
+import { loadResearchQueue } from "@/domain/eval/data-intelligence/research/queue";
+import { findDossierInRemoteMirror, readRemoteMirror } from "@/domain/eval/betmind-runtime/remote-mirror";
+import type { DossierState } from "@/domain/eval/betmind-runtime/event-detail-view";
+import {
+  EVENT_DETAIL_LOCAL_ONLY_NOTICE_IT,
+  EVENT_DETAIL_RESEARCH_FAILED_IT,
+  EVENT_DETAIL_RESEARCH_RUNNING_IT,
+} from "@/domain/eval/betmind-runtime/event-detail-view";
 
 export const dynamic = "force-dynamic";
 
@@ -100,6 +108,21 @@ export const EVENT_DETAIL_NOT_FOUND_IT =
 export const EVENT_DETAIL_DOSSIER_NOT_MIRRORED_IT =
   "Evento presente sul board (filesystem/specchio remoto) ma nessun dossier specchiato. Il dossier completo (HDA, features, lineage) richiede Lab B — non inventabile dai campi lite del board.";
 
+function researchStateForEvent(eventId: string, root: string): string | null {
+  try {
+    const item = loadResearchQueue(root).items.find((i) => i.event_id === eventId);
+    return item?.state ?? null;
+  } catch {
+    return null;
+  }
+}
+
+function dossierStateFromResearch(state: string | null): DossierState | null {
+  if (state === "QUEUED" || state === "RESEARCHING" || state === "DISCOVERED") return "research_running";
+  if (state === "INSUFFICIENT") return "research_failed";
+  return null;
+}
+
 /** Event analysis dossier — Lab B disk first, then remote Blob board/light mirror. Never Neon. */
 export async function GET(_req: Request, ctx: { params: Promise<{ id: string }> }) {
   const { id } = await ctx.params;
@@ -115,9 +138,10 @@ export async function GET(_req: Request, ctx: { params: Promise<{ id: string }> 
       return NextResponse.json({
         ...legacyShapeFromDossier(remote),
         dossier: remote,
+        dossier_state: "ok" as const,
         light_analysis: lightBundle.light,
         analysis_modes: analysisModesPayload(lightBundle.light, Boolean(remote.independent_model.probability)),
-        mirror_source: "filesystem",
+        mirror_source: "remote_dossier",
         api_calls_ui: 0 as const,
         real_money: false as const,
       });
@@ -131,6 +155,7 @@ export async function GET(_req: Request, ctx: { params: Promise<{ id: string }> 
         light_analysis: lightBundle.light,
         analysis_modes: analysisModesPayload(lightBundle.light, lightBundle.strong_available),
         dossier: null,
+        dossier_state: "board_only" as const,
         mirror_source: board ? "filesystem_board_light" : "light",
         api_calls_ui: 0 as const,
         real_money: false as const,
@@ -142,6 +167,7 @@ export async function GET(_req: Request, ctx: { params: Promise<{ id: string }> 
       return NextResponse.json({
         error: "dossier_not_mirrored",
         event_id: id,
+        dossier_state: "board_only" as const,
         reason: EVENT_DETAIL_DOSSIER_NOT_MIRRORED_IT,
         notice_it: EVENT_DETAIL_BOARD_ONLY_NOTICE_IT,
         present: {
@@ -166,6 +192,7 @@ export async function GET(_req: Request, ctx: { params: Promise<{ id: string }> 
       {
         error: "not_found",
         event_id: id,
+        dossier_state: "not_found" as const,
         reason: EVENT_DETAIL_NOT_FOUND_IT,
         present: {
           lab_b_disk: false,
@@ -185,6 +212,25 @@ export async function GET(_req: Request, ctx: { params: Promise<{ id: string }> 
   }
 
   const dossier = buildAnalysisDossier(id, root);
+  const research_state = researchStateForEvent(id, root);
+  let dossier_state: DossierState = dossier ? "ok" : dossierStateFromResearch(research_state) ?? "board_only";
+  let dossier_notice: string | null = null;
+  if (dossier) {
+    try {
+      const remoteHit = findDossierInRemoteMirror(await readRemoteMirror(), id);
+      if (!remoteHit) {
+        dossier_state = "local_only";
+        dossier_notice = EVENT_DETAIL_LOCAL_ONLY_NOTICE_IT;
+      }
+    } catch {
+      dossier_state = "local_only";
+      dossier_notice = EVENT_DETAIL_LOCAL_ONLY_NOTICE_IT;
+    }
+  } else if (dossier_state === "research_running") {
+    dossier_notice = EVENT_DETAIL_RESEARCH_RUNNING_IT;
+  } else if (dossier_state === "research_failed") {
+    dossier_notice = EVENT_DETAIL_RESEARCH_FAILED_IT;
+  }
 
   const predictions = readJsonlMatching(join(root, "predictions.jsonl"), (r) => r.event_id === id, 5);
   const decisions = readJsonlMatching(join(root, "decisions.jsonl"), (r) => r.event_id === id, 3);
@@ -359,6 +405,18 @@ export async function GET(_req: Request, ctx: { params: Promise<{ id: string }> 
       pred?.model_version ?? decision?.model_version ?? dossier?.cycle.model_version ?? "N/A",
     ),
     dossier,
+    dossier_state,
+    research_state,
+    notice_it: dossier_notice,
+    board_summary: boardSummaryFromBoard(id, {
+      event_id: id,
+      label: `${String(event.home_or_a ?? "")} vs ${String(event.away_or_b ?? "")}`,
+      competition: event.competition,
+      kickoff_utc: event.kickoff_utc,
+      home_or_a: event.home_or_a,
+      away_or_b: event.away_or_b,
+      bucket: dossier_state === "ok" || dossier_state === "local_only" ? "ANALYZED" : "DISCOVERED",
+    }),
     light_analysis: lightBundle.light,
     analysis_modes: analysisModesPayload(
       lightBundle.light,

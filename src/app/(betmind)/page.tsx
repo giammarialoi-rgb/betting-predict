@@ -11,6 +11,7 @@ import {
   StatusDot,
   StatusPill,
   asRecord,
+  componentState,
   fmtMoney,
   fmtN,
   fmtPct,
@@ -186,16 +187,51 @@ export default function BetMindHomePage() {
     analysis?.no_events_available === true ||
     (Number(boardCount) === 0 && Number(analysis?.events_in_store ?? 0) === 0);
 
+  const sourcesState = componentState(asRecord(healthBody?.components)?.sources ?? asRecord(health?.components)?.sources);
+  const researchState = componentState(asRecord(healthBody?.components)?.research ?? asRecord(health?.components)?.research);
+  const dossierMirrorState = componentState(
+    asRecord(healthBody?.components)?.dossier_mirror ?? asRecord(health?.components)?.dossier_mirror,
+  );
+  const dossierMirror = asRecord(detail?.dossier_mirror);
+  const researchDetail = asRecord(detail?.research);
+
   const statusRows: { name: string; state: BmState; detail: string }[] = [
-    { name: "App web", state: strip.webApp, detail: "Questa app su Vercel (Next.js)" },
+    { name: "App", state: strip.webApp, detail: "Questa app su Vercel (Next.js) — distinta dal runtime PC" },
     {
-      name: "Runtime (PC)",
+      name: "Runtime",
       state: rt,
       detail: mirrored
         ? `Specchio remoto da ${String(detail?.mirror_host ?? "PC")} · ultimo segnale ${formatAgeIt(mirrorAge)}${mirrorStale ? " — scaduto" : ""}`
         : storePresent
           ? "Store Lab B su questo host"
           : "Nessun battito runtime ricevuto",
+    },
+    {
+      name: "Brain",
+      state: strip.brain,
+      detail: mirrorStale
+        ? `${brainStatusIt("STALE_MIRROR")}. Ultimo stato noto: ${brainStatusIt(lastKnownBrain)}`
+        : brainStatusIt(String(detail?.brain_status ?? sys?.status ?? "")),
+    },
+    {
+      name: "Sources",
+      state: sourcesState,
+      detail: "Adattatori esistenti — vedi /sources. Nessun revive WAF.",
+    },
+    {
+      name: "Research",
+      state: researchState,
+      detail:
+        researchDetail
+          ? `In coda ${String(researchDetail.queued ?? "—")} · ricercati ${String(researchDetail.researched ?? "—")}`
+          : "Coda ricerca assente su questo host",
+    },
+    {
+      name: "Dossier-mirror",
+      state: dossierMirrorState,
+      detail: dossierMirror
+        ? `Locale ${String(dossierMirror.local_count ?? "—")} · remoto ${String(dossierMirror.remote_count ?? "n/d")} · blob ${String(dossierMirror.blob_credentials ?? "KEY_MISSING")}`
+        : "Nessun conteggio dossier-mirror",
     },
     {
       name: "Motore predittivo",
@@ -210,13 +246,6 @@ export default function BetMindHomePage() {
         : mirrored
           ? "Vercel non ha Lab B in locale; elenco da specchio remoto"
           : "Store Lab B assente su Vercel e nessuno specchio",
-    },
-    {
-      name: "Cervello",
-      state: strip.brain,
-      detail: mirrorStale
-        ? `${brainStatusIt("STALE_MIRROR")}. Ultimo stato noto: ${brainStatusIt(lastKnownBrain)}`
-        : brainStatusIt(String(detail?.brain_status ?? sys?.status ?? "")),
     },
     {
       name: "Worker",
@@ -306,8 +335,10 @@ export default function BetMindHomePage() {
         <div className="flex flex-wrap gap-2">
           <StatusPill state={strip.webApp} label={`App ${statusWordIt(strip.webApp)}`} />
           <StatusPill state={rt} label={`Runtime ${statusWordIt(rt)}`} />
-          <StatusPill state={engine} label={`Motore ${statusWordIt(engine)}`} />
-          <Pill>Cervello {statusWordIt(strip.brain)}</Pill>
+          <StatusPill state={strip.brain} label={`Brain ${statusWordIt(strip.brain)}`} />
+          <StatusPill state={sourcesState} label={`Sources ${statusWordIt(sourcesState)}`} />
+          <StatusPill state={researchState} label={`Research ${statusWordIt(researchState)}`} />
+          <StatusPill state={dossierMirrorState} label={`Dossier-mirror ${statusWordIt(dossierMirrorState)}`} />
         </div>
       </section>
 

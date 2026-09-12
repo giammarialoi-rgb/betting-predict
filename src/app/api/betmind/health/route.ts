@@ -6,6 +6,8 @@ import { loadRuntimeStatus } from "@/domain/eval/betmind-runtime/remote-status";
 import { localLabStorePresent, staleMirrorComponents } from "@/domain/eval/betmind-runtime/production-mirror";
 import { permanentRoot044 } from "@/domain/eval/permanent-044/config";
 import { piRoot } from "@/domain/eval/predictive-intelligence/config";
+import { dossierMirrorHealth } from "@/domain/eval/betmind-runtime/dossier-mirror";
+import { loadResearchQueue } from "@/domain/eval/data-intelligence/research/queue";
 
 export const dynamic = "force-dynamic";
 
@@ -94,6 +96,8 @@ export async function GET() {
             mirror_age_ms: remote.age_ms,
             mirror_host: remote.payload.host,
             analysis: remote.payload.analysis,
+            dossier_mirror: await dossierMirrorHealth(root),
+            sources: { note_it: "Stato adattatori su /sources — non inventato qui." },
           },
         });
       }
@@ -118,6 +122,7 @@ export async function GET() {
             last_known_brain_status: remote.payload.detail.brain_status,
             last_known_components: remote.payload.components,
             analysis: remote.payload.analysis,
+            dossier_mirror: await dossierMirrorHealth(root),
           },
         });
       }
@@ -160,12 +165,31 @@ export async function GET() {
     const settlement = settlementsPresent ? "ONLINE" : "UNKNOWN";
     const learning = learningPresent ? "ONLINE" : "UNKNOWN";
 
+    const queue = storePresent ? loadResearchQueue(root) : { items: [] as { state: string }[] };
+    const researching = queue.items.filter((i) => i.state === "RESEARCHING" || i.state === "QUEUED").length;
+    const researched = queue.items.filter((i) =>
+      ["RESEARCHED", "FEATURED", "INFERENCE", "PREDICTION", "INSUFFICIENT"].includes(i.state),
+    ).length;
+    const researchComponent =
+      researching > 0 ? "ONLINE" : researched > 0 ? "DEGRADED" : storePresent ? "UNKNOWN" : "OFFLINE";
+
+    const mirrorHealth = await dossierMirrorHealth(root);
+    const dossierMirrorComponent =
+      mirrorHealth.remote_count != null && mirrorHealth.remote_count > 0
+        ? "ONLINE"
+        : mirrorHealth.local_count > 0
+          ? "DEGRADED"
+          : "UNKNOWN";
+
     const components = {
       supervisor,
       worker,
       brain: brainLabel,
       predictive_engine: predictiveEngine,
       data_pipeline: dataPipeline,
+      sources: storePresent ? "ONLINE" : "UNKNOWN",
+      research: researchComponent,
+      dossier_mirror: dossierMirrorComponent,
       settlement,
       learning,
     } as const;
@@ -196,6 +220,14 @@ export async function GET() {
         mirror_reason_it: storePresent
           ? undefined
           : "Nessuno specchio remoto. App online ≠ Runtime online. Senza publish dal PC, Vercel resta OFFLINE.",
+        sources: {
+          note_it: "Stato adattatori su /sources — non inventato qui.",
+        },
+        research: {
+          queued: researching,
+          researched,
+        },
+        dossier_mirror: mirrorHealth,
       },
     });
   } catch (error) {
