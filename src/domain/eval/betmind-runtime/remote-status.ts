@@ -42,6 +42,7 @@ import {
   type RemoteDossierMirrorRow,
   type RemotePushResult,
 } from "@/domain/eval/betmind-runtime/remote-mirror";
+import { collectLocalLiveForRemote, overlayLiveOnEvents } from "@/domain/eval/betmind-runtime/live-state";
 
 export const RUNTIME_STATUS_ID = "default";
 /** After this age, remote status must not light ONLINE components. */
@@ -276,9 +277,10 @@ export function buildRuntimePayloadFromLocal(root = permanentRoot044()): BetMind
     ? listCalendarEvents({ root, date: today, sport: "football" })
     : { day: today, total: 0, events: [] };
   /** Rolling window for the Vercel snapshot — full history stays on Lab B disk / board table. */
-  const next_events = storePresent
-    ? listCalendarEvents({ root, from, to, sport: "ALL" }).events
-    : [];
+  const next_events = overlayLiveOnEvents(
+    storePresent ? listCalendarEvents({ root, from, to, sport: "ALL" }).events : [],
+    collectLocalLiveForRemote(root),
+  ) as ReturnType<typeof listCalendarEvents>["events"];
   const analysis = buildAnalysisSummaryFromLocal(root, next_events);
   const source_engine = storePresent ? buildOperationalSourceEngine({ labBRoot: root }) : [];
 
@@ -508,20 +510,35 @@ async function collectPublishDossiers(): Promise<RemoteDossierMirrorRow[]> {
   }
 }
 
+async function collectPublishSlices() {
+  const root = permanentRoot044();
+  const { collectLocalLiveForRemote } = await import("@/domain/eval/betmind-runtime/live-state");
+  const { collectLocalSettlementsForRemote, collectLocalLearningForRemote } = await import(
+    "@/domain/eval/betmind-runtime/settle-learn"
+  );
+  return {
+    live_states: collectLocalLiveForRemote(root),
+    settlements: collectLocalSettlementsForRemote(root),
+    learning_cases: collectLocalLearningForRemote(root),
+  };
+}
+
 /**
- * Write the remote Blob artifact (merge dossiers) when the publisher has
- * credentials, then POST ingest. Board updates must not replace dossiers with [].
+ * Write the remote Blob artifact (merge dossiers + live/settle/learn) when the
+ * publisher has credentials, then POST ingest. Empty incoming arrays must not
+ * wipe remote slices.
  */
 async function writeAndPushRemote(
   payload: BetMindRuntimePayload,
   dossiers: RemoteDossierMirrorRow[],
 ): Promise<{ remote: RemotePushResult; dossiers: number }> {
   const boardEvents = extractBoardEventsFromPayload(payload);
-  const written = await writeRemoteMirror(payload, boardEvents, dossiers);
+  const slices = await collectPublishSlices();
+  const written = await writeRemoteMirror(payload, boardEvents, dossiers, slices);
   if (!written.ok && written.error !== "blob_token_missing") {
     console.warn("[runtime-publish] remote mirror write failed:", written.error);
   }
-  const remote = await pushRuntimeToRemoteIngest(payload, boardEvents, { dossiers });
+  const remote = await pushRuntimeToRemoteIngest(payload, boardEvents, { dossiers, ...slices });
   if (!remote.pushed && remote.reason && remote.reason !== "local_only") {
     console.warn("[runtime-publish] remote ingest failed:", remote.reason);
   }

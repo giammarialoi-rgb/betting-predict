@@ -11,6 +11,7 @@ import {
   theSportsDbNextUrl,
 } from "@/domain/eval/acquisition-engine/catalog";
 import { parseEspnScoreboard } from "@/domain/eval/acquisition-engine/sources/espn";
+import { classifyEspnLiveStatus } from "@/domain/eval/betmind-runtime/live-state";
 import { parseTheSportsDbEvents } from "@/domain/eval/acquisition-engine/sources/thesportsdb";
 import { parseOpenLigaMatches, type OpenLigaMatch } from "@/domain/eval/acquisition-engine/sources/openligadb";
 import type { PermanentEvent044 } from "@/domain/eval/permanent-044/types";
@@ -124,8 +125,10 @@ export async function discoverGoldenCandidates(nowMs = Date.now()): Promise<{
         const ko = Date.parse(e.date);
         if (!Number.isFinite(ko)) continue;
         const event_id = fp(`espn|${e.id ?? `${e.home}|${e.away}|${e.date}`}`);
-        const finished = e.completed === true;
-        const live = !finished && Number.isFinite(ko) && ko <= nowMs && ko >= nowMs - 3 * 3600_000;
+        const { status: liveStatus, finished } = classifyEspnLiveStatus(e);
+        const live = liveStatus === "LIVE" || liveStatus === "HT";
+        const score =
+          e.homeScore != null && e.awayScore != null ? { home: e.homeScore, away: e.awayScore } : null;
         candidates.push({
           event: {
             event_id,
@@ -149,8 +152,8 @@ export async function discoverGoldenCandidates(nowMs = Date.now()): Promise<{
           source: "espn",
           finished,
           live,
-          score: null,
-          score_source: null,
+          score,
+          score_source: score ? "espn" : null,
           discovery_probes: [],
         });
       }
@@ -209,25 +212,37 @@ export async function discoverGoldenCandidates(nowMs = Date.now()): Promise<{
   return { candidates, probes };
 }
 
-/** Prefer one upcoming; else a finished match with a real score; else first identified event. */
-export function pickGoldenEvent(candidates: DiscoveredCandidate[]): DiscoveredCandidate | null {
+/** Prefer a known event_id; else upcoming; else finished with a real score; else first identified. */
+export function pickGoldenEvent(
+  candidates: DiscoveredCandidate[],
+  preferEventId?: string,
+): DiscoveredCandidate | null {
+  if (preferEventId) {
+    const hit = candidates.find((c) => c.event.event_id === preferEventId);
+    if (hit) return hit;
+  }
   const upcoming = candidates
     .filter((c) => c.event.status === "UPCOMING" && c.event.home_or_a && c.event.away_or_b)
     .sort((a, b) => Date.parse(a.event.kickoff_utc ?? "") - Date.parse(b.event.kickoff_utc ?? ""));
   if (upcoming[0]) return upcoming[0];
+  const live = candidates.find((c) => c.live && c.event.home_or_a && c.event.away_or_b);
+  if (live) return live;
   const finished = candidates.filter((c) => c.finished && c.score);
   if (finished[0]) return finished[0];
   const identified = candidates.find((c) => c.event.home_or_a && c.event.away_or_b);
   return identified ?? null;
 }
 
-export async function discoverAndPickGoldenEvent(nowMs = Date.now()): Promise<{
+export async function discoverAndPickGoldenEvent(
+  nowMs = Date.now(),
+  preferEventId?: string,
+): Promise<{
   pick: DiscoveredCandidate | null;
   probes: GoldenEventPick["discovery_probes"];
   candidate_count: number;
 }> {
   const { candidates, probes } = await discoverGoldenCandidates(nowMs);
-  const pick = pickGoldenEvent(candidates);
+  const pick = pickGoldenEvent(candidates, preferEventId);
   if (pick) pick.discovery_probes = probes;
   return { pick, probes, candidate_count: candidates.length };
 }

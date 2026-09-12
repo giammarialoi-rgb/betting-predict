@@ -86,6 +86,19 @@ describe("event-detail board-only view", () => {
     assert.equal(classified.kind, "research_failed");
   });
 
+  it("prefers a real dossier over dossier_not_mirrored when both are present", () => {
+    const classified = classifyEventDetailResponse(
+      { ok: true, status: 200 },
+      {
+        error: "dossier_not_mirrored",
+        dossier_state: "ok",
+        dossier: { event: { event_id: "ev-1" }, independent_model: { probability: null } },
+        board_summary: BOARD,
+      },
+    );
+    assert.equal(classified.kind, "ok");
+  });
+
   it("does not treat a naked error as board_only without board_summary", () => {
     const classified = classifyEventDetailResponse(
       { ok: false, status: 404 },

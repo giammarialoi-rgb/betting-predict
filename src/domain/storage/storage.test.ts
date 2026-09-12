@@ -57,5 +57,23 @@ describe("StorageProvider filesystem — works without Neon", () => {
     assert.equal(store.listDossiers()[0]?.event_id, "ev-1");
     assert.equal((store.loadLightAnalysis("ev-1") as { event_id: string }).event_id, "ev-1");
     assert.ok(store.loadLightHistory());
+    store.upsertLiveState({
+      event_id: "ev-1",
+      published_at: "2026-09-12T14:37:00.000Z",
+      status: "LIVE",
+      home: "A",
+      away: "B",
+      home_goals: 0,
+      away_goals: 1,
+      minute: "37'",
+      period: 1,
+      source: "espn",
+      source_status: "STATUS_FIRST_HALF",
+      source_detail: "37'",
+      observed_at: "2026-09-12T14:37:00.000Z",
+      finished: false,
+    });
+    assert.equal(store.loadLiveState("ev-1")?.away_goals, 1);
+    assert.equal(store.listLiveStates().length, 1);
   });
 });

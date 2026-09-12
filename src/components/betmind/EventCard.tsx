@@ -27,6 +27,9 @@ export type EventCardEvent = {
   away_or_b?: unknown;
   result?: unknown;
   why?: unknown;
+  home_goals?: unknown;
+  away_goals?: unknown;
+  minute?: unknown;
 };
 
 function text(v: unknown): string {
@@ -54,7 +57,12 @@ export function EventCard({
   const status = eventStatusIt(rawStatus);
   const bucket = text(ev.calendar_bucket) || text(ev.bucket);
   const decision = decisionLabelIt(text(ev.decision) || text(ev.prediction_status) || bucket);
-  const result = text(ev.result);
+  const homeGoals = text(ev.home_goals);
+  const awayGoals = text(ev.away_goals);
+  const minute = text(ev.minute);
+  const result =
+    text(ev.result) ||
+    (homeGoals !== "" && awayGoals !== "" ? `${homeGoals}–${awayGoals}` : "");
   const why = text(ev.why);
   const inner = (
     <article className="bm-event-card">
@@ -70,10 +78,12 @@ export function EventCard({
           <p className="bm-event-time">
             {kick ? fmtWhen(kick) : "Orario non disponibile"}
             {rawStatus ? ` · ${status}` : ""}
+            {minute ? ` · ${minute}` : ""}
           </p>
         </div>
         <div className="bm-event-flags">
           <Pill>{decision}</Pill>
+          {/live|in_play|playing|1h|2h|ht/i.test(rawStatus) ? <Pill accent>LIVE</Pill> : null}
           {result ? <Pill>{result}</Pill> : null}
         </div>
       </header>

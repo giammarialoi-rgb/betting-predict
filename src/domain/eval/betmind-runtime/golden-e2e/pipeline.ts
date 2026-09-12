@@ -343,19 +343,29 @@ export async function runGoldenEventE2E(opts?: {
     );
   }
 
-  const live = pick.live
-    ? { available: true, reason: `source=${pick.source} status=LIVE` }
-    : { available: false, reason: pick.finished ? "event_finished" : "no_in_play_feed" };
-  if (live.available) {
-    appendJsonl044(join(root, "updates.jsonl"), {
-      event_id: event.event_id,
-      kind: "live_update",
-      at: nowIso,
-      source: pick.source,
-      original_prediction: prediction.kind === "PREDICTION" ? prediction.prediction_id : null,
-      note: "live state from source; not a replacement prediction",
-    });
-  }
+  const { ingestLiveStates } = await import("@/domain/eval/betmind-runtime/live-state");
+  const liveIngest = await ingestLiveStates({
+    targets: [
+      {
+        event_id: event.event_id,
+        home: event.home_or_a,
+        away: event.away_or_b,
+        kickoff_utc: event.kickoff_utc,
+      },
+    ],
+    labBRoot: root,
+    nowIso,
+  });
+  const liveRow = liveIngest.states.find((s) => s.event_id === event.event_id) ?? liveIngest.states[0] ?? null;
+  const live = liveRow
+    ? {
+        available: true,
+        reason: `source=espn status=${liveRow.status} score=${liveRow.home_goals}-${liveRow.away_goals} minute=${liveRow.minute}`,
+      }
+    : {
+        available: false,
+        reason: liveIngest.parsed === 0 ? liveIngest.reason : pick.finished ? "event_finished" : "no_in_play_feed",
+      };
   checklist.push(step("live", live.available || !pick.live, live.reason, live.available ? 1 : 0));
 
   let settlement: GoldenE2EReport["settlement"] = {
@@ -363,7 +373,25 @@ export async function runGoldenEventE2E(opts?: {
     result: null,
     reason: "event_not_finished",
   };
-  if (pick.finished && pick.score) {
+  let learning: GoldenE2EReport["learning"] = { written: false, reason: "not_settled" };
+  const { settleFromLiveState } = await import("@/domain/eval/betmind-runtime/settle-learn");
+  if (liveRow?.finished && liveRow.home_goals != null && liveRow.away_goals != null) {
+    const settled = settleFromLiveState({
+      live: liveRow,
+      labBRoot: root,
+      nowIso,
+      prediction: {
+        event_id: event.event_id,
+        kind: prediction.kind,
+        selection: prediction.kind === "PREDICTION" ? prediction.selection : null,
+        prediction_id: prediction.kind === "PREDICTION" ? prediction.prediction_id : null,
+        model_version: prediction.kind === "PREDICTION" ? prediction.model_version : "NO_PREDICTION",
+        probability_model: prediction.kind === "PREDICTION" ? prediction.probs : null,
+      },
+    });
+    settlement = { available: settled.settled, result: settled.result, reason: settled.reason };
+    learning = { written: settled.learning_written, reason: settled.reason };
+  } else if (pick.finished && pick.score) {
     const result = `${pick.score.home}-${pick.score.away}`;
     const sel = prediction.kind === "PREDICTION" ? prediction.selection : null;
     let outcome: "won" | "lost" | "UNSETTLED" = "UNSETTLED";
@@ -387,8 +415,7 @@ export async function runGoldenEventE2E(opts?: {
     step("settlement", settlement.available || !pick.finished, settlement.reason ?? "", settlement.available ? 1 : 0),
   );
 
-  let learning: GoldenE2EReport["learning"] = { written: false, reason: "not_settled" };
-  if (settlement.available) {
+  if (settlement.available && !learning.written) {
     const learningId = createHash("sha256").update(`learn|${event.event_id}|${nowIso}`).digest("hex").slice(0, 20);
     appendLearning044(store, {
       candidate_id: learningId,

@@ -79,6 +79,18 @@ type DossierLineage = {
   confidence_defined: boolean;
 };
 
+function settlementFromJson(json: EventDetailApiJson | Detail | null | undefined): Detail["settlement"] {
+  const raw = json && "settlement" in json ? json.settlement : null;
+  if (!raw || typeof raw !== "object") return null;
+  const rec = raw as Record<string, unknown>;
+  if (rec.result == null && rec.outcome == null) return null;
+  return {
+    result: String(rec.result ?? "N/A"),
+    outcome: String(rec.outcome ?? "N/A"),
+    settled_at: String(rec.settled_at ?? "N/A"),
+  };
+}
+
 type Detail = {
   event: {
     event_id: string;
@@ -106,6 +118,18 @@ type Detail = {
     outcome: string;
     settled_at: string;
   } | null;
+  live?: {
+    status: string;
+    home_goals: number | null;
+    away_goals: number | null;
+    minute: string | null;
+    period: number | null;
+    source: string;
+    source_status: string | null;
+    observed_at: string;
+    finished: boolean;
+  } | null;
+  prediction_kind?: "PREDICTION" | "NO_PREDICTION";
   decision_048?: {
     decision: string;
     estimated_edge: number | null;
@@ -264,6 +288,10 @@ export function EventDetailClient({
   const { t } = useBmLocale();
   const params = useParams<{ id: string }>();
   const [data, setData] = useState<Detail | null>(initialData);
+  const [boardLive, setBoardLive] = useState<Detail["live"]>(initialData?.live ?? null);
+  const [boardSettlement, setBoardSettlement] = useState<Detail["settlement"]>(
+    settlementFromJson(initialData),
+  );
   const [boardOnly, setBoardOnly] = useState<BoardSummary | null>(initialBoardSummary);
   const [boardNotice, setBoardNotice] = useState<string | null>(
     initialBoardSummary ? EVENT_DETAIL_BOARD_ONLY_NOTICE_IT : null,
@@ -286,6 +314,8 @@ export function EventDetailClient({
         if (!alive) return;
         if (classified.kind === "local_only") {
           setData(json);
+          setBoardLive(json.live ?? null);
+          setBoardSettlement(settlementFromJson(json));
           setBoardOnly(null);
           setBoardNotice(classified.notice_it ?? EVENT_DETAIL_LOCAL_ONLY_NOTICE_IT);
           setErr(null);
@@ -299,6 +329,8 @@ export function EventDetailClient({
         ) {
           setBoardOnly(classified.summary);
           setBoardNotice(classified.notice_it);
+          setBoardLive(json.live ?? null);
+          setBoardSettlement(settlementFromJson(json));
           setData(null);
           setErr(
             classified.kind === "research_failed"
@@ -313,11 +345,15 @@ export function EventDetailClient({
         if (classified.kind === "not_found" || classified.kind === "error") {
           setErr(classified.message);
           setData(null);
+          setBoardLive(null);
+          setBoardSettlement(null);
           setBoardOnly(null);
           setBoardNotice(null);
           return;
         }
         setData(json);
+        setBoardLive(json.live ?? null);
+        setBoardSettlement(settlementFromJson(json));
         setBoardOnly(null);
         setBoardNotice(null);
         setErr(null);
@@ -391,6 +427,33 @@ export function EventDetailClient({
             </p>
           </header>
 
+          {boardLive && (
+            <Card title={boardLive.finished ? "Esito (FT)" : "Live"} glow>
+              <div className="grid grid-cols-2 gap-3">
+                <Metric
+                  label="Punteggio"
+                  value={
+                    boardLive.home_goals != null && boardLive.away_goals != null
+                      ? `${boardLive.home_goals}–${boardLive.away_goals}`
+                      : "—"
+                  }
+                  accent
+                />
+                <Metric label="Stato" value={eventStatusIt(boardLive.status)} />
+                <Metric label="Minuto" value={boardLive.minute ?? "—"} />
+                <Metric label="Fonte" value={boardLive.source} />
+              </div>
+            </Card>
+          )}
+          {boardSettlement && (
+            <Card title="Settlement">
+              <p className="text-sm">
+                Esito: {boardSettlement.result} · {boardSettlement.outcome}
+              </p>
+              <p className="bm-muted text-xs">{boardSettlement.settled_at}</p>
+            </Card>
+          )}
+
           <Card title="Partita sullo specchio">
             <p className="text-sm leading-relaxed">{boardNotice ?? EVENT_DETAIL_BOARD_ONLY_NOTICE_IT}</p>
             <div className="mt-4 grid grid-cols-2 gap-3">
@@ -444,6 +507,49 @@ export function EventDetailClient({
           {boardNotice && (
             <Card>
               <p className="text-sm leading-relaxed">{boardNotice}</p>
+            </Card>
+          )}
+
+          {data.live && (
+            <Card title={data.live.finished ? "Esito (FT)" : "Live"} glow>
+              <div className="grid grid-cols-2 gap-3">
+                <Metric
+                  label="Punteggio"
+                  value={
+                    data.live.home_goals != null && data.live.away_goals != null
+                      ? `${data.live.home_goals}–${data.live.away_goals}`
+                      : "—"
+                  }
+                  accent
+                />
+                <Metric label="Stato" value={eventStatusIt(data.live.status)} />
+                <Metric label="Minuto" value={data.live.minute ?? "—"} />
+                <Metric label="Fonte" value={data.live.source} />
+              </div>
+              <p className="mt-3 text-xs bm-muted">
+                {data.live.finished
+                  ? "Risultato finale dalla fonte. Non inventato."
+                  : "Stato in corso dalla fonte. Settlement solo a FT reale."}{" "}
+                {data.live.source_status ? `· ${data.live.source_status}` : ""}{" "}
+                {data.live.observed_at ? `· ${fmtWhen(data.live.observed_at)}` : ""}
+              </p>
+            </Card>
+          )}
+
+          {(data.prediction_kind === "NO_PREDICTION" ||
+            (!modelProbs && (data.dossier || pred?.model_version === "NO_PREDICTION"))) && (
+            <Card title="Modello indipendente — NO PREDICTION">
+              <p className="text-sm leading-relaxed">
+                Nessuna probabilità HDA prodotta. I gate non sono stati abbassati e nessun dato è
+                stato inventato. {pred?.human_readable_reason ?? dossier?.independent_model.note ?? ""}
+              </p>
+              {(pred?.reason_codes?.length ?? dossier?.independent_model.reason_codes.length ?? 0) > 0 && (
+                <div className="mt-3 flex flex-wrap gap-1">
+                  {(pred?.reason_codes ?? dossier?.independent_model.reason_codes ?? []).map((c) => (
+                    <Pill key={c}>{c}</Pill>
+                  ))}
+                </div>
+              )}
             </Card>
           )}
 

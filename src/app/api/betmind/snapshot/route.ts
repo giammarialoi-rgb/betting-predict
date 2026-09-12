@@ -21,6 +21,8 @@ import {
   readSnapshotCache,
   writeSnapshotCache,
 } from "@/domain/eval/betmind-runtime/snapshot-cache";
+import { collectLocalLiveForRemote, overlayLiveOnEvents } from "@/domain/eval/betmind-runtime/live-state";
+import { readRemoteMirror } from "@/domain/eval/betmind-runtime/remote-mirror";
 
 export const dynamic = "force-dynamic";
 export { invalidateBetMindSnapshotCache };
@@ -100,6 +102,26 @@ export async function GET() {
       const remote = await loadRuntimeStatus(now);
       if (remote) {
         const components = remote.fresh ? remote.payload.components : staleMirrorComponents();
+        const art = await readRemoteMirror();
+        const liveRows = art?.live_states ?? [];
+        const obs = remote.payload.observatory as Record<string, unknown> | null;
+        const observatory = obs
+          ? {
+              ...obs,
+              next_events: overlayLiveOnEvents(
+                (obs.next_events as unknown[]) ?? [],
+                liveRows,
+              ),
+            }
+          : obs;
+        const settlements =
+          (remote.payload.recent_settlements?.length
+            ? remote.payload.recent_settlements
+            : art?.settlements?.map((s) => s.payload)) ?? [];
+        const learning =
+          (remote.payload.learning_cases?.length
+            ? remote.payload.learning_cases
+            : art?.learning_cases?.map((c) => c.payload)) ?? [];
         const body = {
           at: nowIso,
           api_calls_ui: 0 as const,
@@ -109,7 +131,7 @@ export async function GET() {
           mirror_published_at: remote.published_at,
           mirror_age_ms: remote.age_ms,
           mirror_stale: !remote.fresh,
-          observatory: remote.payload.observatory,
+          observatory,
           health: {
             ...remote.payload.health053,
             components,
@@ -138,8 +160,8 @@ export async function GET() {
             paper_bankroll_report: remote.payload.predictive.paper_bankroll_report ?? null,
             e2e: null,
           },
-          learning_cases: remote.payload.learning_cases ?? [],
-          recent_settlements: remote.payload.recent_settlements ?? [],
+          learning_cases: learning,
+          recent_settlements: settlements,
           recent_autopsies: remote.payload.recent_autopsies ?? [],
           analysis: remote.payload.analysis,
         };
@@ -148,7 +170,11 @@ export async function GET() {
       }
     }
 
-    const observatory = buildLiteObservatory(root, nowIso);
+    const observatoryRaw = buildLiteObservatory(root, nowIso);
+    const observatory = {
+      ...observatoryRaw,
+      next_events: overlayLiveOnEvents(observatoryRaw.next_events, collectLocalLiveForRemote(root)),
+    };
     const health = {
       ...buildHealthPayload053(root),
       source_health: loadSourceHealth053(root),

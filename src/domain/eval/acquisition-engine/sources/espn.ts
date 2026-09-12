@@ -25,11 +25,27 @@ export type EspnEvent = {
   league?: string | null;
   sport?: string | null;
   completed?: boolean;
+  /** Real competitor score when ESPN publishes a finite integer. Never invented. */
+  homeScore?: number | null;
+  awayScore?: number | null;
+  /** ESPN status.type.state: pre | in | post */
+  statusState?: string | null;
+  statusName?: string | null;
+  statusDetail?: string | null;
+  displayClock?: string | null;
+  period?: number | null;
   oddsHome?: number | null;
   oddsDraw?: number | null;
   oddsAway?: number | null;
   bookmaker?: string | null;
 };
+
+function parsePublishedScore(raw: unknown): number | null {
+  if (raw == null || raw === "") return null;
+  const n = typeof raw === "number" ? raw : Number(String(raw).trim());
+  if (!Number.isFinite(n) || n < 0 || !Number.isInteger(n)) return null;
+  return n;
+}
 
 function asRec(v: unknown): Record<string, unknown> | null {
   return v && typeof v === "object" ? (v as Record<string, unknown>) : null;
@@ -73,8 +89,24 @@ export function parseEspnScoreboard(jsonText: string, leagueHint = ""): EspnEven
     const drawOdds = decimalOdds(oddsRaw?.drawOdds ?? oddsRaw?.drawOdd);
     const status = asRec(comp?.status) ?? asRec(ev.status);
     const type = asRec(status?.type);
+    let homeScore: number | null = null;
+    let awayScore: number | null = null;
+    for (const c of competitors) {
+      const row = asRec(c);
+      if (!row) continue;
+      const sc = parsePublishedScore(row.score);
+      if (row.homeAway === "home") homeScore = sc;
+      else if (row.homeAway === "away") awayScore = sc;
+    }
+    const periodRaw = status?.period;
+    const period =
+      typeof periodRaw === "number" && Number.isFinite(periodRaw)
+        ? periodRaw
+        : typeof periodRaw === "string" && Number.isFinite(Number(periodRaw))
+          ? Number(periodRaw)
+          : null;
     out.push({
-      id: typeof ev.id === "string" ? ev.id : undefined,
+      id: typeof ev.id === "string" ? ev.id : typeof ev.id === "number" ? String(ev.id) : undefined,
       date: typeof ev.date === "string" ? ev.date : undefined,
       name: typeof ev.name === "string" ? ev.name : undefined,
       home,
@@ -82,6 +114,20 @@ export function parseEspnScoreboard(jsonText: string, leagueHint = ""): EspnEven
       league: leagueHint,
       sport: leagueHint === "nba" ? "basketball" : "football",
       completed: type?.completed === true,
+      homeScore,
+      awayScore,
+      statusState: typeof type?.state === "string" ? type.state : null,
+      statusName: typeof type?.name === "string" ? type.name : null,
+      statusDetail:
+        typeof type?.shortDetail === "string"
+          ? type.shortDetail
+          : typeof type?.detail === "string"
+            ? type.detail
+            : typeof type?.description === "string"
+              ? type.description
+              : null,
+      displayClock: typeof status?.displayClock === "string" ? status.displayClock : null,
+      period,
       oddsHome: homeOdds,
       oddsDraw: drawOdds,
       oddsAway: awayOdds,

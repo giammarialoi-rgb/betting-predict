@@ -19,7 +19,9 @@ export default function LivePage() {
   const activity =
     asRecord(asRecord(obs?.multisource_055)?.current_activity) ?? asRecord(obs?.current_work);
   const events = ((obs?.next_events as Record<string, unknown>[]) ?? []).filter(Boolean);
-  const live = events.filter((e) => /live|in_play|playing/i.test(String(e.status)));
+  const live = events.filter((e) =>
+    /live|in_play|playing|\bht\b|halftime|first_half|second_half|in_progress/i.test(String(e.status)),
+  );
   const decisions = events.slice(0, 12);
   const settlements = data?.recent_settlements ?? [];
   const phase = String(activity?.phase ?? sys?.phase ?? "");
