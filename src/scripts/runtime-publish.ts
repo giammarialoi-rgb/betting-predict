@@ -29,6 +29,7 @@ async function main() {
         store_present_local: payload.store_present_local,
         analysis: payload.analysis,
         board_events: next.length,
+        dossiers: "dossiers" in result ? result.dossiers : undefined,
         remote: "remote" in result ? result.remote : undefined,
         sample_event: next[0] ?? null,
       },

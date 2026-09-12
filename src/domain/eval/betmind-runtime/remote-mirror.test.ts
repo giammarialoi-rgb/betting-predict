@@ -14,6 +14,9 @@ import {
   pushRuntimeToRemoteIngest,
   remoteFreshness,
   setRemoteMirrorStoreOverride,
+  writeRemoteMirror,
+  type RemoteMirrorArtifact,
+  type RemoteMirrorStore,
 } from "@/domain/eval/betmind-runtime/remote-mirror";
 import { honestyLayersIt } from "@/domain/eval/betmind-runtime/status-copy";
 import { publishRuntimeStatus, RUNTIME_STALE_MS } from "@/domain/eval/betmind-runtime/remote-status";
@@ -268,18 +271,30 @@ describe("local filesystem remains SoT on the PC", () => {
   });
 });
 
+function sampleAnalysisDossier(eventId: string) {
+  return {
+    event: {
+      event_id: eventId,
+      home: "A",
+      away: "B",
+      competition: "BL",
+      kickoff_utc: null,
+      sport: "soccer",
+      status: "UPCOMING",
+    },
+    independent_model: { probability: null },
+    features: [],
+    research: [],
+    real_money: false,
+  };
+}
+
 describe("remote dossiers survive board-only publish", () => {
   it("merges analysis_dossier rows and does not treat board as dossier", async () => {
     process.env.BETMIND_RUNTIME_PUBLISH_SECRET = "s3cret";
     const mem = createMemoryRemoteMirrorStore();
     setRemoteMirrorStoreOverride(mem);
-    const dossier = {
-      event: { event_id: "ev-1", home: "A", away: "B", competition: "BL", kickoff_utc: null, sport: "soccer", status: "UPCOMING" },
-      independent_model: { probability: null },
-      features: [],
-      research: [],
-      real_money: false,
-    };
+    const dossier = sampleAnalysisDossier("ev-1");
     assert.equal(isRealAnalysisDossier(dossier), true);
     const first = await acceptRuntimeIngest({
       payload: samplePayload("2026-09-12T13:00:00.000Z"),
@@ -293,6 +308,93 @@ describe("remote dossiers survive board-only publish", () => {
     const art = await mem.read();
     assert.equal(findDossierInRemoteMirror(art, "ev-1") != null, true);
     assert.equal(isRealAnalysisDossier({ event_id: "ev-1", bucket: "DISCOVERED" }), false);
+  });
+
+  it("publishRuntimeStatus board-only write keeps findDossierInRemoteMirror readable", async () => {
+    delete process.env.BETMIND_RUNTIME_INGEST_URL;
+    delete process.env.BETMIND_RUNTIME_PUBLISH_SECRET;
+    const mem = createMemoryRemoteMirrorStore();
+    setRemoteMirrorStoreOverride(mem);
+    const dossier = sampleAnalysisDossier("de3b08b74a8249c647ee0e42");
+    const seeded = await writeRemoteMirror(
+      samplePayload("2026-09-12T13:00:00.000Z"),
+      undefined,
+      [
+        {
+          event_id: "de3b08b74a8249c647ee0e42",
+          published_at: "2026-09-12T13:00:00.000Z",
+          dossier,
+          dossier_version: null,
+        },
+      ],
+    );
+    assert.equal(seeded.ok, true);
+    if (seeded.ok) assert.equal(seeded.dossiers, 1);
+    assert.ok(findDossierInRemoteMirror(await mem.read(), "de3b08b74a8249c647ee0e42"));
+
+    const cwd = mkdtempSync(join(tmpdir(), "bm-pub-keep-dossier-"));
+    const root = join(cwd, "audit", "external", "task-044");
+    mkdirSync(root, { recursive: true });
+    writeFileSync(join(root, "events.jsonl"), "{}\n", "utf8");
+    const prevCwd = process.cwd();
+    process.chdir(cwd);
+    try {
+      const boardOnly = samplePayload("2026-09-12T14:00:00.000Z");
+      boardOnly.observatory = {
+        next_events: [
+          { event_id: "ev-board-a", bucket: "DISCOVERED" },
+          { event_id: "ev-board-b", bucket: "DISCOVERED" },
+        ],
+      };
+      const published = await publishRuntimeStatus(boardOnly);
+      assert.equal(published.ok, true);
+      if (published.ok) {
+        assert.equal(published.board, 2);
+        assert.equal(published.dossiers, 1);
+      }
+      const remote = await mem.read();
+      assert.equal(remote?.board_events.length, 2);
+      const kept = findDossierInRemoteMirror(remote, "de3b08b74a8249c647ee0e42");
+      assert.ok(kept);
+      assert.equal((kept.event as { event_id: string }).event_id, "de3b08b74a8249c647ee0e42");
+      assert.ok(Array.isArray(kept.features));
+    } finally {
+      process.chdir(prevCwd);
+    }
+  });
+
+  it("does not overwrite dossiers when the existing artifact cannot be read", async () => {
+    const dossier = sampleAnalysisDossier("ev-keep");
+    let written: RemoteMirrorArtifact | null = {
+      schema: "betmind-remote-mirror/1",
+      published_at: "2026-09-12T13:00:00.000Z",
+      payload: samplePayload("2026-09-12T13:00:00.000Z"),
+      board_events: [],
+      dossiers: [
+        {
+          event_id: "ev-keep",
+          published_at: "2026-09-12T13:00:00.000Z",
+          dossier,
+          dossier_version: null,
+        },
+      ],
+      neon_in_use: false,
+      backend: "memory",
+    };
+    const store: RemoteMirrorStore = {
+      kind: "memory",
+      async read() {
+        throw new Error("blob_unavailable");
+      },
+      async write(art) {
+        written = art;
+      },
+    };
+    setRemoteMirrorStoreOverride(store);
+    const result = await writeRemoteMirror(samplePayload("2026-09-12T14:00:00.000Z"));
+    assert.equal(result.ok, false);
+    if (!result.ok) assert.match(result.error, /existing_mirror_unread/);
+    assert.ok(findDossierInRemoteMirror(written, "ev-keep"));
   });
 });
 
