@@ -3,6 +3,7 @@ import { describe, it } from "node:test";
 import {
   eventStatusIt,
   honestyLayersIt,
+  isInPlayBoardStatus,
   operationalStatusIt,
   roleLabelIt,
   sourceBlurbIt,
@@ -57,7 +58,17 @@ describe("status-copy Italian honesty", () => {
   it("translates event / role / temporal jargon into Italian", () => {
     assert.equal(eventStatusIt("SCHEDULED"), "In programma");
     assert.equal(eventStatusIt("IN_PLAY"), "In corso");
+    assert.equal(eventStatusIt("HT"), "In corso");
+    assert.equal(eventStatusIt("STATUS_HALFTIME"), "In corso");
     assert.equal(eventStatusIt("FT"), "Terminata");
+    assert.equal(isInPlayBoardStatus("HT"), true);
+    assert.equal(isInPlayBoardStatus("STATUS_HALFTIME"), true);
+    assert.equal(isInPlayBoardStatus("STATUS_FIRST_HALF"), true);
+    assert.equal(isInPlayBoardStatus("STATUS_IN_PROGRESS"), true);
+    assert.equal(isInPlayBoardStatus("LIVE"), true);
+    assert.equal(isInPlayBoardStatus("FINISHED"), false);
+    assert.equal(isInPlayBoardStatus("STATUS_FINAL"), false);
+    assert.equal(isInPlayBoardStatus("UPCOMING"), false);
     assert.equal(roleLabelIt("MARKET_COMPARE"), "Quote di mercato, solo confronto");
     assert.equal(temporalLabelIt("DATE_ONLY"), "Solo data, non orario esatto");
     assert.equal(sourceTitleIt("espn"), "ESPN Scoreboard (non ufficiale)");

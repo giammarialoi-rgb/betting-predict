@@ -203,10 +203,23 @@ export function temporalLabelIt(raw: string | null | undefined): string {
   return raw ? String(raw) : "—";
 }
 
+/**
+ * In-play board rows for `/live`. Includes HT / STATUS_HALFTIME.
+ * FT / FINISHED belong on Conclusi, not here.
+ */
+export function isInPlayBoardStatus(raw: unknown): boolean {
+  const s = String(raw ?? "").trim();
+  if (!s) return false;
+  if (/status_final|\bfinished\b|full.?time|\bended\b|\bsettled\b/i.test(s) && !/half|\bht\b|live|in_play/i.test(s)) {
+    return false;
+  }
+  return /live|\bht\b|half|in_play|playing|status_.*half|status_in_progress|in[ _-]?progress/i.test(s);
+}
+
 export function eventStatusIt(raw: string | null | undefined): string {
   const u = String(raw ?? "").toUpperCase();
   if (!u || u === "N/A" || u === "UNKNOWN") return "Stato sconosciuto";
-  if (/\b(LIVE|IN_PLAY|PLAYING|1H|2H|HT)\b/.test(u)) return "In corso";
+  if (isInPlayBoardStatus(raw)) return "In corso";
   if (/\b(FINISHED|ENDED|FT|FINAL|SETTLED|COMPLETE)\b/.test(u)) return "Terminata";
   if (/\b(SCHEDULED|NS|NOT_STARTED|UPCOMING|PRE_MATCH|PREMATCH)\b/.test(u)) return "In programma";
   if (/\b(POSTPONED|CANCELLED|CANCELED|ABANDONED)\b/.test(u)) return "Rinviata o annullata";

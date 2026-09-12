@@ -13,7 +13,7 @@ import {
 import { EventCard } from "@/components/betmind/EventCard";
 import { RefreshEventsButton } from "@/components/betmind/RefreshEventsButton";
 import { useBetMindData } from "@/components/betmind/DataProvider";
-import { bucketLabelIt, formatAgeIt } from "@/domain/eval/betmind-runtime/status-copy";
+import { bucketLabelIt, formatAgeIt, isInPlayBoardStatus } from "@/domain/eval/betmind-runtime/status-copy";
 
 type Ev = {
   event_id: string;
@@ -61,7 +61,7 @@ const BUCKET_TABS = [
 ] as const;
 
 function isLive(e: Ev): boolean {
-  return /live|in_play|playing/i.test(String(e.status));
+  return isInPlayBoardStatus(e.status);
 }
 function isFinished(e: Ev): boolean {
   return /finish|ended|ft|final|settled/i.test(String(e.status)) || Boolean(e.result && e.result !== "N/A");

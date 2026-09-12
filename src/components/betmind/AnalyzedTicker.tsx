@@ -4,12 +4,12 @@ import { leagueTitleIt } from "@/domain/eval/light-analysis/league-label";
 import { listMarketLeans, type ListLean } from "@/domain/eval/light-analysis/list-leans";
 import type { AnalyzedListRow } from "@/domain/eval/light-analysis/types";
 import { fmtKick } from "@/components/betmind/ui";
-import { eventStatusIt } from "@/domain/eval/betmind-runtime/status-copy";
+import { eventStatusIt, isInPlayBoardStatus } from "@/domain/eval/betmind-runtime/status-copy";
 
 function kickClock(iso: string | null, status: string | null): string {
   const minute = String(status ?? "").match(/\b(\d{1,3})['′]\b/);
   if (minute) return `${minute[1]}'`;
-  if (/live|in_play|playing/i.test(String(status ?? ""))) return "LIVE";
+  if (isInPlayBoardStatus(status)) return "LIVE";
   if (!iso) return "—";
   const clock = fmtKick(iso);
   return clock === "—" ? iso.slice(11, 16) || "—" : clock;

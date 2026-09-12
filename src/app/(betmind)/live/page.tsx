@@ -9,7 +9,7 @@ import {
 } from "@/components/betmind/ui";
 import { EventCard } from "@/components/betmind/EventCard";
 import { useBetMindData } from "@/components/betmind/DataProvider";
-import { decisionLabelIt } from "@/domain/eval/betmind-runtime/status-copy";
+import { decisionLabelIt, isInPlayBoardStatus } from "@/domain/eval/betmind-runtime/status-copy";
 
 export default function LivePage() {
   const { data, error, updating, lastUpdate, health } = useBetMindData();
@@ -19,9 +19,7 @@ export default function LivePage() {
   const activity =
     asRecord(asRecord(obs?.multisource_055)?.current_activity) ?? asRecord(obs?.current_work);
   const events = ((obs?.next_events as Record<string, unknown>[]) ?? []).filter(Boolean);
-  const live = events.filter((e) =>
-    /live|in_play|playing|\bht\b|halftime|first_half|second_half|in_progress/i.test(String(e.status)),
-  );
+  const live = events.filter((e) => isInPlayBoardStatus(e.status));
   const decisions = events.slice(0, 12);
   const settlements = data?.recent_settlements ?? [];
   const phase = String(activity?.phase ?? sys?.phase ?? "");

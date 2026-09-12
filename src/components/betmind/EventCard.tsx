@@ -5,6 +5,7 @@ import {
   bucketLabelIt,
   decisionLabelIt,
   eventStatusIt,
+  isInPlayBoardStatus,
 } from "@/domain/eval/betmind-runtime/status-copy";
 
 export type EventCardEvent = {
@@ -86,7 +87,7 @@ export function EventCard({
         </div>
         <div className="bm-event-flags">
           <Pill>{decision}</Pill>
-          {/live|in_play|playing|1h|2h|ht/i.test(rawStatus) ? <Pill accent>LIVE</Pill> : null}
+          {isInPlayBoardStatus(rawStatus) ? <Pill accent>LIVE</Pill> : null}
           {result ? <Pill>{result}</Pill> : null}
         </div>
       </header>
