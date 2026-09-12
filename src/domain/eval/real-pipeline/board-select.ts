@@ -123,7 +123,7 @@ export function isEligibleBoardEvent(
   const nowMs = opts.nowMs ?? Date.now();
   const recentMs = opts.recentKickoffMs ?? RECENT_KICKOFF_MS;
   if (!c.event_id || !c.home || !c.away) return false;
-  if (c.finished && !opts.includeFinished) return false;
+  if (c.finished) return opts.includeFinished === true;
   if (isLiveOrHtStatus(c.status, c.live)) return true;
   const ko = Date.parse(c.kickoff_utc ?? "");
   if (Number.isFinite(ko)) {
