@@ -42,6 +42,7 @@ export function AppShell({
     { href: "/conclusi", label: t.nav_conclusi },
     { href: "/sources", label: t.nav_sources },
     { href: "/models", label: t.nav_models },
+    { href: "/backtest", label: t.nav_backtest },
     { href: "/bankroll", label: t.nav_bankroll },
     { href: "/settings", label: t.nav_settings },
     { href: "/research", label: t.nav_research },

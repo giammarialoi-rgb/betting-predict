@@ -1,0 +1,93 @@
+{
+  "dataset_version": "dataset_phase9_v1",
+  "pi_dataset_version": "dataset_pi_v1",
+  "created_at": "2026-09-12T05:10:14.861Z",
+  "neon_in_use": false,
+  "source": "football-data-co-uk",
+  "fetch_path": "predictive-intelligence/dataset/download",
+  "divisions": [
+    "E0",
+    "SP1",
+    "D1",
+    "I1",
+    "F1"
+  ],
+  "seasons": [
+    "1920",
+    "2021",
+    "2122",
+    "2223",
+    "2324",
+    "2425"
+  ],
+  "total_rows": 10707,
+  "unique_canonical_ids": 10707,
+  "date_min": "2019-08-09",
+  "date_max": "2025-05-25",
+  "leagues": {
+    "F1": 2031,
+    "E0": 2280,
+    "D1": 1836,
+    "SP1": 2280,
+    "I1": 2280
+  },
+  "seasons_counts": {
+    "1920": 1725,
+    "2021": 1826,
+    "2122": 1826,
+    "2223": 1826,
+    "2324": 1752,
+    "2425": 1752
+  },
+  "fields_coverage": {
+    "fthg_ftag": {
+      "n": 10707,
+      "share": 1
+    },
+    "hs_as": {
+      "n": 10706,
+      "share": 0.9999066031568133
+    },
+    "hc_ac": {
+      "n": 10706,
+      "share": 0.9999066031568133
+    },
+    "hy_ay": {
+      "n": 10706,
+      "share": 0.9999066031568133
+    },
+    "time": {
+      "n": 10525,
+      "share": 0.9830017745400206
+    },
+    "odds_open_b365": {
+      "n": 10702,
+      "share": 0.9995330157840665
+    },
+    "odds_open_any": {
+      "n": 10706,
+      "share": 0.9999066031568133
+    },
+    "ou25_overlay": {
+      "n": 10705,
+      "share": 0.9998132063136266
+    }
+  },
+  "odds_open_complete": 10706,
+  "odds_close_research_only": 10707,
+  "ou25_overlay_n": 10705,
+  "temporal_policy": {
+    "feature_cutoff": "match_dateT00:00:00.000Z",
+    "previous_match": "result_available_at < feature_cutoff AND event_time < target.event_time",
+    "date_only": true,
+    "timestamps_when_available": true
+  },
+  "missing_local_csv": false,
+  "downloads_ok": 30,
+  "downloads_fail": 0,
+  "notes": [
+    "PI import rows=10707 downloads_ok=30",
+    "OU2.5 overlay attached on 10705 rows (optional; not a feature)",
+    "Closing odds retained for research/CLV only — excluded from FEATURES(T)"
+  ]
+}

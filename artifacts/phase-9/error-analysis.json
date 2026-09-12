@@ -1,0 +1,961 @@
+{
+  "at": "2026-09-12T05:10:14.861Z",
+  "neon_in_use": false,
+  "auto_applied": false,
+  "champion": "INDEPENDENT_POISSON_v1",
+  "analysis": {
+    "n": 7156,
+    "hit_rate": 0.4879821129122415,
+    "mean_error": 0.5787716244362646,
+    "by_predicted": {
+      "HOME": {
+        "n": 4551,
+        "hits": 2348
+      },
+      "AWAY": {
+        "n": 2124,
+        "hits": 1004
+      },
+      "DRAW": {
+        "n": 481,
+        "hits": 140
+      }
+    },
+    "hypotheses": [
+      {
+        "id": "H_NONE_AUTO",
+        "kind": "IPOTESI",
+        "text": "Nessuna ipotesi automatica forte; serve analisi umana sul batch."
+      }
+    ]
+  },
+  "learning_n": 28624,
+  "feature_importance": {
+    "logistic": [
+      {
+        "key": "strength_diff_pts",
+        "score": 0.29788496872787024,
+        "causal": false
+      },
+      {
+        "key": "away_rest_days",
+        "score": 0.24986680778164472,
+        "causal": false
+      },
+      {
+        "key": "home_rest_days",
+        "score": 0.22086416335438155,
+        "causal": false
+      },
+      {
+        "key": "home_ga_l5",
+        "score": 0.20702638764533837,
+        "causal": false
+      },
+      {
+        "key": "home_cs_l5",
+        "score": 0.10851903178240789,
+        "causal": false
+      },
+      {
+        "key": "away_gf_l3",
+        "score": 0.09242427782717151,
+        "causal": false
+      },
+      {
+        "key": "away_shots_l3",
+        "score": 0.09104231692758624,
+        "causal": false
+      },
+      {
+        "key": "away_ga_l3",
+        "score": 0.08889034622608512,
+        "causal": false
+      },
+      {
+        "key": "away_sot_l10",
+        "score": 0.08525756766613699,
+        "causal": false
+      },
+      {
+        "key": "home_gf_l10",
+        "score": 0.08197393041639635,
+        "causal": false
+      },
+      {
+        "key": "away_cards_l3",
+        "score": 0.07832321580577592,
+        "causal": false
+      },
+      {
+        "key": "home_ga_l3",
+        "score": 0.07753269842160862,
+        "causal": false
+      }
+    ],
+    "gbm": [
+      {
+        "key": "away_attack_all",
+        "score": 0.042337780387015994,
+        "causal": false
+      },
+      {
+        "key": "away_corners_l10",
+        "score": 0.037529659179128684,
+        "causal": false
+      },
+      {
+        "key": "away_corners_l5",
+        "score": 0.030127873784011577,
+        "causal": false
+      },
+      {
+        "key": "away_corners_l3",
+        "score": 0.02800189529928436,
+        "causal": false
+      },
+      {
+        "key": "away_cs_l10",
+        "score": 0.02743516370349674,
+        "causal": false
+      },
+      {
+        "key": "away_cards_l10",
+        "score": 0.018029393146841037,
+        "causal": false
+      },
+      {
+        "key": "away_cards_l5",
+        "score": 0.01711188861691551,
+        "causal": false
+      },
+      {
+        "key": "away_cards_l3",
+        "score": 0.012364312054833054,
+        "causal": false
+      }
+    ],
+    "causal_claim": false
+  },
+  "feature_quality": [
+    {
+      "key": "home_gf_l3",
+      "source": "football-data-co-uk",
+      "origin": "DERIVED",
+      "temporal_precision": "DATE_ONLY",
+      "status": "ELIGIBLE",
+      "entered_model": true,
+      "provenance": "rolling mean over last 3 prior matches excluding target"
+    },
+    {
+      "key": "home_ga_l3",
+      "source": "football-data-co-uk",
+      "origin": "DERIVED",
+      "temporal_precision": "DATE_ONLY",
+      "status": "ELIGIBLE",
+      "entered_model": true,
+      "provenance": "rolling mean over last 3 prior matches excluding target"
+    },
+    {
+      "key": "home_pts_l3",
+      "source": "football-data-co-uk",
+      "origin": "DERIVED",
+      "temporal_precision": "DATE_ONLY",
+      "status": "ELIGIBLE",
+      "entered_model": true,
+      "provenance": "rolling mean over last 3 prior matches excluding target"
+    },
+    {
+      "key": "away_gf_l3",
+      "source": "football-data-co-uk",
+      "origin": "DERIVED",
+      "temporal_precision": "DATE_ONLY",
+      "status": "ELIGIBLE",
+      "entered_model": true,
+      "provenance": "rolling mean over last 3 prior matches excluding target"
+    },
+    {
+      "key": "away_ga_l3",
+      "source": "football-data-co-uk",
+      "origin": "DERIVED",
+      "temporal_precision": "DATE_ONLY",
+      "status": "ELIGIBLE",
+      "entered_model": true,
+      "provenance": "rolling mean over last 3 prior matches excluding target"
+    },
+    {
+      "key": "away_pts_l3",
+      "source": "football-data-co-uk",
+      "origin": "DERIVED",
+      "temporal_precision": "DATE_ONLY",
+      "status": "ELIGIBLE",
+      "entered_model": true,
+      "provenance": "rolling mean over last 3 prior matches excluding target"
+    },
+    {
+      "key": "home_shots_l3",
+      "source": "football-data-co-uk",
+      "origin": "DERIVED",
+      "temporal_precision": "DATE_ONLY",
+      "status": "ELIGIBLE",
+      "entered_model": true,
+      "provenance": "rolling mean over last 3 prior matches excluding target"
+    },
+    {
+      "key": "away_shots_l3",
+      "source": "football-data-co-uk",
+      "origin": "DERIVED",
+      "temporal_precision": "DATE_ONLY",
+      "status": "ELIGIBLE",
+      "entered_model": true,
+      "provenance": "rolling mean over last 3 prior matches excluding target"
+    },
+    {
+      "key": "home_sot_l3",
+      "source": "football-data-co-uk",
+      "origin": "DERIVED",
+      "temporal_precision": "DATE_ONLY",
+      "status": "ELIGIBLE",
+      "entered_model": true,
+      "provenance": "rolling mean over last 3 prior matches excluding target"
+    },
+    {
+      "key": "away_sot_l3",
+      "source": "football-data-co-uk",
+      "origin": "DERIVED",
+      "temporal_precision": "DATE_ONLY",
+      "status": "ELIGIBLE",
+      "entered_model": true,
+      "provenance": "rolling mean over last 3 prior matches excluding target"
+    },
+    {
+      "key": "home_corners_l3",
+      "source": "football-data-co-uk",
+      "origin": "DERIVED",
+      "temporal_precision": "DATE_ONLY",
+      "status": "ELIGIBLE",
+      "entered_model": true,
+      "provenance": "rolling mean over last 3 prior matches excluding target"
+    },
+    {
+      "key": "away_corners_l3",
+      "source": "football-data-co-uk",
+      "origin": "DERIVED",
+      "temporal_precision": "DATE_ONLY",
+      "status": "ELIGIBLE",
+      "entered_model": true,
+      "provenance": "rolling mean over last 3 prior matches excluding target"
+    },
+    {
+      "key": "home_cards_l3",
+      "source": "football-data-co-uk",
+      "origin": "DERIVED",
+      "temporal_precision": "DATE_ONLY",
+      "status": "ELIGIBLE",
+      "entered_model": true,
+      "provenance": "rolling mean over last 3 prior matches excluding target"
+    },
+    {
+      "key": "away_cards_l3",
+      "source": "football-data-co-uk",
+      "origin": "DERIVED",
+      "temporal_precision": "DATE_ONLY",
+      "status": "ELIGIBLE",
+      "entered_model": true,
+      "provenance": "rolling mean over last 3 prior matches excluding target"
+    },
+    {
+      "key": "home_cs_l3",
+      "source": "football-data-co-uk",
+      "origin": "DERIVED",
+      "temporal_precision": "DATE_ONLY",
+      "status": "ELIGIBLE",
+      "entered_model": true,
+      "provenance": "rolling mean over last 3 prior matches excluding target"
+    },
+    {
+      "key": "away_cs_l3",
+      "source": "football-data-co-uk",
+      "origin": "DERIVED",
+      "temporal_precision": "DATE_ONLY",
+      "status": "ELIGIBLE",
+      "entered_model": true,
+      "provenance": "rolling mean over last 3 prior matches excluding target"
+    },
+    {
+      "key": "home_score_cons_l3",
+      "source": "football-data-co-uk",
+      "origin": "DERIVED",
+      "temporal_precision": "DATE_ONLY",
+      "status": "ELIGIBLE",
+      "entered_model": true,
+      "provenance": "rolling mean over last 3 prior matches excluding target"
+    },
+    {
+      "key": "away_score_cons_l3",
+      "source": "football-data-co-uk",
+      "origin": "DERIVED",
+      "temporal_precision": "DATE_ONLY",
+      "status": "ELIGIBLE",
+      "entered_model": true,
+      "provenance": "rolling mean over last 3 prior matches excluding target"
+    },
+    {
+      "key": "home_gf_l5",
+      "source": "football-data-co-uk",
+      "origin": "DERIVED",
+      "temporal_precision": "DATE_ONLY",
+      "status": "ELIGIBLE",
+      "entered_model": true,
+      "provenance": "rolling mean over last 5 prior matches excluding target"
+    },
+    {
+      "key": "home_ga_l5",
+      "source": "football-data-co-uk",
+      "origin": "DERIVED",
+      "temporal_precision": "DATE_ONLY",
+      "status": "ELIGIBLE",
+      "entered_model": true,
+      "provenance": "rolling mean over last 5 prior matches excluding target"
+    },
+    {
+      "key": "home_pts_l5",
+      "source": "football-data-co-uk",
+      "origin": "DERIVED",
+      "temporal_precision": "DATE_ONLY",
+      "status": "ELIGIBLE",
+      "entered_model": true,
+      "provenance": "rolling mean over last 5 prior matches excluding target"
+    },
+    {
+      "key": "away_gf_l5",
+      "source": "football-data-co-uk",
+      "origin": "DERIVED",
+      "temporal_precision": "DATE_ONLY",
+      "status": "ELIGIBLE",
+      "entered_model": true,
+      "provenance": "rolling mean over last 5 prior matches excluding target"
+    },
+    {
+      "key": "away_ga_l5",
+      "source": "football-data-co-uk",
+      "origin": "DERIVED",
+      "temporal_precision": "DATE_ONLY",
+      "status": "ELIGIBLE",
+      "entered_model": true,
+      "provenance": "rolling mean over last 5 prior matches excluding target"
+    },
+    {
+      "key": "away_pts_l5",
+      "source": "football-data-co-uk",
+      "origin": "DERIVED",
+      "temporal_precision": "DATE_ONLY",
+      "status": "ELIGIBLE",
+      "entered_model": true,
+      "provenance": "rolling mean over last 5 prior matches excluding target"
+    },
+    {
+      "key": "home_shots_l5",
+      "source": "football-data-co-uk",
+      "origin": "DERIVED",
+      "temporal_precision": "DATE_ONLY",
+      "status": "ELIGIBLE",
+      "entered_model": true,
+      "provenance": "rolling mean over last 5 prior matches excluding target"
+    },
+    {
+      "key": "away_shots_l5",
+      "source": "football-data-co-uk",
+      "origin": "DERIVED",
+      "temporal_precision": "DATE_ONLY",
+      "status": "ELIGIBLE",
+      "entered_model": true,
+      "provenance": "rolling mean over last 5 prior matches excluding target"
+    },
+    {
+      "key": "home_sot_l5",
+      "source": "football-data-co-uk",
+      "origin": "DERIVED",
+      "temporal_precision": "DATE_ONLY",
+      "status": "ELIGIBLE",
+      "entered_model": true,
+      "provenance": "rolling mean over last 5 prior matches excluding target"
+    },
+    {
+      "key": "away_sot_l5",
+      "source": "football-data-co-uk",
+      "origin": "DERIVED",
+      "temporal_precision": "DATE_ONLY",
+      "status": "ELIGIBLE",
+      "entered_model": true,
+      "provenance": "rolling mean over last 5 prior matches excluding target"
+    },
+    {
+      "key": "home_corners_l5",
+      "source": "football-data-co-uk",
+      "origin": "DERIVED",
+      "temporal_precision": "DATE_ONLY",
+      "status": "ELIGIBLE",
+      "entered_model": true,
+      "provenance": "rolling mean over last 5 prior matches excluding target"
+    },
+    {
+      "key": "away_corners_l5",
+      "source": "football-data-co-uk",
+      "origin": "DERIVED",
+      "temporal_precision": "DATE_ONLY",
+      "status": "ELIGIBLE",
+      "entered_model": true,
+      "provenance": "rolling mean over last 5 prior matches excluding target"
+    },
+    {
+      "key": "home_cards_l5",
+      "source": "football-data-co-uk",
+      "origin": "DERIVED",
+      "temporal_precision": "DATE_ONLY",
+      "status": "ELIGIBLE",
+      "entered_model": true,
+      "provenance": "rolling mean over last 5 prior matches excluding target"
+    },
+    {
+      "key": "away_cards_l5",
+      "source": "football-data-co-uk",
+      "origin": "DERIVED",
+      "temporal_precision": "DATE_ONLY",
+      "status": "ELIGIBLE",
+      "entered_model": true,
+      "provenance": "rolling mean over last 5 prior matches excluding target"
+    },
+    {
+      "key": "home_cs_l5",
+      "source": "football-data-co-uk",
+      "origin": "DERIVED",
+      "temporal_precision": "DATE_ONLY",
+      "status": "ELIGIBLE",
+      "entered_model": true,
+      "provenance": "rolling mean over last 5 prior matches excluding target"
+    },
+    {
+      "key": "away_cs_l5",
+      "source": "football-data-co-uk",
+      "origin": "DERIVED",
+      "temporal_precision": "DATE_ONLY",
+      "status": "ELIGIBLE",
+      "entered_model": true,
+      "provenance": "rolling mean over last 5 prior matches excluding target"
+    },
+    {
+      "key": "home_score_cons_l5",
+      "source": "football-data-co-uk",
+      "origin": "DERIVED",
+      "temporal_precision": "DATE_ONLY",
+      "status": "ELIGIBLE",
+      "entered_model": true,
+      "provenance": "rolling mean over last 5 prior matches excluding target"
+    },
+    {
+      "key": "away_score_cons_l5",
+      "source": "football-data-co-uk",
+      "origin": "DERIVED",
+      "temporal_precision": "DATE_ONLY",
+      "status": "ELIGIBLE",
+      "entered_model": true,
+      "provenance": "rolling mean over last 5 prior matches excluding target"
+    },
+    {
+      "key": "home_gf_l10",
+      "source": "football-data-co-uk",
+      "origin": "DERIVED",
+      "temporal_precision": "DATE_ONLY",
+      "status": "ELIGIBLE",
+      "entered_model": true,
+      "provenance": "rolling mean over last 10 prior matches excluding target"
+    },
+    {
+      "key": "home_ga_l10",
+      "source": "football-data-co-uk",
+      "origin": "DERIVED",
+      "temporal_precision": "DATE_ONLY",
+      "status": "ELIGIBLE",
+      "entered_model": true,
+      "provenance": "rolling mean over last 10 prior matches excluding target"
+    },
+    {
+      "key": "home_pts_l10",
+      "source": "football-data-co-uk",
+      "origin": "DERIVED",
+      "temporal_precision": "DATE_ONLY",
+      "status": "ELIGIBLE",
+      "entered_model": true,
+      "provenance": "rolling mean over last 10 prior matches excluding target"
+    },
+    {
+      "key": "away_gf_l10",
+      "source": "football-data-co-uk",
+      "origin": "DERIVED",
+      "temporal_precision": "DATE_ONLY",
+      "status": "ELIGIBLE",
+      "entered_model": true,
+      "provenance": "rolling mean over last 10 prior matches excluding target"
+    },
+    {
+      "key": "away_ga_l10",
+      "source": "football-data-co-uk",
+      "origin": "DERIVED",
+      "temporal_precision": "DATE_ONLY",
+      "status": "ELIGIBLE",
+      "entered_model": true,
+      "provenance": "rolling mean over last 10 prior matches excluding target"
+    },
+    {
+      "key": "away_pts_l10",
+      "source": "football-data-co-uk",
+      "origin": "DERIVED",
+      "temporal_precision": "DATE_ONLY",
+      "status": "ELIGIBLE",
+      "entered_model": true,
+      "provenance": "rolling mean over last 10 prior matches excluding target"
+    },
+    {
+      "key": "home_shots_l10",
+      "source": "football-data-co-uk",
+      "origin": "DERIVED",
+      "temporal_precision": "DATE_ONLY",
+      "status": "ELIGIBLE",
+      "entered_model": true,
+      "provenance": "rolling mean over last 10 prior matches excluding target"
+    },
+    {
+      "key": "away_shots_l10",
+      "source": "football-data-co-uk",
+      "origin": "DERIVED",
+      "temporal_precision": "DATE_ONLY",
+      "status": "ELIGIBLE",
+      "entered_model": true,
+      "provenance": "rolling mean over last 10 prior matches excluding target"
+    },
+    {
+      "key": "home_sot_l10",
+      "source": "football-data-co-uk",
+      "origin": "DERIVED",
+      "temporal_precision": "DATE_ONLY",
+      "status": "ELIGIBLE",
+      "entered_model": true,
+      "provenance": "rolling mean over last 10 prior matches excluding target"
+    },
+    {
+      "key": "away_sot_l10",
+      "source": "football-data-co-uk",
+      "origin": "DERIVED",
+      "temporal_precision": "DATE_ONLY",
+      "status": "ELIGIBLE",
+      "entered_model": true,
+      "provenance": "rolling mean over last 10 prior matches excluding target"
+    },
+    {
+      "key": "home_corners_l10",
+      "source": "football-data-co-uk",
+      "origin": "DERIVED",
+      "temporal_precision": "DATE_ONLY",
+      "status": "ELIGIBLE",
+      "entered_model": true,
+      "provenance": "rolling mean over last 10 prior matches excluding target"
+    },
+    {
+      "key": "away_corners_l10",
+      "source": "football-data-co-uk",
+      "origin": "DERIVED",
+      "temporal_precision": "DATE_ONLY",
+      "status": "ELIGIBLE",
+      "entered_model": true,
+      "provenance": "rolling mean over last 10 prior matches excluding target"
+    },
+    {
+      "key": "home_cards_l10",
+      "source": "football-data-co-uk",
+      "origin": "DERIVED",
+      "temporal_precision": "DATE_ONLY",
+      "status": "ELIGIBLE",
+      "entered_model": true,
+      "provenance": "rolling mean over last 10 prior matches excluding target"
+    },
+    {
+      "key": "away_cards_l10",
+      "source": "football-data-co-uk",
+      "origin": "DERIVED",
+      "temporal_precision": "DATE_ONLY",
+      "status": "ELIGIBLE",
+      "entered_model": true,
+      "provenance": "rolling mean over last 10 prior matches excluding target"
+    },
+    {
+      "key": "home_cs_l10",
+      "source": "football-data-co-uk",
+      "origin": "DERIVED",
+      "temporal_precision": "DATE_ONLY",
+      "status": "ELIGIBLE",
+      "entered_model": true,
+      "provenance": "rolling mean over last 10 prior matches excluding target"
+    },
+    {
+      "key": "away_cs_l10",
+      "source": "football-data-co-uk",
+      "origin": "DERIVED",
+      "temporal_precision": "DATE_ONLY",
+      "status": "ELIGIBLE",
+      "entered_model": true,
+      "provenance": "rolling mean over last 10 prior matches excluding target"
+    },
+    {
+      "key": "home_score_cons_l10",
+      "source": "football-data-co-uk",
+      "origin": "DERIVED",
+      "temporal_precision": "DATE_ONLY",
+      "status": "ELIGIBLE",
+      "entered_model": true,
+      "provenance": "rolling mean over last 10 prior matches excluding target"
+    },
+    {
+      "key": "away_score_cons_l10",
+      "source": "football-data-co-uk",
+      "origin": "DERIVED",
+      "temporal_precision": "DATE_ONLY",
+      "status": "ELIGIBLE",
+      "entered_model": true,
+      "provenance": "rolling mean over last 10 prior matches excluding target"
+    },
+    {
+      "key": "home_attack_home",
+      "source": "football-data-co-uk",
+      "origin": "DERIVED",
+      "temporal_precision": "DATE_ONLY",
+      "status": "ELIGIBLE",
+      "entered_model": true,
+      "provenance": "derived from football-data priors excluding target"
+    },
+    {
+      "key": "home_defense_home",
+      "source": "football-data-co-uk",
+      "origin": "DERIVED",
+      "temporal_precision": "DATE_ONLY",
+      "status": "ELIGIBLE",
+      "entered_model": true,
+      "provenance": "derived from football-data priors excluding target"
+    },
+    {
+      "key": "away_attack_away",
+      "source": "football-data-co-uk",
+      "origin": "DERIVED",
+      "temporal_precision": "DATE_ONLY",
+      "status": "ELIGIBLE",
+      "entered_model": true,
+      "provenance": "derived from football-data priors excluding target"
+    },
+    {
+      "key": "away_defense_away",
+      "source": "football-data-co-uk",
+      "origin": "DERIVED",
+      "temporal_precision": "DATE_ONLY",
+      "status": "ELIGIBLE",
+      "entered_model": true,
+      "provenance": "derived from football-data priors excluding target"
+    },
+    {
+      "key": "home_attack_all",
+      "source": "football-data-co-uk",
+      "origin": "DERIVED",
+      "temporal_precision": "DATE_ONLY",
+      "status": "ELIGIBLE",
+      "entered_model": true,
+      "provenance": "derived from football-data priors excluding target"
+    },
+    {
+      "key": "away_attack_all",
+      "source": "football-data-co-uk",
+      "origin": "DERIVED",
+      "temporal_precision": "DATE_ONLY",
+      "status": "ELIGIBLE",
+      "entered_model": true,
+      "provenance": "derived from football-data priors excluding target"
+    },
+    {
+      "key": "strength_diff_pts",
+      "source": "football-data-co-uk",
+      "origin": "DERIVED",
+      "temporal_precision": "DATE_ONLY",
+      "status": "ELIGIBLE",
+      "entered_model": true,
+      "provenance": "derived from football-data priors excluding target"
+    },
+    {
+      "key": "home_rest_days",
+      "source": "football-data-co-uk",
+      "origin": "DERIVED",
+      "temporal_precision": "DATE_ONLY",
+      "status": "ELIGIBLE",
+      "entered_model": true,
+      "provenance": "derived from football-data priors excluding target"
+    },
+    {
+      "key": "away_rest_days",
+      "source": "football-data-co-uk",
+      "origin": "DERIVED",
+      "temporal_precision": "DATE_ONLY",
+      "status": "ELIGIBLE",
+      "entered_model": true,
+      "provenance": "derived from football-data priors excluding target"
+    },
+    {
+      "key": "home_advantage",
+      "source": "football-data-co-uk",
+      "origin": "STATIC",
+      "temporal_precision": "DATE_ONLY",
+      "status": "ELIGIBLE",
+      "entered_model": true,
+      "provenance": "static/contextual"
+    },
+    {
+      "key": "league_avg_gf",
+      "source": "football-data-co-uk",
+      "origin": "DERIVED",
+      "temporal_precision": "DATE_ONLY",
+      "status": "ELIGIBLE",
+      "entered_model": true,
+      "provenance": "derived from football-data priors excluding target"
+    },
+    {
+      "key": "h2h_n",
+      "source": "football-data-co-uk",
+      "origin": "DERIVED",
+      "temporal_precision": "DATE_ONLY",
+      "status": "ELIGIBLE",
+      "entered_model": true,
+      "provenance": "head-to-head priors excluding target"
+    },
+    {
+      "key": "h2h_home_win_rate",
+      "source": "football-data-co-uk",
+      "origin": "DERIVED",
+      "temporal_precision": "DATE_ONLY",
+      "status": "ELIGIBLE",
+      "entered_model": true,
+      "provenance": "head-to-head priors excluding target"
+    },
+    {
+      "key": "h2h_draw_rate",
+      "source": "football-data-co-uk",
+      "origin": "DERIVED",
+      "temporal_precision": "DATE_ONLY",
+      "status": "ELIGIBLE",
+      "entered_model": true,
+      "provenance": "head-to-head priors excluding target"
+    },
+    {
+      "key": "season_phase",
+      "source": "football-data-co-uk",
+      "origin": "STATIC",
+      "temporal_precision": "DATE_ONLY",
+      "status": "ELIGIBLE",
+      "entered_model": true,
+      "provenance": "static/contextual"
+    },
+    {
+      "key": "home_elo",
+      "source": "clubelo",
+      "origin": null,
+      "temporal_precision": "DATE_ONLY",
+      "status": "UNAVAILABLE",
+      "provenance": "clubelo"
+    },
+    {
+      "key": "away_elo",
+      "source": "clubelo",
+      "origin": null,
+      "temporal_precision": "DATE_ONLY",
+      "status": "UNAVAILABLE",
+      "provenance": "clubelo"
+    },
+    {
+      "key": "elo_diff",
+      "source": "clubelo",
+      "origin": null,
+      "temporal_precision": "DATE_ONLY",
+      "status": "UNAVAILABLE",
+      "provenance": "clubelo"
+    },
+    {
+      "key": "home_xg_prematch",
+      "source": "none",
+      "origin": "LIVE_RESEARCH",
+      "temporal_precision": "UNKNOWN",
+      "status": "UNAVAILABLE",
+      "entered_model": false,
+      "provenance": "none"
+    },
+    {
+      "key": "away_xg_prematch",
+      "source": "none",
+      "origin": "LIVE_RESEARCH",
+      "temporal_precision": "UNKNOWN",
+      "status": "UNAVAILABLE",
+      "entered_model": false,
+      "provenance": "none"
+    },
+    {
+      "key": "home_injuries_n",
+      "source": "none",
+      "origin": "LIVE_RESEARCH",
+      "temporal_precision": "UNKNOWN",
+      "status": "UNAVAILABLE",
+      "entered_model": false,
+      "provenance": "none"
+    },
+    {
+      "key": "away_injuries_n",
+      "source": "none",
+      "origin": "LIVE_RESEARCH",
+      "temporal_precision": "UNKNOWN",
+      "status": "UNAVAILABLE",
+      "entered_model": false,
+      "provenance": "none"
+    },
+    {
+      "key": "home_lineup_confirmed",
+      "source": "none",
+      "origin": "LIVE_RESEARCH",
+      "temporal_precision": "UNKNOWN",
+      "status": "UNAVAILABLE",
+      "entered_model": false,
+      "provenance": "none"
+    },
+    {
+      "key": "away_lineup_confirmed",
+      "source": "none",
+      "origin": "LIVE_RESEARCH",
+      "temporal_precision": "UNKNOWN",
+      "status": "UNAVAILABLE",
+      "entered_model": false,
+      "provenance": "none"
+    },
+    {
+      "key": "ppda_home",
+      "source": "none",
+      "origin": "LIVE_RESEARCH",
+      "temporal_precision": "UNKNOWN",
+      "status": "UNAVAILABLE",
+      "entered_model": false,
+      "provenance": "none"
+    },
+    {
+      "key": "ppda_away",
+      "source": "none",
+      "origin": "LIVE_RESEARCH",
+      "temporal_precision": "UNKNOWN",
+      "status": "UNAVAILABLE",
+      "entered_model": false,
+      "provenance": "none"
+    }
+  ],
+  "value_champion": {
+    "oos_grid": [
+      {
+        "edge_threshold": 0.01,
+        "chosen_on": "GRID_REPORT_ONLY",
+        "n_bets": 5085,
+        "hit_rate": 0.44601769911504424,
+        "yield": -0.05976204523107178,
+        "roi": -0.05976204523107178,
+        "max_drawdown": 0.06709341199606687,
+        "profit": -303.89,
+        "longest_losing_streak": 11,
+        "longest_winning_streak": 9,
+        "insufficient": false,
+        "reason": null
+      },
+      {
+        "edge_threshold": 0.02,
+        "chosen_on": "GRID_REPORT_ONLY",
+        "n_bets": 4923,
+        "hit_rate": 0.4424131627056673,
+        "yield": -0.06337395896810886,
+        "roi": -0.06337395896810886,
+        "max_drawdown": 0.07169002640666261,
+        "profit": -311.98999999999995,
+        "longest_losing_streak": 11,
+        "longest_winning_streak": 10,
+        "insufficient": false,
+        "reason": null
+      },
+      {
+        "edge_threshold": 0.03,
+        "chosen_on": "GRID_REPORT_ONLY",
+        "n_bets": 4738,
+        "hit_rate": 0.43731532292106373,
+        "yield": -0.06859856479527222,
+        "roi": -0.06859856479527222,
+        "max_drawdown": 0.07645631067961163,
+        "profit": -325.0199999999998,
+        "longest_losing_streak": 11,
+        "longest_winning_streak": 10,
+        "insufficient": false,
+        "reason": null
+      },
+      {
+        "edge_threshold": 0.05,
+        "chosen_on": "GRID_REPORT_ONLY",
+        "n_bets": 4360,
+        "hit_rate": 0.43004587155963303,
+        "yield": -0.07022935779816508,
+        "roi": -0.07022935779816508,
+        "max_drawdown": 0.07851605504587153,
+        "profit": -306.19999999999976,
+        "longest_losing_streak": 11,
+        "longest_winning_streak": 9,
+        "insufficient": false,
+        "reason": null
+      },
+      {
+        "edge_threshold": 0.07,
+        "chosen_on": "GRID_REPORT_ONLY",
+        "n_bets": 3943,
+        "hit_rate": 0.4250570631498859,
+        "yield": -0.06677149378645689,
+        "roi": -0.06677149378645689,
+        "max_drawdown": 0.075505959928988,
+        "profit": -263.2799999999995,
+        "longest_losing_streak": 11,
+        "longest_winning_streak": 9,
+        "insufficient": false,
+        "reason": null
+      },
+      {
+        "edge_threshold": 0.1,
+        "chosen_on": "GRID_REPORT_ONLY",
+        "n_bets": 3342,
+        "hit_rate": 0.41502094554159186,
+        "yield": -0.06355475763016159,
+        "roi": -0.06355475763016159,
+        "max_drawdown": 0.07330640335128669,
+        "profit": -212.40000000000006,
+        "longest_losing_streak": 14,
+        "longest_winning_streak": 9,
+        "insufficient": false,
+        "reason": null
+      }
+    ],
+    "chosen": {
+      "edge_threshold": 0.1,
+      "chosen_on": "VAL",
+      "n_bets": 3342,
+      "hit_rate": 0.41502094554159186,
+      "yield": -0.06355475763016159,
+      "roi": -0.06355475763016159,
+      "max_drawdown": 0.07330640335128669,
+      "profit": -212.40000000000006,
+      "longest_losing_streak": 14,
+      "longest_winning_streak": 9,
+      "insufficient": false,
+      "reason": null
+    }
+  }
+}

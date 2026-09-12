@@ -1,0 +1,238 @@
+{
+  "at": "2026-09-12T05:10:14.861Z",
+  "neon_in_use": false,
+  "auto_promotion": false,
+  "promoted_count": 0,
+  "current_production_unchanged": true,
+  "current_production": "INDEPENDENT_POISSON_v1",
+  "policy": {
+    "auto_promotion": false,
+    "promoted_by_code": false,
+    "single_positive_roi_insufficient": true,
+    "current_production_until_criteria": "INDEPENDENT_POISSON_v1",
+    "required_for_candidate": [
+      "leakage_pass",
+      "odds_not_in_features",
+      "train_n>=200",
+      "val_n>=80",
+      "oos_n>=80",
+      "beats_naive_logloss_and_brier_on_every_oos_window",
+      "calibration_error<0.08",
+      "threshold_chosen_on_val_only"
+    ],
+    "required_for_promoted": [
+      "all_candidate_criteria",
+      "human_approval",
+      "no_regression_vs_current_production",
+      "not_a_single_window_result"
+    ],
+    "note": "PROMOTED=0 is a valid and expected outcome."
+  },
+  "entries": [
+    {
+      "model_id": "INDEPENDENT_POISSON_v1",
+      "version": "phase9-1.0.0",
+      "status": "EXPERIMENTAL",
+      "production": false,
+      "auto_promotion": false,
+      "leakage_pass": true,
+      "odds_in_features": false,
+      "train_n": 7203,
+      "validate_n": 1752,
+      "oos_n": 7156,
+      "windows_beat_naive": 0,
+      "windows_total": 4,
+      "metrics_oos": {
+        "log_loss": 1.1269775027292042,
+        "brier": 0.21775034948387884,
+        "accuracy": 0.4879821129122415,
+        "calibration_error": 0.12181241892286143,
+        "naive_log_loss": 1.0834578748696517,
+        "naive_brier": 0.21879075674558962
+      },
+      "reasons": [
+        "DOES_NOT_BEAT_NAIVE_ON_POOLED_OOS",
+        "TRAINED_BUT_NOT_VALIDATED"
+      ],
+      "created_at": "2026-09-12T05:10:14.861Z",
+      "updated_at": "2026-09-12T05:10:14.861Z"
+    },
+    {
+      "model_id": "DIXON_COLES_v1",
+      "version": "phase9-1.0.0",
+      "status": "CANDIDATE",
+      "production": false,
+      "auto_promotion": false,
+      "leakage_pass": true,
+      "odds_in_features": false,
+      "train_n": 7203,
+      "validate_n": 1752,
+      "oos_n": 7156,
+      "windows_beat_naive": 4,
+      "windows_total": 4,
+      "metrics_oos": {
+        "log_loss": 1.0579147980218482,
+        "brier": 0.2098893269333112,
+        "accuracy": 0.4857462269424259,
+        "calibration_error": 0.039625058478448966,
+        "naive_log_loss": 1.0834578748696517,
+        "naive_brier": 0.21879075674558962
+      },
+      "reasons": [
+        "BEATS_NAIVE_POOLED_OOS",
+        "CANDIDATE_GATES_MET",
+        "NO_AUTO_PROMOTION",
+        "SINGLE_POSITIVE_ROI_INSUFFICIENT"
+      ],
+      "created_at": "2026-09-12T05:10:14.861Z",
+      "updated_at": "2026-09-12T05:10:14.861Z"
+    },
+    {
+      "model_id": "NEGBIN_v1",
+      "version": "phase9-1.0.0",
+      "status": "INSUFFICIENT_EVIDENCE",
+      "production": false,
+      "auto_promotion": false,
+      "leakage_pass": true,
+      "odds_in_features": false,
+      "train_n": 7203,
+      "validate_n": 1752,
+      "oos_n": 0,
+      "windows_beat_naive": 0,
+      "windows_total": 0,
+      "metrics_oos": {
+        "log_loss": null,
+        "brier": null,
+        "accuracy": null,
+        "calibration_error": null,
+        "naive_log_loss": 1.0834578748696517,
+        "naive_brier": 0.21879075674558962
+      },
+      "reasons": [
+        "DATA_REQUIREMENTS_NOT_MET"
+      ],
+      "created_at": "2026-09-12T05:10:14.861Z",
+      "updated_at": "2026-09-12T05:10:14.861Z"
+    },
+    {
+      "model_id": "INDEPENDENT_LOGISTIC_v1",
+      "version": "phase9-1.0.0",
+      "status": "EXPERIMENTAL",
+      "production": false,
+      "auto_promotion": false,
+      "leakage_pass": true,
+      "odds_in_features": false,
+      "train_n": 7203,
+      "validate_n": 1752,
+      "oos_n": 7156,
+      "windows_beat_naive": 0,
+      "windows_total": 4,
+      "metrics_oos": {
+        "log_loss": 1.3161616578985924,
+        "brier": 0.24241279145274722,
+        "accuracy": 0.44955282280603687,
+        "calibration_error": 0.20844949737806256,
+        "naive_log_loss": 1.0834578748696517,
+        "naive_brier": 0.21879075674558962
+      },
+      "reasons": [
+        "DOES_NOT_BEAT_NAIVE_ON_POOLED_OOS",
+        "TRAINED_BUT_NOT_VALIDATED"
+      ],
+      "created_at": "2026-09-12T05:10:14.861Z",
+      "updated_at": "2026-09-12T05:10:14.861Z"
+    },
+    {
+      "model_id": "GBM_STUMPS_v1",
+      "version": "phase9-1.0.0",
+      "status": "CANDIDATE",
+      "production": false,
+      "auto_promotion": false,
+      "leakage_pass": true,
+      "odds_in_features": false,
+      "train_n": 7203,
+      "validate_n": 1752,
+      "oos_n": 7156,
+      "windows_beat_naive": 4,
+      "windows_total": 4,
+      "metrics_oos": {
+        "log_loss": 1.0681306094735836,
+        "brier": 0.21523708484458098,
+        "accuracy": 0.43418110676355504,
+        "calibration_error": 0.004106273957034409,
+        "naive_log_loss": 1.0834578748696517,
+        "naive_brier": 0.21879075674558962
+      },
+      "reasons": [
+        "BEATS_NAIVE_POOLED_OOS",
+        "CANDIDATE_GATES_MET",
+        "NO_AUTO_PROMOTION",
+        "SINGLE_POSITIVE_ROI_INSUFFICIENT"
+      ],
+      "created_at": "2026-09-12T05:10:14.861Z",
+      "updated_at": "2026-09-12T05:10:14.861Z"
+    }
+  ],
+  "candidates": [
+    {
+      "model_id": "DIXON_COLES_v1",
+      "version": "phase9-1.0.0",
+      "status": "CANDIDATE",
+      "production": false,
+      "auto_promotion": false,
+      "leakage_pass": true,
+      "odds_in_features": false,
+      "train_n": 7203,
+      "validate_n": 1752,
+      "oos_n": 7156,
+      "windows_beat_naive": 4,
+      "windows_total": 4,
+      "metrics_oos": {
+        "log_loss": 1.0579147980218482,
+        "brier": 0.2098893269333112,
+        "accuracy": 0.4857462269424259,
+        "calibration_error": 0.039625058478448966,
+        "naive_log_loss": 1.0834578748696517,
+        "naive_brier": 0.21879075674558962
+      },
+      "reasons": [
+        "BEATS_NAIVE_POOLED_OOS",
+        "CANDIDATE_GATES_MET",
+        "NO_AUTO_PROMOTION",
+        "SINGLE_POSITIVE_ROI_INSUFFICIENT"
+      ],
+      "created_at": "2026-09-12T05:10:14.861Z",
+      "updated_at": "2026-09-12T05:10:14.861Z"
+    },
+    {
+      "model_id": "GBM_STUMPS_v1",
+      "version": "phase9-1.0.0",
+      "status": "CANDIDATE",
+      "production": false,
+      "auto_promotion": false,
+      "leakage_pass": true,
+      "odds_in_features": false,
+      "train_n": 7203,
+      "validate_n": 1752,
+      "oos_n": 7156,
+      "windows_beat_naive": 4,
+      "windows_total": 4,
+      "metrics_oos": {
+        "log_loss": 1.0681306094735836,
+        "brier": 0.21523708484458098,
+        "accuracy": 0.43418110676355504,
+        "calibration_error": 0.004106273957034409,
+        "naive_log_loss": 1.0834578748696517,
+        "naive_brier": 0.21879075674558962
+      },
+      "reasons": [
+        "BEATS_NAIVE_POOLED_OOS",
+        "CANDIDATE_GATES_MET",
+        "NO_AUTO_PROMOTION",
+        "SINGLE_POSITIVE_ROI_INSUFFICIENT"
+      ],
+      "created_at": "2026-09-12T05:10:14.861Z",
+      "updated_at": "2026-09-12T05:10:14.861Z"
+    }
+  ]
+}

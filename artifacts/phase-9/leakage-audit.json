@@ -1,0 +1,15 @@
+{
+  "temporal_pass": true,
+  "target_pass": true,
+  "odds_pass": true,
+  "random_split_rejected": true,
+  "future_features_pass": true,
+  "date_only_policy": "DATE_ONLY_CONSERVATIVE",
+  "neon_in_use": false,
+  "notes": [
+    "feature_cutoff = match_date 00:00 UTC (DATE_ONLY); result_available_at = next UTC day",
+    "odds columns may exist on the row but must not appear in independent feature keys"
+  ],
+  "at": "2026-09-12T05:10:14.861Z",
+  "n_matches": 10707
+}

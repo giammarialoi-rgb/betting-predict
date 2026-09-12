@@ -1,0 +1,36 @@
+{
+  "at": "2026-09-12T05:10:14.861Z",
+  "neon_in_use": false,
+  "models": [
+    {
+      "model_id": "INDEPENDENT_POISSON_v1",
+      "oos_calibration_error": 0.12181241892286143,
+      "n": 7156,
+      "insufficient": false
+    },
+    {
+      "model_id": "DIXON_COLES_v1",
+      "oos_calibration_error": 0.039625058478448966,
+      "n": 7156,
+      "insufficient": false
+    },
+    {
+      "model_id": "NEGBIN_v1",
+      "oos_calibration_error": null,
+      "n": 0,
+      "insufficient": true
+    },
+    {
+      "model_id": "INDEPENDENT_LOGISTIC_v1",
+      "oos_calibration_error": 0.20844949737806256,
+      "n": 7156,
+      "insufficient": false
+    },
+    {
+      "model_id": "GBM_STUMPS_v1",
+      "oos_calibration_error": 0.004106273957034409,
+      "n": 7156,
+      "insufficient": false
+    }
+  ]
+}
