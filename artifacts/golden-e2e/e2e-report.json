@@ -1,0 +1,416 @@
+{
+  "at": "2026-09-12T13:43:00.118Z",
+  "neon_in_use": false,
+  "neon_status_it": "NEON NON UTILIZZATO",
+  "blob_credentials": "KEY_MISSING",
+  "remote_backend": "memory",
+  "golden": {
+    "event_id": "de3b08b74a8249c647ee0e42",
+    "home": "AFC Bournemouth",
+    "away": "Brentford",
+    "competition": "eng.1",
+    "kickoff_utc": "2026-09-12T14:00:00.000Z",
+    "sport": "soccer",
+    "source": "espn",
+    "status": "UPCOMING"
+  },
+  "counts": {
+    "events": 1,
+    "research_jobs": 1,
+    "sources_queried": 5,
+    "sources_working": 4,
+    "observations": 4,
+    "dossiers_local": 1,
+    "dossiers_remote": 1,
+    "brain_cycles": 1,
+    "predictions": 0,
+    "no_predictions": 1,
+    "live_updates": 0,
+    "settlements": 0,
+    "learning_records": 0
+  },
+  "source_audit": [
+    {
+      "source_id": "sofascore",
+      "status": "BLOCKED",
+      "http_status": 403,
+      "extractable_fields": [],
+      "reason": "HTTP 403 / WAF — no bypass",
+      "key": "NOT_REQUIRED",
+      "probed": false
+    },
+    {
+      "source_id": "fbref",
+      "status": "BLOCKED",
+      "http_status": 403,
+      "extractable_fields": [],
+      "reason": "HTTP 403 / WAF — no bypass",
+      "key": "NOT_REQUIRED",
+      "probed": false
+    },
+    {
+      "source_id": "whoscored",
+      "status": "BLOCKED",
+      "http_status": 403,
+      "extractable_fields": [],
+      "reason": "HTTP 403 / WAF — no bypass",
+      "key": "NOT_REQUIRED",
+      "probed": false
+    },
+    {
+      "source_id": "openligadb",
+      "status": "WORKING",
+      "http_status": 200,
+      "extractable_fields": [
+        "matchID",
+        "team1",
+        "team2",
+        "matchDateTimeUTC"
+      ],
+      "reason": "http_200_extracted",
+      "key": "NOT_REQUIRED",
+      "probed": true
+    },
+    {
+      "source_id": "espn",
+      "status": "WORKING",
+      "http_status": 200,
+      "extractable_fields": [
+        "events",
+        "competitions"
+      ],
+      "reason": "http_200_extracted",
+      "key": "NOT_REQUIRED",
+      "probed": true
+    },
+    {
+      "source_id": "thesportsdb",
+      "status": "WORKING",
+      "http_status": 200,
+      "extractable_fields": [
+        "idEvent",
+        "strHomeTeam",
+        "strAwayTeam"
+      ],
+      "reason": "http_200_extracted",
+      "key": "NOT_REQUIRED",
+      "probed": true
+    },
+    {
+      "source_id": "clubelo",
+      "status": "FAILED",
+      "http_status": 502,
+      "extractable_fields": [],
+      "reason": "http_502",
+      "key": "NOT_REQUIRED",
+      "probed": true
+    },
+    {
+      "source_id": "open-meteo",
+      "status": "WORKING",
+      "http_status": 200,
+      "extractable_fields": [
+        "current_weather"
+      ],
+      "reason": "http_200_extracted",
+      "key": "NOT_REQUIRED",
+      "probed": true
+    },
+    {
+      "source_id": "openfootball",
+      "status": "PARTIAL",
+      "http_status": null,
+      "extractable_fields": [],
+      "reason": "catalogued_not_probed_this_cycle",
+      "key": "NOT_REQUIRED",
+      "probed": false
+    },
+    {
+      "source_id": "statsbomb",
+      "status": "PARTIAL",
+      "http_status": null,
+      "extractable_fields": [],
+      "reason": "catalogued_not_probed_this_cycle",
+      "key": "NOT_REQUIRED",
+      "probed": false
+    },
+    {
+      "source_id": "football-data-co-uk",
+      "status": "PARTIAL",
+      "http_status": null,
+      "extractable_fields": [],
+      "reason": "cache_only — no live probe",
+      "key": "NOT_REQUIRED",
+      "probed": false
+    },
+    {
+      "source_id": "ansa",
+      "status": "PARTIAL",
+      "http_status": null,
+      "extractable_fields": [],
+      "reason": "catalogued_not_probed_this_cycle",
+      "key": "NOT_REQUIRED",
+      "probed": false
+    },
+    {
+      "source_id": "bbc-sport",
+      "status": "PARTIAL",
+      "http_status": null,
+      "extractable_fields": [],
+      "reason": "catalogued_not_probed_this_cycle",
+      "key": "NOT_REQUIRED",
+      "probed": false
+    },
+    {
+      "source_id": "guardian-football",
+      "status": "PARTIAL",
+      "http_status": null,
+      "extractable_fields": [],
+      "reason": "catalogued_not_probed_this_cycle",
+      "key": "NOT_REQUIRED",
+      "probed": false
+    },
+    {
+      "source_id": "gazzetta",
+      "status": "PARTIAL",
+      "http_status": null,
+      "extractable_fields": [],
+      "reason": "catalogued_not_probed_this_cycle",
+      "key": "NOT_REQUIRED",
+      "probed": false
+    },
+    {
+      "source_id": "sky-sports",
+      "status": "PARTIAL",
+      "http_status": null,
+      "extractable_fields": [],
+      "reason": "catalogued_not_probed_this_cycle",
+      "key": "NOT_REQUIRED",
+      "probed": false
+    },
+    {
+      "source_id": "espn-soccer-news",
+      "status": "PARTIAL",
+      "http_status": null,
+      "extractable_fields": [],
+      "reason": "catalogued_not_probed_this_cycle",
+      "key": "NOT_REQUIRED",
+      "probed": false
+    },
+    {
+      "source_id": "corriere-sport",
+      "status": "PARTIAL",
+      "http_status": null,
+      "extractable_fields": [],
+      "reason": "catalogued_not_probed_this_cycle",
+      "key": "NOT_REQUIRED",
+      "probed": false
+    },
+    {
+      "source_id": "il-messaggero",
+      "status": "PARTIAL",
+      "http_status": null,
+      "extractable_fields": [],
+      "reason": "catalogued_not_probed_this_cycle",
+      "key": "NOT_REQUIRED",
+      "probed": false
+    },
+    {
+      "source_id": "understat",
+      "status": "PARTIAL",
+      "http_status": null,
+      "extractable_fields": [],
+      "reason": "catalogued_not_probed_this_cycle",
+      "key": "NOT_REQUIRED",
+      "probed": false
+    },
+    {
+      "source_id": "club-football-match-data",
+      "status": "PARTIAL",
+      "http_status": null,
+      "extractable_fields": [],
+      "reason": "cache_only — no live probe",
+      "key": "NOT_REQUIRED",
+      "probed": false
+    }
+  ],
+  "prediction": {
+    "kind": "NO_PREDICTION",
+    "event_id": "de3b08b74a8249c647ee0e42",
+    "reason": "failed_gates",
+    "missing": [
+      "independent_model",
+      "predict_ok",
+      "feature_coverage",
+      "no_failed_research_as_model"
+    ],
+    "failed_gates": [
+      "independent_model",
+      "predict_ok",
+      "feature_coverage",
+      "no_failed_research_as_model"
+    ],
+    "gate_results": [
+      {
+        "name": "event_identity",
+        "passed": true,
+        "reason": "home/away/event_id required"
+      },
+      {
+        "name": "dossier_present",
+        "passed": true,
+        "reason": "analysis_dossier built"
+      },
+      {
+        "name": "independent_model",
+        "passed": false,
+        "reason": "INDEPENDENT model + probability required; no naked probability"
+      },
+      {
+        "name": "predict_ok",
+        "passed": false,
+        "reason": "predictIndependentForEvent failed"
+      },
+      {
+        "name": "feature_coverage",
+        "passed": false,
+        "reason": "feature_coverage unavailable"
+      },
+      {
+        "name": "no_failed_research_as_model",
+        "passed": false,
+        "reason": "INSUFFICIENT_DATA cannot become a prediction"
+      }
+    ],
+    "dossier_version": "MODEL_v2_DECISION_ENGINE"
+  },
+  "live": {
+    "available": false,
+    "reason": "no_in_play_feed"
+  },
+  "settlement": {
+    "available": false,
+    "result": null,
+    "reason": "event_not_finished"
+  },
+  "learning": {
+    "written": false,
+    "reason": "not_settled"
+  },
+  "mirror": {
+    "local_verified": true,
+    "remote_verified": true,
+    "repaired": true
+  },
+  "checklist": [
+    {
+      "step": "neon_excluded",
+      "ok": true,
+      "evidence": "NEON NON UTILIZZATO",
+      "count": null
+    },
+    {
+      "step": "source_audit",
+      "ok": true,
+      "evidence": "audited=21 working=4 (existing adapters only)",
+      "count": 21
+    },
+    {
+      "step": "discovery",
+      "ok": true,
+      "evidence": "AFC Bournemouth vs Brentford · eng.1 · 2026-09-12T14:00:00.000Z · source=espn",
+      "count": 79
+    },
+    {
+      "step": "persist",
+      "ok": true,
+      "evidence": "appendEvent044=ok",
+      "count": 1
+    },
+    {
+      "step": "research_job",
+      "ok": true,
+      "evidence": "queued golden event",
+      "count": 1
+    },
+    {
+      "step": "research",
+      "ok": true,
+      "evidence": "fetches=2 obs=4 yield=0.211",
+      "count": 1
+    },
+    {
+      "step": "brain",
+      "ok": true,
+      "evidence": "focused brain path: research + independent predict + dossier (single event)",
+      "count": 1
+    },
+    {
+      "step": "observations",
+      "ok": true,
+      "evidence": "persisted=4",
+      "count": 4
+    },
+    {
+      "step": "dossier_builder",
+      "ok": true,
+      "evidence": "features=0 research_rows=19 dq=0.305",
+      "count": null
+    },
+    {
+      "step": "dossier_validation",
+      "ok": true,
+      "evidence": "analysis_dossier valid",
+      "count": null
+    },
+    {
+      "step": "board",
+      "ok": true,
+      "evidence": "board row upserted (not a dossier)",
+      "count": 1
+    },
+    {
+      "step": "dossier_storage",
+      "ok": true,
+      "evidence": "local dossier verified",
+      "count": null
+    },
+    {
+      "step": "remote_mirror",
+      "ok": true,
+      "evidence": "backend=memory blob=KEY_MISSING repaired=true ",
+      "count": null
+    },
+    {
+      "step": "prediction",
+      "ok": true,
+      "evidence": "NO PREDICTION reason=failed_gates failed_gates=independent_model,predict_ok,feature_coverage,no_failed_research_as_model",
+      "count": 0
+    },
+    {
+      "step": "live",
+      "ok": true,
+      "evidence": "no_in_play_feed",
+      "count": 0
+    },
+    {
+      "step": "settlement",
+      "ok": true,
+      "evidence": "event_not_finished",
+      "count": 0
+    },
+    {
+      "step": "learning",
+      "ok": true,
+      "evidence": "not_settled",
+      "count": 0
+    },
+    {
+      "step": "event_detail_states",
+      "ok": true,
+      "evidence": "dossier_state=ok (local+remote)",
+      "count": null
+    }
+  ],
+  "errors": []
+}

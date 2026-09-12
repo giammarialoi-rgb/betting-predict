@@ -1,0 +1,1148 @@
+{
+  "event_id": "de3b08b74a8249c647ee0e42",
+  "published_at": "2026-09-12T13:43:08.251Z",
+  "payload": {
+    "event": {
+      "event_id": "de3b08b74a8249c647ee0e42",
+      "home": "AFC Bournemouth",
+      "away": "Brentford",
+      "competition": "eng.1",
+      "kickoff_utc": "2026-09-12T14:00:00.000Z",
+      "sport": "soccer",
+      "status": "UPCOMING"
+    },
+    "cycle": {
+      "cycle_number": 0,
+      "last_cycle_at": null,
+      "last_successful_cycle_at": null,
+      "model_version": "MODEL_v2_DECISION_ENGINE"
+    },
+    "independent_model": {
+      "probability": null,
+      "model_version": null,
+      "confidence": null,
+      "feature_coverage": null,
+      "data_coverage": null,
+      "decision": null,
+      "reason_codes": [],
+      "why": null,
+      "note": "NO DATA AVAILABLE — nessuna inference indipendente (INDEPENDENT_POISSON). Una riga previsione puo esistere senza essere un modello indipendente."
+    },
+    "market": {
+      "probability": null,
+      "selection_pct": null,
+      "note": "Le quote e le probabilità di mercato sono solo confronto — non entrano nel modello indipendente."
+    },
+    "features": [],
+    "features_note": "NO DATA AVAILABLE — nessuno snapshot di reasoning/feature per questo evento",
+    "research": [
+      {
+        "source_id": "statsbomb",
+        "fetched": false,
+        "ok": false,
+        "phase": "UNAVAILABLE",
+        "fetched_at": null,
+        "available_at": null,
+        "observed_at": null,
+        "reason": "Fonte cablata, senza abbinamento per questa partita (identità fail-closed).",
+        "url": "https://github.com/statsbomb/open-data",
+        "http_status": null,
+        "parser_status": "NO_DATA",
+        "fields_extracted": [],
+        "adapter_kind": "PRODUCTION_ADAPTER",
+        "entered_model": false
+      },
+      {
+        "source_id": "il-messaggero",
+        "fetched": true,
+        "ok": false,
+        "phase": "UNAVAILABLE",
+        "fetched_at": "2026-09-12T13:43:00.118Z",
+        "available_at": null,
+        "observed_at": "2026-09-12T13:43:00.118Z",
+        "reason": "RSS letto (20 item) ma nessuna voce cita entrambe le squadre",
+        "url": "https://www.ilmessaggero.it/rss/sport.xml",
+        "http_status": 200,
+        "parser_status": "NO_EVENT",
+        "fields_extracted": [],
+        "adapter_kind": "PRODUCTION_ADAPTER",
+        "entered_model": false
+      },
+      {
+        "source_id": "corriere-sport",
+        "fetched": true,
+        "ok": false,
+        "phase": "UNAVAILABLE",
+        "fetched_at": "2026-09-12T13:43:00.118Z",
+        "available_at": null,
+        "observed_at": "2026-09-12T13:43:00.118Z",
+        "reason": "RSS letto (30 item) ma nessuna voce cita entrambe le squadre",
+        "url": "https://www.corrieredellosport.it/rss/calcio",
+        "http_status": 200,
+        "parser_status": "NO_EVENT",
+        "fields_extracted": [],
+        "adapter_kind": "PRODUCTION_ADAPTER",
+        "entered_model": false
+      },
+      {
+        "source_id": "espn-soccer-news",
+        "fetched": true,
+        "ok": false,
+        "phase": "UNAVAILABLE",
+        "fetched_at": "2026-09-12T13:43:00.118Z",
+        "available_at": null,
+        "observed_at": "2026-09-12T13:43:00.118Z",
+        "reason": "RSS letto (20 item) ma nessuna voce cita entrambe le squadre",
+        "url": "https://www.espn.com/espn/rss/soccer/news",
+        "http_status": 200,
+        "parser_status": "NO_EVENT",
+        "fields_extracted": [],
+        "adapter_kind": "PRODUCTION_ADAPTER",
+        "entered_model": false
+      },
+      {
+        "source_id": "sky-sports",
+        "fetched": true,
+        "ok": true,
+        "phase": "OK",
+        "fetched_at": "2026-09-12T13:43:00.118Z",
+        "available_at": "Sat, 12 Sep 2026 13:20:00 BST",
+        "observed_at": "2026-09-12T13:43:00.118Z",
+        "reason": "Voce RSS cita entrambe le squadre — CONTEXT only, non e un infortunio strutturato",
+        "url": "https://www.skysports.com/rss/12040",
+        "http_status": 200,
+        "parser_status": "PARTIAL",
+        "fields_extracted": [
+          "rss_mention"
+        ],
+        "adapter_kind": "PRODUCTION_ADAPTER",
+        "entered_model": false
+      },
+      {
+        "source_id": "gazzetta",
+        "fetched": true,
+        "ok": false,
+        "phase": "UNAVAILABLE",
+        "fetched_at": "2026-09-12T13:43:00.118Z",
+        "available_at": null,
+        "observed_at": "2026-09-12T13:43:00.118Z",
+        "reason": "RSS letto (99 item) ma nessuna voce cita entrambe le squadre",
+        "url": "https://www.gazzetta.it/rss/calcio.xml",
+        "http_status": 200,
+        "parser_status": "NO_EVENT",
+        "fields_extracted": [],
+        "adapter_kind": "PRODUCTION_ADAPTER",
+        "entered_model": false
+      },
+      {
+        "source_id": "guardian-football",
+        "fetched": true,
+        "ok": false,
+        "phase": "UNAVAILABLE",
+        "fetched_at": "2026-09-12T13:43:00.118Z",
+        "available_at": null,
+        "observed_at": "2026-09-12T13:43:00.118Z",
+        "reason": "RSS letto (60 item) ma nessuna voce cita entrambe le squadre",
+        "url": "https://www.theguardian.com/football/rss",
+        "http_status": 200,
+        "parser_status": "NO_EVENT",
+        "fields_extracted": [],
+        "adapter_kind": "PRODUCTION_ADAPTER",
+        "entered_model": false
+      },
+      {
+        "source_id": "bbc-sport",
+        "fetched": true,
+        "ok": false,
+        "phase": "UNAVAILABLE",
+        "fetched_at": "2026-09-12T13:43:00.118Z",
+        "available_at": null,
+        "observed_at": "2026-09-12T13:43:00.118Z",
+        "reason": "RSS letto (79 item) ma nessuna voce cita entrambe le squadre",
+        "url": "https://feeds.bbci.co.uk/sport/football/rss.xml",
+        "http_status": 200,
+        "parser_status": "NO_EVENT",
+        "fields_extracted": [],
+        "adapter_kind": "PRODUCTION_ADAPTER",
+        "entered_model": false
+      },
+      {
+        "source_id": "ansa",
+        "fetched": true,
+        "ok": false,
+        "phase": "UNAVAILABLE",
+        "fetched_at": "2026-09-12T13:43:00.118Z",
+        "available_at": null,
+        "observed_at": "2026-09-12T13:43:00.118Z",
+        "reason": "RSS letto (79 item) ma nessuna voce cita entrambe le squadre",
+        "url": "https://www.ansa.it/sito/notizie/sport/calcio/calcio_rss.xml",
+        "http_status": 200,
+        "parser_status": "NO_EVENT",
+        "fields_extracted": [],
+        "adapter_kind": "PRODUCTION_ADAPTER",
+        "entered_model": false
+      },
+      {
+        "source_id": "understat",
+        "fetched": false,
+        "ok": false,
+        "phase": "UNAVAILABLE",
+        "fetched_at": null,
+        "available_at": null,
+        "observed_at": null,
+        "reason": "No Understat league slug for this competition — not guessed.",
+        "url": null,
+        "http_status": null,
+        "parser_status": "DENIED",
+        "fields_extracted": [],
+        "adapter_kind": "PRODUCTION_ADAPTER",
+        "entered_model": false
+      },
+      {
+        "source_id": "thesportsdb",
+        "fetched": false,
+        "ok": false,
+        "phase": "UNAVAILABLE",
+        "fetched_at": null,
+        "available_at": null,
+        "observed_at": null,
+        "reason": "Nessuna cache TheSportsDB in disco per questa partita.",
+        "url": "https://www.thesportsdb.com/api/v1/json/3/",
+        "http_status": null,
+        "parser_status": "NO_DATA",
+        "fields_extracted": [],
+        "adapter_kind": "PRODUCTION_ADAPTER",
+        "entered_model": false
+      },
+      {
+        "source_id": "openfootball",
+        "fetched": false,
+        "ok": false,
+        "phase": "UNAVAILABLE",
+        "fetched_at": null,
+        "available_at": null,
+        "observed_at": null,
+        "reason": "Nessuna cache OpenFootball in disco per questa partita.",
+        "url": "https://github.com/openfootball/football.json",
+        "http_status": null,
+        "parser_status": "NO_DATA",
+        "fields_extracted": [],
+        "adapter_kind": "PRODUCTION_ADAPTER",
+        "entered_model": false
+      },
+      {
+        "source_id": "openligadb",
+        "fetched": false,
+        "ok": false,
+        "phase": "UNAVAILABLE",
+        "fetched_at": null,
+        "available_at": null,
+        "observed_at": null,
+        "reason": "Nessuna cache OpenLigaDB in disco per questa partita.",
+        "url": "https://api.openligadb.de/getmatchdata/bl1",
+        "http_status": null,
+        "parser_status": "NO_DATA",
+        "fields_extracted": [],
+        "adapter_kind": "PRODUCTION_ADAPTER",
+        "entered_model": false
+      },
+      {
+        "source_id": "espn",
+        "fetched": false,
+        "ok": false,
+        "phase": "UNAVAILABLE",
+        "fetched_at": null,
+        "available_at": null,
+        "observed_at": null,
+        "reason": "Nessuna cache ESPN in disco per questa partita.",
+        "url": "https://site.api.espn.com/apis/site/v2/sports/soccer/eng.1/scoreboard",
+        "http_status": null,
+        "parser_status": "NO_DATA",
+        "fields_extracted": [],
+        "adapter_kind": "PRODUCTION_ADAPTER",
+        "entered_model": false
+      },
+      {
+        "source_id": "club-football-match-data",
+        "fetched": false,
+        "ok": false,
+        "phase": "UNAVAILABLE",
+        "fetched_at": null,
+        "available_at": null,
+        "observed_at": null,
+        "reason": "Club-Football-Match-Data Matches.csv assente — non usato come SUCCESS.",
+        "url": null,
+        "http_status": null,
+        "parser_status": "MISSING_FILE",
+        "fields_extracted": [],
+        "adapter_kind": "CACHE_ONLY",
+        "entered_model": false
+      },
+      {
+        "source_id": "football-data-co-uk",
+        "fetched": false,
+        "ok": false,
+        "phase": "UNAVAILABLE",
+        "fetched_at": null,
+        "available_at": null,
+        "observed_at": null,
+        "reason": "Nessun archivio Football-Data locale (matches.jsonl assente).",
+        "url": "https://www.football-data.co.uk/",
+        "http_status": null,
+        "parser_status": "MISSING_FILE",
+        "fields_extracted": [],
+        "adapter_kind": "CACHE_ONLY",
+        "entered_model": false
+      },
+      {
+        "source_id": "clubelo",
+        "fetched": false,
+        "ok": false,
+        "phase": "UNAVAILABLE",
+        "fetched_at": null,
+        "available_at": null,
+        "observed_at": null,
+        "reason": "Nessun CSV ClubElo locale. Nessun Elo inventato.",
+        "url": "http://api.clubelo.com/2026-09-11",
+        "http_status": 502,
+        "parser_status": "MISSING_FILE",
+        "fields_extracted": [],
+        "adapter_kind": "PRODUCTION_ADAPTER",
+        "entered_model": false
+      },
+      {
+        "source_id": "open-meteo",
+        "fetched": true,
+        "ok": true,
+        "phase": "OK",
+        "fetched_at": "2026-09-12T13:43:00.118Z",
+        "available_at": "2026-09-12T14:00:00.000Z",
+        "observed_at": "2026-09-12T13:43:00.118Z",
+        "reason": "osservazioni CONTEXT=5",
+        "url": "https://archive-api.open-meteo.com/",
+        "http_status": 200,
+        "parser_status": "OK",
+        "fields_extracted": [
+          "temp_c",
+          "precip_mm",
+          "precip_prob_pct",
+          "humidity_pct",
+          "wind_kmh"
+        ],
+        "adapter_kind": "PRODUCTION_ADAPTER",
+        "entered_model": false
+      },
+      {
+        "source_id": "api-sports",
+        "fetched": false,
+        "ok": false,
+        "phase": "UNAVAILABLE",
+        "fetched_at": null,
+        "available_at": null,
+        "observed_at": null,
+        "reason": "API_KEY_NOT_CONFIGURED",
+        "url": "https://v3.football.api-sports.io/",
+        "http_status": null,
+        "parser_status": "NO_KEY",
+        "fields_extracted": [],
+        "adapter_kind": "PRODUCTION_ADAPTER",
+        "entered_model": false
+      }
+    ],
+    "prediction_id": null,
+    "analyzed_at": null,
+    "prediction_persisted_at": null,
+    "lineage": {
+      "what_betmind_knew_before_kickoff": "No independent model probability. Feature bag size=0; entered_model=0. Market compare may exist but is NOT model knowledge.",
+      "sources_consulted": [
+        "il-messaggero",
+        "corriere-sport",
+        "espn-soccer-news",
+        "sky-sports",
+        "gazzetta",
+        "guardian-football",
+        "bbc-sport",
+        "ansa",
+        "club-football-match-data",
+        "football-data-co-uk",
+        "open-meteo"
+      ],
+      "source_information": [
+        {
+          "source_id": "statsbomb",
+          "summary": "phase=UNAVAILABLE; adapter=PRODUCTION_ADAPTER; parser=NO_DATA; fields=none; available_at=null; Fonte cablata, senza abbinamento per questa partita (identità fail-closed)."
+        },
+        {
+          "source_id": "il-messaggero",
+          "summary": "phase=UNAVAILABLE; adapter=PRODUCTION_ADAPTER; http=200; parser=NO_EVENT; fields=none; available_at=null; RSS letto (20 item) ma nessuna voce cita entrambe le squadre"
+        },
+        {
+          "source_id": "corriere-sport",
+          "summary": "phase=UNAVAILABLE; adapter=PRODUCTION_ADAPTER; http=200; parser=NO_EVENT; fields=none; available_at=null; RSS letto (30 item) ma nessuna voce cita entrambe le squadre"
+        },
+        {
+          "source_id": "espn-soccer-news",
+          "summary": "phase=UNAVAILABLE; adapter=PRODUCTION_ADAPTER; http=200; parser=NO_EVENT; fields=none; available_at=null; RSS letto (20 item) ma nessuna voce cita entrambe le squadre"
+        },
+        {
+          "source_id": "sky-sports",
+          "summary": "phase=OK; adapter=PRODUCTION_ADAPTER; http=200; parser=PARTIAL; fields=rss_mention; available_at=Sat, 12 Sep 2026 13:20:00 BST; Voce RSS cita entrambe le squadre — CONTEXT only, non e un infortunio strutturato"
+        },
+        {
+          "source_id": "gazzetta",
+          "summary": "phase=UNAVAILABLE; adapter=PRODUCTION_ADAPTER; http=200; parser=NO_EVENT; fields=none; available_at=null; RSS letto (99 item) ma nessuna voce cita entrambe le squadre"
+        },
+        {
+          "source_id": "guardian-football",
+          "summary": "phase=UNAVAILABLE; adapter=PRODUCTION_ADAPTER; http=200; parser=NO_EVENT; fields=none; available_at=null; RSS letto (60 item) ma nessuna voce cita entrambe le squadre"
+        },
+        {
+          "source_id": "bbc-sport",
+          "summary": "phase=UNAVAILABLE; adapter=PRODUCTION_ADAPTER; http=200; parser=NO_EVENT; fields=none; available_at=null; RSS letto (79 item) ma nessuna voce cita entrambe le squadre"
+        },
+        {
+          "source_id": "ansa",
+          "summary": "phase=UNAVAILABLE; adapter=PRODUCTION_ADAPTER; http=200; parser=NO_EVENT; fields=none; available_at=null; RSS letto (79 item) ma nessuna voce cita entrambe le squadre"
+        },
+        {
+          "source_id": "understat",
+          "summary": "phase=UNAVAILABLE; adapter=PRODUCTION_ADAPTER; parser=DENIED; fields=none; available_at=null; No Understat league slug for this competition — not guessed."
+        },
+        {
+          "source_id": "thesportsdb",
+          "summary": "phase=UNAVAILABLE; adapter=PRODUCTION_ADAPTER; parser=NO_DATA; fields=none; available_at=null; Nessuna cache TheSportsDB in disco per questa partita."
+        },
+        {
+          "source_id": "openfootball",
+          "summary": "phase=UNAVAILABLE; adapter=PRODUCTION_ADAPTER; parser=NO_DATA; fields=none; available_at=null; Nessuna cache OpenFootball in disco per questa partita."
+        },
+        {
+          "source_id": "openligadb",
+          "summary": "phase=UNAVAILABLE; adapter=PRODUCTION_ADAPTER; parser=NO_DATA; fields=none; available_at=null; Nessuna cache OpenLigaDB in disco per questa partita."
+        },
+        {
+          "source_id": "espn",
+          "summary": "phase=UNAVAILABLE; adapter=PRODUCTION_ADAPTER; parser=NO_DATA; fields=none; available_at=null; Nessuna cache ESPN in disco per questa partita."
+        },
+        {
+          "source_id": "club-football-match-data",
+          "summary": "phase=UNAVAILABLE; adapter=CACHE_ONLY; parser=MISSING_FILE; fields=none; available_at=null; Club-Football-Match-Data Matches.csv assente — non usato come SUCCESS."
+        },
+        {
+          "source_id": "football-data-co-uk",
+          "summary": "phase=UNAVAILABLE; adapter=CACHE_ONLY; parser=MISSING_FILE; fields=none; available_at=null; Nessun archivio Football-Data locale (matches.jsonl assente)."
+        },
+        {
+          "source_id": "clubelo",
+          "summary": "phase=UNAVAILABLE; adapter=PRODUCTION_ADAPTER; http=502; parser=MISSING_FILE; fields=none; available_at=null; Nessun CSV ClubElo locale. Nessun Elo inventato."
+        },
+        {
+          "source_id": "open-meteo",
+          "summary": "phase=OK; adapter=PRODUCTION_ADAPTER; http=200; parser=OK; fields=temp_c,precip_mm,precip_prob_pct,humidity_pct,wind_kmh; available_at=2026-09-12T14:00:00.000Z; osservazioni CONTEXT=5"
+        },
+        {
+          "source_id": "api-sports",
+          "summary": "phase=UNAVAILABLE; adapter=PRODUCTION_ADAPTER; parser=NO_KEY; fields=none; available_at=null; API_KEY_NOT_CONFIGURED"
+        }
+      ],
+      "catalogue_noted_not_fetched": [],
+      "eligible_information": [],
+      "features_entered_model": [],
+      "model_version": "MODEL_v2_DECISION_ENGINE",
+      "prediction_produced": "NO_PREDICTION_ROW",
+      "odds_entered_model": false,
+      "information_missing": [
+        "independent probability_model (null or not INDEPENDENT_POISSON)",
+        "eligible independent features with values"
+      ],
+      "after_inference": "No independent inference; prediction/decision may still be persisted for audit.",
+      "feature_vector_schema": [],
+      "edge_calculated": false,
+      "confidence_defined": false
+    },
+    "research_summary": {
+      "sources_attempted": 17,
+      "sources_successful": 1,
+      "sources_partial": 1,
+      "sources_blocked": 0,
+      "sources_missing_adapter": 0,
+      "sources_no_data": 8,
+      "sources_no_event": 7,
+      "sources_policy_denied": 0,
+      "sources_http_error": 0,
+      "sources_rate_limited": 0,
+      "sources_parse_error": 0,
+      "source_rows": [
+        {
+          "source_id": "statsbomb",
+          "title": "StatsBomb Open Data",
+          "human_status": "NO_DATA",
+          "fetched": false,
+          "ok": false,
+          "http_status": null,
+          "fetched_at": null,
+          "fields_extracted": [],
+          "sought_it": "historical",
+          "market_layer": false,
+          "reason_it": "Il sistema ha consultato StatsBomb Open Data ma non ha trovato dati utilizzabili per questa partita.",
+          "public_url": "https://github.com/statsbomb/open-data"
+        },
+        {
+          "source_id": "il-messaggero",
+          "title": "Il Messaggero",
+          "human_status": "NO_EVENT",
+          "fetched": true,
+          "ok": false,
+          "http_status": 200,
+          "fetched_at": "2026-09-12T13:43:00.118Z",
+          "fields_extracted": [],
+          "sought_it": "news",
+          "market_layer": false,
+          "reason_it": "Il Messaggero non conteneva questa partita. Nessun dato utilizzato.",
+          "public_url": "https://www.ilmessaggero.it/rss/sport.xml"
+        },
+        {
+          "source_id": "corriere-sport",
+          "title": "Corriere dello Sport",
+          "human_status": "NO_EVENT",
+          "fetched": true,
+          "ok": false,
+          "http_status": 200,
+          "fetched_at": "2026-09-12T13:43:00.118Z",
+          "fields_extracted": [],
+          "sought_it": "news",
+          "market_layer": false,
+          "reason_it": "Corriere dello Sport non conteneva questa partita. Nessun dato utilizzato.",
+          "public_url": "https://www.corrieredellosport.it/rss/calcio"
+        },
+        {
+          "source_id": "espn-soccer-news",
+          "title": "ESPN Soccer News",
+          "human_status": "NO_EVENT",
+          "fetched": true,
+          "ok": false,
+          "http_status": 200,
+          "fetched_at": "2026-09-12T13:43:00.118Z",
+          "fields_extracted": [],
+          "sought_it": "news",
+          "market_layer": false,
+          "reason_it": "ESPN Soccer News non conteneva questa partita. Nessun dato utilizzato.",
+          "public_url": "https://www.espn.com/espn/rss/soccer/news"
+        },
+        {
+          "source_id": "sky-sports",
+          "title": "Sky Sports",
+          "human_status": "PARTIAL",
+          "fetched": true,
+          "ok": true,
+          "http_status": 200,
+          "fetched_at": "2026-09-12T13:43:00.118Z",
+          "fields_extracted": [
+            "rss_mention"
+          ],
+          "sought_it": "news",
+          "market_layer": false,
+          "reason_it": "Sky Sports ha restituito dati incompleti.",
+          "public_url": "https://www.skysports.com/rss/12040"
+        },
+        {
+          "source_id": "gazzetta",
+          "title": "Gazzetta dello Sport",
+          "human_status": "NO_EVENT",
+          "fetched": true,
+          "ok": false,
+          "http_status": 200,
+          "fetched_at": "2026-09-12T13:43:00.118Z",
+          "fields_extracted": [],
+          "sought_it": "news",
+          "market_layer": false,
+          "reason_it": "Gazzetta dello Sport non conteneva questa partita. Nessun dato utilizzato.",
+          "public_url": "https://www.gazzetta.it/rss/calcio.xml"
+        },
+        {
+          "source_id": "guardian-football",
+          "title": "The Guardian Football",
+          "human_status": "NO_EVENT",
+          "fetched": true,
+          "ok": false,
+          "http_status": 200,
+          "fetched_at": "2026-09-12T13:43:00.118Z",
+          "fields_extracted": [],
+          "sought_it": "news",
+          "market_layer": false,
+          "reason_it": "The Guardian Football non conteneva questa partita. Nessun dato utilizzato.",
+          "public_url": "https://www.theguardian.com/football/rss"
+        },
+        {
+          "source_id": "bbc-sport",
+          "title": "BBC Sport",
+          "human_status": "NO_EVENT",
+          "fetched": true,
+          "ok": false,
+          "http_status": 200,
+          "fetched_at": "2026-09-12T13:43:00.118Z",
+          "fields_extracted": [],
+          "sought_it": "news",
+          "market_layer": false,
+          "reason_it": "BBC Sport non conteneva questa partita. Nessun dato utilizzato.",
+          "public_url": "https://feeds.bbci.co.uk/sport/football/rss.xml"
+        },
+        {
+          "source_id": "ansa",
+          "title": "ANSA",
+          "human_status": "NO_EVENT",
+          "fetched": true,
+          "ok": false,
+          "http_status": 200,
+          "fetched_at": "2026-09-12T13:43:00.118Z",
+          "fields_extracted": [],
+          "sought_it": "news",
+          "market_layer": false,
+          "reason_it": "ANSA non conteneva questa partita. Nessun dato utilizzato.",
+          "public_url": "https://www.ansa.it/sito/notizie/sport/calcio/calcio_rss.xml"
+        },
+        {
+          "source_id": "understat",
+          "title": "Understat",
+          "human_status": "NO_DATA",
+          "fetched": false,
+          "ok": false,
+          "http_status": null,
+          "fetched_at": null,
+          "fields_extracted": [],
+          "sought_it": "Public getLeagueData XHR (X-Requested-With); rolling L5 xG/xGA CONTEXT only; available_at unknown so not MODEL",
+          "market_layer": false,
+          "reason_it": "Il sistema ha consultato Understat ma non ha trovato dati utilizzabili per questa partita.",
+          "public_url": "https://understat.com/"
+        },
+        {
+          "source_id": "thesportsdb",
+          "title": "TheSportsDB",
+          "human_status": "NO_DATA",
+          "fetched": false,
+          "ok": false,
+          "http_status": null,
+          "fetched_at": null,
+          "fields_extracted": [],
+          "sought_it": "fixtures",
+          "market_layer": false,
+          "reason_it": "Il sistema ha consultato TheSportsDB ma non ha trovato dati utilizzabili per questa partita.",
+          "public_url": "https://www.thesportsdb.com/api/v1/json/3/"
+        },
+        {
+          "source_id": "openfootball",
+          "title": "OpenFootball",
+          "human_status": "NO_DATA",
+          "fetched": false,
+          "ok": false,
+          "http_status": null,
+          "fetched_at": null,
+          "fields_extracted": [],
+          "sought_it": "historical",
+          "market_layer": false,
+          "reason_it": "Il sistema ha consultato OpenFootball ma non ha trovato dati utilizzabili per questa partita.",
+          "public_url": "https://github.com/openfootball/football.json"
+        },
+        {
+          "source_id": "openligadb",
+          "title": "OpenLigaDB",
+          "human_status": "NO_DATA",
+          "fetched": false,
+          "ok": false,
+          "http_status": null,
+          "fetched_at": null,
+          "fields_extracted": [],
+          "sought_it": "fixtures, scores, historical",
+          "market_layer": false,
+          "reason_it": "Il sistema ha consultato OpenLigaDB ma non ha trovato dati utilizzabili per questa partita.",
+          "public_url": "https://api.openligadb.de/getmatchdata/bl1"
+        },
+        {
+          "source_id": "espn",
+          "title": "ESPN Scoreboard (non ufficiale)",
+          "human_status": "NO_DATA",
+          "fetched": false,
+          "ok": false,
+          "http_status": null,
+          "fetched_at": null,
+          "fields_extracted": [],
+          "sought_it": "fixtures, scores",
+          "market_layer": false,
+          "reason_it": "Il sistema ha consultato ESPN Scoreboard (non ufficiale) ma non ha trovato dati utilizzabili per questa partita.",
+          "public_url": "https://site.api.espn.com/apis/site/v2/sports/soccer/eng.1/scoreboard"
+        },
+        {
+          "source_id": "club-football-match-data",
+          "title": "Club-Football-Match-Data",
+          "human_status": "NO_DATA",
+          "fetched": false,
+          "ok": false,
+          "http_status": null,
+          "fetched_at": null,
+          "fields_extracted": [],
+          "sought_it": "historical",
+          "market_layer": false,
+          "reason_it": "Il sistema ha consultato Club-Football-Match-Data ma non ha trovato dati utilizzabili per questa partita.",
+          "public_url": "https://github.com/xgabora/Club-Football-Match-Data"
+        },
+        {
+          "source_id": "football-data-co-uk",
+          "title": "Football-Data",
+          "human_status": "NO_DATA",
+          "fetched": false,
+          "ok": false,
+          "http_status": null,
+          "fetched_at": null,
+          "fields_extracted": [],
+          "sought_it": "historical, scores, statistics",
+          "market_layer": false,
+          "reason_it": "Il sistema ha consultato Football-Data ma non ha trovato dati utilizzabili per questa partita.",
+          "public_url": "https://www.football-data.co.uk/"
+        },
+        {
+          "source_id": "open-meteo",
+          "title": "Open-Meteo",
+          "human_status": "SUCCESS",
+          "fetched": true,
+          "ok": true,
+          "http_status": 200,
+          "fetched_at": "2026-09-12T13:43:00.118Z",
+          "fields_extracted": [
+            "temp_c",
+            "precip_mm",
+            "precip_prob_pct",
+            "humidity_pct",
+            "wind_kmh"
+          ],
+          "sought_it": "weather",
+          "market_layer": false,
+          "reason_it": "osservazioni CONTEXT=5",
+          "public_url": "https://archive-api.open-meteo.com/"
+        }
+      ],
+      "feature_groups_found": [],
+      "feature_groups_missing": [
+        "FORMA",
+        "ATTACCO",
+        "DIFESA",
+        "CONTESTO",
+        "FORZA",
+        "SQUADRA",
+        "HEAD_TO_HEAD"
+      ],
+      "feature_quality": {
+        "REAL": 0,
+        "DERIVED": 0,
+        "HISTORICAL_PRIOR": 0,
+        "MISSING": 0,
+        "STALE": 0,
+        "INVALID": 0,
+        "EXCLUDED": 0
+      },
+      "origin": {
+        "live_research_sources": 2,
+        "historical_prior_features": 0,
+        "derived_features": 0,
+        "static_context_features": 0,
+        "market_sources": 0
+      },
+      "model_inputs": [],
+      "model_exclusions": [],
+      "explanation_facts": [
+        "sources_attempted=17",
+        "sources_successful=1",
+        "model_inputs=0",
+        "has_inference=false",
+        "odds_entered_model=false"
+      ],
+      "timeline": [
+        {
+          "at": "2026-09-12T13:43:00.118Z",
+          "label_it": "Evento identificato",
+          "fact_key": "event_identified"
+        },
+        {
+          "at": "2026-09-12T13:43:00.118Z",
+          "label_it": "Sky Sports consultato",
+          "fact_key": "source_ok:sky-sports"
+        },
+        {
+          "at": "2026-09-12T13:43:00.118Z",
+          "label_it": "Open-Meteo consultato",
+          "fact_key": "source_ok:open-meteo"
+        }
+      ],
+      "prediction_snapshot": {
+        "prediction_time": null,
+        "model_version": "MODEL_v2_DECISION_ENGINE",
+        "has_independent_inference": false,
+        "odds_entered_model": false,
+        "feature_count_entered": 0,
+        "feature_coverage": null
+      }
+    },
+    "human_explanation": {
+      "match_line": "AFC Bournemouth contro Brentford",
+      "did": "BetMind ha analizzato la partita AFC Bournemouth – Brentford prima del calcio d'inizio. Ha cercato risultati recenti, forma, gol, tiri, tiri in porta, precedenti, disponibilita dei giocatori, xG, meteo e altre informazioni pre-partita.",
+      "live_research": "Ricerca live: 2 fonti hanno restituito dati riferiti a questa partita.",
+      "archive": "Archivio storico: Football-Data non ha abbinato questa partita (Il sistema ha consultato Football-Data ma non ha trovato dati utilizzabili per questa partita.).",
+      "prediction_lines": [],
+      "why": [],
+      "analyzed": "Prima della partita BetMind non ha ottenuto gruppi di dati sufficienti per descrivere forma o forza delle squadre.",
+      "used": [],
+      "missing": [
+        "Non e stato possibile reperire un dato xG specifico per questa partita.",
+        "Non e stato possibile verificare gli infortuni da una fonte compatibile.",
+        "Le formazioni ufficiali non erano ancora disponibili.",
+        "Il dato arbitro non e stato trovato.",
+        "Il sistema ha consultato StatsBomb Open Data ma non ha trovato dati utilizzabili per questa partita.",
+        "Il Messaggero non conteneva questa partita. Nessun dato utilizzato.",
+        "Corriere dello Sport non conteneva questa partita. Nessun dato utilizzato.",
+        "ESPN Soccer News non conteneva questa partita. Nessun dato utilizzato.",
+        "Gazzetta dello Sport non conteneva questa partita. Nessun dato utilizzato.",
+        "The Guardian Football non conteneva questa partita. Nessun dato utilizzato.",
+        "BBC Sport non conteneva questa partita. Nessun dato utilizzato.",
+        "ANSA non conteneva questa partita. Nessun dato utilizzato.",
+        "Il sistema ha consultato Understat ma non ha trovato dati utilizzabili per questa partita.",
+        "Il sistema ha consultato TheSportsDB ma non ha trovato dati utilizzabili per questa partita.",
+        "Il sistema ha consultato OpenFootball ma non ha trovato dati utilizzabili per questa partita.",
+        "Il sistema ha consultato OpenLigaDB ma non ha trovato dati utilizzabili per questa partita."
+      ],
+      "sources_summary": "BetMind ha consultato 17 fonti. 1 hanno restituito dati, 1 in modo parziale. 15 non avevano informazioni su questa partita. Le quote, se presenti, restano nel layer di mercato e non entrano nel modello.",
+      "odds_sentence": "Le quote sono state osservate separatamente e non sono entrate nell'input del modello indipendente.",
+      "model_card": {
+        "name_it": "Poisson indipendente",
+        "version": "MODEL_v2_DECISION_ENGINE",
+        "inputs": 0,
+        "coverage_pct": null,
+        "odds_used": false
+      },
+      "how_model_works": "BetMind non ha ottenuto abbastanza dati storici o di ricerca per stimare i gol attesi. Le quote di mercato restano separate e non sostituiscono i dati mancanti.",
+      "poisson": null,
+      "insufficient": "BetMind non ha prodotto una previsione indipendente per questa partita perché i dati disponibili non hanno raggiunto i requisiti del modello.",
+      "category_checks": [
+        {
+          "label": "Forma recente",
+          "found": false,
+          "note": "Forma recente: non disponibile."
+        },
+        {
+          "label": "Rendimento casa/trasferta",
+          "found": false,
+          "note": "Rendimento casa/trasferta: non disponibile."
+        },
+        {
+          "label": "Gol",
+          "found": false,
+          "note": "Gol: non disponibile."
+        },
+        {
+          "label": "Tiri",
+          "found": false,
+          "note": "Tiri: non disponibile."
+        },
+        {
+          "label": "Tiri nello specchio",
+          "found": false,
+          "note": "Tiri nello specchio: non disponibile."
+        },
+        {
+          "label": "Corner",
+          "found": false,
+          "note": "Corner: non disponibile."
+        },
+        {
+          "label": "Cartellini",
+          "found": false,
+          "note": "Cartellini: non disponibile."
+        },
+        {
+          "label": "Clean sheet",
+          "found": false,
+          "note": "Clean sheet: non disponibile."
+        },
+        {
+          "label": "H2H",
+          "found": false,
+          "note": "H2H: non disponibile."
+        },
+        {
+          "label": "xG",
+          "found": false,
+          "note": "xG: non disponibile."
+        },
+        {
+          "label": "Infortuni",
+          "found": false,
+          "note": "Infortuni: non disponibile."
+        },
+        {
+          "label": "Formazioni",
+          "found": false,
+          "note": "Formazioni: non disponibile."
+        },
+        {
+          "label": "Arbitro",
+          "found": false,
+          "note": "Arbitro: non disponibile."
+        },
+        {
+          "label": "Meteo",
+          "found": true,
+          "note": "Meteo: parzialmente trovato. I dati restano nel dossier anche se non tutti entrano nel modello."
+        },
+        {
+          "label": "Calendario e riposo",
+          "found": false,
+          "note": "Calendario e riposo: non disponibile."
+        },
+        {
+          "label": "Notizie",
+          "found": true,
+          "note": "Notizie: parzialmente trovato. I dati restano nel dossier anche se non tutti entrano nel modello."
+        }
+      ],
+      "analyzed_topics": [
+        {
+          "id": "form",
+          "label_it": "Forma recente",
+          "light": "MISSING",
+          "note_it": "Forma recente: non disponibile."
+        },
+        {
+          "id": "home_away",
+          "label_it": "Rendimento casa/trasferta",
+          "light": "MISSING",
+          "note_it": "Rendimento casa/trasferta: non disponibile."
+        },
+        {
+          "id": "goals",
+          "label_it": "Gol",
+          "light": "MISSING",
+          "note_it": "Gol: non disponibile."
+        },
+        {
+          "id": "shots",
+          "label_it": "Tiri",
+          "light": "MISSING",
+          "note_it": "Tiri: non disponibile."
+        },
+        {
+          "id": "sot",
+          "label_it": "Tiri nello specchio",
+          "light": "MISSING",
+          "note_it": "Tiri nello specchio: non disponibile."
+        },
+        {
+          "id": "corners",
+          "label_it": "Corner",
+          "light": "MISSING",
+          "note_it": "Corner: non disponibile."
+        },
+        {
+          "id": "cards",
+          "label_it": "Cartellini",
+          "light": "MISSING",
+          "note_it": "Cartellini: non disponibile."
+        },
+        {
+          "id": "cs",
+          "label_it": "Clean sheet",
+          "light": "MISSING",
+          "note_it": "Clean sheet: non disponibile."
+        },
+        {
+          "id": "h2h",
+          "label_it": "H2H",
+          "light": "MISSING",
+          "note_it": "H2H: non disponibile."
+        },
+        {
+          "id": "xg",
+          "label_it": "xG",
+          "light": "MISSING",
+          "note_it": "xG: non disponibile."
+        },
+        {
+          "id": "injuries",
+          "label_it": "Infortuni",
+          "light": "MISSING",
+          "note_it": "Infortuni: non disponibile."
+        },
+        {
+          "id": "lineups",
+          "label_it": "Formazioni",
+          "light": "MISSING",
+          "note_it": "Formazioni: non disponibile."
+        },
+        {
+          "id": "referee",
+          "label_it": "Arbitro",
+          "light": "MISSING",
+          "note_it": "Arbitro: non disponibile."
+        },
+        {
+          "id": "weather",
+          "label_it": "Meteo",
+          "light": "PARTIAL",
+          "note_it": "Meteo: parzialmente trovato. I dati restano nel dossier anche se non tutti entrano nel modello."
+        },
+        {
+          "id": "calendar",
+          "label_it": "Calendario e riposo",
+          "light": "MISSING",
+          "note_it": "Calendario e riposo: non disponibile."
+        },
+        {
+          "id": "news",
+          "label_it": "Notizie",
+          "light": "PARTIAL",
+          "note_it": "Notizie: parzialmente trovato. I dati restano nel dossier anche se non tutti entrano nel modello."
+        }
+      ],
+      "facts_used": [
+        "sources_attempted=17",
+        "sources_successful=1",
+        "model_inputs=0",
+        "has_inference=false",
+        "odds_entered_model=false",
+        "sources_summary_counts",
+        "live_research=2",
+        "historical_priors=0",
+        "odds_entered_model=false",
+        "insufficient_independent=true"
+      ],
+      "found": [
+        "Dato tecnico \"news_other\" (descrizione non in dizionario — non interpretato) = Schuster makes Brentford PL debut at unchanged Bournemouth LIVE! (sky-sports, ricerca evento, Sat, 12 Sep 2026 13:20:00 BST)",
+        "Dato tecnico \"wind_kmh\" (descrizione non in dizionario — non interpretato) = 24.1 (open-meteo, ricerca evento, 2026-09-12T14:00:00.000Z)",
+        "Dato tecnico \"precip_mm\" (descrizione non in dizionario — non interpretato) = 0 (open-meteo, ricerca evento, 2026-09-12T14:00:00.000Z)",
+        "Dato tecnico \"temp_c\" (descrizione non in dizionario — non interpretato) = 19.2 (open-meteo, ricerca evento, 2026-09-12T14:00:00.000Z)"
+      ]
+    },
+    "team_identity": {
+      "home": {
+        "display_name": "AFC Bournemouth",
+        "canonical_id": "bournemouth",
+        "matched": true,
+        "method": "alias_unverified",
+        "aliases": [
+          "AFC Bournemouth",
+          "afc bournemouth",
+          "bournemouth",
+          "live:bournemouth"
+        ],
+        "competition": null,
+        "provisional": false,
+        "provider_ids": {
+          "sofascore": null,
+          "api_sports": null,
+          "fbref": null,
+          "understat": null,
+          "whoscored": null
+        }
+      },
+      "away": {
+        "display_name": "Brentford",
+        "canonical_id": "brentford",
+        "matched": true,
+        "method": "alias_unverified",
+        "aliases": [
+          "Brentford",
+          "brentford",
+          "live:brentford"
+        ],
+        "competition": null,
+        "provisional": false,
+        "provider_ids": {
+          "sofascore": null,
+          "api_sports": null,
+          "fbref": null,
+          "understat": null,
+          "whoscored": null
+        }
+      },
+      "division": null,
+      "season": "live"
+    },
+    "poisson": null,
+    "reconciliation": [
+      {
+        "field": "injuries",
+        "label_it": "Infortuni",
+        "status": "NO_COMPARISON",
+        "sources": [],
+        "note_it": "Nessuna fonte ha estratto Infortuni per questa partita."
+      },
+      {
+        "field": "lineup",
+        "label_it": "Formazione",
+        "status": "NO_COMPARISON",
+        "sources": [],
+        "note_it": "Nessuna fonte ha estratto Formazione per questa partita."
+      },
+      {
+        "field": "xg",
+        "label_it": "xG",
+        "status": "NO_COMPARISON",
+        "sources": [],
+        "note_it": "Nessuna fonte ha estratto xG per questa partita."
+      },
+      {
+        "field": "elo",
+        "label_it": "Elo",
+        "status": "NO_COMPARISON",
+        "sources": [],
+        "note_it": "Nessuna fonte ha estratto Elo per questa partita."
+      },
+      {
+        "field": "form",
+        "label_it": "Forma / risultati",
+        "status": "NO_COMPARISON",
+        "sources": [],
+        "note_it": "Nessuna fonte ha estratto Forma / risultati per questa partita."
+      }
+    ],
+    "research_plan": {
+      "topics": [
+        "historical_form",
+        "team_statistics",
+        "goals",
+        "shots",
+        "shots_on_target",
+        "corners",
+        "cards",
+        "clean_sheets",
+        "xg",
+        "injuries",
+        "suspensions",
+        "expected_lineup",
+        "confirmed_lineup",
+        "goalkeeper",
+        "ppda",
+        "possession",
+        "h2h",
+        "elo",
+        "coach",
+        "tactics",
+        "weather",
+        "schedule_rest",
+        "market"
+      ]
+    },
+    "data_quality": {
+      "data_quality_score": 0.305,
+      "letter": "D",
+      "breakdown": {
+        "coverage": 0,
+        "source_breadth": 0.5,
+        "freshness": 1,
+        "conflict_penalty": 0,
+        "temporal_penalty": 0
+      },
+      "note_it": "Qualita dati D (31%). Non sostituisce i gate del modello e non produce probabilita."
+    },
+    "conflicts": [],
+    "real_money": false
+  },
+  "neon_in_use": false
+}

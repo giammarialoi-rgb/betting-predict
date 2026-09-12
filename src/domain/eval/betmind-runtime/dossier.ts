@@ -661,9 +661,12 @@ export function compactDossierForMirror(d: AnalysisDossier): Record<string, unkn
   };
 }
 
-export async function upsertDossierStore(dossier: AnalysisDossier): Promise<void> {
+export async function upsertDossierStore(
+  dossier: AnalysisDossier,
+  root?: string,
+): Promise<void> {
   try {
-    getStorage().upsertDossier(dossier.event.event_id, compactDossierForMirror(dossier));
+    getStorage(root).upsertDossier(dossier.event.event_id, compactDossierForMirror(dossier));
   } catch (e) {
     console.warn(
       `[dossier-store] upsert failed event=${dossier.event.event_id}:`,
@@ -675,16 +678,30 @@ export async function upsertDossierStore(dossier: AnalysisDossier): Promise<void
 /** @deprecated name — writes filesystem, not Neon. */
 export const upsertDossierNeon = upsertDossierStore;
 
-export async function loadDossierStore(eventId: string): Promise<AnalysisDossier | null> {
+export async function loadDossierStore(
+  eventId: string,
+  root?: string,
+): Promise<AnalysisDossier | null> {
   try {
-    const payload = getStorage().loadDossier(eventId);
-    if (!payload) return null;
-    return typeof payload === "string"
-      ? (JSON.parse(payload) as AnalysisDossier)
-      : (payload as AnalysisDossier);
+    const payload = getStorage(root).loadDossier(eventId);
+    if (payload) {
+      return typeof payload === "string"
+        ? (JSON.parse(payload) as AnalysisDossier)
+        : (payload as AnalysisDossier);
+    }
+  } catch {
+    /* Vercel has no Lab B disk — fall through to remote dossier */
+  }
+  try {
+    const { findDossierInRemoteMirror, readRemoteMirror, isRealAnalysisDossier } = await import(
+      "@/domain/eval/betmind-runtime/remote-mirror"
+    );
+    const remote = findDossierInRemoteMirror(await readRemoteMirror(), eventId);
+    if (remote && isRealAnalysisDossier(remote)) return remote as AnalysisDossier;
   } catch {
     return null;
   }
+  return null;
 }
 
 /** @deprecated name — reads filesystem, not Neon. */
@@ -774,7 +791,7 @@ export async function mirrorDossiersToStore(
       skipped += 1;
       continue;
     }
-    await upsertDossierStore(d);
+    await upsertDossierStore(d, labB);
     upserted += 1;
   }
   return { attempted, upserted, skipped };

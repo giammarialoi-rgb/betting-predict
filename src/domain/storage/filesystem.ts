@@ -3,7 +3,7 @@
  * Least-invasive host option already in the repo.
  * NEON NON UTILIZZATO
  */
-import { appendFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { appendFileSync, existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { permanentRoot044 } from "@/domain/eval/permanent-044/config";
 import { NEON_IN_USE, STORAGE_BACKEND, assertNeonBanned } from "@/domain/storage/neon-ban";
@@ -150,6 +150,26 @@ export class FilesystemStorageProvider implements StorageProvider {
   loadDossier(eventId: string): unknown | null {
     const row = readJsonFile<{ payload?: unknown }>(join(this.dossierDir(), `${safeEventId(eventId)}.json`));
     return row?.payload ?? null;
+  }
+
+  listDossiers(): Array<{ event_id: string; published_at: string; payload: unknown }> {
+    const dir = this.dossierDir();
+    if (!existsSync(dir)) return [];
+    const out: Array<{ event_id: string; published_at: string; payload: unknown }> = [];
+    for (const name of readdirSync(dir)) {
+      if (!name.endsWith(".json")) continue;
+      const row = readJsonFile<{ event_id?: string; published_at?: string; payload?: unknown }>(
+        join(dir, name),
+      );
+      const eventId = String(row?.event_id ?? "");
+      if (!eventId || row?.payload == null) continue;
+      out.push({
+        event_id: eventId,
+        published_at: String(row.published_at ?? ""),
+        payload: row.payload,
+      });
+    }
+    return out;
   }
 
   upsertLightAnalysis(row: { event_id: string; analyzed_at?: string }): void {
