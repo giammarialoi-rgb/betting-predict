@@ -256,7 +256,7 @@ function vercelBlobStore(): RemoteMirrorStore {
     kind: "vercel_blob",
     async read() {
       const { get } = await import("@vercel/blob");
-      let result: { statusCode?: number; stream?: ReadableStream<Uint8Array> | null };
+      let result: { statusCode?: number; stream?: ReadableStream<Uint8Array> | null } | null;
       try {
         result = await get(REMOTE_MIRROR_PATHNAME, {
           access: "private",
@@ -402,7 +402,13 @@ export async function acceptRuntimeIngest(body: unknown): Promise<{
 }> {
   const parsed = ingestRuntimeMirrorBody(body);
   if (!parsed.ok || !parsed.payload) {
-    return { ...parsed, neon_in_use: false };
+    return {
+      ok: parsed.ok,
+      status: parsed.status,
+      neon_in_use: false,
+      error: parsed.error,
+      error_it: parsed.error_it,
+    };
   }
   if (!remoteMirrorDurableConfigured()) {
     return {
