@@ -3,6 +3,7 @@
  */
 import { appendFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
+import { coerceAvailableAtToIso } from "@/lib/available-at";
 import { permanentRoot044 } from "@/domain/eval/permanent-044/config";
 
 export type ResearchPhase =
@@ -49,7 +50,11 @@ export function appendResearchStatus(
   root = permanentRoot044(),
 ): void {
   mkdirSync(root, { recursive: true });
-  appendFileSync(researchStatusPath(root), `${JSON.stringify(row)}\n`, "utf8");
+  const sanitized: ResearchStatusRow = {
+    ...row,
+    available_at: coerceAvailableAtToIso(row.available_at),
+  };
+  appendFileSync(researchStatusPath(root), `${JSON.stringify(sanitized)}\n`, "utf8");
 }
 
 export function loadResearchStatusForEvent(

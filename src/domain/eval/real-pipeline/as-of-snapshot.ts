@@ -1,7 +1,16 @@
 import { AsOfLeakageError, assertAsOf } from "@/lib/as-of";
+import { coerceAvailableAtToIso } from "@/lib/available-at";
 import type { ResearchObservation } from "@/domain/eval/data-intelligence/research/observations-store";
 import type { PermanentEvent044, PermanentQuote044 } from "@/domain/eval/permanent-044/types";
 import type { AsOfSnapshot, AsOfSnapshotField } from "@/domain/eval/real-pipeline/types";
+
+function clockOrUnknown(raw: string | null | undefined): {
+  iso: string | null;
+  precision: "exact" | "unknown";
+} {
+  const iso = coerceAvailableAtToIso(raw);
+  return { iso, precision: iso ? "exact" : "unknown" };
+}
 
 export class PreMatchLeakageError extends Error {
   readonly code = "PRE_MATCH_LEAKAGE";
@@ -54,18 +63,19 @@ export function buildAsOfSnapshot(input: {
   const blockedByTemporal: AsOfSnapshotField[] = [];
   const asOfMs = Date.parse(input.asOf);
 
+  const identityClock = clockOrUnknown(input.event.available_at_utc ?? input.event.collected_at_utc);
   fields.push({
     key: "home",
     value: input.event.home_or_a,
     provenance: {
       source_id: input.event.source,
       observed_at: input.event.collected_at_utc,
-      available_at: input.event.available_at_utc ?? input.event.collected_at_utc,
+      available_at: identityClock.iso,
       extraction_method: "event_identity",
       epistemic_kind: "FACT",
     },
     enters_model: false,
-    temporal_precision: "exact",
+    temporal_precision: identityClock.precision,
   });
   fields.push({
     key: "away",
@@ -73,16 +83,17 @@ export function buildAsOfSnapshot(input: {
     provenance: {
       source_id: input.event.source,
       observed_at: input.event.collected_at_utc,
-      available_at: input.event.available_at_utc ?? input.event.collected_at_utc,
+      available_at: identityClock.iso,
       extraction_method: "event_identity",
       epistemic_kind: "FACT",
     },
     enters_model: false,
-    temporal_precision: "exact",
+    temporal_precision: identityClock.precision,
   });
 
   for (const obs of input.observations ?? []) {
-    const available = obs.available_at ?? null;
+    const { iso: available, precision } = clockOrUnknown(obs.available_at);
+    const wantsModel = obs.enters_independent_model === true && obs.status === "REAL";
     const row: AsOfSnapshotField = {
       key: obs.feature_key,
       value: obs.value,
@@ -93,11 +104,12 @@ export function buildAsOfSnapshot(input: {
         extraction_method: obs.extraction_method,
         epistemic_kind: obs.kind === "HISTORICAL_PRIOR" ? "QUANTITATIVE_EVIDENCE" : "FACT",
       },
-      enters_model: obs.enters_independent_model === true && obs.status === "REAL",
-      temporal_precision: available ? "exact" : "unknown",
+      // Fail closed without aborting ANALYZE_EVENT: no clock → cannot enter the model.
+      enters_model: wantsModel && available != null,
+      temporal_precision: precision,
     };
-    if (available && Date.parse(available) > asOfMs) {
-      blockedByTemporal.push(row);
+    if (available && Number.isFinite(asOfMs) && Date.parse(available) > asOfMs) {
+      blockedByTemporal.push({ ...row, enters_model: false });
       continue;
     }
     if (obs.kind === "MARKET" || fieldLooksLikeClosingOdds(obs.feature_key)) {
@@ -108,7 +120,7 @@ export function buildAsOfSnapshot(input: {
   }
 
   for (const q of input.quotes ?? []) {
-    const available = q.available_at_utc ?? q.collected_at_utc;
+    const { iso: available, precision } = clockOrUnknown(q.available_at_utc ?? q.collected_at_utc);
     const row: AsOfSnapshotField = {
       key: `quote.${q.market}.${q.selection}.${q.bookmaker}`,
       value: q.price,
@@ -120,9 +132,9 @@ export function buildAsOfSnapshot(input: {
         epistemic_kind: "FACT",
       },
       enters_model: false,
-      temporal_precision: "exact",
+      temporal_precision: precision,
     };
-    if (available && Date.parse(available) > asOfMs) {
+    if (available && Number.isFinite(asOfMs) && Date.parse(available) > asOfMs) {
       blockedByTemporal.push(row);
       continue;
     }
@@ -164,7 +176,7 @@ export function assertPreMatchData(snapshot: AsOfSnapshot, kickoff: string | Dat
     if (fieldLooksLikeClosingOdds(field.key) && field.enters_model) {
       throw new PreMatchLeakageError(`${bucket}.${field.key} closing/market odds cannot enter independent model`);
     }
-    const available = field.provenance.available_at;
+    const available = coerceAvailableAtToIso(field.provenance.available_at);
     if (!available) {
       if (field.enters_model) {
         throw new PreMatchLeakageError(

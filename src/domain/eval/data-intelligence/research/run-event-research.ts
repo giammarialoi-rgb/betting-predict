@@ -39,6 +39,7 @@ import { resolveEventIdentity } from "@/domain/eval/data-intelligence/research/e
 import { attachAcquisitionCacheToEvent } from "@/domain/eval/data-intelligence/research/attach-acquisition-cache";
 import { RSS_FEEDS, type RssSourceId } from "@/domain/eval/data-intelligence/research/rss-news";
 import { ACTIVE_FONTI_SOURCE_IDS } from "@/domain/eval/acquisition-engine/active-fonti";
+import { coerceAvailableAtToIso } from "@/lib/available-at";
 
 export type ResearchCycleResult = {
   events_touched: number;
@@ -728,7 +729,7 @@ export async function runEventResearchBatch(input: {
             ok: rss.status === "PARTIAL",
             fetched: rss.http_status != null,
             fetched_at: rss.http_status != null ? nowIso : null,
-            available_at: rss.matched_pubDate,
+            available_at: coerceAvailableAtToIso(rss.matched_pubDate),
             observed_at: rss.status === "PARTIAL" ? nowIso : null,
             reason: rss.reason,
             raw_ref: rss.matched_link,
@@ -764,7 +765,7 @@ export async function runEventResearchBatch(input: {
             source: sid,
             source_url: rss.matched_link ?? rss.url,
             observed_at: nowIso,
-            available_at: rss.matched_pubDate,
+            available_at: coerceAvailableAtToIso(rss.matched_pubDate),
             extraction_method: "public_rss",
             confidence: null,
             status: "CONTEXT" as const,

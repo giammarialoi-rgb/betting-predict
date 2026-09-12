@@ -1,6 +1,7 @@
 /**
  * News classification. Headlines stay CONTEXT. Never become probability.
  */
+import { coerceAvailableAtToIso } from "@/lib/available-at";
 export type NewsCategory =
   | "INJURY"
   | "SUSPENSION"
@@ -55,7 +56,7 @@ export function newsObservationFromRss(input: {
 }): NewsObservation {
   return {
     source: input.source,
-    published_at: input.pubDate,
+    published_at: coerceAvailableAtToIso(input.pubDate),
     team: null,
     event: input.eventId,
     category: classifyNewsText(input.title),

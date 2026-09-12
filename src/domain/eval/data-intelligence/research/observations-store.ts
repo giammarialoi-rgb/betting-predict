@@ -4,7 +4,20 @@
  */
 import { appendFileSync, existsSync, mkdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
+import { coerceAvailableAt } from "@/lib/available-at";
 import { permanentRoot044 } from "@/domain/eval/permanent-044/config";
+
+function sanitizeObservationClock(row: ResearchObservation): ResearchObservation {
+  const coerced = coerceAvailableAt(row.available_at);
+  if (!coerced.unparseable && coerced.iso === row.available_at) return row;
+  if (!coerced.unparseable && coerced.iso === null && row.available_at == null) return row;
+  return {
+    ...row,
+    available_at: coerced.iso,
+    enters_independent_model: coerced.unparseable ? false : row.enters_independent_model,
+    status: coerced.unparseable && row.status === "REAL" ? "INVALID" : row.status,
+  };
+}
 
 export type ResearchObservationKind =
   | "HISTORICAL_PRIOR"
@@ -47,11 +60,12 @@ const writtenThisProcess = new Set<string>();
 
 /** Append unless the same logical observation was already persisted this process. */
 export function appendResearchObservation(row: ResearchObservation, root = permanentRoot044()): boolean {
-  const key = `${row.event_id}|${row.source}|${row.feature_key}|${row.available_at ?? ""}`;
+  const sanitized = sanitizeObservationClock(row);
+  const key = `${sanitized.event_id}|${sanitized.source}|${sanitized.feature_key}|${sanitized.available_at ?? ""}`;
   if (writtenThisProcess.has(key)) return false;
   writtenThisProcess.add(key);
   mkdirSync(root, { recursive: true });
-  appendFileSync(researchObservationsPath(root), `${JSON.stringify(row)}\n`, "utf8");
+  appendFileSync(researchObservationsPath(root), `${JSON.stringify(sanitized)}\n`, "utf8");
   return true;
 }
 
@@ -68,7 +82,7 @@ export function loadResearchObservationsForEvent(
     try {
       const row = JSON.parse(lines[i]!) as ResearchObservation;
       if (row.event_id === eventId) {
-        out.push(row);
+        out.push(sanitizeObservationClock(row));
         if (out.length >= limit) break;
       }
     } catch {
