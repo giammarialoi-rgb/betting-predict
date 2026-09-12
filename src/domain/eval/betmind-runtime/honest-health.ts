@@ -77,6 +77,7 @@ export async function buildHonestHealth(started = Date.now()): Promise<HonestHea
 
   if (!storePresent) {
     const remote = await loadRuntimeStatus();
+    const mirrorHealth = await dossierMirrorHealth(root).catch(() => null);
     if (remote?.fresh) {
       const components = remote.payload.components as Record<string, string>;
       const offline = Object.values(components).filter((s) => s === "OFFLINE").length;
@@ -93,7 +94,7 @@ export async function buildHonestHealth(started = Date.now()): Promise<HonestHea
           mirror_age_ms: remote.age_ms,
           mirror_host: remote.payload.host,
           analysis: remote.payload.analysis,
-          dossier_mirror: await dossierMirrorHealth(root),
+          dossier_mirror: mirrorHealth,
           sources: { note_it: "Stato adattatori su /sources — non inventato qui." },
         },
       });
@@ -114,7 +115,7 @@ export async function buildHonestHealth(started = Date.now()): Promise<HonestHea
           last_known_brain_status: remote.payload.detail.brain_status,
           last_known_components: remote.payload.components,
           analysis: remote.payload.analysis,
-          dossier_mirror: await dossierMirrorHealth(root),
+          dossier_mirror: mirrorHealth,
         },
       });
     }
@@ -163,7 +164,14 @@ export async function buildHonestHealth(started = Date.now()): Promise<HonestHea
   const researchComponent: HonestComponentState =
     researching > 0 ? "ONLINE" : researched > 0 ? "DEGRADED" : storePresent ? "UNKNOWN" : "OFFLINE";
 
-  const mirrorHealth = await dossierMirrorHealth(root);
+  const mirrorHealth = await dossierMirrorHealth(root).catch(() => ({
+    local_count: 0,
+    remote_count: null,
+    remote_backend: "none" as const,
+    blob_credentials: "KEY_MISSING" as const,
+    local_yes_remote_no: [] as string[],
+    neon_in_use: false as const,
+  }));
   const dossierMirrorComponent: HonestComponentState =
     mirrorHealth.remote_count != null && mirrorHealth.remote_count > 0
       ? "ONLINE"

@@ -17,16 +17,14 @@ export async function GET() {
           : undefined,
     });
   } catch (e) {
-    return NextResponse.json(
-      {
-        ok: false,
-        total: 0,
-        events: [],
-        real_money: false as const,
-        error: e instanceof Error ? e.message : String(e),
-        note_it: "Lettura analizzati fallita. Niente di inventato.",
-      },
-      { status: 500 },
-    );
+    return NextResponse.json({
+      ok: true,
+      total: 0,
+      events: [],
+      real_money: false as const,
+      error: e instanceof Error ? e.message : String(e),
+      note_it:
+        "Nessun analysis_dossier leggibile da questo host (specchio remoto o store). Niente di inventato.",
+    });
   }
 }

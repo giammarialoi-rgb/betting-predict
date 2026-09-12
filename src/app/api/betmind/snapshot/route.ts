@@ -22,7 +22,11 @@ import {
   writeSnapshotCache,
 } from "@/domain/eval/betmind-runtime/snapshot-cache";
 import { collectLocalLiveForRemote, overlayLiveOnEvents } from "@/domain/eval/betmind-runtime/live-state";
-import { liveRowsFromRemoteArtifact, readRemoteMirror } from "@/domain/eval/betmind-runtime/remote-mirror";
+import {
+  liveRowsFromRemoteArtifact,
+  overlayAnalyzedDossiersOntoEvents,
+  readRemoteMirror,
+} from "@/domain/eval/betmind-runtime/remote-mirror";
 
 export const dynamic = "force-dynamic";
 export { invalidateBetMindSnapshotCache };
@@ -109,7 +113,7 @@ export async function GET() {
           ? {
               ...obs,
               next_events: overlayLiveOnEvents(
-                (obs.next_events as unknown[]) ?? [],
+                overlayAnalyzedDossiersOntoEvents((obs.next_events as unknown[]) ?? [], art),
                 liveRows,
               ),
             }

@@ -65,8 +65,8 @@ export class FilesystemStorageProvider implements StorageProvider {
   constructor(root = permanentRoot044()) {
     assertNeonBanned("FilesystemStorageProvider");
     this.root = root;
-    mkdirSync(this.mirrorDir(), { recursive: true });
-    mkdirSync(this.dossierDir(), { recursive: true });
+    // Do not mkdir in the constructor — Vercel /var/task is read-only.
+    // Write paths mkdir lazily; list/load treat missing dirs as empty.
   }
 
   private mirrorDir(): string {

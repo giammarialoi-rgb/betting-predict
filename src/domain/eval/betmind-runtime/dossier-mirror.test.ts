@@ -6,6 +6,7 @@ import { afterEach, describe, it } from "node:test";
 import { getStorage, NEON_IN_USE } from "@/domain/storage";
 import {
   createMemoryRemoteMirrorStore,
+  findBoardEventInRemoteMirror,
   findDossierInRemoteMirror,
   isRealAnalysisDossier,
   setRemoteMirrorStoreOverride,
@@ -134,10 +135,17 @@ describe("repairMirror local YES remote NO", () => {
     assert.equal(repaired.local, true);
     assert.equal(repaired.repaired, true);
     assert.equal(repaired.remote_readable, true);
-    const remote = findDossierInRemoteMirror(await mem.read(), "ev-gold-1");
+    const art = await mem.read();
+    const remote = findDossierInRemoteMirror(art, "ev-gold-1");
     assert.ok(remote);
     assert.equal((remote.event as { event_id: string }).event_id, "ev-gold-1");
     assert.ok(Array.isArray(remote.features));
+    const board = findBoardEventInRemoteMirror(art, "ev-gold-1");
+    assert.ok(board);
+    assert.equal(board.bucket, "ANALYZED");
+    assert.equal(board.dossier_present, true);
+    const next = art?.payload.observatory?.next_events as Array<{ event_id?: string }>;
+    assert.ok(next?.some((e) => e.event_id === "ev-gold-1"));
   });
 
   it("does not invent a remote dossier when local is missing", async () => {
@@ -161,5 +169,9 @@ describe("persistAndMirrorDossier", () => {
     assert.equal(result.local_verified, true);
     assert.equal(result.remote_verified, true);
     assert.equal(NEON_IN_USE, false);
+    const art = await mem.read();
+    assert.ok(findBoardEventInRemoteMirror(art, "ev-gold-2"));
+    const next = art?.payload.observatory?.next_events as Array<{ event_id?: string }>;
+    assert.ok(next?.some((e) => e.event_id === "ev-gold-2"));
   });
 });

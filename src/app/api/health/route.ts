@@ -16,20 +16,19 @@ export async function GET() {
       latencyMs: health.latency_ms,
     });
   } catch (error) {
-    return NextResponse.json(
-      {
-        ok: false,
-        app: "ok",
-        db: "unused",
-        neon_in_use: false,
-        neon_status_it: "NEON NON UTILIZZATO",
-        project: "sports-prediction-engine",
-        service: "betmind",
-        error: error instanceof Error ? error.message : "unknown",
-        latencyMs: Date.now() - started,
-        real_money: false,
-      },
-      { status: 503 },
-    );
+    return NextResponse.json({
+      ok: false,
+      app: "ok",
+      db: "unused",
+      neon_in_use: false,
+      neon_status_it: "NEON NON UTILIZZATO",
+      project: "sports-prediction-engine",
+      service: "betmind",
+      error: error instanceof Error ? error.message : "unknown",
+      latencyMs: Date.now() - started,
+      real_money: false,
+      note_it:
+        "Health letto senza store Lab B locale. Usa lo specchio Blob se presente. Niente di inventato.",
+    });
   }
 }

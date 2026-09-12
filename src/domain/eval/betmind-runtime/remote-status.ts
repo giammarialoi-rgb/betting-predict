@@ -35,6 +35,7 @@ import {
 import { getStorage } from "@/domain/storage";
 import {
   extractBoardEventsFromPayload,
+  overlayAnalyzedDossiersOntoEvents,
   pushRuntimeToRemoteIngest,
   readRemoteMirror,
   remoteFreshness,
@@ -795,14 +796,15 @@ export async function loadBoardEventsFromStore(q: {
     const root = permanentRoot044();
     const rows = localLabStorePresent(root) ? storage().loadBoardEvents() : [];
     let events = rowsToBoardEvents(rows);
+    const remote = await readRemoteMirror();
     if (!events.length) {
-      const remote = await readRemoteMirror();
       if (remote?.board_events?.length) {
         events = rowsToBoardEvents(remote.board_events);
       } else if (Array.isArray(remote?.payload?.observatory?.next_events)) {
         events = remote.payload.observatory.next_events as unknown[];
       }
     }
+    events = overlayAnalyzedDossiersOntoEvents(events, remote);
     if (!events.length && !rows.length) return null;
     const filtered = events.filter((e) =>
       matchesCalendarQuery(e as { calendar_day?: string; kickoff_utc?: string; sport?: string }, q),

@@ -13,6 +13,13 @@ import { timingSafeEqual } from "node:crypto";
 import type { BoardEventMirrorRow, LiveStateMirrorRow } from "@/domain/storage/types";
 import { NEON_IN_USE } from "@/domain/storage/neon-ban";
 import {
+  analyzedEventFromDossierRow,
+  mergeBoardEventsPreservingAnalyzed,
+  mergeNextEventsPreservingAnalyzed,
+  overlayAnalyzedBoardOntoEvents,
+  overlayAnalyzedDossierPayloadsOntoEvents,
+} from "@/domain/eval/betmind-runtime/analyzed-board";
+import {
   collectLiveRows,
   latestLiveTimestamp,
   overlayLiveOnEvents,
@@ -469,8 +476,27 @@ export async function writeRemoteMirror(
     if ((existing?.learning_cases?.length ?? 0) > 0 && mergedLearning.length === 0) {
       return { ok: false, error: "learning_merge_empty" };
     }
+    const incomingBoard = Array.isArray(boardEvents)
+      ? boardEvents
+      : extractBoardEventsFromPayload(payload);
+    const mergedBoard = mergeBoardEventsPreservingAnalyzed(existing?.board_events, incomingBoard);
+    const mergedNext = overlayAnalyzedBoardOntoEvents(
+      mergeNextEventsPreservingAnalyzed(
+        existingPayload.observatory?.next_events,
+        payload.observatory?.next_events,
+      ),
+      mergedBoard,
+    );
+    const existingObservatory = existingPayload.observatory ?? null;
+    const incomingObservatory = payload.observatory ?? null;
     const mergedPayload: RuntimeIngestPayload = {
+      ...existingPayload,
       ...payload,
+      observatory: {
+        ...(existingObservatory ?? {}),
+        ...(incomingObservatory ?? {}),
+        next_events: mergedNext,
+      },
       recent_settlements: mergePayloadArrayByEventId(
         existingPayload.recent_settlements,
         payload.recent_settlements,
@@ -480,7 +506,7 @@ export async function writeRemoteMirror(
         payload.learning_cases,
       ),
     };
-    const art = buildRemoteMirrorArtifact(mergedPayload, boardEvents, store.kind, merged, {
+    const art = buildRemoteMirrorArtifact(mergedPayload, mergedBoard, store.kind, merged, {
       live_states: mergedLive,
       settlements: mergedSettlements,
       learning_cases: mergedLearning,
@@ -727,6 +753,23 @@ export function unwrapBoardEventRow(row: unknown): Record<string, unknown> | nul
     bucket: rec.bucket ?? payload.bucket ?? null,
     published_at: rec.published_at ?? payload.published_at ?? null,
   };
+}
+
+/**
+ * Eventi listing: union board/next_events with ANALYZED metadata from real dossiers.
+ * Never synthesizes a dossier from a board row.
+ */
+export function overlayAnalyzedDossiersOntoEvents(
+  events: unknown[],
+  remote: RemoteMirrorArtifact | null,
+): unknown[] {
+  const extras: Record<string, unknown>[] = [];
+  for (const row of remote?.dossiers ?? []) {
+    if (!row?.event_id || !isRealAnalysisDossier(row.dossier)) continue;
+    const ev = analyzedEventFromDossierRow(row);
+    if (ev) extras.push(ev);
+  }
+  return overlayAnalyzedDossierPayloadsOntoEvents(events, extras);
 }
 
 /**

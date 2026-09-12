@@ -39,7 +39,8 @@ function toRow(analysis: LightAnalysis): AnalyzedListRow | null {
 }
 
 function dossierToRow(dossier: AnalysisDossier): AnalyzedListRow {
-  const p = dossier.independent_model.probability;
+  const im = dossier.independent_model;
+  const p = im?.probability;
   const favorite =
     p && typeof p.HOME === "number" && typeof p.DRAW === "number" && typeof p.AWAY === "number"
       ? p.HOME >= p.DRAW && p.HOME >= p.AWAY
@@ -69,8 +70,8 @@ function dossierToRow(dossier: AnalysisDossier): AnalyzedListRow {
     favorite_1x2: favorite,
     markets: [],
     prose: [
-      dossier.independent_model.note ?? "",
-      dossier.independent_model.decision ? `decision=${dossier.independent_model.decision}` : "",
+      im?.note ?? "",
+      im?.decision ? `decision=${im.decision}` : "",
     ].filter(Boolean),
     sources_used: dossier.lineage?.sources_consulted ?? [],
   };
@@ -79,24 +80,48 @@ function dossierToRow(dossier: AnalysisDossier): AnalyzedListRow {
 export async function listAnalyzedEvents(cwd = process.cwd()): Promise<AnalyzedListRow[]> {
   const byId = new Map<string, AnalyzedListRow>();
 
-  for (const row of (await loadAllLightAnalyses(cwd)).map(toRow)) {
-    if (row) byId.set(row.event_id, row);
+  try {
+    for (const row of (await loadAllLightAnalyses(cwd)).map(toRow)) {
+      if (row) byId.set(row.event_id, row);
+    }
+  } catch {
+    /* ephemeral / read-only FS — remote dossiers remain the SoT on Vercel */
   }
 
-  const storage = getStorage(permanentRoot044());
-  for (const listed of storage.listDossiers()) {
-    if (!isRealAnalysisDossier(listed.payload)) continue;
-    const strong = dossierToRow(listed.payload as AnalysisDossier);
-    const prev = byId.get(strong.event_id);
-    byId.set(strong.event_id, prev ? { ...prev, ...strong, light: prev.light, light_label_it: prev.light_label_it, markets: prev.markets, prose: [...prev.prose, ...strong.prose] } : strong);
+  try {
+    const storage = getStorage(permanentRoot044());
+    for (const listed of storage.listDossiers()) {
+      if (!isRealAnalysisDossier(listed.payload)) continue;
+      const strong = dossierToRow(listed.payload as AnalysisDossier);
+      const prev = byId.get(strong.event_id);
+      byId.set(
+        strong.event_id,
+        prev
+          ? {
+              ...prev,
+              ...strong,
+              light: prev.light,
+              light_label_it: prev.light_label_it,
+              markets: prev.markets,
+              prose: [...prev.prose, ...strong.prose],
+            }
+          : strong,
+      );
+    }
+  } catch {
+    /* Vercel has no writable Lab B — do not 500 */
   }
 
-  const remote = await readRemoteMirror();
-  for (const row of remote?.dossiers ?? []) {
-    if (!isRealAnalysisDossier(row.dossier)) continue;
-    const strong = dossierToRow(row.dossier as AnalysisDossier);
-    const prev = byId.get(strong.event_id);
-    byId.set(strong.event_id, prev ? { ...prev, strong: true, strong_label_it: "Forte" } : strong);
+  try {
+    const remote = await readRemoteMirror();
+    for (const row of remote?.dossiers ?? []) {
+      if (!isRealAnalysisDossier(row.dossier)) continue;
+      const strong = dossierToRow(row.dossier as AnalysisDossier);
+      const prev = byId.get(strong.event_id);
+      byId.set(strong.event_id, prev ? { ...prev, strong: true, strong_label_it: "Forte" } : strong);
+    }
+  } catch {
+    /* Blob unread — return whatever we have, including empty */
   }
 
   const rows = [...byId.values()];
