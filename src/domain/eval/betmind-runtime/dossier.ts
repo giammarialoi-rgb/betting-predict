@@ -25,6 +25,10 @@ import { catalogueAdapterKind } from "@/domain/eval/data-intelligence/research/s
 import { isPrunedFontiSource } from "@/domain/eval/acquisition-engine/active-fonti";
 import { getStorage } from "@/domain/storage";
 import { overlayUnderstatXgOnFeatureData } from "@/domain/eval/data-intelligence/research/understat-league";
+import {
+  findBoardEventInRemoteMirror,
+  readRemoteMirror,
+} from "@/domain/eval/betmind-runtime/remote-mirror";
 
 export type UiFeatureStatus =
   | "ELIGIBLE"
@@ -686,7 +690,7 @@ export async function loadDossierStore(eventId: string): Promise<AnalysisDossier
 /** @deprecated name — reads filesystem, not Neon. */
 export const loadDossierNeon = loadDossierStore;
 
-/** Board row from filesystem mirror — identity check only; never silently treat as full dossier. */
+/** Board row from filesystem, then the same remote Blob mirror as the Eventi list. Never a dossier. */
 export async function loadBoardEventStore(
   eventId: string,
 ): Promise<Record<string, unknown> | null> {
@@ -694,17 +698,23 @@ export async function loadBoardEventStore(
     const row = getStorage()
       .loadBoardEvents()
       .find((r) => r.event_id === eventId);
-    if (!row) return null;
-    const payload =
-      typeof row.payload === "string"
-        ? (JSON.parse(row.payload) as Record<string, unknown>)
-        : ((row.payload ?? {}) as Record<string, unknown>);
-    return {
-      ...payload,
-      event_id: eventId,
-      bucket: row.bucket ?? payload.bucket ?? null,
-      published_at: row.published_at,
-    };
+    if (row) {
+      const payload =
+        typeof row.payload === "string"
+          ? (JSON.parse(row.payload) as Record<string, unknown>)
+          : ((row.payload ?? {}) as Record<string, unknown>);
+      return {
+        ...payload,
+        event_id: eventId,
+        bucket: row.bucket ?? payload.bucket ?? null,
+        published_at: row.published_at,
+      };
+    }
+  } catch {
+    /* Vercel has no Lab B disk — fall through to remote mirror */
+  }
+  try {
+    return findBoardEventInRemoteMirror(await readRemoteMirror(), eventId);
   } catch {
     return null;
   }

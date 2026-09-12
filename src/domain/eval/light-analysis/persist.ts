@@ -5,6 +5,10 @@
 import { appendFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { permanentRoot044 } from "@/domain/eval/permanent-044/config";
+import {
+  findLightAnalysisInRemoteMirror,
+  readRemoteMirror,
+} from "@/domain/eval/betmind-runtime/remote-mirror";
 import type { LightAnalysis } from "@/domain/eval/light-analysis/types";
 
 export function lightAnalysisDiskPath(cwd = process.cwd()): string {
@@ -118,7 +122,14 @@ export async function loadLightAnalysesNeon(): Promise<LightAnalysis[]> {
 }
 
 export async function loadLightAnalysis(eventId: string, cwd = process.cwd()): Promise<LightAnalysis | null> {
-  return loadLightAnalysisFromDisk(eventId, cwd);
+  const disk = loadLightAnalysisFromDisk(eventId, cwd);
+  if (disk) return disk;
+  try {
+    const remote = findLightAnalysisInRemoteMirror(await readRemoteMirror(), eventId);
+    return remote ? (remote as LightAnalysis) : null;
+  } catch {
+    return null;
+  }
 }
 
 export async function loadAllLightAnalyses(cwd = process.cwd()): Promise<LightAnalysis[]> {

@@ -380,3 +380,84 @@ export function isRemoteMirrorSource(src: unknown): boolean {
   const s = String(src ?? "");
   return s === "remote" || s === "vercel_blob" || s === "memory" || s === "neon";
 }
+
+/** Unwrap a board row (mirror JSONL or observatory next_events) without inventing fields. */
+export function unwrapBoardEventRow(row: unknown): Record<string, unknown> | null {
+  if (!row || typeof row !== "object") return null;
+  const rec = row as Record<string, unknown>;
+  let payload: Record<string, unknown>;
+  if (typeof rec.payload === "string") {
+    try {
+      payload = JSON.parse(rec.payload) as Record<string, unknown>;
+    } catch {
+      payload = {};
+    }
+  } else if (rec.payload && typeof rec.payload === "object") {
+    payload = rec.payload as Record<string, unknown>;
+  } else {
+    payload = rec;
+  }
+  const eventId = String(rec.event_id || payload.event_id || "");
+  if (!eventId) return null;
+  return {
+    ...payload,
+    event_id: eventId,
+    bucket: rec.bucket ?? payload.bucket ?? null,
+    published_at: rec.published_at ?? payload.published_at ?? null,
+  };
+}
+
+/**
+ * Same sources as the Eventi list: Blob `board_events`, then observatory next_events.
+ * Does not invent a row when the id is absent from the remote mirror.
+ */
+export function findBoardEventInRemoteMirror(
+  remote: RemoteMirrorArtifact | null,
+  eventId: string,
+): Record<string, unknown> | null {
+  if (!remote || !eventId) return null;
+  for (const row of remote.board_events ?? []) {
+    const ev = unwrapBoardEventRow(row);
+    if (ev && String(ev.event_id) === eventId) return ev;
+  }
+  const next = remote.payload?.observatory?.next_events;
+  if (Array.isArray(next)) {
+    for (const row of next) {
+      const ev = unwrapBoardEventRow(row);
+      if (ev && String(ev.event_id) === eventId) return ev;
+    }
+  }
+  return null;
+}
+
+function asLightAnalysisRecord(v: unknown): Record<string, unknown> | null {
+  if (!v || typeof v !== "object") return null;
+  const rec = v as Record<string, unknown>;
+  if (!String(rec.event_id ?? "") || !Array.isArray(rec.markets) || rec.mode !== "light") {
+    return null;
+  }
+  return rec;
+}
+
+/**
+ * Surface a light analysis already stored on the remote mirror. Never synthesizes one
+ * from board lite fields.
+ */
+export function findLightAnalysisInRemoteMirror(
+  remote: RemoteMirrorArtifact | null,
+  eventId: string,
+): Record<string, unknown> | null {
+  if (!remote || !eventId) return null;
+  const extra = remote as RemoteMirrorArtifact & { light_analyses?: unknown };
+  const payload = remote.payload as RuntimeIngestPayload & { light_analyses?: unknown };
+  const lists = [extra.light_analyses, payload.light_analyses];
+  for (const list of lists) {
+    if (!Array.isArray(list)) continue;
+    for (const row of list) {
+      const hit = asLightAnalysisRecord(row);
+      if (hit && String(hit.event_id) === eventId) return hit;
+    }
+  }
+  const board = findBoardEventInRemoteMirror(remote, eventId);
+  return asLightAnalysisRecord(board?.light_analysis);
+}
