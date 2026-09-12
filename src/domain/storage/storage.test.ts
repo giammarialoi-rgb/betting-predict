@@ -37,6 +37,14 @@ describe("StorageProvider filesystem — works without Neon", () => {
     else delete process.env.DATABASE_URL;
   });
 
+  it("does not mkdir in the constructor — missing Lab B is an empty store", () => {
+    const root = join(tmpdir(), `bm-store-nomkdir-${Date.now()}`);
+    const store = getStorage(root);
+    assert.equal(store.listDossiers().length, 0);
+    assert.equal(store.loadBoardEvents().length, 0);
+    assert.equal(store.loadDossier("missing"), null);
+  });
+
   it("mirrors runtime, board, dossier, light, history on disk", () => {
     const root = mkdtempSync(join(tmpdir(), "bm-store-m-"));
     const store = getStorage(root);

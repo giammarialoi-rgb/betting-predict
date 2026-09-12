@@ -6,6 +6,10 @@
 import { getStorage } from "@/domain/storage";
 import { permanentRoot044 } from "@/domain/eval/permanent-044/config";
 import {
+  analyzedBoardRowFromDossier,
+  type AnalyzedDossierLike,
+} from "@/domain/eval/betmind-runtime/analyzed-board";
+import {
   blobCredentialsPresent,
   findDossierInRemoteMirror,
   getRemoteMirrorStore,
@@ -117,21 +121,25 @@ export function collectLocalDossiersForRemote(
   root = permanentRoot044(),
   eventIds?: string[],
 ): RemoteDossierMirrorRow[] {
-  const store = getStorage(root);
-  const rows: RemoteDossierMirrorRow[] = [];
-  const listed = store.listDossiers();
-  const allow = eventIds?.length ? new Set(eventIds) : null;
-  for (const row of listed) {
-    if (allow && !allow.has(row.event_id)) continue;
-    if (!isRealAnalysisDossier(row.payload)) continue;
-    rows.push({
-      event_id: row.event_id,
-      published_at: row.published_at || new Date().toISOString(),
-      dossier: row.payload as Record<string, unknown>,
-      dossier_version: dossierVersionOf(row.payload as AnalysisDossier),
-    });
+  try {
+    const store = getStorage(root);
+    const rows: RemoteDossierMirrorRow[] = [];
+    const listed = store.listDossiers();
+    const allow = eventIds?.length ? new Set(eventIds) : null;
+    for (const row of listed) {
+      if (allow && !allow.has(row.event_id)) continue;
+      if (!isRealAnalysisDossier(row.payload)) continue;
+      rows.push({
+        event_id: row.event_id,
+        published_at: row.published_at || new Date().toISOString(),
+        dossier: row.payload as Record<string, unknown>,
+        dossier_version: dossierVersionOf(row.payload as AnalysisDossier),
+      });
+    }
+    return rows;
+  } catch {
+    return [];
   }
-  return rows;
 }
 
 export async function verifyRemoteDossierReadable(eventId: string): Promise<{
@@ -243,31 +251,23 @@ export async function repairMirror(
     existing = null;
   }
   const already = findDossierInRemoteMirror(existing, eventId);
-  if (already) {
-    return {
-      event_id: eventId,
-      repaired: false,
-      local: true,
-      remote: true,
-      remote_readable: true,
-      backend: store.kind,
-      reason: "already_remote",
-    };
-  }
-
   const publishedAt = new Date().toISOString();
-  const incoming: RemoteDossierMirrorRow[] = [
-    {
-      event_id: eventId,
-      published_at: publishedAt,
-      dossier: localPayload as Record<string, unknown>,
-      dossier_version: dossierVersionOf(localPayload as AnalysisDossier),
-    },
-  ];
+  const incoming: RemoteDossierMirrorRow[] = already
+    ? []
+    : [
+        {
+          event_id: eventId,
+          published_at: publishedAt,
+          dossier: localPayload as Record<string, unknown>,
+          dossier_version: dossierVersionOf(localPayload as AnalysisDossier),
+        },
+      ];
   const payload = existing?.payload ?? fallbackPayload(publishedAt);
+  const boardRow = analyzedBoardRowFromDossier(localPayload as AnalyzedDossierLike, publishedAt);
+  const existingBoard = (existing?.board_events ?? []).filter((r) => r.event_id !== eventId);
   const written = await writeRemoteMirror(
     { ...payload, published_at: publishedAt },
-    existing?.board_events,
+    [...existingBoard, boardRow],
     incoming,
   );
   if (!written.ok) {
@@ -275,8 +275,8 @@ export async function repairMirror(
       event_id: eventId,
       repaired: false,
       local: true,
-      remote: false,
-      remote_readable: false,
+      remote: Boolean(already),
+      remote_readable: Boolean(already),
       backend: store.kind,
       reason: written.error,
     };

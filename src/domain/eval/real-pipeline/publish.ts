@@ -4,6 +4,7 @@
  */
 import { getStorage, NEON_IN_USE } from "@/domain/storage";
 import { persistAndMirrorDossier, validateAnalysisDossier } from "@/domain/eval/betmind-runtime/dossier-mirror";
+import { analyzedBoardRowFromDossier } from "@/domain/eval/betmind-runtime/analyzed-board";
 import {
   compactDossierForMirror,
   type AnalysisDossier,
@@ -47,29 +48,7 @@ export async function publishAnalysis(input: {
   }
 
   const storage = getStorage(input.labBRoot);
-  storage.upsertBoardEvent({
-    event_id: input.eventId,
-    bucket: "ANALYZED",
-    published_at: input.nowIso,
-    payload: {
-      event_id: input.eventId,
-      label: `${input.dossier.event.home} vs ${input.dossier.event.away}`,
-      home_or_a: input.dossier.event.home,
-      away_or_b: input.dossier.event.away,
-      competition: input.dossier.event.competition,
-      kickoff_utc: input.dossier.event.kickoff_utc,
-      sport: input.dossier.event.sport,
-      bucket: "ANALYZED",
-      model_version: input.dossier.independent_model.model_version,
-      feature_coverage: input.dossier.independent_model.feature_coverage,
-      decision: input.dossier.independent_model.decision,
-      prediction_status: input.dossier.independent_model.probability ? "PREDICTION" : "NO_PREDICTION",
-      probability_model: input.dossier.independent_model.probability,
-      analyzed_at: input.dossier.analyzed_at,
-      dossier_present: true,
-      real_money: false,
-    },
-  });
+  storage.upsertBoardEvent(analyzedBoardRowFromDossier(input.dossier, input.nowIso));
 
   const compact = compactDossierForMirror(input.dossier);
   if (!isRealAnalysisDossier(compact)) {
