@@ -225,7 +225,10 @@
     "betmind:model-evaluate": "tsx src/scripts/betmind-model-evaluate.ts",
     "betmind:model-registry": "tsx src/scripts/betmind-model-registry.ts",
     "betmind:e2e": "tsx src/scripts/betmind-e2e.ts",
-    "betmind:e2e:live": "tsx src/scripts/betmind-e2e-live.ts"
+    "betmind:e2e:live": "tsx src/scripts/betmind-e2e-live.ts",
+    "betmind:live": "tsx src/scripts/betmind-live.ts",
+    "betmind:live:loop": "tsx src/scripts/betmind-live.ts -- --loop --interval 60",
+    "betmind:live:golden": "tsx src/scripts/_live_golden_espn.ts"
   },
   "dependencies": {
     "@neondatabase/serverless": "^1.1.0",

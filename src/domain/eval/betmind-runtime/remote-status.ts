@@ -38,6 +38,7 @@ import {
   pushRuntimeToRemoteIngest,
   readRemoteMirror,
   remoteFreshness,
+  remoteMirrorActivityAt,
   writeRemoteMirror,
   type RemoteDossierMirrorRow,
   type RemotePushResult,
@@ -122,6 +123,8 @@ export type BetMindRuntimePayload = {
   learning_cases: unknown[];
   recent_settlements: unknown[];
   recent_autopsies: unknown[];
+  /** Lab PC live rows. Same merge semantics as artifact `live_states`. */
+  live_snapshots?: unknown[];
 };
 
 export type LoadedRuntimeStatus = {
@@ -458,6 +461,7 @@ export function buildRuntimePayloadFromLocal(root = permanentRoot044()): BetMind
     learning_cases,
     recent_settlements: readJsonlTail(join(root, "settlements.jsonl"), 30),
     recent_autopsies: readJsonlTail(join(root, "autopsies.jsonl"), 30),
+    live_snapshots: collectLocalLiveForRemote(root),
   };
 }
 
@@ -617,7 +621,8 @@ export async function loadRuntimeStatus(
     }
     const remote = await readRemoteMirror();
     if (!remote?.payload) return null;
-    const published_at = remote.published_at || remote.payload.published_at;
+    const published_at =
+      remoteMirrorActivityAt(remote) || remote.published_at || remote.payload.published_at;
     return loadedFromRecord(published_at, remote.payload as BetMindRuntimePayload, nowMs, staleMs);
   } catch {
     return null;

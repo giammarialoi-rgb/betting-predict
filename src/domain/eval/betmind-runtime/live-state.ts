@@ -67,30 +67,142 @@ export function liveStateFromEspn(
   };
 }
 
+/** Parse a published score string such as `0-1` or `0–1`. Never invents digits. */
+export function parsePublishedScorePair(raw: unknown): { home: number; away: number } | null {
+  if (raw == null) return null;
+  if (typeof raw === "object") {
+    const rec = raw as { home?: unknown; away?: unknown; home_goals?: unknown; away_goals?: unknown };
+    const home = typeof rec.home === "number" ? rec.home : typeof rec.home_goals === "number" ? rec.home_goals : null;
+    const away = typeof rec.away === "number" ? rec.away : typeof rec.away_goals === "number" ? rec.away_goals : null;
+    if (home != null && away != null && Number.isInteger(home) && Number.isInteger(away)) {
+      return { home, away };
+    }
+  }
+  const m = String(raw)
+    .trim()
+    .match(/^(\d+)\s*[-–:]\s*(\d+)$/);
+  if (!m) return null;
+  return { home: Number(m[1]), away: Number(m[2]) };
+}
+
+function clockLike(raw: unknown): string | null {
+  if (typeof raw !== "string") return null;
+  const s = raw.trim();
+  if (!s || s.length > 24) return null;
+  return /\d/.test(s) && /['m]|HT|FT|1H|2H/i.test(s) ? s : null;
+}
+
+export function normalizeLiveBoardFields(raw: Record<string, unknown>): Record<string, unknown> {
+  const score = parsePublishedScorePair(raw.score ?? raw.result);
+  const home_goals =
+    typeof raw.home_goals === "number" ? raw.home_goals : (score?.home ?? null);
+  const away_goals =
+    typeof raw.away_goals === "number" ? raw.away_goals : (score?.away ?? null);
+  const result =
+    raw.result ??
+    (home_goals != null && away_goals != null ? `${home_goals}–${away_goals}` : raw.score ?? null);
+  const minute = raw.minute ?? clockLike(raw.note) ?? clockLike(raw.source_detail) ?? null;
+  return {
+    ...raw,
+    home_goals,
+    away_goals,
+    minute,
+    result,
+    score: raw.score ?? result,
+  };
+}
+
+export function liveRowFromUnknown(raw: unknown): LiveStateMirrorRow | null {
+  if (!raw || typeof raw !== "object") return null;
+  const rec = raw as Record<string, unknown>;
+  const event_id = String(rec.event_id ?? "");
+  if (!event_id) return null;
+  const score = parsePublishedScorePair(rec.score ?? rec.result);
+  const home_goals =
+    typeof rec.home_goals === "number" ? rec.home_goals : (score?.home ?? null);
+  const away_goals =
+    typeof rec.away_goals === "number" ? rec.away_goals : (score?.away ?? null);
+  const status = String(rec.status ?? rec.source_status ?? "UNKNOWN");
+  const finished =
+    rec.finished === true ||
+    /^(FT|FINAL|FINISHED|ENDED)$/i.test(status) ||
+    rec.completed === true;
+  const published_at = String(rec.published_at ?? rec.observed_at ?? rec.at ?? "");
+  return {
+    event_id,
+    published_at,
+    status,
+    home: typeof rec.home === "string" ? rec.home : typeof rec.home_or_a === "string" ? rec.home_or_a : null,
+    away: typeof rec.away === "string" ? rec.away : typeof rec.away_or_b === "string" ? rec.away_or_b : null,
+    home_goals,
+    away_goals,
+    minute: (typeof rec.minute === "string" ? rec.minute : null) ?? clockLike(rec.note) ?? clockLike(rec.source_detail),
+    period: typeof rec.period === "number" ? rec.period : null,
+    source: String(rec.source ?? "espn"),
+    source_status: typeof rec.source_status === "string" ? rec.source_status : null,
+    source_detail: typeof rec.source_detail === "string" ? rec.source_detail : clockLike(rec.note),
+    observed_at: String(rec.observed_at ?? rec.published_at ?? rec.at ?? published_at),
+    finished,
+  };
+}
+
+export function collectLiveRows(...lists: unknown[]): LiveStateMirrorRow[] {
+  const by = new Map<string, LiveStateMirrorRow>();
+  for (const list of lists) {
+    if (!Array.isArray(list)) continue;
+    for (const raw of list) {
+      const row = liveRowFromUnknown(raw);
+      if (!row) continue;
+      const prev = by.get(row.event_id);
+      if (!prev || String(row.published_at ?? "") >= String(prev.published_at ?? "")) {
+        by.set(row.event_id, row);
+      }
+    }
+  }
+  return [...by.values()];
+}
+
+export function latestLiveTimestamp(rows: LiveStateMirrorRow[] | undefined): string | null {
+  let latest: string | null = null;
+  let latestMs = Number.NEGATIVE_INFINITY;
+  for (const row of rows ?? []) {
+    for (const raw of [row.observed_at, row.published_at]) {
+      const ms = Date.parse(String(raw ?? ""));
+      if (Number.isFinite(ms) && ms > latestMs) {
+        latestMs = ms;
+        latest = String(raw);
+      }
+    }
+  }
+  return latest;
+}
+
 export function overlayLiveOnEvents(
   events: unknown[] | undefined,
   live: LiveStateMirrorRow[] | undefined,
 ): unknown[] {
   if (!Array.isArray(events)) return [];
-  if (!live?.length) return events;
-  const by = new Map(live.map((row) => [row.event_id, row]));
+  const by = new Map((live ?? []).map((row) => [row.event_id, row]));
   return events.map((raw) => {
     if (!raw || typeof raw !== "object") return raw;
-    const rec = raw as Record<string, unknown>;
+    const rec = normalizeLiveBoardFields(raw as Record<string, unknown>);
     const id = String(rec.event_id ?? "");
     const hit = id ? by.get(id) : undefined;
     if (!hit) return rec;
     const result =
-      hit.home_goals != null && hit.away_goals != null ? `${hit.home_goals}–${hit.away_goals}` : rec.result;
+      hit.home_goals != null && hit.away_goals != null
+        ? `${hit.home_goals}–${hit.away_goals}`
+        : rec.result;
     return {
       ...rec,
       status: hit.status,
-      home_goals: hit.home_goals,
-      away_goals: hit.away_goals,
-      minute: hit.minute,
-      period: hit.period,
+      home_goals: hit.home_goals ?? rec.home_goals,
+      away_goals: hit.away_goals ?? rec.away_goals,
+      minute: hit.minute ?? rec.minute,
+      period: hit.period ?? rec.period,
       live_source: hit.source,
       result,
+      score: rec.score ?? result,
       finished: hit.finished,
     };
   });

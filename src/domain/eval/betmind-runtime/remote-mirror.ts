@@ -12,7 +12,11 @@
 import { timingSafeEqual } from "node:crypto";
 import type { BoardEventMirrorRow, LiveStateMirrorRow } from "@/domain/storage/types";
 import { NEON_IN_USE } from "@/domain/storage/neon-ban";
-import { overlayLiveOnEvents } from "@/domain/eval/betmind-runtime/live-state";
+import {
+  collectLiveRows,
+  latestLiveTimestamp,
+  overlayLiveOnEvents,
+} from "@/domain/eval/betmind-runtime/live-state";
 
 /** Structural payload — avoid importing remote-status (cycle). */
 export type RuntimeIngestPayload = {
@@ -271,6 +275,21 @@ export function findDossierInRemoteMirror(
   return null;
 }
 
+export function liveRowsFromRemoteArtifact(
+  remote: Pick<RemoteMirrorArtifact, "live_states" | "payload"> | null | undefined,
+): LiveStateMirrorRow[] {
+  const payload = (remote?.payload ?? {}) as RuntimeIngestPayload;
+  const next = payload.observatory?.next_events;
+  const fromBoard = Array.isArray(next)
+    ? next.filter((row) => {
+        if (!row || typeof row !== "object") return false;
+        const rec = row as Record<string, unknown>;
+        return /live|ht|ft|in_play|playing|first_half|second_half/i.test(String(rec.status ?? ""));
+      })
+    : [];
+  return collectLiveRows(remote?.live_states, payload.live_states, payload.live_snapshots, fromBoard);
+}
+
 export function buildRemoteMirrorArtifact(
   payload: RuntimeIngestPayload,
   boardEvents?: BoardEventMirrorRow[],
@@ -289,6 +308,8 @@ export function buildRemoteMirrorArtifact(
     observatory: observatory
       ? { ...observatory, next_events: next.length ? next : observatory.next_events }
       : observatory,
+    // Lab PC already writes this field; keep it in lockstep with live_states.
+    live_snapshots: live,
   };
   return {
     schema: REMOTE_MIRROR_SCHEMA,
@@ -424,10 +445,22 @@ export async function writeRemoteMirror(
     if ((existing?.dossiers?.length ?? 0) > 0 && merged.length === 0) {
       return { ok: false, error: "dossier_merge_empty" };
     }
-    const mergedLive = mergeByEventId(existing?.live_states, slices?.live_states);
+    const existingPayload = (existing?.payload ?? {}) as RuntimeIngestPayload;
+    const incomingPayload = payload;
+    const existingLive = collectLiveRows(
+      existing?.live_states,
+      existingPayload.live_states,
+      existingPayload.live_snapshots,
+    );
+    const incomingLive = collectLiveRows(
+      slices?.live_states,
+      incomingPayload.live_states,
+      incomingPayload.live_snapshots,
+    );
+    const mergedLive = mergeByEventId(existingLive, incomingLive);
     const mergedSettlements = mergeByEventId(existing?.settlements, slices?.settlements);
     const mergedLearning = mergeByEventId(existing?.learning_cases, slices?.learning_cases);
-    if ((existing?.live_states?.length ?? 0) > 0 && mergedLive.length === 0) {
+    if (existingLive.length > 0 && mergedLive.length === 0) {
       return { ok: false, error: "live_merge_empty" };
     }
     if ((existing?.settlements?.length ?? 0) > 0 && mergedSettlements.length === 0) {
@@ -436,7 +469,6 @@ export async function writeRemoteMirror(
     if ((existing?.learning_cases?.length ?? 0) > 0 && mergedLearning.length === 0) {
       return { ok: false, error: "learning_merge_empty" };
     }
-    const existingPayload = (existing?.payload ?? {}) as RuntimeIngestPayload;
     const mergedPayload: RuntimeIngestPayload = {
       ...payload,
       recent_settlements: mergePayloadArrayByEventId(
@@ -513,9 +545,16 @@ export function ingestRuntimeMirrorBody(body: unknown): {
   const dossiers = Array.isArray(rec.dossiers)
     ? rec.dossiers.filter((row) => row?.event_id && isRealAnalysisDossier(row.dossier))
     : [];
-  const live_states = Array.isArray(rec.live_states)
-    ? rec.live_states.filter((row) => row?.event_id)
-    : [];
+  const live_states = collectLiveRows(
+    rec.live_states,
+    rec.payload && typeof rec.payload === "object"
+      ? (rec.payload as RuntimeIngestPayload).live_snapshots
+      : null,
+    rec.payload && typeof rec.payload === "object"
+      ? (rec.payload as RuntimeIngestPayload).live_states
+      : null,
+    (rec as { live_snapshots?: unknown }).live_snapshots,
+  );
   const settlements = Array.isArray(rec.settlements)
     ? rec.settlements.filter((row) => row?.event_id && row.payload)
     : [];
@@ -750,10 +789,17 @@ export function findLiveInRemoteMirror(
   eventId: string,
 ): LiveStateMirrorRow | null {
   if (!remote || !eventId) return null;
-  for (const row of remote.live_states ?? []) {
-    if (String(row.event_id) === eventId) return row;
-  }
-  return null;
+  return liveRowsFromRemoteArtifact(remote).find((row) => row.event_id === eventId) ?? null;
+}
+
+/** Latest of artifact published_at and any live snapshot — a live write keeps the mirror fresh. */
+export function remoteMirrorActivityAt(remote: RemoteMirrorArtifact | null): string | null {
+  if (!remote) return null;
+  const liveAt = latestLiveTimestamp(liveRowsFromRemoteArtifact(remote));
+  const published = remote.published_at || remote.payload?.published_at || null;
+  if (!liveAt) return published;
+  if (!published) return liveAt;
+  return Date.parse(liveAt) >= Date.parse(published) ? liveAt : published;
 }
 
 export function findSettlementInRemoteMirror(

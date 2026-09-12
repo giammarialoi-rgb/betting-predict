@@ -23,7 +23,12 @@ This report uses only numbers produced by the pre-match Golden Event run plus a 
 | Pre-match status | UPCOMING (PR #21 run at 13:43Z) |
 | Live source at close-out | ESPN `site.api` scoreboard — **WORKING** HTTP 200 |
 
-ESPN event id `401879285` (`Brentford at AFC Bournemouth`). `pnpm betmind:e2e:live` @ 2026-09-12T14:49:43.137Z: **LIVE 1–1**, minute `45'+4'`, ESPN HTTP 200, `parsed=16` `matched=1`. Earlier parser fixture used the 1H 0–1 / `37'` shape. We persist **score / minute / status only**. `completed=false` — no FT invented.
+ESPN event id `401879285` (`Brentford at AFC Bournemouth`). Honest live probes (no invented FT):
+
+- Lab PC publish (folded in): **LIVE 0–1**, ~39', `STATUS_FIRST_HALF`, source `espn_scoreboard`. Blob already had `dossiers=1` after merge. Payload fields: `observatory.next_events.status=LIVE` + `payload.live_snapshots` (1 row). Event API stayed `dossier_state=ok` / NO_PREDICTION.
+- Agent `pnpm betmind:e2e:live` @ 2026-09-12T14:49:43.137Z: **LIVE 1–1**, minute `45'+4'`, ESPN HTTP 200, `parsed=16` `matched=1`.
+
+Vercel snapshot now reads **both** artifact `live_states` and Lab `payload.live_snapshots`, overlays `/live` board rows, and treats a recent live snapshot as freshness so health is not falsely OFFLINE. `completed=false` — no FT invented.
 
 ---
 
@@ -34,7 +39,7 @@ ESPN event id `401879285` (`Brentford at AFC Bournemouth`). `pnpm betmind:e2e:li
 3. **Conclusi / Learning** — remote artifact slices `settlements` + `learning_cases` are merge-safe. Snapshot on Vercel reads payload arrays, then those slices. `/conclusi` and `/learn` therefore show Blob-backed rows, not only local FS.
 4. **Event detail (iPhone)** — SSR and `/api/betmind/event/:id` load the **dossier from Blob** (`dossier_state=ok`) when present. They also attach live / settlement. A present dossier is never classified as red `dossier_not_mirrored`. Honest **NO PREDICTION** is rendered as its own card.
 5. **Publish safety** — `runtime:publish` / ingest merge **dossiers + live_states + settlements + learning_cases**. Empty incoming arrays do not wipe remote rows. Unreadable existing artifact → fail closed (same as PR #22).
-6. **E2E** — `pnpm betmind:e2e` now also probes ESPN live after the pre-match path. `pnpm betmind:e2e:live` is the dedicated live→settle→learn command for `de3b08b74a8249c647ee0e42`.
+6. **E2E / Lab refresh** — `pnpm betmind:e2e` probes ESPN live after pre-match. `pnpm betmind:e2e:live` is the Golden Event live→settle→learn command. `pnpm betmind:live` (and `betmind:live:loop`) refresh in-play board events from ESPN and merge-publish without wiping dossiers. Lab temp `src/scripts/_live_golden_espn.ts` is kept as an alias (`pnpm betmind:live:golden`).
 
 ---
 
@@ -87,6 +92,7 @@ Live E2E on this agent VM used `remote_backend=memory` because `BLOB_READ_WRITE_
 |---|---|---|
 | `dossiers` | yes (PR #22 + this PR) | `/api/betmind/event/:id` |
 | `live_states` | yes | `/live`, event detail, snapshot overlay |
+| `payload.live_snapshots` | yes (merged with `live_states`) | Lab PC already published this field — Vercel reads it |
 | `settlements` | yes | `/conclusi`, event detail |
 | `learning_cases` | yes | `/learn`, event detail |
 | `board_events` | replaced by latest board (intended) | `/events` |

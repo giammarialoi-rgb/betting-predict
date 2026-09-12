@@ -26,6 +26,8 @@ export type EventCardEvent = {
   home_or_a?: unknown;
   away_or_b?: unknown;
   result?: unknown;
+  score?: unknown;
+  note?: unknown;
   why?: unknown;
   home_goals?: unknown;
   away_goals?: unknown;
@@ -59,10 +61,11 @@ export function EventCard({
   const decision = decisionLabelIt(text(ev.decision) || text(ev.prediction_status) || bucket);
   const homeGoals = text(ev.home_goals);
   const awayGoals = text(ev.away_goals);
-  const minute = text(ev.minute);
+  const minute = text(ev.minute) || (/\d/.test(text(ev.note)) ? text(ev.note) : "");
   const result =
     text(ev.result) ||
-    (homeGoals !== "" && awayGoals !== "" ? `${homeGoals}–${awayGoals}` : "");
+    (homeGoals !== "" && awayGoals !== "" ? `${homeGoals}–${awayGoals}` : "") ||
+    text(ev.score);
   const why = text(ev.why);
   const inner = (
     <article className="bm-event-card">

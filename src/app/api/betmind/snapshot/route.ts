@@ -22,7 +22,7 @@ import {
   writeSnapshotCache,
 } from "@/domain/eval/betmind-runtime/snapshot-cache";
 import { collectLocalLiveForRemote, overlayLiveOnEvents } from "@/domain/eval/betmind-runtime/live-state";
-import { readRemoteMirror } from "@/domain/eval/betmind-runtime/remote-mirror";
+import { liveRowsFromRemoteArtifact, readRemoteMirror } from "@/domain/eval/betmind-runtime/remote-mirror";
 
 export const dynamic = "force-dynamic";
 export { invalidateBetMindSnapshotCache };
@@ -103,7 +103,7 @@ export async function GET() {
       if (remote) {
         const components = remote.fresh ? remote.payload.components : staleMirrorComponents();
         const art = await readRemoteMirror();
-        const liveRows = art?.live_states ?? [];
+        const liveRows = liveRowsFromRemoteArtifact(art);
         const obs = remote.payload.observatory as Record<string, unknown> | null;
         const observatory = obs
           ? {

@@ -9,6 +9,7 @@ import {
   ingestLiveStates,
   liveStateFromEspn,
   overlayLiveOnEvents,
+  parsePublishedScorePair,
 } from "@/domain/eval/betmind-runtime/live-state";
 import { settleFromLiveState } from "@/domain/eval/betmind-runtime/settle-learn";
 import {
@@ -18,6 +19,8 @@ import {
   findLiveInRemoteMirror,
   findSettlementInRemoteMirror,
   mergeByEventId,
+  remoteFreshness,
+  remoteMirrorActivityAt,
   setRemoteMirrorStoreOverride,
   writeRemoteMirror,
 } from "@/domain/eval/betmind-runtime/remote-mirror";
@@ -105,6 +108,13 @@ afterEach(() => {
 });
 
 describe("ESPN live score parse — no invented numbers", () => {
+  it("parses Lab score strings without inventing digits", () => {
+    assert.deepEqual(parsePublishedScorePair("0-1"), { home: 0, away: 1 });
+    assert.deepEqual(parsePublishedScorePair("1–1"), { home: 1, away: 1 });
+    assert.equal(parsePublishedScorePair("n/a"), null);
+    assert.equal(parsePublishedScorePair(""), null);
+  });
+
   it("extracts score, clock, and in-play status from a real scoreboard shape", () => {
     const ev = parseEspnScoreboard(ESPN_LIVE, "eng.1")[0];
     assert.ok(ev);
@@ -161,6 +171,13 @@ describe("live ingest + overlay", () => {
     );
     assert.equal((overlaid[0] as { status: string }).status, "LIVE");
     assert.equal((overlaid[0] as { result: string }).result, "0–1");
+    const fromLab = overlayLiveOnEvents(
+      [{ event_id: "de3b08b74a8249c647ee0e42", status: "LIVE", score: "0-1", note: "39'" }],
+      [],
+    );
+    assert.equal((fromLab[0] as { home_goals: number }).home_goals, 0);
+    assert.equal((fromLab[0] as { away_goals: number }).away_goals, 1);
+    assert.equal((fromLab[0] as { minute: string }).minute, "39'");
   });
 });
 
@@ -253,6 +270,68 @@ describe("remote mirror merge-safe live/settlement/learning slices", () => {
     );
     assert.equal(kept.length, 1);
     assert.equal(kept[0]?.event_id, "a");
+  });
+
+  it("keeps Lab payload.live_snapshots when a later publish sends empty live_states", async () => {
+    const mem = createMemoryRemoteMirrorStore();
+    setRemoteMirrorStoreOverride(mem);
+    await writeRemoteMirror({
+      ...samplePayload("2026-09-12T14:39:00.000Z"),
+      live_snapshots: [
+        {
+          event_id: "de3b08b74a8249c647ee0e42",
+          published_at: "2026-09-12T14:39:00.000Z",
+          status: "LIVE",
+          home: "AFC Bournemouth",
+          away: "Brentford",
+          score: "0-1",
+          minute: "39'",
+          source: "espn_scoreboard",
+          observed_at: "2026-09-12T14:39:00.000Z",
+          finished: false,
+        },
+      ],
+    });
+    const second = await writeRemoteMirror(samplePayload("2026-09-12T14:41:00.000Z"));
+    assert.equal(second.ok, true);
+    const art = await mem.read();
+    const live = findLiveInRemoteMirror(art, "de3b08b74a8249c647ee0e42");
+    assert.ok(live);
+    assert.equal(live.home_goals, 0);
+    assert.equal(live.away_goals, 1);
+    assert.equal(live.minute, "39'");
+    assert.ok(Array.isArray(art?.payload.live_snapshots) && art.payload.live_snapshots.length >= 1);
+  });
+
+  it("treats a recent live_snapshot as freshness even if published_at is older", () => {
+    const art = {
+      schema: "betmind-remote-mirror/1" as const,
+      published_at: "2026-09-12T14:00:00.000Z",
+      payload: {
+        published_at: "2026-09-12T14:00:00.000Z",
+        components: { brain: "ONLINE" },
+        live_snapshots: [
+          {
+            event_id: "de3b08b74a8249c647ee0e42",
+            published_at: "2026-09-12T14:39:00.000Z",
+            status: "LIVE",
+            home_goals: 0,
+            away_goals: 1,
+            minute: "39'",
+            source: "espn_scoreboard",
+            observed_at: "2026-09-12T14:39:00.000Z",
+            finished: false,
+          },
+        ],
+      },
+      board_events: [],
+      neon_in_use: false as const,
+      backend: "memory" as const,
+    };
+    const at = remoteMirrorActivityAt(art);
+    assert.equal(at, "2026-09-12T14:39:00.000Z");
+    const { fresh } = remoteFreshness(at!, Date.parse("2026-09-12T14:42:00.000Z"));
+    assert.equal(fresh, true);
   });
 });
 
