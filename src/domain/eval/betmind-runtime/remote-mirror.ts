@@ -183,8 +183,10 @@ export function mergeDossierRows(
   incoming: RemoteDossierMirrorRow[] | undefined,
 ): RemoteDossierMirrorRow[] {
   const by = new Map<string, RemoteDossierMirrorRow>();
+  // Keep prior remote rows by event_id even if the heuristic is picky —
+  // a board rewrite must not drop a dossier that was already mirrored.
   for (const row of existing ?? []) {
-    if (!row?.event_id || !isRealAnalysisDossier(row.dossier)) continue;
+    if (!row?.event_id || !row.dossier || typeof row.dossier !== "object") continue;
     by.set(row.event_id, row);
   }
   for (const row of incoming ?? []) {
@@ -221,10 +223,16 @@ export function buildRemoteMirrorArtifact(
     published_at: payload.published_at,
     payload,
     board_events: boardEvents?.length ? boardEvents : extractBoardEventsFromPayload(payload),
-    dossiers: dossiers?.length ? dossiers : [],
+    // Caller must pass mergeDossierRows(...) — never invent dossiers here.
+    dossiers: Array.isArray(dossiers) ? dossiers : [],
     neon_in_use: false,
     backend,
   };
+}
+
+function isBlobNotFound(e: unknown): boolean {
+  const msg = e instanceof Error ? e.message : String(e);
+  return /404|not.?found|blobnotfound|nosuchkey/i.test(msg);
 }
 
 function noneStore(): RemoteMirrorStore {
@@ -248,14 +256,25 @@ function vercelBlobStore(): RemoteMirrorStore {
     kind: "vercel_blob",
     async read() {
       const { get } = await import("@vercel/blob");
-      const result = await get(REMOTE_MIRROR_PATHNAME, {
-        access: "private",
-        useCache: false,
-      });
-      if (result?.statusCode !== 200 || !result.stream) return null;
+      let result: { statusCode?: number; stream?: ReadableStream<Uint8Array> | null };
+      try {
+        result = await get(REMOTE_MIRROR_PATHNAME, {
+          access: "private",
+          useCache: false,
+        });
+      } catch (e) {
+        if (isBlobNotFound(e)) return null;
+        throw e;
+      }
+      if (!result || result.statusCode === 404) return null;
+      if (result.statusCode !== 200 || !result.stream) {
+        throw new Error(`blob_get_${result.statusCode ?? "unknown"}`);
+      }
       const text = await streamToText(result.stream);
       const parsed = JSON.parse(text) as RemoteMirrorArtifact;
-      if (!parsed?.payload || !parsed.published_at) return null;
+      if (!parsed?.payload || !parsed.published_at) {
+        throw new Error("blob_artifact_invalid");
+      }
       return {
         ...parsed,
         neon_in_use: false,
@@ -303,14 +322,22 @@ export async function writeRemoteMirror(
   if (store.kind === "none") {
     return { ok: false, error: "blob_token_missing" };
   }
+  let existing: RemoteMirrorArtifact | null = null;
   try {
-    let existing: RemoteMirrorArtifact | null = null;
-    try {
-      existing = await store.read();
-    } catch {
-      existing = null;
+    existing = await store.read();
+  } catch (e) {
+    // Fail closed: a board rewrite must not clobber dossiers we could not read.
+    return {
+      ok: false,
+      error: `existing_mirror_unread:${e instanceof Error ? e.message : String(e)}`,
+    };
+  }
+  try {
+    const incoming = Array.isArray(dossiers) ? dossiers : [];
+    const merged = mergeDossierRows(existing?.dossiers, incoming);
+    if ((existing?.dossiers?.length ?? 0) > 0 && merged.length === 0) {
+      return { ok: false, error: "dossier_merge_empty" };
     }
-    const merged = mergeDossierRows(existing?.dossiers, dossiers);
     const art = buildRemoteMirrorArtifact(payload, boardEvents, store.kind, merged);
     if (art.neon_in_use !== false || NEON_IN_USE) {
       return { ok: false, error: "neon_banned" };

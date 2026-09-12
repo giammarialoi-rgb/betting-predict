@@ -34,9 +34,12 @@ import {
 } from "@/domain/eval/betmind-runtime/pipeline-counters";
 import { getStorage } from "@/domain/storage";
 import {
+  extractBoardEventsFromPayload,
   pushRuntimeToRemoteIngest,
   readRemoteMirror,
   remoteFreshness,
+  writeRemoteMirror,
+  type RemoteDossierMirrorRow,
   type RemotePushResult,
 } from "@/domain/eval/betmind-runtime/remote-mirror";
 
@@ -494,10 +497,44 @@ async function persistCycleAndBoard(payload: BetMindRuntimePayload): Promise<voi
   }
 }
 
+async function collectPublishDossiers(): Promise<RemoteDossierMirrorRow[]> {
+  try {
+    const { collectLocalDossiersForRemote } = await import(
+      "@/domain/eval/betmind-runtime/dossier-mirror"
+    );
+    return collectLocalDossiersForRemote(permanentRoot044());
+  } catch {
+    return [];
+  }
+}
+
+/**
+ * Write the remote Blob artifact (merge dossiers) when the publisher has
+ * credentials, then POST ingest. Board updates must not replace dossiers with [].
+ */
+async function writeAndPushRemote(
+  payload: BetMindRuntimePayload,
+  dossiers: RemoteDossierMirrorRow[],
+): Promise<{ remote: RemotePushResult; dossiers: number }> {
+  const boardEvents = extractBoardEventsFromPayload(payload);
+  const written = await writeRemoteMirror(payload, boardEvents, dossiers);
+  if (!written.ok && written.error !== "blob_token_missing") {
+    console.warn("[runtime-publish] remote mirror write failed:", written.error);
+  }
+  const remote = await pushRuntimeToRemoteIngest(payload, boardEvents, { dossiers });
+  if (!remote.pushed && remote.reason && remote.reason !== "local_only") {
+    console.warn("[runtime-publish] remote ingest failed:", remote.reason);
+  }
+  return {
+    remote,
+    dossiers: written.ok ? written.dossiers : dossiers.length,
+  };
+}
+
 export async function publishRuntimeStatus(
   payload: BetMindRuntimePayload = buildRuntimePayloadFromLocal(),
 ): Promise<
-  | { ok: true; published_at: string; board: number; remote: RemotePushResult }
+  | { ok: true; published_at: string; board: number; dossiers: number; remote: RemotePushResult }
   | { ok: false; error: string }
 > {
   try {
@@ -523,20 +560,15 @@ export async function publishRuntimeStatus(
       /* dossier mirror optional — board publish must still succeed */
     }
     const board = ((payload.observatory?.next_events as unknown[]) ?? []).length;
-    let dossiers: import("@/domain/eval/betmind-runtime/remote-mirror").RemoteDossierMirrorRow[] = [];
-    try {
-      const { collectLocalDossiersForRemote } = await import(
-        "@/domain/eval/betmind-runtime/dossier-mirror"
-      );
-      dossiers = collectLocalDossiersForRemote(permanentRoot044());
-    } catch {
-      dossiers = [];
-    }
-    const remote = await pushRuntimeToRemoteIngest(payload, undefined, { dossiers });
-    if (!remote.pushed && remote.reason && remote.reason !== "local_only") {
-      console.warn("[runtime-publish] remote ingest failed:", remote.reason);
-    }
-    return { ok: true, published_at: publishedAt, board, remote };
+    const dossiers = await collectPublishDossiers();
+    const pushed = await writeAndPushRemote(payload, dossiers);
+    return {
+      ok: true,
+      published_at: publishedAt,
+      board,
+      dossiers: pushed.dossiers,
+      remote: pushed.remote,
+    };
   } catch (e) {
     return { ok: false, error: e instanceof Error ? e.message : String(e) };
   }
@@ -641,7 +673,14 @@ function buildHeartbeatComponents(root = permanentRoot044()): {
  * First row still needs a full publishRuntimeStatus().
  */
 export async function publishRuntimeHeartbeat(): Promise<
-  | { ok: true; published_at: string; board: number; heartbeat: true; remote: RemotePushResult }
+  | {
+      ok: true;
+      published_at: string;
+      board: number;
+      dossiers: number;
+      heartbeat: true;
+      remote: RemotePushResult;
+    }
   | { ok: false; error: string }
 > {
   try {
@@ -653,6 +692,7 @@ export async function publishRuntimeHeartbeat(): Promise<
         ok: true,
         published_at: full.published_at,
         board: full.board,
+        dossiers: full.dossiers,
         heartbeat: true,
         remote: full.remote,
       };
@@ -686,11 +726,16 @@ export async function publishRuntimeHeartbeat(): Promise<
     };
     storage().publishRuntime(merged, published_at);
     const board = ((merged.observatory?.next_events as unknown[]) ?? []).length;
-    const remote = await pushRuntimeToRemoteIngest(merged);
-    if (!remote.pushed && remote.reason && remote.reason !== "local_only") {
-      console.warn("[runtime-publish] remote heartbeat failed:", remote.reason);
-    }
-    return { ok: true, published_at, board, heartbeat: true, remote };
+    const dossiers = await collectPublishDossiers();
+    const pushed = await writeAndPushRemote(merged, dossiers);
+    return {
+      ok: true,
+      published_at,
+      board,
+      dossiers: pushed.dossiers,
+      heartbeat: true,
+      remote: pushed.remote,
+    };
   } catch (e) {
     return { ok: false, error: e instanceof Error ? e.message : String(e) };
   }

@@ -4,17 +4,15 @@
  * NEON NON UTILIZZATO
  */
 import { getStorage } from "@/domain/storage";
-import { NEON_IN_USE } from "@/domain/storage/neon-ban";
 import { permanentRoot044 } from "@/domain/eval/permanent-044/config";
 import {
   blobCredentialsPresent,
-  buildRemoteMirrorArtifact,
   findDossierInRemoteMirror,
   getRemoteMirrorStore,
   isRealAnalysisDossier,
-  mergeDossierRows,
   readRemoteMirror,
   remoteMirrorDurableConfigured,
+  writeRemoteMirror,
   type RemoteDossierMirrorRow,
   type RuntimeIngestPayload,
 } from "@/domain/eval/betmind-runtime/remote-mirror";
@@ -267,13 +265,12 @@ export async function repairMirror(
     },
   ];
   const payload = existing?.payload ?? fallbackPayload(publishedAt);
-  const art = buildRemoteMirrorArtifact(
+  const written = await writeRemoteMirror(
     { ...payload, published_at: publishedAt },
     existing?.board_events,
-    store.kind,
-    mergeDossierRows(existing?.dossiers, incoming),
+    incoming,
   );
-  if (art.neon_in_use !== false || NEON_IN_USE) {
+  if (!written.ok) {
     return {
       event_id: eventId,
       repaired: false,
@@ -281,20 +278,7 @@ export async function repairMirror(
       remote: false,
       remote_readable: false,
       backend: store.kind,
-      reason: "neon_banned",
-    };
-  }
-  try {
-    await store.write(art);
-  } catch (e) {
-    return {
-      event_id: eventId,
-      repaired: false,
-      local: true,
-      remote: false,
-      remote_readable: false,
-      backend: store.kind,
-      reason: e instanceof Error ? e.message : String(e),
+      reason: written.error,
     };
   }
   const verify = await verifyRemoteDossierReadable(eventId);
