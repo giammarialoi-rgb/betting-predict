@@ -147,4 +147,137 @@ describe("real-pipeline unit", () => {
     };
     assert.throws(() => assertPreMatchData(ft, "2026-09-20T14:00:00.000Z"), PreMatchLeakageError);
   });
+
+  it("coerces RFC 2822 news available_at to ISO and does not abort ANALYZE_EVENT", () => {
+    const snap = buildAsOfSnapshot({
+      event: event(),
+      asOf: "2026-09-12T12:00:00.000Z",
+      observations: [
+        {
+          event_id: "ev-future-1",
+          feature_key: "news_other",
+          value: "Dortmund host Paderborn",
+          source: "bbc-sport",
+          source_url: "https://example.test/rss",
+          observed_at: "2026-09-12T11:00:00.000Z",
+          available_at: "Sat, 12 Sep 2026 10:15:00 +0000",
+          extraction_method: "public_rss",
+          confidence: null,
+          status: "CONTEXT",
+          kind: "EVENT_RESEARCH",
+          enters_independent_model: false,
+        },
+      ],
+    });
+    const news = snap.fields.find((f) => f.key === "news_other");
+    assert.ok(news);
+    assert.equal(news!.provenance.available_at, "2026-09-12T10:15:00.000Z");
+    assert.equal(news!.enters_model, false);
+    assert.equal(news!.temporal_precision, "exact");
+    assert.doesNotThrow(() => assertPreMatchData(snap, "2026-09-20T14:00:00.000Z"));
+  });
+
+  it("omits unparseable available_at on CONTEXT news instead of crashing", () => {
+    const snap = buildAsOfSnapshot({
+      event: event(),
+      asOf: "2026-09-12T12:00:00.000Z",
+      observations: [
+        {
+          event_id: "ev-future-1",
+          feature_key: "news_other",
+          value: "preview notes",
+          source: "ansa",
+          source_url: null,
+          observed_at: "2026-09-12T11:00:00.000Z",
+          available_at: "not-a-date",
+          extraction_method: "public_rss",
+          confidence: null,
+          status: "CONTEXT",
+          kind: "EVENT_RESEARCH",
+          enters_independent_model: false,
+        },
+        {
+          event_id: "ev-future-1",
+          feature_key: "news_injury",
+          value: "",
+          source: "gazzetta",
+          source_url: null,
+          observed_at: "2026-09-12T11:00:00.000Z",
+          available_at: "",
+          extraction_method: "public_rss",
+          confidence: null,
+          status: "CONTEXT",
+          kind: "EVENT_RESEARCH",
+          enters_independent_model: false,
+        },
+      ],
+    });
+    const junk = snap.fields.find((f) => f.key === "news_other");
+    const empty = snap.fields.find((f) => f.key === "news_injury");
+    assert.ok(junk);
+    assert.equal(junk!.provenance.available_at, null);
+    assert.equal(junk!.temporal_precision, "unknown");
+    assert.equal(junk!.enters_model, false);
+    assert.equal(empty!.provenance.available_at, null);
+    assert.doesNotThrow(() => assertPreMatchData(snap, "2026-09-20T14:00:00.000Z"));
+  });
+
+  it("does not let a REAL field enter the model when available_at is unparseable", () => {
+    const snap = buildAsOfSnapshot({
+      event: event(),
+      asOf: "2026-09-12T12:00:00.000Z",
+      observations: [
+        {
+          event_id: "ev-future-1",
+          feature_key: "clubelo.home",
+          value: 1700,
+          source: "clubelo",
+          source_url: null,
+          observed_at: "2026-09-12T11:00:00.000Z",
+          available_at: "soon",
+          extraction_method: "csv",
+          confidence: 0.8,
+          status: "REAL",
+          kind: "HISTORICAL_PRIOR",
+          enters_independent_model: true,
+        },
+      ],
+    });
+    const elo = snap.fields.find((f) => f.key === "clubelo.home");
+    assert.ok(elo);
+    assert.equal(elo!.provenance.available_at, null);
+    assert.equal(elo!.enters_model, false);
+    assert.equal(elo!.temporal_precision, "unknown");
+    assert.doesNotThrow(() => assertPreMatchData(snap, "2026-09-20T14:00:00.000Z"));
+  });
+
+  it("still fail-closes a hand-built snapshot that marks enters_model with unknown available_at", () => {
+    const leak: AsOfSnapshot = {
+      event_id: "ev-future-1",
+      asOf: "2026-09-12T12:00:00.000Z",
+      kickoff_utc: "2026-09-20T14:00:00.000Z",
+      home: "Alpha",
+      away: "Beta",
+      competition: "eng.1",
+      fields: [
+        {
+          key: "clubelo.home",
+          value: 1700,
+          provenance: {
+            source_id: "clubelo",
+            observed_at: "2026-09-12T11:00:00.000Z",
+            available_at: "not-a-date",
+            extraction_method: "csv",
+            epistemic_kind: "QUANTITATIVE_EVIDENCE",
+          },
+          enters_model: true,
+          temporal_precision: "unknown",
+        },
+      ],
+      market_fields: [],
+      blockedByTemporal: [],
+      ft_score: null,
+    };
+    assert.throws(() => assertPreMatchData(leak, "2026-09-20T14:00:00.000Z"), PreMatchLeakageError);
+  });
 });

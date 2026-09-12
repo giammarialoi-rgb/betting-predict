@@ -3,6 +3,7 @@
  * Never invents injuries/lineups from headlines. 403/WAF = BLOCKED.
  */
 import { identityKey, isCollisionStem } from "@/domain/eval/data-intelligence/research/identity-normalize";
+import { coerceAvailableAtToIso } from "@/lib/available-at";
 
 export type RssSourceId =
   | "ansa"
@@ -197,7 +198,7 @@ export async function matchRssToEvent(input: {
     items_scanned: feed.items.length,
     matched_title: hit.title,
     matched_link: hit.link,
-    matched_pubDate: hit.pubDate,
+    matched_pubDate: coerceAvailableAtToIso(hit.pubDate),
     reason: "Voce RSS cita entrambe le squadre — CONTEXT only, non e un infortunio strutturato",
   };
 }

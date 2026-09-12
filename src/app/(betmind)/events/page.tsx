@@ -55,13 +55,16 @@ const BUCKET_TABS = [
   "QUEUED",
   "RESEARCHING",
   "RESEARCHED",
+  "ANALYZED",
   "MODEL_INFERENCE",
   "INSUFFICIENT_DATA",
   "SKIPPED",
 ] as const;
 
 function isLive(e: Ev): boolean {
-  return /live|in_play|playing/i.test(String(e.status));
+  return /live|in_play|playing|\bht\b|halftime|first_half|second_half|in_progress/i.test(
+    String(e.status),
+  );
 }
 function isFinished(e: Ev): boolean {
   return /finish|ended|ft|final|settled/i.test(String(e.status)) || Boolean(e.result && e.result !== "N/A");
