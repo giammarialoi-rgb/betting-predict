@@ -45,7 +45,7 @@ describe("production mirror honesty", () => {
   });
 
   it("does not show STALE_MIRROR as the primary Italian phrase", () => {
-    assert.match(brainStatusIt("STALE_MIRROR"), /Specchio filesystem scaduto/);
+    assert.match(brainStatusIt("STALE_MIRROR"), /Specchio scaduto/);
     assert.equal(statusWordIt("OFFLINE"), "Offline");
     assert.equal(statusWordIt("RUNNING"), "Online");
     assert.equal(decisionLabelIt("INSUFFICIENT_DATA"), "Dati insufficienti");
@@ -71,7 +71,7 @@ describe("production mirror honesty", () => {
         last_event_label: null,
       },
     ]);
-    assert.equal(cards[0]?.overlay, "neon_operational");
+    assert.equal(cards[0]?.overlay, "remote_operational");
     assert.equal(cards[0]?.status, "ACTIVE");
     assert.match(String(cards[0]?.reason), /81 eventi/);
     assert.equal(operationalHasNeonSignal(cards), true);
@@ -82,7 +82,7 @@ describe("production mirror honesty", () => {
       { source_id: "understat", status: "IDLE", events_found: 0, observations_found: 0 },
     ]);
     assert.equal(cards[0]?.status, "UNAVAILABLE");
-    assert.equal(cards[0]?.overlay, "neon_operational");
+    assert.equal(cards[0]?.overlay, "remote_operational");
   });
 
   it("stale ≠ empty: explains date filter vs missing mirror", () => {
@@ -95,7 +95,7 @@ describe("production mirror honesty", () => {
         date: "2026-09-11",
         sport: "football",
       }),
-      /Nessuno specchio filesystem/,
+      /Nessuno specchio remoto/,
     );
     assert.match(
       neonEventsEmptyReason({

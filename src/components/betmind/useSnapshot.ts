@@ -55,7 +55,7 @@ export type DataSourceEntry = {
   last_event_label?: string | null;
   capabilities?: string[];
   missing_adapter?: boolean;
-  overlay?: "neon_operational" | "registry_only";
+  overlay?: "remote_operational" | "neon_operational" | "registry_only";
 };
 
 export type DataSourcesPayload = {

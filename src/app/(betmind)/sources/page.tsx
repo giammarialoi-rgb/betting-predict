@@ -67,8 +67,8 @@ export default function SourcesPage() {
   ];
 
   const origin =
-    sources?.source === "neon"
-      ? "Elenco dallo specchio Neon: i numeri sono rendimento reale, non catalogo."
+    sources?.source === "remote" || sources?.source === "neon"
+      ? "Elenco dallo specchio remoto: i numeri sono rendimento reale, non catalogo."
       : sources?.source === "disk"
         ? "Elenco dal disco Lab B su questo host."
         : sources?.source === "memory"
@@ -110,7 +110,7 @@ export default function SourcesPage() {
           title={lastUpdate || error ? "Nessun elenco fonti" : "Caricamento"}
           reason={
             lastUpdate || error
-              ? "L’API non ha restituito un registro. Niente di inventato: o lo specchio Neon è vuoto, o il runtime non ha ancora pubblicato le fonti."
+              ? "L’API non ha restituito un registro. Niente di inventato: o lo specchio remoto è vuoto, o il runtime non ha ancora pubblicato le fonti."
               : "Sto chiedendo il registro fonti. Nessuno stato ONLINE inventato mentre aspettiamo."
           }
         />

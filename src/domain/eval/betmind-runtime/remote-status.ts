@@ -1,5 +1,6 @@
 /**
  * Mirror Lab B runtime + analysis board to the filesystem StorageProvider.
+ * When ingest URL + secret are set, also POST to Vercel Blob via /api/betmind/runtime/ingest.
  * NEON NON UTILIZZATO. Stale heartbeats stay OFFLINE — never invent alive state.
  */
 import { existsSync, readFileSync } from "node:fs";
@@ -32,6 +33,12 @@ import {
   type PipelineCounters3d,
 } from "@/domain/eval/betmind-runtime/pipeline-counters";
 import { getStorage } from "@/domain/storage";
+import {
+  pushRuntimeToRemoteIngest,
+  readRemoteMirror,
+  remoteFreshness,
+  type RemotePushResult,
+} from "@/domain/eval/betmind-runtime/remote-mirror";
 
 export const RUNTIME_STATUS_ID = "default";
 /** After this age, remote status must not light ONLINE components. */
@@ -489,7 +496,10 @@ async function persistCycleAndBoard(payload: BetMindRuntimePayload): Promise<voi
 
 export async function publishRuntimeStatus(
   payload: BetMindRuntimePayload = buildRuntimePayloadFromLocal(),
-): Promise<{ ok: true; published_at: string; board: number } | { ok: false; error: string }> {
+): Promise<
+  | { ok: true; published_at: string; board: number; remote: RemotePushResult }
+  | { ok: false; error: string }
+> {
   try {
     const store = storage();
     await ensureRuntimeTables();
@@ -513,10 +523,24 @@ export async function publishRuntimeStatus(
       /* dossier mirror optional — board publish must still succeed */
     }
     const board = ((payload.observatory?.next_events as unknown[]) ?? []).length;
-    return { ok: true, published_at: publishedAt, board };
+    const remote = await pushRuntimeToRemoteIngest(payload);
+    if (!remote.pushed && remote.reason && remote.reason !== "local_only") {
+      console.warn("[runtime-publish] remote ingest failed:", remote.reason);
+    }
+    return { ok: true, published_at: publishedAt, board, remote };
   } catch (e) {
     return { ok: false, error: e instanceof Error ? e.message : String(e) };
   }
+}
+
+function loadedFromRecord(
+  published_at: string,
+  payload: BetMindRuntimePayload,
+  nowMs: number,
+  staleMs: number,
+): LoadedRuntimeStatus {
+  const { age_ms, fresh } = remoteFreshness(published_at, nowMs, staleMs);
+  return { published_at, age_ms, fresh, payload };
 }
 
 export async function loadRuntimeStatus(
@@ -524,17 +548,19 @@ export async function loadRuntimeStatus(
   staleMs = RUNTIME_STALE_MS,
 ): Promise<LoadedRuntimeStatus | null> {
   try {
-    const row = storage().loadRuntime();
-    if (!row) return null;
-    const payload = row.payload as BetMindRuntimePayload;
-    const published_at = row.published_at || payload.published_at;
-    const age_ms = Math.max(0, nowMs - Date.parse(published_at));
-    return {
-      published_at,
-      age_ms,
-      fresh: Number.isFinite(age_ms) && age_ms <= staleMs,
-      payload,
-    };
+    const root = permanentRoot044();
+    if (localLabStorePresent(root)) {
+      const row = storage().loadRuntime();
+      if (row?.payload) {
+        const payload = row.payload as BetMindRuntimePayload;
+        const published_at = row.published_at || payload.published_at;
+        return loadedFromRecord(published_at, payload, nowMs, staleMs);
+      }
+    }
+    const remote = await readRemoteMirror();
+    if (!remote?.payload) return null;
+    const published_at = remote.published_at || remote.payload.published_at;
+    return loadedFromRecord(published_at, remote.payload as BetMindRuntimePayload, nowMs, staleMs);
   } catch {
     return null;
   }
@@ -606,14 +632,21 @@ function buildHeartbeatComponents(root = permanentRoot044()): {
  * First row still needs a full publishRuntimeStatus().
  */
 export async function publishRuntimeHeartbeat(): Promise<
-  { ok: true; published_at: string; board: number; heartbeat: true } | { ok: false; error: string }
+  | { ok: true; published_at: string; board: number; heartbeat: true; remote: RemotePushResult }
+  | { ok: false; error: string }
 > {
   try {
     const existing = await loadRuntimeStatus(Date.now(), Number.POSITIVE_INFINITY);
     if (!existing) {
       const full = await publishRuntimeStatus();
       if (!full.ok) return full;
-      return { ok: true, published_at: full.published_at, board: full.board, heartbeat: true };
+      return {
+        ok: true,
+        published_at: full.published_at,
+        board: full.board,
+        heartbeat: true,
+        remote: full.remote,
+      };
     }
     const patch = buildHeartbeatComponents();
     const published_at = new Date().toISOString();
@@ -644,10 +677,36 @@ export async function publishRuntimeHeartbeat(): Promise<
     };
     storage().publishRuntime(merged, published_at);
     const board = ((merged.observatory?.next_events as unknown[]) ?? []).length;
-    return { ok: true, published_at, board, heartbeat: true };
+    const remote = await pushRuntimeToRemoteIngest(merged);
+    if (!remote.pushed && remote.reason && remote.reason !== "local_only") {
+      console.warn("[runtime-publish] remote heartbeat failed:", remote.reason);
+    }
+    return { ok: true, published_at, board, heartbeat: true, remote };
   } catch (e) {
     return { ok: false, error: e instanceof Error ? e.message : String(e) };
   }
+}
+
+function rowsToBoardEvents(
+  rows: { event_id?: string; bucket?: string; payload?: unknown }[],
+): unknown[] {
+  const events: unknown[] = [];
+  const seen = new Set<string>();
+  for (const row of rows) {
+    const payload =
+      typeof row.payload === "string"
+        ? (JSON.parse(row.payload) as Record<string, unknown>)
+        : ((row.payload ?? {}) as Record<string, unknown>);
+    const eventId = String(row.event_id || payload.event_id || "");
+    if (!eventId || seen.has(eventId)) continue;
+    seen.add(eventId);
+    events.push({
+      ...payload,
+      event_id: eventId,
+      bucket: row.bucket ?? payload.bucket ?? null,
+    });
+  }
+  return events;
 }
 
 export async function loadBoardEventsFromStore(q: {
@@ -657,23 +716,18 @@ export async function loadBoardEventsFromStore(q: {
   sport?: string | null;
 }): Promise<{ events: unknown[]; total: number } | null> {
   try {
-    const rows = storage().loadBoardEvents();
-    const events: unknown[] = [];
-    const seen = new Set<string>();
-    for (const row of rows) {
-      const payload =
-        typeof row.payload === "string"
-          ? (JSON.parse(row.payload) as Record<string, unknown>)
-          : ((row.payload ?? {}) as Record<string, unknown>);
-      const eventId = String(row.event_id || payload.event_id || "");
-      if (!eventId || seen.has(eventId)) continue;
-      seen.add(eventId);
-      events.push({
-        ...payload,
-        event_id: eventId,
-        bucket: row.bucket ?? payload.bucket ?? null,
-      });
+    const root = permanentRoot044();
+    const rows = localLabStorePresent(root) ? storage().loadBoardEvents() : [];
+    let events = rowsToBoardEvents(rows);
+    if (!events.length) {
+      const remote = await readRemoteMirror();
+      if (remote?.board_events?.length) {
+        events = rowsToBoardEvents(remote.board_events);
+      } else if (Array.isArray(remote?.payload?.observatory?.next_events)) {
+        events = remote.payload.observatory.next_events as unknown[];
+      }
     }
+    if (!events.length && !rows.length) return null;
     const filtered = events.filter((e) =>
       matchesCalendarQuery(e as { calendar_day?: string; kickoff_utc?: string; sport?: string }, q),
     );
@@ -706,7 +760,8 @@ export function schedulePublishRuntimeStatus(minIntervalMs = 30_000): void {
 
 /** Awaited full publish after a real cycle — preferred over debounce. */
 export async function publishRuntimeStatusNow(): Promise<
-  { ok: true; published_at: string; board: number } | { ok: false; error: string }
+  | { ok: true; published_at: string; board: number; remote: RemotePushResult }
+  | { ok: false; error: string }
 > {
   const result = await publishRuntimeStatus();
   if (result.ok) lastPublishMs = Date.now();
