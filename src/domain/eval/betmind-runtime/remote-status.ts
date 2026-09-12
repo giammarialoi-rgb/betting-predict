@@ -523,7 +523,16 @@ export async function publishRuntimeStatus(
       /* dossier mirror optional — board publish must still succeed */
     }
     const board = ((payload.observatory?.next_events as unknown[]) ?? []).length;
-    const remote = await pushRuntimeToRemoteIngest(payload);
+    let dossiers: import("@/domain/eval/betmind-runtime/remote-mirror").RemoteDossierMirrorRow[] = [];
+    try {
+      const { collectLocalDossiersForRemote } = await import(
+        "@/domain/eval/betmind-runtime/dossier-mirror"
+      );
+      dossiers = collectLocalDossiersForRemote(permanentRoot044());
+    } catch {
+      dossiers = [];
+    }
+    const remote = await pushRuntimeToRemoteIngest(payload, undefined, { dossiers });
     if (!remote.pushed && remote.reason && remote.reason !== "local_only") {
       console.warn("[runtime-publish] remote ingest failed:", remote.reason);
     }

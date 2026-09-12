@@ -55,6 +55,7 @@ export async function POST(req: Request) {
       neon_in_use: false,
       published_at: result.published_at,
       board: result.board,
+      dossiers: result.dossiers,
       backend: result.backend,
       error: result.error,
       error_it: result.error_it,

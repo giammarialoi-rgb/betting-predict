@@ -37,6 +37,7 @@ export type StorageProvider = {
 
   upsertDossier(eventId: string, payload: unknown): void;
   loadDossier(eventId: string): unknown | null;
+  listDossiers(): Array<{ event_id: string; published_at: string; payload: unknown }>;
 
   upsertLightAnalysis(row: { event_id: string; analyzed_at?: string }): void;
   loadLightAnalysis(eventId: string): unknown | null;

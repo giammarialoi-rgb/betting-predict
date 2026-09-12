@@ -8,6 +8,8 @@ import {
   acceptRuntimeIngest,
   authorizeRuntimeIngest,
   createMemoryRemoteMirrorStore,
+  findDossierInRemoteMirror,
+  isRealAnalysisDossier,
   isRemoteMirrorSource,
   pushRuntimeToRemoteIngest,
   remoteFreshness,
@@ -263,6 +265,34 @@ describe("local filesystem remains SoT on the PC", () => {
     assert.equal(calls.length, 1);
     assert.match(calls[0]!.url, /runtime\/ingest/);
     assert.equal(calls[0]!.auth, "Bearer shared");
+  });
+});
+
+describe("remote dossiers survive board-only publish", () => {
+  it("merges analysis_dossier rows and does not treat board as dossier", async () => {
+    process.env.BETMIND_RUNTIME_PUBLISH_SECRET = "s3cret";
+    const mem = createMemoryRemoteMirrorStore();
+    setRemoteMirrorStoreOverride(mem);
+    const dossier = {
+      event: { event_id: "ev-1", home: "A", away: "B", competition: "BL", kickoff_utc: null, sport: "soccer", status: "UPCOMING" },
+      independent_model: { probability: null },
+      features: [],
+      research: [],
+      real_money: false,
+    };
+    assert.equal(isRealAnalysisDossier(dossier), true);
+    const first = await acceptRuntimeIngest({
+      payload: samplePayload("2026-09-12T13:00:00.000Z"),
+      dossiers: [{ event_id: "ev-1", published_at: "2026-09-12T13:00:00.000Z", dossier, dossier_version: null }],
+    });
+    assert.equal(first.ok, true);
+    assert.equal(first.dossiers, 1);
+
+    const second = await acceptRuntimeIngest({ payload: samplePayload("2026-09-12T13:05:00.000Z") });
+    assert.equal(second.ok, true);
+    const art = await mem.read();
+    assert.equal(findDossierInRemoteMirror(art, "ev-1") != null, true);
+    assert.equal(isRealAnalysisDossier({ event_id: "ev-1", bucket: "DISCOVERED" }), false);
   });
 });
 

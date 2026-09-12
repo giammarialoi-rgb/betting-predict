@@ -53,6 +53,8 @@ describe("StorageProvider filesystem — works without Neon", () => {
 
     assert.equal(store.loadBoardEvents().length, 1);
     assert.ok(store.loadDossier("ev-1"));
+    assert.equal(store.listDossiers().length, 1);
+    assert.equal(store.listDossiers()[0]?.event_id, "ev-1");
     assert.equal((store.loadLightAnalysis("ev-1") as { event_id: string }).event_id, "ev-1");
     assert.ok(store.loadLightHistory());
   });

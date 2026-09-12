@@ -28,11 +28,21 @@ export const REMOTE_MIRROR_SCHEMA = "betmind-remote-mirror/1" as const;
 
 export type RemoteMirrorBackend = "vercel_blob" | "memory" | "none";
 
+/** Compact analysis_dossier row on the remote artifact. Never a board_summary. */
+export type RemoteDossierMirrorRow = {
+  event_id: string;
+  published_at: string;
+  dossier: Record<string, unknown>;
+  dossier_version: string | null;
+};
+
 export type RemoteMirrorArtifact = {
   schema: typeof REMOTE_MIRROR_SCHEMA;
   published_at: string;
   payload: RuntimeIngestPayload;
   board_events: BoardEventMirrorRow[];
+  /** Optional — older artifacts omit this. Board publish must not wipe existing rows. */
+  dossiers?: RemoteDossierMirrorRow[];
   neon_in_use: false;
   backend: RemoteMirrorBackend;
 };
@@ -151,16 +161,67 @@ export function extractBoardEventsFromPayload(payload: RuntimeIngestPayload): Bo
   return out;
 }
 
+export function isRealAnalysisDossier(v: unknown): boolean {
+  if (!v || typeof v !== "object") return false;
+  const d = v as Record<string, unknown>;
+  const event = d.event;
+  if (!event || typeof event !== "object") return false;
+  const eventId = String((event as { event_id?: unknown }).event_id ?? "");
+  if (!eventId) return false;
+  const hasAnalysis =
+    Array.isArray(d.features) ||
+    Array.isArray(d.research) ||
+    (d.lineage != null && typeof d.lineage === "object") ||
+    (d.independent_model != null && typeof d.independent_model === "object");
+  if (!hasAnalysis) return false;
+  if ("bucket" in d && !d.independent_model && !Array.isArray(d.features)) return false;
+  return true;
+}
+
+export function mergeDossierRows(
+  existing: RemoteDossierMirrorRow[] | undefined,
+  incoming: RemoteDossierMirrorRow[] | undefined,
+): RemoteDossierMirrorRow[] {
+  const by = new Map<string, RemoteDossierMirrorRow>();
+  for (const row of existing ?? []) {
+    if (!row?.event_id || !isRealAnalysisDossier(row.dossier)) continue;
+    by.set(row.event_id, row);
+  }
+  for (const row of incoming ?? []) {
+    if (!row?.event_id || !isRealAnalysisDossier(row.dossier)) continue;
+    const prev = by.get(row.event_id);
+    if (!prev || String(row.published_at ?? "") >= String(prev.published_at ?? "")) {
+      by.set(row.event_id, row);
+    }
+  }
+  return [...by.values()];
+}
+
+export function findDossierInRemoteMirror(
+  remote: RemoteMirrorArtifact | null,
+  eventId: string,
+): Record<string, unknown> | null {
+  if (!remote || !eventId) return null;
+  for (const row of remote.dossiers ?? []) {
+    if (String(row.event_id) === eventId && isRealAnalysisDossier(row.dossier)) {
+      return row.dossier;
+    }
+  }
+  return null;
+}
+
 export function buildRemoteMirrorArtifact(
   payload: RuntimeIngestPayload,
   boardEvents?: BoardEventMirrorRow[],
   backend: RemoteMirrorBackend = "vercel_blob",
+  dossiers?: RemoteDossierMirrorRow[],
 ): RemoteMirrorArtifact {
   return {
     schema: REMOTE_MIRROR_SCHEMA,
     published_at: payload.published_at,
     payload,
     board_events: boardEvents?.length ? boardEvents : extractBoardEventsFromPayload(payload),
+    dossiers: dossiers?.length ? dossiers : [],
     neon_in_use: false,
     backend,
   };
@@ -200,6 +261,7 @@ function vercelBlobStore(): RemoteMirrorStore {
         neon_in_use: false,
         backend: "vercel_blob",
         board_events: Array.isArray(parsed.board_events) ? parsed.board_events : [],
+        dossiers: Array.isArray(parsed.dossiers) ? parsed.dossiers : [],
       };
     },
     async write(art) {
@@ -232,18 +294,29 @@ export async function readRemoteMirror(): Promise<RemoteMirrorArtifact | null> {
 export async function writeRemoteMirror(
   payload: RuntimeIngestPayload,
   boardEvents?: BoardEventMirrorRow[],
-): Promise<{ ok: true; backend: RemoteMirrorBackend } | { ok: false; error: string }> {
+  dossiers?: RemoteDossierMirrorRow[],
+): Promise<
+  | { ok: true; backend: RemoteMirrorBackend; dossiers: number }
+  | { ok: false; error: string }
+> {
   const store = getRemoteMirrorStore();
   if (store.kind === "none") {
     return { ok: false, error: "blob_token_missing" };
   }
   try {
-    const art = buildRemoteMirrorArtifact(payload, boardEvents, store.kind);
+    let existing: RemoteMirrorArtifact | null = null;
+    try {
+      existing = await store.read();
+    } catch {
+      existing = null;
+    }
+    const merged = mergeDossierRows(existing?.dossiers, dossiers);
+    const art = buildRemoteMirrorArtifact(payload, boardEvents, store.kind, merged);
     if (art.neon_in_use !== false || NEON_IN_USE) {
       return { ok: false, error: "neon_banned" };
     }
     await store.write(art);
-    return { ok: true, backend: store.kind };
+    return { ok: true, backend: store.kind, dossiers: merged.length };
   } catch (e) {
     return { ok: false, error: e instanceof Error ? e.message : String(e) };
   }
@@ -254,6 +327,7 @@ export function ingestRuntimeMirrorBody(body: unknown): {
   status: number;
   payload?: RuntimeIngestPayload;
   board_events?: BoardEventMirrorRow[];
+  dossiers?: RemoteDossierMirrorRow[];
   error?: string;
   error_it?: string;
 } {
@@ -265,7 +339,11 @@ export function ingestRuntimeMirrorBody(body: unknown): {
       error_it: "Corpo JSON assente o non valido.",
     };
   }
-  const rec = body as { payload?: RuntimeIngestPayload; board_events?: BoardEventMirrorRow[] };
+  const rec = body as {
+    payload?: RuntimeIngestPayload;
+    board_events?: BoardEventMirrorRow[];
+    dossiers?: RemoteDossierMirrorRow[];
+  };
   const payload = rec.payload;
   if (!payload || typeof payload !== "object" || !payload.published_at || !payload.components) {
     return {
@@ -278,7 +356,10 @@ export function ingestRuntimeMirrorBody(body: unknown): {
   const board = Array.isArray(rec.board_events)
     ? rec.board_events
     : extractBoardEventsFromPayload(payload);
-  return { ok: true, status: 200, payload, board_events: board };
+  const dossiers = Array.isArray(rec.dossiers)
+    ? rec.dossiers.filter((row) => row?.event_id && isRealAnalysisDossier(row.dossier))
+    : [];
+  return { ok: true, status: 200, payload, board_events: board, dossiers };
 }
 
 export async function acceptRuntimeIngest(body: unknown): Promise<{
@@ -286,6 +367,7 @@ export async function acceptRuntimeIngest(body: unknown): Promise<{
   status: number;
   published_at?: string;
   board?: number;
+  dossiers?: number;
   backend?: RemoteMirrorBackend;
   neon_in_use: false;
   error?: string;
@@ -305,7 +387,7 @@ export async function acceptRuntimeIngest(body: unknown): Promise<{
         "Specchio remoto non configurato (manca BLOB_READ_WRITE_TOKEN). Modalità solo locale: Vercel resta OFFLINE.",
     };
   }
-  const written = await writeRemoteMirror(parsed.payload, parsed.board_events);
+  const written = await writeRemoteMirror(parsed.payload, parsed.board_events, parsed.dossiers);
   if (!written.ok) {
     return {
       ok: false,
@@ -320,6 +402,7 @@ export async function acceptRuntimeIngest(body: unknown): Promise<{
     status: 200,
     published_at: parsed.payload.published_at,
     board: parsed.board_events?.length ?? 0,
+    dossiers: written.dossiers,
     backend: written.backend,
     neon_in_use: false,
   };
@@ -328,7 +411,12 @@ export async function acceptRuntimeIngest(body: unknown): Promise<{
 export async function pushRuntimeToRemoteIngest(
   payload: RuntimeIngestPayload,
   boardEvents?: BoardEventMirrorRow[],
-  deps?: { fetchImpl?: typeof fetch; url?: string; secret?: string },
+  deps?: {
+    fetchImpl?: typeof fetch;
+    url?: string;
+    secret?: string;
+    dossiers?: RemoteDossierMirrorRow[];
+  },
 ): Promise<RemotePushResult> {
   const url = (deps?.url ?? process.env.BETMIND_RUNTIME_INGEST_URL)?.trim();
   const secret = (deps?.secret ?? process.env.BETMIND_RUNTIME_PUBLISH_SECRET)?.trim();
@@ -346,6 +434,7 @@ export async function pushRuntimeToRemoteIngest(
       body: JSON.stringify({
         payload,
         board_events: boardEvents ?? extractBoardEventsFromPayload(payload),
+        dossiers: deps?.dossiers ?? [],
       }),
     });
     if (!res.ok) {
