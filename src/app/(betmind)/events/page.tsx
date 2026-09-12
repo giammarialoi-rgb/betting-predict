@@ -45,6 +45,11 @@ type Ev = {
   probability_model?: Record<string, number> | null;
   home_or_a?: string | null;
   away_or_b?: string | null;
+  home_goals?: number | null;
+  away_goals?: number | null;
+  minute?: string | null;
+  score?: string | null;
+  live?: { home_goals?: number | null; away_goals?: number | null; minute?: string | null; status?: string };
 };
 
 const SPORTS = ["ALL", "FOOTBALL", "TENNIS", "BASKETBALL", "HOCKEY", "VOLLEYBALL"] as const;

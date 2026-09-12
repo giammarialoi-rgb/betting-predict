@@ -94,6 +94,7 @@ export type AnalyzedListRow = {
   kickoff_utc: string | null;
   sport: string;
   status: string | null;
+  minute: string | null;
   score_home: number | null;
   score_away: number | null;
   analyzed_at: string | null;

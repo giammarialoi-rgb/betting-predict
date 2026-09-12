@@ -281,14 +281,18 @@ function statusIt(s: string, t: ReturnType<typeof useBmLocale>["t"]): string {
 export function EventDetailClient({
   initialData = null,
   initialBoardSummary = null,
+  initialLive = null,
 }: {
   initialData?: Detail | null;
   initialBoardSummary?: BoardSummary | null;
+  initialLive?: Detail["live"];
 }) {
   const { t } = useBmLocale();
   const params = useParams<{ id: string }>();
   const [data, setData] = useState<Detail | null>(initialData);
-  const [boardLive, setBoardLive] = useState<Detail["live"]>(initialData?.live ?? null);
+  const [boardLive, setBoardLive] = useState<Detail["live"]>(
+    initialData?.live ?? initialLive ?? null,
+  );
   const [boardSettlement, setBoardSettlement] = useState<Detail["settlement"]>(
     settlementFromJson(initialData),
   );
@@ -372,6 +376,11 @@ export function EventDetailClient({
     };
   }, [params.id]);
 
+  const liveNow = boardLive ?? data?.live ?? null;
+  const liveScore =
+    liveNow && liveNow.home_goals != null && liveNow.away_goals != null
+      ? `${liveNow.home_goals}–${liveNow.away_goals}`
+      : null;
   const pred = data?.predictions?.[0];
   const dossier = data?.dossier;
   const hx = dossier?.human_explanation ?? null;
@@ -422,26 +431,29 @@ export function EventDetailClient({
                 matchTitleFromBoard(boardOnly)
               )}
             </h1>
+            {liveScore || liveNow?.minute ? (
+              <p className="bm-event-score mt-3" data-testid="event-live-score">
+                {liveScore ?? "—"}
+                {liveNow?.minute ? ` · ${liveNow.minute}` : ""}
+              </p>
+            ) : null}
             <p className="mt-2 text-sm bm-muted">
               {boardOnly.kickoff_utc ? fmtWhen(boardOnly.kickoff_utc) : "Orario non disponibile"}
+              {liveNow?.status ? ` · ${eventStatusIt(liveNow.status)}` : ""}
             </p>
           </header>
 
-          {boardLive && (
-            <Card title={boardLive.finished ? "Esito (FT)" : "Live"} glow>
+          {liveNow && (
+            <Card title={liveNow.finished ? "Esito (FT)" : "Live"} glow>
               <div className="grid grid-cols-2 gap-3">
                 <Metric
                   label="Punteggio"
-                  value={
-                    boardLive.home_goals != null && boardLive.away_goals != null
-                      ? `${boardLive.home_goals}–${boardLive.away_goals}`
-                      : "—"
-                  }
+                  value={liveScore ?? "—"}
                   accent
                 />
-                <Metric label="Stato" value={eventStatusIt(boardLive.status)} />
-                <Metric label="Minuto" value={boardLive.minute ?? "—"} />
-                <Metric label="Fonte" value={boardLive.source} />
+                <Metric label="Stato" value={eventStatusIt(liveNow.status)} />
+                <Metric label="Minuto" value={liveNow.minute ?? "—"} />
+                <Metric label="Fonte" value={liveNow.source} />
               </div>
             </Card>
           )}
@@ -498,9 +510,19 @@ export function EventDetailClient({
               <div className="my-1 text-base font-medium bm-muted">{t.vs}</div>
               {data.event.away_or_b}
             </h1>
+            {liveScore || liveNow?.minute ? (
+              <p className="bm-event-score mt-3" data-testid="event-live-score">
+                {liveScore ?? "—"}
+                {liveNow?.minute ? ` · ${liveNow.minute}` : ""}
+              </p>
+            ) : null}
             <p className="mt-2 text-sm bm-muted">
               {fmtWhen(String(data.event.kickoff_utc ?? ""))}
-              {data.event.status ? ` · ${eventStatusIt(data.event.status)}` : ""}
+              {liveNow?.status
+                ? ` · ${eventStatusIt(liveNow.status)}`
+                : data.event.status
+                  ? ` · ${eventStatusIt(data.event.status)}`
+                  : ""}
             </p>
           </header>
 
@@ -510,28 +532,24 @@ export function EventDetailClient({
             </Card>
           )}
 
-          {data.live && (
-            <Card title={data.live.finished ? "Esito (FT)" : "Live"} glow>
+          {liveNow && (
+            <Card title={liveNow.finished ? "Esito (FT)" : "Live"} glow>
               <div className="grid grid-cols-2 gap-3">
                 <Metric
                   label="Punteggio"
-                  value={
-                    data.live.home_goals != null && data.live.away_goals != null
-                      ? `${data.live.home_goals}–${data.live.away_goals}`
-                      : "—"
-                  }
+                  value={liveScore ?? "—"}
                   accent
                 />
-                <Metric label="Stato" value={eventStatusIt(data.live.status)} />
-                <Metric label="Minuto" value={data.live.minute ?? "—"} />
-                <Metric label="Fonte" value={data.live.source} />
+                <Metric label="Stato" value={eventStatusIt(liveNow.status)} />
+                <Metric label="Minuto" value={liveNow.minute ?? "—"} />
+                <Metric label="Fonte" value={liveNow.source} />
               </div>
               <p className="mt-3 text-xs bm-muted">
-                {data.live.finished
+                {liveNow.finished
                   ? "Risultato finale dalla fonte. Non inventato."
                   : "Stato in corso dalla fonte. Settlement solo a FT reale."}{" "}
-                {data.live.source_status ? `· ${data.live.source_status}` : ""}{" "}
-                {data.live.observed_at ? `· ${fmtWhen(data.live.observed_at)}` : ""}
+                {liveNow.source_status ? `· ${liveNow.source_status}` : ""}{" "}
+                {liveNow.observed_at ? `· ${fmtWhen(liveNow.observed_at)}` : ""}
               </p>
             </Card>
           )}

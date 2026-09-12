@@ -162,20 +162,39 @@ function hasRenderableDossier(json: EventDetailApiJson): boolean {
 
 export function liveViewFromRow(row: {
   status?: string;
-  home_goals?: number | null;
-  away_goals?: number | null;
+  home_goals?: number | string | null;
+  away_goals?: number | string | null;
   minute?: string | null;
   period?: number | null;
   source?: string;
   source_status?: string | null;
   observed_at?: string;
   finished?: boolean;
+  score?: unknown;
+  result?: unknown;
 } | null | undefined): EventLiveView | null {
   if (!row) return null;
+  const asNum = (v: unknown): number | null => {
+    if (typeof v === "number" && Number.isFinite(v)) return v;
+    if (typeof v === "string" && v.trim() && Number.isFinite(Number(v))) return Number(v);
+    return null;
+  };
+  let home_goals = asNum(row.home_goals);
+  let away_goals = asNum(row.away_goals);
+  if (home_goals == null || away_goals == null) {
+    const raw = row.score ?? row.result;
+    if (typeof raw === "string") {
+      const m = raw.trim().match(/^(\d+)\s*[-–:]\s*(\d+)$/);
+      if (m) {
+        home_goals = home_goals ?? Number(m[1]);
+        away_goals = away_goals ?? Number(m[2]);
+      }
+    }
+  }
   return {
     status: String(row.status ?? "UNKNOWN"),
-    home_goals: typeof row.home_goals === "number" ? row.home_goals : null,
-    away_goals: typeof row.away_goals === "number" ? row.away_goals : null,
+    home_goals,
+    away_goals,
     minute: row.minute ?? null,
     period: typeof row.period === "number" ? row.period : null,
     source: String(row.source ?? "unknown"),

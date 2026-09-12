@@ -6,7 +6,8 @@ import type { AnalyzedListRow } from "@/domain/eval/light-analysis/types";
 import { fmtKick } from "@/components/betmind/ui";
 import { eventStatusIt } from "@/domain/eval/betmind-runtime/status-copy";
 
-function kickClock(iso: string | null, status: string | null): string {
+function kickClock(iso: string | null, status: string | null, clock?: string | null): string {
+  if (clock && /\d/.test(clock)) return clock;
   const minute = String(status ?? "").match(/\b(\d{1,3})['′]\b/);
   if (minute) return `${minute[1]}'`;
   if (/live|in_play|playing/i.test(String(status ?? ""))) return "LIVE";
@@ -64,7 +65,7 @@ export function AnalyzedTicker({ events }: { events: AnalyzedListRow[] }) {
                 className="bm-ticker-row"
               >
                 <div className="bm-ticker-time">
-                  <span>{kickClock(row.kickoff_utc, row.status)}</span>
+                  <span>{kickClock(row.kickoff_utc, row.status, row.minute)}</span>
                   {row.status ? <em>{eventStatusIt(row.status)}</em> : null}
                 </div>
                 <div className="bm-ticker-teams">
