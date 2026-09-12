@@ -7,7 +7,7 @@ import type { StorageProvider } from "@/domain/storage/types";
 
 export type { StorageProvider, BoardEventMirrorRow, RuntimeMirrorRecord } from "@/domain/storage/types";
 export { FilesystemStorageProvider, getFilesystemStorage } from "@/domain/storage/filesystem";
-export { NEON_IN_USE, NEON_STATUS_IT, STORAGE_BACKEND, neonIgnoredReason, neonUrlPresent } from "@/domain/storage/neon-ban";
+export { NEON_IN_USE, NEON_STATUS_IT, STORAGE_BACKEND, neonIgnoredReason, neonUrlPresent, assertNeonBanned } from "@/domain/storage/neon-ban";
 
 export function getStorage(root?: string): StorageProvider {
   return getFilesystemStorage(root);
