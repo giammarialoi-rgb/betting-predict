@@ -228,7 +228,7 @@ describe("identity matching — Understat priors", () => {
     assert.match(roll.home_identity.reason_it, /ambiguo|corto/i);
   });
 
-  it("keeps Understat observations CONTEXT / not independent-model", async () => {
+  it("keeps Understat observations CONTEXT until available_at demonstrably precedes the cutoff", async () => {
     const json = JSON.stringify(payload);
     const lane = await researchUnderstatLeague({
       eventId: "test-osasuna-espanyol",
@@ -241,8 +241,12 @@ describe("identity matching — Understat priors", () => {
     });
     assert.ok(lane.status === "SUCCESS" || lane.status === "PARTIAL");
     assert.ok(lane.observations.length >= 2);
-    assert.ok(lane.observations.every((o) => o.available_at === null));
-    assert.ok(lane.observations.every((o) => o.enters_independent_model === false));
+    // Fixture priors are all August 2026, well before the Sept 12 cutoff --
+    // available_at (day after the most recent prior) reconstructs to a real
+    // timestamp before the cutoff, so these are now MODEL-eligible.
+    assert.ok(lane.observations.every((o) => o.available_at !== null));
+    assert.ok(lane.observations.every((o) => Date.parse(o.available_at!) <= Date.parse("2026-09-12T14:15:00.000Z")));
+    assert.ok(lane.observations.every((o) => o.enters_independent_model === true));
     assert.match(lane.reason, /home_identity=/);
     assert.match(lane.reason, /Abbinamento|chiave|Nomi squadra|Nessun/);
   });

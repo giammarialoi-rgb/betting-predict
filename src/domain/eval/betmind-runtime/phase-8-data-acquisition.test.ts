@@ -211,18 +211,24 @@ describe("Phase 8 event intelligence", () => {
     const homeXg = lane.observations.find((o) => o.feature_key === "home_xg_prematch");
     assert.ok(homeXg && typeof homeXg.value === "number");
     assert.notEqual(homeXg!.value, 9.9);
-    assert.equal(homeXg!.enters_independent_model, false);
-    assert.equal(homeXg!.available_at, null);
+    // Most recent home-team prior (id 12, 2026-08-29) reconstructs to an
+    // available_at (2026-08-30T00:00Z) well before this target's own cutoff
+    // (2026-09-13T14:00Z) -- STRICT_AS_OF allows it, so it now enters MODEL.
+    assert.equal(homeXg!.enters_independent_model, true);
+    assert.equal(homeXg!.available_at, "2026-08-30T00:00:00.000Z");
     assert.equal(homeXg!.source_event_id, "99");
     assert.equal(homeXg!.target_event_id, "test-villa-forest-xg");
     assert.ok(homeXg!.derived_from?.includes("excluded_target=true"));
     assert.ok(homeXg!.derived_from?.some((d) => d.startsWith("home_prior:")));
     assert.equal(catalogueAdapterKind("understat"), "PRODUCTION_ADAPTER");
+    // Both sides' most recent prior (2026-08-29 home, 2026-08-23 away)
+    // reconstruct to an available_at well before this target's cutoff, so
+    // every deduped xG key here is eligible for the independent model.
     const persist = understatXgPersistRows(lane.observations);
     assert.ok(persist.length >= 4);
-    assert.ok(persist.every((r) => r.availableAt === null));
-    assert.ok(persist.every((r) => r.featureStatus === "NOT_ELIGIBLE"));
-    assert.ok(persist.every((r) => r.featureValueJson.enters_independent_model === false));
+    assert.ok(persist.every((r) => r.availableAt !== null));
+    assert.ok(persist.every((r) => r.featureStatus === "ELIGIBLE"));
+    assert.ok(persist.every((r) => r.featureValueJson.enters_independent_model === true));
   });
 
   it("overlays Understat xG into the feature bag without entering the independent model", () => {

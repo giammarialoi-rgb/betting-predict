@@ -47,12 +47,12 @@ export type UnderstatFeaturePersistRow = {
   featureValueNumeric: number;
   observedAt: Date;
   availableAt: Date | null;
-  featureStatus: "NOT_ELIGIBLE";
-  temporalPrecision: "unknown";
+  featureStatus: "ELIGIBLE" | "NOT_ELIGIBLE";
+  temporalPrecision: "date_only" | "unknown";
   featureValueJson: {
-    eligibility: "NOT_ELIGIBLE";
-    context_status: "CONTEXT";
-    enters_independent_model: false;
+    eligibility: "ELIGIBLE" | "NOT_ELIGIBLE";
+    context_status: "MODEL" | "CONTEXT";
+    enters_independent_model: boolean;
     lab_b_event_id: string;
     source_event_id: string | null;
     target_event_id: string | null;
@@ -133,17 +133,18 @@ export function understatXgPersistRows(observations: ResearchObservation[]): Und
       row.available_at && Number.isFinite(Date.parse(row.available_at))
         ? new Date(row.available_at)
         : null;
+    const eligible = availableAt != null && row.enters_independent_model === true;
     out.push({
       featureKey: row.feature_key,
       featureValueNumeric: row.value as number,
       observedAt,
       availableAt,
-      featureStatus: "NOT_ELIGIBLE",
-      temporalPrecision: "unknown",
+      featureStatus: eligible ? "ELIGIBLE" : "NOT_ELIGIBLE",
+      temporalPrecision: eligible ? "date_only" : "unknown",
       featureValueJson: {
-        eligibility: "NOT_ELIGIBLE",
-        context_status: "CONTEXT",
-        enters_independent_model: false,
+        eligibility: eligible ? "ELIGIBLE" : "NOT_ELIGIBLE",
+        context_status: eligible ? "MODEL" : "CONTEXT",
+        enters_independent_model: eligible,
         lab_b_event_id: row.event_id,
         source_event_id: row.source_event_id ?? null,
         target_event_id: row.target_event_id ?? row.event_id,

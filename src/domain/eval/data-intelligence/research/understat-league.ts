@@ -9,7 +9,7 @@
  * completed matches only. available_at stays null unless a publication clock
  * is demonstrated — so values enter the feature bag as CONTEXT / NOT_ELIGIBLE.
  */
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import {
   identityKey,
@@ -164,7 +164,7 @@ function kickMs(iso: string): number {
   return Number.isFinite(t) ? t : NaN;
 }
 
-function uniqueTeamTitles(matches: UnderstatMatch[]): string[] {
+function uniqueTeamTitles(matches: readonly UnderstatMatch[]): string[] {
   const seen = new Set<string>();
   const out: string[] = [];
   for (const m of matches) {
@@ -183,7 +183,7 @@ function sameIdentity(candidate: string, key: string | null): boolean {
 }
 
 export function rollingPriorXg(input: {
-  matches: UnderstatMatch[];
+  matches: readonly UnderstatMatch[];
   home: string;
   away: string;
   kickoffIso: string;
@@ -198,6 +198,15 @@ export function rollingPriorXg(input: {
   prior_n_away: number;
   prior_home_ids: string[];
   prior_away_ids: string[];
+  /**
+   * "Day after the most recent prior match, 00:00 UTC" -- the same
+   * DATE_ONLY reconstruction already used for football-data.co.uk's
+   * result_available_at (dataset/normalize.ts). Only covers the prior
+   * (completed, pre-cutoff) matches feeding the rolling average --
+   * never the target match's own xG, which isn't known pre-match.
+   */
+  home_xg_l5_available_at: string | null;
+  away_xg_l5_available_at: string | null;
   home_team_id: string | null;
   away_team_id: string | null;
   home_identity: ReturnType<typeof pickUniqueTeam>;
@@ -250,6 +259,11 @@ export function rollingPriorXg(input: {
     xs.sort((a, b) => a.t - b.t).slice(-window);
   const h = last(priorsHome);
   const a = last(priorsAway);
+  // Reconstructed availability: the rolling average as a whole is only
+  // fully known once its most recent contributing match has a result --
+  // day after that match's kickoff, 00:00 UTC (same rule as football-data.co.uk).
+  const dayAfterUtc = (ms: number): string =>
+    new Date(Date.parse(new Date(ms).toISOString().slice(0, 10) + "T00:00:00.000Z") + 86_400_000).toISOString();
   return {
     target,
     home_xg_l5: mean(h.map((x) => x.xg)),
@@ -260,6 +274,8 @@ export function rollingPriorXg(input: {
     prior_n_away: a.length,
     prior_home_ids: h.map((x) => x.id),
     prior_away_ids: a.map((x) => x.id),
+    home_xg_l5_available_at: h.length ? dayAfterUtc(h[h.length - 1]!.t) : null,
+    away_xg_l5_available_at: a.length ? dayAfterUtc(a[a.length - 1]!.t) : null,
     home_team_id: homeTeamId,
     away_team_id: awayTeamId,
     home_identity: homeIdentity,
@@ -276,6 +292,35 @@ type CachedLeagueJson = {
 
 function jsonCachePath(root: string, slug: string, year: number): string {
   return join(root, "understat-cache", `${slug}-${year}.json`);
+}
+
+/**
+ * Load every cached getLeagueData response under {root}/understat-cache/,
+ * combined into one match pool for rolling-prior computation. Local disk
+ * only, no network -- same pattern as clubelo-cache.ts's
+ * loadClubEloCacheSync. TTL doesn't apply here: a played match is a valid
+ * prior data point regardless of how long ago the cache was populated.
+ */
+export function loadUnderstatCacheSync(root: string): UnderstatMatch[] {
+  const dir = join(root, "understat-cache");
+  if (!existsSync(dir)) return [];
+  const seen = new Set<string>();
+  const out: UnderstatMatch[] = [];
+  for (const name of readdirSync(dir)) {
+    if (!name.endsWith(".json")) continue;
+    try {
+      const row = JSON.parse(readFileSync(join(dir, name), "utf8")) as CachedLeagueJson;
+      if (!row?.body) continue;
+      for (const m of parseUnderstatLeagueJson(row.body)) {
+        if (seen.has(m.id)) continue;
+        seen.add(m.id);
+        out.push(m);
+      }
+    } catch {
+      /* skip unreadable cache file */
+    }
+  }
+  return out;
 }
 
 function readLeagueJsonCache(root: string, slug: string, year: number, nowMs: number): CachedLeagueJson | null {
@@ -612,7 +657,20 @@ export async function researchUnderstatLeague(input: {
     ...roll.prior_home_ids.map((id) => `home_prior:${id}`),
     ...roll.prior_away_ids.map((id) => `away_prior:${id}`),
   ];
-  const push = (key: string, value: number | null) => {
+  // STRICT_AS_OF: the reconstructed available_at (day after the most recent
+  // contributing prior match, 00:00 UTC -- same rule as football-data.co.uk's
+  // result_available_at) only counts if it lands at or before this event's
+  // own kickoff/decision cutoff. Never invent an earlier clock.
+  const cutoffMs = Date.parse(input.kickoffIso);
+  const homeAvailableAt =
+    roll.home_xg_l5_available_at != null && Date.parse(roll.home_xg_l5_available_at) <= cutoffMs
+      ? roll.home_xg_l5_available_at
+      : null;
+  const awayAvailableAt =
+    roll.away_xg_l5_available_at != null && Date.parse(roll.away_xg_l5_available_at) <= cutoffMs
+      ? roll.away_xg_l5_available_at
+      : null;
+  const push = (key: string, value: number | null, availableAt: string | null) => {
     if (value == null || !Number.isFinite(value)) return;
     obs.push({
       event_id: input.eventId,
@@ -621,26 +679,26 @@ export async function researchUnderstatLeague(input: {
       source: "understat",
       source_url: url,
       observed_at: input.nowIso,
-      available_at: null,
+      available_at: availableAt,
       extraction_method: "understat_getLeagueData_prior_only",
       confidence: null,
-      status: "REAL",
+      status: availableAt ? "REAL" : "EXCLUDED_TEMPORALLY",
       kind: "HISTORICAL_PRIOR",
       derived_from: derivedFrom,
-      enters_independent_model: false,
+      enters_independent_model: availableAt != null,
       source_event_id: roll.target?.id ?? null,
       target_event_id: input.eventId,
     });
   };
-  push("home_xg_l5", roll.home_xg_l5);
-  push("away_xg_l5", roll.away_xg_l5);
-  push("home_xga_l5", roll.home_xga_l5);
-  push("away_xga_l5", roll.away_xga_l5);
-  // Canonical feature-bag keys (same values; still not MODEL).
-  push("home_xg_prematch", roll.home_xg_l5);
-  push("away_xg_prematch", roll.away_xg_l5);
-  push("home_xga_prematch", roll.home_xga_l5);
-  push("away_xga_prematch", roll.away_xga_l5);
+  push("home_xg_l5", roll.home_xg_l5, homeAvailableAt);
+  push("away_xg_l5", roll.away_xg_l5, awayAvailableAt);
+  push("home_xga_l5", roll.home_xga_l5, homeAvailableAt);
+  push("away_xga_l5", roll.away_xga_l5, awayAvailableAt);
+  // Canonical feature-bag keys (same values, same availability).
+  push("home_xg_prematch", roll.home_xg_l5, homeAvailableAt);
+  push("away_xg_prematch", roll.away_xg_l5, awayAvailableAt);
+  push("home_xga_prematch", roll.home_xga_l5, homeAvailableAt);
+  push("away_xga_prematch", roll.away_xga_l5, awayAvailableAt);
 
   const identityNote = `home_identity=${roll.home_identity.status} away_identity=${roll.away_identity.status}`;
   const identityIt = [roll.home_identity.reason_it, roll.away_identity.reason_it].filter(Boolean).join(" ");

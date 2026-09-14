@@ -24,6 +24,8 @@ import type { FeatureDatum, PiProb3 } from "@/domain/eval/predictive-intelligenc
 import { loadClubEloCacheSync } from "@/domain/eval/data-intelligence/clubelo-cache";
 import { clubEloCachePresent } from "@/domain/eval/data-intelligence/registry";
 import { synthesizeFeatureBag } from "@/domain/eval/data-intelligence/feature-bag";
+import { loadUnderstatCacheSync } from "@/domain/eval/data-intelligence/research/understat-league";
+import { permanentRoot044 } from "@/domain/eval/permanent-044/config";
 import type { PrematchFeatureObservation } from "@/domain/eval/data-intelligence/types";
 import { resolveLivePiTarget } from "@/domain/eval/predictive-intelligence/live-resolve";
 
@@ -191,6 +193,7 @@ export function predictIndependentForEvent(input: {
   };
 
   const clubElo = clubEloCachePresent(process.cwd()) ? loadClubEloCacheSync(process.cwd()) : [];
+  const understatMatches = loadUnderstatCacheSync(input.labBRoot ?? permanentRoot044());
   const decisionTime = input.decisionTime ?? kick;
   let diFeatures: Map<string, FeatureDatum> | undefined;
   let diConflicts: IndependentPredictResult["di_conflicts"];
@@ -209,6 +212,7 @@ export function predictIndependentForEvent(input: {
   const features = buildFeatureVectorPi(target, matches, {
     clubElo,
     diFeatures,
+    understatMatches,
   });
   assertNoMarketInputsInPredictionContext(Object.keys(features.values));
 

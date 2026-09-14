@@ -16,6 +16,7 @@ import type {
 import type { ClubEloObservation } from "@/domain/features/clubelo-asof";
 import { resolveTeamEloAsOf } from "@/domain/eval/data-intelligence/clubelo-cache";
 import { mergeDiIntoFeatureVector } from "@/domain/eval/data-intelligence/feature-bag";
+import { rollingPriorXg, type UnderstatMatch } from "@/domain/eval/data-intelligence/research/understat-league";
 
 type TeamAgg = {
   n: number;
@@ -195,6 +196,8 @@ export function buildFeatureVectorPi(
     clubElo?: readonly ClubEloObservation[];
     /** ELIGIBLE DI features (injuries/lineups/elo) — never odds/scrape/meteo. */
     diFeatures?: Map<string, FeatureDatum> | FeatureDatum[];
+    /** Understat getLeagueData cache — local disk only, never network here. */
+    understatMatches?: readonly UnderstatMatch[];
   },
 ): PiFeatureVector {
   const feature_cutoff = featureCutoffForMatch(target);
@@ -321,6 +324,34 @@ export function buildFeatureVectorPi(
     );
   }
 
+  // Understat xG L5 SAFE — only from supplied local cache; never network.
+  // STRICT_AS_OF: reconstructed available_at (day after the most recent
+  // contributing prior match, 00:00 UTC) must land at or before this
+  // target's own cutoff, same rule as understat-league.ts's push().
+  const understatMatches = opts?.understatMatches ?? [];
+  const xgCutoffIso = target.match_date || target.event_time;
+  const xgRoll = understatMatches.length
+    ? rollingPriorXg({
+        matches: understatMatches,
+        home: target.home_team,
+        away: target.away_team,
+        kickoffIso: xgCutoffIso,
+      })
+    : null;
+  const xgCutoffMs = Date.parse(xgCutoffIso);
+  const homeXgAvailableAt =
+    xgRoll?.home_xg_l5_available_at != null && Date.parse(xgRoll.home_xg_l5_available_at) <= xgCutoffMs
+      ? xgRoll.home_xg_l5_available_at
+      : null;
+  const awayXgAvailableAt =
+    xgRoll?.away_xg_l5_available_at != null && Date.parse(xgRoll.away_xg_l5_available_at) <= xgCutoffMs
+      ? xgRoll.away_xg_l5_available_at
+      : null;
+  if (understatMatches.length) {
+    put(values, missing, "home_xg_prematch", homeXgAvailableAt ? xgRoll!.home_xg_l5 : null);
+    put(values, missing, "away_xg_prematch", awayXgAvailableAt ? xgRoll!.away_xg_l5 : null);
+  }
+
   assertNoClosingOddsInPredictionContext(Object.keys(values));
   assertNoMarketInputsInPredictionContext(Object.keys(values));
 
@@ -360,7 +391,28 @@ export function buildFeatureVectorPi(
   const feature_data: FeatureDatum[] = keys.map((key) => {
     const value = values[key]!;
     const isElo = key === "home_elo" || key === "away_elo" || key === "elo_diff";
+    const isXg = key === "home_xg_prematch" || key === "away_xg_prematch";
     const prov = provenanceFor(key);
+
+    if (isXg) {
+      const avail = key === "home_xg_prematch" ? homeXgAvailableAt : awayXgAvailableAt;
+      const eligible = value != null && Number.isFinite(value) && avail != null;
+      return {
+        key,
+        source: "understat",
+        event_id: target.canonical_id,
+        available_at: eligible ? avail : null,
+        feature_time: feature_cutoff,
+        value: eligible ? value : null,
+        quality: eligible ? 1 : 0,
+        status: eligible ? ("ELIGIBLE" as const) : ("NOT_ELIGIBLE" as const),
+        temporal_precision: "DATE_ONLY" as const,
+        derived_from: [],
+        calculation: "understat getLeagueData L5 rolling xG prior, excluding target",
+        origin: "HISTORICAL_ARCHIVE",
+        entered_model: eligible,
+      };
+    }
 
     if (isElo) {
       const avail =
@@ -423,10 +475,24 @@ export function buildFeatureVectorPi(
     }
   }
 
+  if (!understatMatches.length) {
+    for (const key of ["home_xg_prematch", "away_xg_prematch"] as const) {
+      feature_data.push({
+        key,
+        source: "understat",
+        event_id: target.canonical_id,
+        available_at: null,
+        feature_time: feature_cutoff,
+        value: null,
+        quality: null,
+        status: "UNAVAILABLE",
+        temporal_precision: "UNKNOWN",
+      });
+    }
+  }
+
   // Explicit UNAVAILABLE placeholders for audit coverage (not in model bag)
   for (const key of [
-    "home_xg_prematch",
-    "away_xg_prematch",
     "home_injuries_n",
     "away_injuries_n",
     "home_lineup_confirmed",

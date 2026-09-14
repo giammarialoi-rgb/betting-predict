@@ -8,11 +8,17 @@ import {
 } from "@/domain/eval/data-intelligence/synthesis";
 import type { FeatureDatum, PiFeatureVector } from "@/domain/eval/predictive-intelligence/types";
 
-/** Sources that must never enter independent MODEL via DI merge. */
+/**
+ * Sources that must never enter independent MODEL via the generic DI merge
+ * (synthesizeFeatureBag / mergeDiIntoFeatureVector diFeatures path).
+ * Understat is deliberately NOT here: its xG rolling priors get a dedicated,
+ * ClubElo-style path (buildFeatureVectorPi's understatMatches opt) with its
+ * own reconstructed available_at and STRICT_AS_OF gate -- see
+ * data-intelligence/research/understat-league.ts.
+ */
 const CONTEXT_ONLY_SOURCES = new Set([
   "open-meteo",
   "fbref",
-  "understat",
   "uefa",
   "sofascore",
   "directa",

@@ -264,7 +264,11 @@ describe("data-intelligence", () => {
     assert.ok(FEATURE_MANIFEST_P0.length >= 10);
     assert.ok(sum.by_readiness.ACTIVE.includes("home_injuries_n"));
     assert.ok(sum.by_readiness.CONTEXT_ONLY.includes("weather_temp_c"));
-    assert.ok(sum.by_readiness.CONTEXT_ONLY.includes("home_xg_prematch"));
+    // xG L5 rolling priors now reconstruct a defensible available_at
+    // (day after the most recent prior match, same rule as
+    // football-data.co.uk) and enter the independent model when that
+    // clears STRICT_AS_OF against the target's cutoff.
+    assert.ok(sum.by_readiness.ACTIVE.includes("home_xg_prematch"));
     assert.ok(!sum.stub_or_missing_families.includes("xg"));
   });
 

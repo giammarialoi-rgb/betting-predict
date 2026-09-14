@@ -153,13 +153,27 @@ export async function runUnderstatLane(input: {
   ];
 
   for (const ev of input.labEvents ?? []) {
+    const cutoffIso = ev.kickoff_utc ?? input.nowIso;
+    const cutoffMs = Date.parse(cutoffIso);
     const roll = rollingPriorXg({
       matches,
       home: ev.home,
       away: ev.away,
-      kickoffIso: ev.kickoff_utc ?? input.nowIso,
+      kickoffIso: cutoffIso,
     });
     if (!roll.home_identity.matched && !roll.away_identity.matched) continue;
+    // STRICT_AS_OF: a reconstructed available_at only counts if it lands
+    // at or before this event's own cutoff. Never invent an earlier clock.
+    // enters_independent_model stays false regardless -- this acquisition-engine
+    // lane is context-only by type (AcquisitionRecord.enters_independent_model
+    // is literal false); the model-feeding copy lives in the ResearchObservation
+    // this same rolling prior produces via researchUnderstatLeague().
+    const homeEligible =
+      roll.home_xg_l5_available_at != null &&
+      Date.parse(roll.home_xg_l5_available_at) <= cutoffMs;
+    const awayEligible =
+      roll.away_xg_l5_available_at != null &&
+      Date.parse(roll.away_xg_l5_available_at) <= cutoffMs;
     if (roll.home_xg_l5 != null) {
       records.push({
         source_id: "understat",
@@ -172,14 +186,16 @@ export async function runUnderstatLane(input: {
         kickoff_iso: ev.kickoff_utc ?? null,
         team_name: ev.home,
         observed_at: input.nowIso,
-        available_at: null,
-        temporal_precision: "unknown",
-        feature_status: "NOT_ELIGIBLE",
+        available_at: homeEligible ? roll.home_xg_l5_available_at : null,
+        temporal_precision: homeEligible ? "date_only" : "unknown",
+        feature_status: homeEligible ? "VALID" : "NOT_ELIGIBLE",
         enters_independent_model: false,
         extraction_method: "understat_getLeagueData_prior_only",
         source_url: url,
         identity_status: roll.home_identity.status,
-        reason_it: `xG L5 casa Understat. available_at sconosciuto; escluso dal modello pre-match. ${roll.home_identity.reason_it}`,
+        reason_it: homeEligible
+          ? `xG L5 casa Understat (${roll.prior_n_home} partite precedenti). Disponibile dal ${roll.home_xg_l5_available_at}.`
+          : `xG L5 casa Understat. available_at non dimostrabile prima del cutoff; escluso dal modello pre-match. ${roll.home_identity.reason_it}`,
       });
     }
     if (roll.away_xg_l5 != null) {
@@ -194,14 +210,16 @@ export async function runUnderstatLane(input: {
         kickoff_iso: ev.kickoff_utc ?? null,
         team_name: ev.away,
         observed_at: input.nowIso,
-        available_at: null,
-        temporal_precision: "unknown",
-        feature_status: "NOT_ELIGIBLE",
+        available_at: awayEligible ? roll.away_xg_l5_available_at : null,
+        temporal_precision: awayEligible ? "date_only" : "unknown",
+        feature_status: awayEligible ? "VALID" : "NOT_ELIGIBLE",
         enters_independent_model: false,
         extraction_method: "understat_getLeagueData_prior_only",
         source_url: url,
         identity_status: roll.away_identity.status,
-        reason_it: `xG L5 trasferta Understat. available_at sconosciuto; escluso dal modello pre-match. ${roll.away_identity.reason_it}`,
+        reason_it: awayEligible
+          ? `xG L5 trasferta Understat (${roll.prior_n_away} partite precedenti). Disponibile dal ${roll.away_xg_l5_available_at}.`
+          : `xG L5 trasferta Understat. available_at non dimostrabile prima del cutoff; escluso dal modello pre-match. ${roll.away_identity.reason_it}`,
       });
     }
   }

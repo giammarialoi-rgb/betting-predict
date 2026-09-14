@@ -74,6 +74,16 @@ export function predictPoissonIndependentDetailed(input: {
     homeLambda *= 1 + scale;
     awayLambda *= 1 - scale;
   }
+  const xgHome = input.features.values.home_xg_prematch;
+  const xgAway = input.features.values.away_xg_prematch;
+  if (xgHome != null && xgAway != null && Number.isFinite(xgHome) && Number.isFinite(xgAway)) {
+    // Rolling L5 xG differential, mild proportional nudge (same shape/cap as
+    // the Elo adjustment above) -- xG is a lower-variance proxy for attacking
+    // quality than raw goals, not a replacement for the goal-rate base rate.
+    const xgScale = Math.max(-0.15, Math.min(0.15, (xgHome - xgAway) / 3));
+    homeLambda *= 1 + xgScale;
+    awayLambda *= 1 - xgScale;
+  }
 
   const raw = poisson1x2({ homeLambda, awayLambda }, 8);
   const base = dixonColesAdjust(normalizeProb3(raw.HOME, raw.DRAW, raw.AWAY), p.rho);
