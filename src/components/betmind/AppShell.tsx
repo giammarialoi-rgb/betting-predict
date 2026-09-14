@@ -45,7 +45,6 @@ export function AppShell({
     { href: "/backtest", label: t.nav_backtest },
     { href: "/bankroll", label: t.nav_bankroll },
     { href: "/settings", label: t.nav_settings },
-    { href: "/research", label: t.nav_research },
   ] as const;
 
   const MOBILE_NAV = [

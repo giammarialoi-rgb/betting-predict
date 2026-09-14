@@ -87,9 +87,6 @@ export default function SettingsPage() {
           <Link className="bm-accent underline" href="/bankroll">
             Bankroll
           </Link>
-          <Link className="bm-accent underline" href="/research">
-            Ricerca
-          </Link>
         </div>
       </Card>
     </div>

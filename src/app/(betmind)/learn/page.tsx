@@ -52,8 +52,8 @@ export default function LearnPage() {
           <h1 className="text-2xl font-bold">{t.learn_title}</h1>
           <p className="mt-1 text-sm bm-muted">{t.learn_subtitle}</p>
           <p className="mt-2 text-xs bm-muted">
-            Una previsione persistita non e un esito. L&apos;inference indipendente e distinta
-            dalla riga salvata. I casi sotto appaiono solo quando l&apos;esito e stato verificato —
+            Una previsione persistita non è un esito. L&apos;inference indipendente è distinta
+            dalla riga salvata. I casi sotto appaiono solo quando l&apos;esito è stato verificato —
             le partite future restano in attesa.
           </p>
         </div>

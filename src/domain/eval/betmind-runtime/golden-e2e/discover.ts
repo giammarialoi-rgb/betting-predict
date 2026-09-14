@@ -136,7 +136,7 @@ export async function discoverGoldenCandidates(nowMs = Date.now()): Promise<{
             source: "espn",
             source_event_id: String(e.id ?? event_id),
             sport: "soccer",
-            competition: e.league ?? board.slug,
+            competition: e.league ?? board.label,
             country: null,
             home_or_a: e.home,
             away_or_b: e.away,

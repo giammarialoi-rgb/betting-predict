@@ -34,7 +34,6 @@ export const it = {
   nav_backtest: "Backtest",
   nav_bankroll: "Bankroll",
   nav_settings: "Altro",
-  nav_research: "Ricerca",
 
   home_subtitle: "Stato del sistema, senza fingere che il motore sia acceso se non lo è.",
   system_status: "Stato del sistema",
@@ -187,7 +186,6 @@ const en: BmMessages = {
   nav_backtest: "Backtest",
   nav_bankroll: "Bankroll",
   nav_settings: "More",
-  nav_research: "Research",
   home_subtitle:
     "Honest system dashboard. Web ≠ Runtime ≠ Prediction engine. Paper only · REAL_MONEY=false.",
   system_status: "System status",

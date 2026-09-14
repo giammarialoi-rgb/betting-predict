@@ -20,7 +20,7 @@ export default function ConclusiPage() {
           <div className="bm-section-label">Valutazione</div>
           <h1 className="text-2xl font-bold">Conclusi</h1>
           <p className="mt-1 text-sm bm-muted">
-            Solo partite con esito verificato. Una previsione persistita non e un risultato.
+            Solo partite con esito verificato. Una previsione persistita non è un risultato.
             Le quote restano fuori dal modello indipendente.
           </p>
         </div>

@@ -123,6 +123,7 @@ const SYNONYMS: Record<string, string> = {
   "celta de vigo": "celta vigo",
   "rc celta": "celta vigo",
   "real betis": "betis",
+  "real betis balompie": "betis",
   betis: "betis",
   "rayo vallecano": "rayo vallecano",
   "real sociedad": "real sociedad",

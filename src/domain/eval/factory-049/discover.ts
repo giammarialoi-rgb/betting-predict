@@ -2,9 +2,17 @@ import { join } from "node:path";
 import { loadCreditState042, remainingCredits042, saveCreditState042, canAffordRun042 } from "@/domain/eval/collector-042/credit";
 import { loadGovernorConfig042 } from "@/domain/eval/collector-042/config";
 import { labAStore044, permanentRoot044, ensurePermanentDirs044 } from "@/domain/eval/permanent-044/config";
-import { appendJournal044, loadStore044, appendJsonl044, appendEvent044 } from "@/domain/eval/permanent-044/store";
+import {
+  appendJournal044,
+  loadStore044,
+  appendJsonl044,
+  appendEvent044,
+  type Store044,
+} from "@/domain/eval/permanent-044/store";
 import { discoverGoldenCandidates } from "@/domain/eval/betmind-runtime/golden-e2e/discover";
 import { discoverFootballDataOrgFixtures } from "@/domain/eval/acquisition-engine/sources/football-data-org";
+import { normalizeTeamName } from "@/domain/eval/data-intelligence/research/identity-normalize";
+import type { PermanentEvent044 } from "@/domain/eval/permanent-044/types";
 import { bumpApiCalls045, loadDiscoveryState045, saveDiscoveryState045 } from "@/domain/eval/factory-045/config";
 import { fetchSportsCatalog045, pullSportOddsMulti045 } from "@/domain/eval/factory-045/pull";
 import { ingestDiscovered045 } from "@/domain/eval/factory-045/ingest";
@@ -15,6 +23,46 @@ import {
   type SportCoverageEntry049,
   type SportAvailability049,
 } from "@/domain/eval/factory-049/config";
+
+/**
+ * Cross-source identity key for free-discovery dedup: same calendar day +
+ * normalized home/away team names. football-data.org, ESPN, OpenLigaDB and
+ * TheSportsDB each spell the same real match differently ("Torino" vs
+ * "Torino FC", "Parma" vs "Parma Calcio 1913") -- appendEvent044's
+ * fingerprint dedup is per-source and never catches this, so the same
+ * fixture was showing up 2-4 times on the board. Strips a trailing
+ * founding-year suffix (normalizeTeamName doesn't) on top of the shared
+ * normalizer.
+ */
+function dedupTeamKey(name: string): string {
+  return normalizeTeamName(name).replace(/\s+\d{3,4}$/, "").trim();
+}
+
+function eventIdentityKey(home: string, away: string, kickoffUtc: string | null): string {
+  const day = kickoffUtc ? kickoffUtc.slice(0, 10) : "unknown";
+  return `${day}|${dedupTeamKey(home)}|${dedupTeamKey(away)}`;
+}
+
+function existingIdentityKeys(store: Store044): Set<string> {
+  const keys = new Set<string>();
+  for (const e of store.events) {
+    keys.add(eventIdentityKey(e.home_or_a, e.away_or_b, e.kickoff_utc));
+  }
+  return keys;
+}
+
+/** appendEvent044, but also skips a cross-source identity duplicate. */
+function appendUniqueEvent049(
+  store: Store044,
+  seenKeys: Set<string>,
+  event: PermanentEvent044,
+): "ok" | "dup" {
+  const key = eventIdentityKey(event.home_or_a, event.away_or_b, event.kickoff_utc);
+  if (seenKeys.has(key)) return "dup";
+  const result = appendEvent044(store, event);
+  if (result === "ok") seenKeys.add(key);
+  return result;
+}
 
 export type DiscoverResult049 = {
   sports_catalog: number;
@@ -150,11 +198,15 @@ export async function runDiscover049(input: {
     let fdOrgInserted = 0;
     const freeSources: string[] = [];
     let freeStore = loadStore044(labB);
+    const seenIdentityKeys = existingIdentityKeys(freeStore);
     if (status === "DISCOVERY_FAILED") {
+      // football-data.org first: official per-competition API, richer and
+      // more reliable than a scoreboard scrape, so it wins any cross-source
+      // identity collision.
       try {
         const fdOrg = await discoverFootballDataOrgFixtures({ nowIso });
         for (const ev of fdOrg.events) {
-          if (appendEvent044(freeStore, ev) === "ok") {
+          if (appendUniqueEvent049(freeStore, seenIdentityKeys, ev) === "ok") {
             freeInserted += 1;
             fdOrgInserted += 1;
           }
@@ -167,7 +219,7 @@ export async function runDiscover049(input: {
         const { candidates } = await discoverGoldenCandidates(nowMs);
         let espnInserted = 0;
         for (const c of candidates) {
-          if (appendEvent044(freeStore, c.event) === "ok") {
+          if (appendUniqueEvent049(freeStore, seenIdentityKeys, c.event) === "ok") {
             freeInserted += 1;
             espnInserted += 1;
           }
