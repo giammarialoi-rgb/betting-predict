@@ -1,0 +1,39 @@
+---
+description: Before integrating Next.js, Vercel, Playwright, Drizzle, Neon, sports APIs, SDKs, or scrapers — fetch current docs via Context7; never invent APIs
+alwaysApply: true
+---
+
+# Context7 Docs-First (integrations)
+
+Before implementing or modifying any integration with the technologies below, retrieve **current** documentation for that specific technology via Context7, then implement from that documentation. Do not invent APIs, methods, options, or package names from memory.
+
+## Covered technologies
+
+- Next.js
+- Vercel
+- Playwright
+- Drizzle
+- Neon
+- Sports / odds APIs
+- Third-party SDKs
+- Scraping libraries
+
+## Workflow
+
+1. **Resolve** the library on Context7 (prefer verified / high trustScore IDs, e.g. `/vercel/next.js`, `/drizzle-team/drizzle-orm`).
+2. **Fetch** focused docs for the exact topic you are about to change (routing, schema, deploy, selectors, client init, etc.).
+3. **Implement** only APIs and patterns present in that documentation (or in repo-local vendor docs such as `node_modules/next/dist/docs/` when AGENTS.md requires them).
+4. If Context7 MCP is unavailable, use the Context7 HTTP API (search + docs) — do not skip the lookup.
+5. Prefer official MCP doc tools when they exist for the same stack (e.g. Neon `list_docs_resources` / `get_doc_resource`, Vercel `search_vercel_documentation`) **in addition to** Context7 for the library surface you are calling.
+
+## Hard rules
+
+- **No invented APIs.** If the docs do not show a method, do not call it.
+- **Version-aware.** Match the docs to the version pinned in this repo when versions are listed.
+- **Scope the query.** Ask for the concrete feature, not the whole framework.
+- **Do not weaken** Evidence & Attribution or Historical Decision Time rules to “match” outdated examples.
+
+## Do not
+
+- Copy training-data API shapes for Next.js App Router, Drizzle schema APIs, Neon drivers, Playwright fixtures, or Vercel platform APIs without a fresh Context7 (or official MCP) check
+- Treat blog posts or random GitHub issues as substitutes for Context7/official docs when implementing
