@@ -128,7 +128,7 @@ export async function runOpenMeteoLane(input: {
       },
     });
     const temp = obs.find((o) => o.key === "temp_c" && typeof o.value === "number");
-    if (!temp || temp.value == null) continue;
+    if (!temp || typeof temp.value !== "number") continue;
     records.push({
       source_id: "open-meteo",
       kind: "meta",

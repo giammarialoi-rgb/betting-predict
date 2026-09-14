@@ -45,6 +45,10 @@
 /data/acquisition/
 /data/light-analysis/
 /artifacts/acquisition-engine/
+/artifacts/phase-8-test-identity/
+
+# Claude Code local dev tooling (per-machine, not project config)
+/.claude/
 
 # debug
 npm-debug.log*

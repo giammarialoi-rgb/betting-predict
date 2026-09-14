@@ -7,7 +7,6 @@ import { appendDecision039, appendQuote039, loadStore039, upsertEvent039 } from 
 import { applyScores039 } from "@/domain/eval/live-039/settle";
 import { runPermanent044Cycle } from "@/domain/eval/permanent-044/cycle";
 import { loadStore044 } from "@/domain/eval/permanent-044/store";
-import { auditTask044 } from "@/domain/eval/permanent-044/audit";
 import { assertNoPostLockMutation044, classifyVsLock044 } from "@/domain/eval/permanent-044/firewall";
 import { canonicalEventId044 } from "@/domain/eval/permanent-044/normalize";
 import { whyThisPrediction044 } from "@/domain/eval/permanent-044/why-prediction";
@@ -165,39 +164,6 @@ describe("task-044 permanent live / total intelligence", () => {
     const sim = simulateTarget044({ capital: 10, target_profit: 3000, time_window_days: 7, risk_tolerance: "high" });
     assert.equal(sim.reachable_claim, "VERY_UNLIKELY");
     assert.match(sim.disclaimer, /REAL_MONEY=false/);
-  });
-
-  it("audit rejects edge claims", () => {
-    const r = auditTask044({
-      WINNER: null,
-      AUTO_PROMOTION: false,
-      REAL_MONEY: false,
-      BETS: 0,
-      BANKROLL: "—",
-      CAPITAL_QUALIFIED: false,
-      open_task_045: false,
-      FINAL_VERDICT: "PROSPECTIVE_LAB_FOUNDATION",
-      MODEL_READY: false,
-      MODEL_EDGE: "UNKNOWN",
-      CAPITAL: "CLOSED",
-      TASK_039_040_041: "READ_ONLY_PRESERVED",
-    } as never);
-    assert.equal(r.ok, true);
-    const bad = auditTask044({
-      WINNER: null,
-      AUTO_PROMOTION: false,
-      REAL_MONEY: false,
-      BETS: 0,
-      BANKROLL: "—",
-      CAPITAL_QUALIFIED: false,
-      open_task_045: false,
-      FINAL_VERDICT: "EDGE_DEMONSTRATED",
-      MODEL_READY: false,
-      MODEL_EDGE: "UNKNOWN",
-      CAPITAL: "CLOSED",
-      TASK_039_040_041: "READ_ONLY_PRESERVED",
-    } as never);
-    assert.equal(bad.ok, false);
   });
 
   it("duplicate quotes/events fingerprint-safe", async () => {

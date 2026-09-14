@@ -2,7 +2,8 @@ import { join } from "node:path";
 import { loadCreditState042, remainingCredits042, saveCreditState042, canAffordRun042 } from "@/domain/eval/collector-042/credit";
 import { loadGovernorConfig042 } from "@/domain/eval/collector-042/config";
 import { labAStore044, permanentRoot044, ensurePermanentDirs044 } from "@/domain/eval/permanent-044/config";
-import { appendJournal044, loadStore044, appendJsonl044 } from "@/domain/eval/permanent-044/store";
+import { appendJournal044, loadStore044, appendJsonl044, appendEvent044 } from "@/domain/eval/permanent-044/store";
+import { discoverGoldenCandidates } from "@/domain/eval/betmind-runtime/golden-e2e/discover";
 import { bumpApiCalls045, loadDiscoveryState045, saveDiscoveryState045 } from "@/domain/eval/factory-045/config";
 import { fetchSportsCatalog045, pullSportOddsMulti045 } from "@/domain/eval/factory-045/pull";
 import { ingestDiscovered045 } from "@/domain/eval/factory-045/ingest";
@@ -137,23 +138,58 @@ export async function runDiscover049(input: {
       ? "RATE_LIMITED"
       : "DISCOVERY_FAILED";
     state.last_error = catalog.error;
+
+    // No paid odds catalog (no key / provider down): fall back to free soccer
+    // discovery (ESPN/OpenLigaDB/TheSportsDB scoreboards, no key required).
+    // Identity + kickoff only — no odds, so nothing here ever enters the model.
+    let freeInserted = 0;
+    let freeStore = loadStore044(labB);
+    if (status === "DISCOVERY_FAILED") {
+      try {
+        const { candidates } = await discoverGoldenCandidates(nowMs);
+        for (const c of candidates) {
+          if (appendEvent044(freeStore, c.event) === "ok") freeInserted += 1;
+        }
+      } catch {
+        /* free discovery is best-effort; keep the original DISCOVERY_FAILED status */
+      }
+    }
+
     saveDiscoveryState045(labB, state);
     saveCreditState042(credit, labA);
-    const families = emptyFamilies().map((f) => ({ ...f, status, note: catalog.error }));
+    const families = emptyFamilies().map((f) => {
+      if (f.family === "soccer" && freeInserted > 0) {
+        return {
+          ...f,
+          status: "FREE_SOURCE_FALLBACK" as SportAvailability049,
+          events_in_lab: freeInserted,
+          note: `The Odds API unavailable (${catalog.error}); used free ESPN/OpenLigaDB/TheSportsDB discovery instead`,
+        };
+      }
+      return { ...f, status, note: catalog.error };
+    });
     saveSportCoverage049(labB, { at: nowIso, sports: families });
+    appendJournal044(labB, {
+      kind: "discover_049_free_fallback",
+      odds_api_error: catalog.error,
+      freeInserted,
+    });
     return {
       sports_catalog: 0,
       pull_queue_size: 0,
       sports_pulled: 0,
-      events_inserted: 0,
+      events_inserted: freeInserted,
       quotes_inserted: 0,
       duplicates: 0,
       api_calls: apiCalls,
       credits_remaining: remainingCredits042(credit),
-      skipped_reason: catalog.error,
+      skipped_reason: freeInserted > 0 ? null : catalog.error,
       stopped_gracefully: false,
       families,
-      horizons: { TODAY: 0, NEXT_24H: 0, NEXT_72H: 0, NEXT_7D: 0 },
+      horizons: horizonCounts(
+        freeStore.events.map((e) => e.kickoff_utc),
+        nowMs,
+      ),
       artificial_cap: false,
     };
   }

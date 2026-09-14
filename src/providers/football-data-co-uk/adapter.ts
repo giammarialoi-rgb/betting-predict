@@ -1,9 +1,14 @@
 import { PermanentError, RetryableError } from "@/ingest/retry";
 import {
+  FOOTBALL_DATA_CO_UK_DIVISIONS,
   FOOTBALL_DATA_CO_UK_SOURCE_ID,
   footballDataCoUkCsvUrl,
   type FootballDataCoUkDivisionCode,
 } from "./bookmakers";
+
+export function isFootballDataCoUkDivisionCode(value: string): value is FootballDataCoUkDivisionCode {
+  return value in FOOTBALL_DATA_CO_UK_DIVISIONS;
+}
 import { FOOTBALL_DATA_CO_UK_LICENSE } from "./license";
 import { parseFootballDataCoUkMatches } from "./parser";
 import type {

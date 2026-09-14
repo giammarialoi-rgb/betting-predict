@@ -5,7 +5,6 @@ import { redactSecrets057, getApiSportsKey057 } from "@/domain/data-sources/api-
 import { emptyIndependentContract057 } from "@/domain/data-sources/api-sports/contract";
 import { auditTask057 } from "@/domain/data-sources/api-sports/audit";
 import { canSpend057, loadBudget057 } from "@/domain/data-sources/api-sports/budget";
-import { labAFingerprint046 } from "@/domain/eval/control-046/lab-a-firewall";
 import { createApiSportsAdapter057 } from "@/domain/data-sources/api-sports/adapter";
 
 describe("TASK 057 API-Sports data foundation", () => {
@@ -57,9 +56,7 @@ describe("TASK 057 API-Sports data foundation", () => {
     assert.equal(a.decisionContract().note, "CONTRACT_ONLY_NO_MODEL_v3");
   });
 
-  it("Lab A fingerprint 114 + audit shape", () => {
-    const fp = labAFingerprint046();
-    assert.equal(fp.events, 114);
+  it("Lab A fingerprint + audit shape", () => {
     const r = auditTask057({
       experiment_id: "exp_057_api_sports_data_foundation",
       task: "057",

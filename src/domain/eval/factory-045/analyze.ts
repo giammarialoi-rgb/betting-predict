@@ -173,7 +173,7 @@ export function analyzeAllLabB045(input: {
     const fixtureId = getSourceEventIdentity(ev.event_id, input.store.root)?.api_sports_fixture_id ?? null;
     const diObservations = loadApiSportsPrematchFromCacheSync({
       eventId: ev.event_id,
-      eventTime: ev.kickoff_utc,
+      eventTime: ev.kickoff_utc ?? asOf,
       homeTeam: ev.home_or_a ?? "",
       awayTeam: ev.away_or_b ?? "",
       fixtureId,

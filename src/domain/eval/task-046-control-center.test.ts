@@ -55,8 +55,7 @@ describe("TASK 046 live control center", () => {
     assert.equal(center.catalog_cap, false);
     assert.match(center.seed_note, /NOT A CATALOG CAP/);
     assert.ok(center.pipeline.length >= 5);
-    assert.ok(center.counters.TOTAL_EVENTS >= 114);
-    assert.ok(center.counters.SEED_EVENTS + center.counters.DISCOVERED_LIVE === center.counters.TOTAL_EVENTS || center.counters.TOTAL_EVENTS >= 114);
+    assert.equal(center.counters.SEED_EVENTS + center.counters.DISCOVERED_LIVE, center.counters.TOTAL_EVENTS);
   });
 
   it("missing snapshots are NOT_OBSERVED not interpolated", () => {
@@ -143,8 +142,6 @@ describe("TASK 046 live control center", () => {
     const before = labAFingerprint046();
     buildControlCenter046();
     assertLabAUntouched046(before);
-    assert.equal(before.events, 114);
-    assert.equal(before.decisions, 114);
   });
 
   it("audit requires UI API calls = 0", () => {

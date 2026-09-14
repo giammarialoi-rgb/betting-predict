@@ -16,7 +16,7 @@ import {
 } from "@/domain/eval/live-039/store";
 import { applyScores039 } from "@/domain/eval/live-039/settle";
 import { settledVerified039 } from "@/domain/eval/live-039/health";
-import { getOddsApiKey } from "@/domain/eval/live-039/sources";
+import { getOddsApiKey, type ScoreRow039 } from "@/domain/eval/live-039/sources";
 import { recoverLocks040 } from "@/domain/eval/recover-040/lock";
 import { LIVE_SOCCER_SPORTS_039, pullSportOdds042, pullSportScores042 } from "@/domain/eval/collector-042/api";
 import {
@@ -57,7 +57,7 @@ export function loadMeta042(root: string): Meta042 {
       labTriggeredAt: null,
       consecutiveErrors: 0,
       backoffMs: 0,
-      ...(JSON.parse(readFileSync(p, "utf8")) as Meta042),
+      ...(JSON.parse(readFileSync(p, "utf8")) as Partial<Meta042>),
     };
   } catch {
     return { lastDiscoveryAt: null, labTriggeredAt: null, consecutiveErrors: 0, backoffMs: 0 };
@@ -357,7 +357,7 @@ export async function runCollectorCycle042(input: {
   if (!httpFatal && plan.runScores) {
     let settledN = 0;
     let unsettledN = 0;
-    const allScores: Parameters<typeof applyScores039>[1] = [];
+    const allScores: ScoreRow039[] = [];
     for (const sport of plan.scoreSports) {
       const pull = await pullSportScores042({
         sport,

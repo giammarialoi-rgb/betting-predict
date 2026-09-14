@@ -163,7 +163,9 @@ export async function runRealAnalysisPipeline(opts?: {
         reason: row.reason ?? row.status,
         acquisition: row.status === "WORKING" ? "OK" : row.status,
         blockedByPolicy: row.status === "BLOCKED",
-        enters_independent_model: row.source_id === "clubelo" || row.source_id === "football-data-co-uk",
+        enters_independent_model:
+          (row.source_id === "clubelo" || row.source_id === "football-data-co-uk") &&
+          row.status === "WORKING",
       }),
     );
   }
@@ -271,7 +273,7 @@ export async function runRealAnalysisPipeline(opts?: {
           fields_extracted: manifest.total_rows > 0 ? ["matches"] : [],
           acquisition: manifest.total_rows >= 500 ? "OK" : "PARTIAL",
           reason: `imported ${manifest.total_rows} historical rows`,
-          enters_independent_model: true,
+          enters_independent_model: manifest.total_rows >= 500,
         }),
       );
       if (manifest.total_rows < 500) {

@@ -3,6 +3,7 @@
  * Understat prior xG, calendar congestion. Continue-on-fail.
  */
 import type { PermanentEvent044 } from "@/domain/eval/permanent-044/types";
+import type { ResearchPhase } from "@/domain/eval/data-intelligence/research/status";
 import type { ResearchObservation } from "@/domain/eval/data-intelligence/research/observations-store";
 import { appendResearchObservation } from "@/domain/eval/data-intelligence/research/observations-store";
 import { resolveApiSportsFixture, type FixtureResolveResult } from "@/domain/eval/data-intelligence/research/api-sports-fixture";
@@ -21,7 +22,7 @@ import { publishUnderstatXgObservations } from "@/ingest/understat-feature-publi
 
 export type Phase8LaneStatus = {
   source_id: string;
-  phase: string;
+  phase: ResearchPhase;
   ok: boolean;
   fetched: boolean;
   parser_status: string;

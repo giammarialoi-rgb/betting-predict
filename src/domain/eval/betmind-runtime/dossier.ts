@@ -397,8 +397,7 @@ export function buildAnalysisDossier(
         r.fetched === true ||
         r.phase === "OK" ||
         r.phase === "BLOCKED" ||
-        (r.adapter_kind === "CACHE_ONLY" && r.parser_status != null) ||
-        (r.adapter_kind === "PRODUCTION_ADAPTER" && r.fetched === true)
+        (r.adapter_kind === "CACHE_ONLY" && r.parser_status != null)
       ),
   );
   const catalogueNoted = research.filter(

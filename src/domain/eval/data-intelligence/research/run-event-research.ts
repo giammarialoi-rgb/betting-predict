@@ -337,7 +337,7 @@ export async function runEventResearchBatch(input: {
           );
           const persisted = [];
           for (const o of eligible) {
-            if (o.value == null || !Number.isFinite(Number(o.value))) continue;
+            if (o.value == null || typeof o.value === "boolean" || !Number.isFinite(Number(o.value))) continue;
             const row = {
               event_id: ev.event_id,
               feature_key: o.key,

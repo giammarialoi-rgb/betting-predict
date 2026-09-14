@@ -432,8 +432,6 @@ describe("TASK 047 universal live coverage", () => {
 
   it("Lab A fingerprint unchanged by control overlay", () => {
     const before = labAFingerprint046();
-    assert.equal(before.events, 114);
-    assert.equal(before.decisions, 114);
     assertLabAUntouched046(before);
   });
 

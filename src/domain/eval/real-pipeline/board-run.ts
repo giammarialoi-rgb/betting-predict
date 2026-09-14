@@ -10,7 +10,8 @@ import { permanentRoot044 } from "@/domain/eval/permanent-044/config";
 import { appendEvent044, loadStore044 } from "@/domain/eval/permanent-044/store";
 import { discoverGoldenCandidates } from "@/domain/eval/betmind-runtime/golden-e2e/discover";
 import { readRemoteMirror } from "@/domain/eval/betmind-runtime/remote-mirror";
-import { runRealAnalysisPipeline, type RealPipelineReport } from "@/domain/eval/real-pipeline/run";
+import { runRealAnalysisPipeline } from "@/domain/eval/real-pipeline/run";
+import type { RealPipelineReport } from "@/domain/eval/real-pipeline/types";
 import { refreshInPlayFromEspn } from "@/domain/eval/betmind-runtime/live-refresh";
 import {
   candidateToPermanentEvent,

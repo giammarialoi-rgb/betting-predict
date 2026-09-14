@@ -51,7 +51,6 @@ export function toSourceResultStatus(input: {
   if (http === 401 || http === 403 || http === 429) return "BLOCKED";
   if (http != null && http >= 500) return "ERROR";
   if (http === 0 || http === null) {
-    if (input.configured === false) return "NOT_CONFIGURED";
     return "UNAVAILABLE";
   }
   if (http === 200) return (input.extracted ?? 0) > 0 ? "ACTIVE" : "PARTIAL";
@@ -59,22 +58,17 @@ export function toSourceResultStatus(input: {
   return "UNAVAILABLE";
 }
 
-export function assertNeverUnavailableAsActive(status: SourceResultStatus): void {
-  if (status === "ACTIVE" && NEVER_ACTIVE.has(status)) {
-    throw new Error("UNAVAILABLE_MAPPED_TO_ACTIVE");
-  }
-}
-
 export function sourceResult(partial: Omit<SourceResult, "enters_independent_model"> & {
   enters_independent_model?: boolean;
 }): SourceResult {
   const status = partial.status;
-  if (status === "UNAVAILABLE" && status === "ACTIVE") {
+  const entersModel = partial.enters_independent_model === true;
+  if (NEVER_ACTIVE.has(status) && entersModel) {
     throw new Error("UNAVAILABLE_MAPPED_TO_ACTIVE");
   }
   return {
     ...partial,
-    enters_independent_model: partial.enters_independent_model === true,
+    enters_independent_model: entersModel,
   };
 }
 

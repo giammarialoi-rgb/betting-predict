@@ -45,12 +45,12 @@ export function buildDecisionContext(input: {
   decisionTimestampUtc: string;
   quotes: readonly ProspectiveQuote036[];
   bookmaker: string;
-}): DecisionContext036 {
+}): Omit<DecisionContext036, "state"> & { state: "LOCKED" } {
   assertNotCloseAsDecision(false);
   const odds = tripleFromQuotes(input.quotes.filter((q) => q.market === "1X2" && q.bookmaker === input.bookmaker));
   if (!odds) throw new ProspectiveIntegrityError("MISSING_QUOTE_TIME", "incomplete 1X2");
   const d = marketDevig036(odds);
-  const ctx: Omit<DecisionContext036, "decision_context_hash"> = {
+  const ctx: Omit<DecisionContext036, "decision_context_hash" | "state"> & { state: "LOCKED" } = {
     decision_id: input.decisionId,
     event_id: input.eventId,
     decision_timestamp_utc: input.decisionTimestampUtc,

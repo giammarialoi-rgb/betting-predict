@@ -174,8 +174,8 @@ export async function fetchApiSportsPrematchObservations(
 ): Promise<PrematchFeatureObservation[]> {
   const retrievedAt = input.deps?.retrievedAt ?? new Date().toISOString();
   const publishedFallback = input.deps?.sourcePublishedAt ?? null;
-  let injuriesBody = input.deps?.injuriesBody ?? null;
-  let lineupsBody = input.deps?.lineupsBody ?? null;
+  let injuriesBody: unknown = input.deps?.injuriesBody ?? null;
+  let lineupsBody: unknown = input.deps?.lineupsBody ?? null;
 
   if (input.deps?.allowNetwork && input.fixtureId) {
     const injPath = `/injuries?fixture=${input.fixtureId}`;
