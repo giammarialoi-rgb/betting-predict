@@ -75,6 +75,7 @@ export type SportAvailability049 =
   | "RATE_LIMITED"
   | "BUDGET_INSUFFICIENT"
   | "PROVIDER_ERROR"
+  | "FREE_SOURCE_FALLBACK"
   | "UNKNOWN";
 
 export type SportCoverageEntry049 = {
