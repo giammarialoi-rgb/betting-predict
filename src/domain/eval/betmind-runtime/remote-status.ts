@@ -504,12 +504,24 @@ async function persistCycleAndBoard(payload: BetMindRuntimePayload): Promise<voi
   }
 }
 
+/**
+ * Cap on dossiers sent to the remote ingest POST. Each real dossier runs
+ * ~100-145KB (full feature_data + reasoning) -- unbounded, this blew past
+ * Vercel's request body limit (http_413) once Lab A grew past ~30 analyzed
+ * events. Most-recently-published first; local disk stays the full SoT
+ * regardless of what the remote mirror gets.
+ */
+const REMOTE_DOSSIER_LIMIT = 25;
+
 async function collectPublishDossiers(): Promise<RemoteDossierMirrorRow[]> {
   try {
     const { collectLocalDossiersForRemote } = await import(
       "@/domain/eval/betmind-runtime/dossier-mirror"
     );
-    return collectLocalDossiersForRemote(permanentRoot044());
+    const all = collectLocalDossiersForRemote(permanentRoot044());
+    return [...all]
+      .sort((a, b) => Date.parse(b.published_at) - Date.parse(a.published_at))
+      .slice(0, REMOTE_DOSSIER_LIMIT);
   } catch {
     return [];
   }
