@@ -4,6 +4,7 @@ import { loadGovernorConfig042 } from "@/domain/eval/collector-042/config";
 import { labAStore044, permanentRoot044, ensurePermanentDirs044 } from "@/domain/eval/permanent-044/config";
 import { appendJournal044, loadStore044, appendJsonl044, appendEvent044 } from "@/domain/eval/permanent-044/store";
 import { discoverGoldenCandidates } from "@/domain/eval/betmind-runtime/golden-e2e/discover";
+import { discoverFootballDataOrgFixtures } from "@/domain/eval/acquisition-engine/sources/football-data-org";
 import { bumpApiCalls045, loadDiscoveryState045, saveDiscoveryState045 } from "@/domain/eval/factory-045/config";
 import { fetchSportsCatalog045, pullSportOddsMulti045 } from "@/domain/eval/factory-045/pull";
 import { ingestDiscovered045 } from "@/domain/eval/factory-045/ingest";
@@ -140,16 +141,38 @@ export async function runDiscover049(input: {
     state.last_error = catalog.error;
 
     // No paid odds catalog (no key / provider down): fall back to free soccer
-    // discovery (ESPN/OpenLigaDB/TheSportsDB scoreboards, no key required).
-    // Identity + kickoff only — no odds, so nothing here ever enters the model.
+    // discovery. football-data.org (official API, token required) first when
+    // configured — full-season fixtures for the EU5, not just a scoreboard
+    // window. ESPN/OpenLigaDB/TheSportsDB (no key) fill in the rest (UCL/UEL,
+    // smaller leagues). Identity + kickoff only — no odds, so nothing here
+    // ever enters the model.
     let freeInserted = 0;
+    let fdOrgInserted = 0;
+    const freeSources: string[] = [];
     let freeStore = loadStore044(labB);
     if (status === "DISCOVERY_FAILED") {
       try {
-        const { candidates } = await discoverGoldenCandidates(nowMs);
-        for (const c of candidates) {
-          if (appendEvent044(freeStore, c.event) === "ok") freeInserted += 1;
+        const fdOrg = await discoverFootballDataOrgFixtures({ nowIso });
+        for (const ev of fdOrg.events) {
+          if (appendEvent044(freeStore, ev) === "ok") {
+            freeInserted += 1;
+            fdOrgInserted += 1;
+          }
         }
+        if (fdOrgInserted > 0) freeSources.push("football-data.org");
+      } catch {
+        /* free discovery is best-effort; fall through to the other free sources */
+      }
+      try {
+        const { candidates } = await discoverGoldenCandidates(nowMs);
+        let espnInserted = 0;
+        for (const c of candidates) {
+          if (appendEvent044(freeStore, c.event) === "ok") {
+            freeInserted += 1;
+            espnInserted += 1;
+          }
+        }
+        if (espnInserted > 0) freeSources.push("ESPN/OpenLigaDB/TheSportsDB");
       } catch {
         /* free discovery is best-effort; keep the original DISCOVERY_FAILED status */
       }
@@ -163,7 +186,7 @@ export async function runDiscover049(input: {
           ...f,
           status: "FREE_SOURCE_FALLBACK" as SportAvailability049,
           events_in_lab: freeInserted,
-          note: `The Odds API unavailable (${catalog.error}); used free ESPN/OpenLigaDB/TheSportsDB discovery instead`,
+          note: `The Odds API unavailable (${catalog.error}); used free discovery instead (${freeSources.join(", ")})`,
         };
       }
       return { ...f, status, note: catalog.error };
