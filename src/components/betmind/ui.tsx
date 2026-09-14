@@ -194,7 +194,7 @@ export function sportBucket(sport: string | null | undefined): string {
 
 export function edgeLabel(status: unknown, edge: unknown): string {
   const st = String(status ?? "UNKNOWN").toUpperCase();
-  if (st === "UNKNOWN" || edge == null || !Number.isFinite(Number(edge))) return "EDGE UNKNOWN";
+  if (st === "UNKNOWN" || edge == null || !Number.isFinite(Number(edge))) return "SCONOSCIUTO";
   return fmtN(Number(edge), 3);
 }
 

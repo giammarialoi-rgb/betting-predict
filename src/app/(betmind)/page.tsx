@@ -159,12 +159,16 @@ export default function BetMindHomePage() {
   const rt = runtimeState(strip);
   const engine = strip.predictiveEngine;
 
+  const bankroll053 = asRecord(obs?.bankroll_053);
+  const bankroll053Summary = asRecord(bankroll053?.summary) ?? bankroll053;
   const capital =
     typeof paper?.current_flat === "number"
       ? (paper.current_flat as number)
-      : typeof asRecord(obs?.multisource_055)?.paper_bankroll === "number"
-        ? (asRecord(obs?.multisource_055)?.paper_bankroll as number)
-        : null;
+      : typeof bankroll053Summary?.current_flat === "number"
+        ? (bankroll053Summary.current_flat as number)
+        : typeof asRecord(obs?.multisource_055)?.paper_bankroll === "number"
+          ? (asRecord(obs?.multisource_055)?.paper_bankroll as number)
+          : null;
 
   const phase = String(activity?.phase ?? (analysis?.idle ? "IDLE" : "UNKNOWN"));
   const lastCycle = String(

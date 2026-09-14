@@ -55,7 +55,6 @@ const BUCKET_TABS = [
   "QUEUED",
   "RESEARCHING",
   "RESEARCHED",
-  "ANALYZED",
   "MODEL_INFERENCE",
   "INSUFFICIENT_DATA",
   "SKIPPED",
@@ -136,10 +135,12 @@ function EventsInner() {
   const bucketCounts = useMemo(() => {
     const c: Record<string, number> = {
       DISCOVERED: 0,
-      ELIGIBLE_FOR_MODEL: 0,
-      ANALYZED: 0,
+      QUEUED: 0,
+      RESEARCHING: 0,
+      RESEARCHED: 0,
+      MODEL_INFERENCE: 0,
+      INSUFFICIENT_DATA: 0,
       SKIPPED: 0,
-      UNAVAILABLE: 0,
     };
     for (const e of events) {
       const b = String(
