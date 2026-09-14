@@ -47,10 +47,8 @@ export function whyDidModelFail044(input: {
         Away: "AWAY",
       };
       const norm = map[pick] ?? (pick as "HOME" | "DRAW" | "AWAY");
-      if (out === norm || (out === "HOME" && norm === "HOME") || (out === "DRAW" && norm === "DRAW") || (out === "AWAY" && norm === "AWAY")) {
+      if (out === norm) {
         result_class = "CORRECT";
-      } else if (out === "VOID" || out === "PUSH") {
-        result_class = "NEUTRAL";
       } else {
         result_class = "INCORRECT";
       }

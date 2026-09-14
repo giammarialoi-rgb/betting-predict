@@ -420,7 +420,7 @@ describe("data-intelligence", () => {
   });
 
   it("production still allows ordinary GET scrape; bypass remains forbidden", () => {
-    const env = {
+    const env: NodeJS.ProcessEnv = {
       ...process.env,
       BETMIND_TEST_SCRAPE: "true",
       NODE_ENV: "production",

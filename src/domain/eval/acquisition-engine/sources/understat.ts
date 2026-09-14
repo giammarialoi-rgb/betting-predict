@@ -45,7 +45,7 @@ export async function runUnderstatLane(input: {
   let retries = 0;
   let url = input.url;
   let usedYear = year;
-  let usedLeague = UNDERSTAT_LEAGUES[0]!;
+  let usedLeague: (typeof UNDERSTAT_LEAGUES)[number] = UNDERSTAT_LEAGUES[0]!;
   const leaguesHit: string[] = [];
   const allMatches: UnderstatMatch[] = [];
 

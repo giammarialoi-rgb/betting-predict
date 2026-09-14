@@ -205,7 +205,7 @@ export async function runEspnLane(input: {
       writeFileSync(join(cacheDir, `${board.slug}.json`), got.text, "utf8");
       events.push(...parsed);
       leagues.push(board.slug);
-      sports.add(board.sport === "basketball" ? "basketball" : "football");
+      sports.add("football");
     }
   }
 

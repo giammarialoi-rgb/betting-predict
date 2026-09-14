@@ -567,9 +567,12 @@ export async function runFootballDataCoUkIngestion(options: {
   /** Inject CSV for offline tests. Omit for live download (may be BLOCKED). */
   csvText?: string;
 }): Promise<OddsIngestionResult> {
-  const { FootballDataCoUkOddsProvider } = await import(
+  const { FootballDataCoUkOddsProvider, isFootballDataCoUkDivisionCode } = await import(
     "@/providers/football-data-co-uk/adapter"
   );
+  if (!isFootballDataCoUkDivisionCode(options.division)) {
+    throw new Error(`Unknown football-data.co.uk division code: ${options.division}`);
+  }
   const provider = new FootballDataCoUkOddsProvider(
     { seasonCode: options.seasonCode, division: options.division },
     options.csvText != null ? { csvText: options.csvText } : {},

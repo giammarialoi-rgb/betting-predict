@@ -34,7 +34,7 @@ function pi(home: string, homeId: string, away: string, awayId: string): PiMatch
     away_team_id: awayId,
     fthg: 1,
     ftag: 0,
-    ftr: "H",
+    ftr: "HOME",
     hthg: null,
     htag: null,
     htr: null,

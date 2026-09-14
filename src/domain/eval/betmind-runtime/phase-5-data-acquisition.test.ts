@@ -93,7 +93,7 @@ describe("Phase 5 data acquisition", () => {
     const cal = listCalendarEvents({ root, date: "2026-09-12", sport: "football" });
     assert.equal(cal.total, 40);
     assert.ok(cal.events.every((e) => e.home_or_a && e.away_or_b));
-    assert.ok(cal.events.every((e) => !String(e.label).startsWith("e") || e.label.includes(" vs ")));
+    assert.ok(cal.events.every((e) => !String(e.label).startsWith("e") || String(e.label).includes(" vs ")));
   });
 
   it("queue accepts all upcoming events; budget only slices the batch", () => {

@@ -50,7 +50,7 @@ function topHorizon(
 
 /** Analytical rankings only — never forces bets. */
 export function buildRankBoards055(store: Store044, nowIso: string, persist = true): RankBoard055 {
-  const base = computeRankBoards047(store, nowIso.slice(0, 10), false);
+  const base = computeRankBoards047(store, nowIso.slice(0, 10));
   const nowMs = Date.parse(nowIso);
   const byPred = new Map<string, (typeof store.predictions)[0]>();
   for (const p of store.predictions) {

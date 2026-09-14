@@ -139,7 +139,7 @@ export async function resolveApiSportsFixture(input: {
 
   const comp = resolveCompetitionMatrix(ev.competition);
   const season = europeanSeasonYear(ev.kickoff_utc);
-  let body = input.deps?.fixturesBody ?? null;
+  let body: unknown = input.deps?.fixturesBody ?? null;
   let charged = 0;
   let from_cache = false;
 

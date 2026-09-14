@@ -62,7 +62,7 @@ function sampleDossier(eventId: string): AnalysisDossier {
         source: "football-data-co-uk",
         observed_at: "2026-09-12T12:00:00.000Z",
         available_at: "2026-09-12T12:00:00.000Z",
-        status: "OK",
+        status: "ELIGIBLE",
         entered_model: true,
       },
     ],
