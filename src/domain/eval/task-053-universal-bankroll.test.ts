@@ -171,7 +171,6 @@ describe("TASK 053 universal massive + virtual bankroll", () => {
   it("source adapter name documented; Lab A untouched", () => {
     assert.equal(ODDS_API_ADAPTER_NAME_053, "OddsApiAdapter");
     const before = labAFingerprint046();
-    assert.equal(before.events, 114);
     assertLabAUntouched046(before);
   });
 

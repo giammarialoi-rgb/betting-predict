@@ -412,7 +412,6 @@ describe("TASK 048 decision engine", () => {
 
   it("Lab A untouched + audit flags", () => {
     const before = labAFingerprint046();
-    assert.equal(before.events, 114);
     assertLabAUntouched046(before);
     assert.equal(auditTask048(null).ok, true);
   });

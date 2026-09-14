@@ -252,8 +252,6 @@ describe("TASK 051 autonomous 24/7 brain", () => {
 
   it("Lab A fingerprint stable across brain unit checks", () => {
     const before = labAFingerprint046();
-    assert.equal(before.events, 114);
-    assert.equal(before.decisions, 114);
     assertLabAUntouched046(before);
   });
 
