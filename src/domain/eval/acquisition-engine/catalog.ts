@@ -70,9 +70,9 @@ export const THESPORTSDB_LEAGUES = [
   { id: "4331", label: "German Bundesliga" },
   { id: "4334", label: "French Ligue 1" },
   { id: "4337", label: "Dutch Eredivisie" },
-  { id: "4346", label: "Portuguese Primeira Liga" },
-  { id: "4480", label: "English Championship" },
-  { id: "4481", label: "Italian Serie B" },
+  { id: "4344", label: "Portuguese Primeira Liga" },
+  { id: "4329", label: "English Championship" },
+  { id: "4394", label: "Italian Serie B" },
 ] as const;
 
 /** football-data.co.uk free CSVs. Odds columns stay MARKET layer. */
