@@ -144,10 +144,35 @@ function jaccard(a: string[], b: string[]): number {
 }
 
 /**
+ * Quota dei token del CANDIDATO che la query non spiega, pesata sulla lunghezza.
+ *
+ * Serve contro il caso "query corta interamente contenuta nel candidato": senza
+ * questo, "Paris FC" normalizza in "paris", che sta tutto dentro "parissg", e
+ * ottiene 1,0 contro il Paris Saint-Germain — due societa diverse. Il token "sg"
+ * del candidato non e spiegato da nulla nella query, ed e questo a smascherarlo.
+ *
+ * Si penalizzano solo i token del candidato, non quelli della query: le
+ * abbreviazioni dello storico ("M'gladbach") hanno un unico token, che la query
+ * lunga spiega, e restano intatte.
+ */
+function uncoveredCandidateTokens(queryNormalized: string, candidateTokens: string[]): number {
+  if (!candidateTokens.length) return 0;
+  let total = 0;
+  let uncovered = 0;
+  for (const t of candidateTokens) {
+    total += t.length;
+    const cov = longestCommonSubstring(t, queryNormalized) / t.length;
+    if (cov < 0.7) uncovered += t.length;
+  }
+  return total > 0 ? uncovered / total : 0;
+}
+
+/**
  * 0..1. Base: sottostringa comune piu lunga rapportata al nome piu corto, perche
  * una fonte abbrevia ("M'gladbach" dentro "Borussia Monchengladbach"). La
  * sovrapposizione di token puo solo ALZARE il punteggio: pesarla in media lo
- * abbassava proprio sugli abbreviati, che sono i casi da riconoscere.
+ * abbassava proprio sugli abbreviati, che sono i casi da riconoscere. Infine si
+ * scala per i token del candidato che la query non spiega.
  */
 export function similarity(a: string, b: string): number {
   const na = normalizeTeamName(a);
@@ -159,7 +184,8 @@ export function similarity(a: string, b: string): number {
   if (shorter < 4) return 0;
   const sub = lcs / shorter;
   const jac = jaccard(na.tokens, nb.tokens);
-  return Math.min(1, sub + 0.15 * jac);
+  const raw = Math.min(1, sub + 0.15 * jac);
+  return raw * (1 - uncoveredCandidateTokens(na.normalized, nb.tokens));
 }
 
 export type MatchOutcome =
