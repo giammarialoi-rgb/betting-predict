@@ -85,7 +85,9 @@
     "analyze:all": "tsx src/scripts/analyze-board.ts",
     "lab:strength-dc": "tsx src/scripts/lab-strength-dc.ts",
     "lab:totals-dc": "tsx src/scripts/lab-totals-dc.ts",
-    "lab:ticket-ev": "tsx src/scripts/lab-ticket-ev.ts"
+    "lab:ticket-ev": "tsx src/scripts/lab-ticket-ev.ts",
+    "data:build-expanded": "tsx src/scripts/build-expanded-dataset.ts",
+    "lab:league-coverage": "tsx src/scripts/lab-league-coverage.ts"
   },
   "dependencies": {
     "@neondatabase/serverless": "^1.1.0",
