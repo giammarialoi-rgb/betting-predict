@@ -1,6 +1,6 @@
 # BetMind — stato del modello predittivo (handoff)
 
-Documento di passaggio di consegne fra sessioni e strumenti. Aggiornato: 2026-09-19.
+Documento di passaggio di consegne fra sessioni e strumenti. Aggiornato: 2026-09-19 (sera).
 Tutte le cifre sono riproducibili con gli script indicati; nessuna è stimata.
 
 ## Stato in una riga
@@ -92,3 +92,35 @@ prende il prezzo: apertura Bet365 → CLV −4,71%; miglior prezzo fra i book �
 `node_modules` è installato con pnpm su Windows: i suoi symlink non sono leggibili da un
 filesystem Linux, quindi `npx tsc` e `npx tsx` falliscono da lì con `MODULE_NOT_FOUND`.
 Da Windows funzionano normalmente (`pnpm test`, `pnpm lab:*`).
+
+
+---
+
+## Aggiornamento — copertura, corner, tabellone
+
+**Dataset esteso**: da 5 a 22 divisioni, 45.228 partite (`pnpm data:build-expanded`, file
+separato `matches-expanded.jsonl`). Copertura per lega misurata con `pnpm lab:league-coverage`:
+il modello non batte il mercato in **nessuna** delle 22, ma il divario si stringe fino a 13
+volte nelle divisioni minori (2. Bundesliga +0,0031) rispetto alle grandi (Bundesliga
++0,0428). Attenzione al margine: in Scozia il book costa 9,2-9,6% contro 5,4% delle grandi.
+Candidati con divario stretto E margine normale: D2, E3, E1, E2, SP2.
+
+**Corner** (`count-model.ts`, `pnpm lab:corners`): sui **totali** nessun segnale oltre la
+media di lega — l'effetto squadra si annulla nella somma. Sui **direzionali** segnale forte:
+corner 1X2 −0,03486 (IC [−0,0444, −0,0256]), corner casa Over 4.5 −0,02442. Comprare quote
+sui corner totali sarebbe denaro sprecato; `corners_1x2` e i team total corner no.
+
+**Tabellone 7 giorni** (`pnpm board:7days`): calendario da football-data.org, 63 partite su
+81 nel tabellone. Le quote di quella API sono un pacchetto a pagamento, quindi **non ci sono
+prezzi e nessuna selezione viene proposta**.
+
+**Abbinamento nomi** (`team-matching.ts`): non restituisce mai il candidato piu vicino.
+Pretende punteggio alto e margine netto, altrimenti AMBIGUOUS o NO_MATCH e la partita esce.
+Due trappole gia trovate e chiuse, entrambe con test di regressione:
+- la rosa costruita per divisione rendeva invisibile ogni promossa o retrocessa;
+- il punteggio basato su sottostringa/lunghezza minima dava 1,0 a qualunque query contenuta
+  nel candidato, e faceva passare "Paris FC" per il PSG. Ora si scala per i token del
+  candidato non spiegati dalla query.
+
+**Stato generatore casuale**: usare sempre `validation/rng.ts`. Un LCG scritto a mano
+degenera in copertura e falsa gli intervalli di confidenza.
