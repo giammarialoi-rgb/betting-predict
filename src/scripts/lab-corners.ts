@@ -26,7 +26,7 @@ import { pairedBootstrap as sharedPairedBootstrap } from "@/domain/eval/predicti
 
 const ROOT = process.cwd();
 const RAW = join(ROOT, "audit/external/task-044/predictive-intelligence/datasets/raw");
-const OUT = join(ROOT, "audit", "corners-report.json");
+const OUT = join(ROOT, "audit", (process.argv.find((a) => a.startsWith("--metric="))?.split("=")[1] ?? "corners") + "-report.json");
 
 type Row = { div: string; date: number; home: string; away: string; hc: number; ac: number; season: string };
 
@@ -47,7 +47,9 @@ function load(): Row[] {
     if (!lines.length) continue;
     const h = lines[0]!.replace(/^﻿/, "").split(",");
     const ix = (n: string) => h.indexOf(n);
-    const [iD, iDate, iH, iA, iHC, iAC] = [ix("Div"), ix("Date"), ix("HomeTeam"), ix("AwayTeam"), ix("HC"), ix("AC")];
+    const metric = process.argv.find((a) => a.startsWith("--metric="))?.split("=")[1] ?? "corners";
+    const cols = metric === "cards" ? ["HY", "AY"] : ["HC", "AC"];
+    const [iD, iDate, iH, iA, iHC, iAC] = [ix("Div"), ix("Date"), ix("HomeTeam"), ix("AwayTeam"), ix(cols[0]!), ix(cols[1]!)];
     if (iHC < 0 || iAC < 0) continue;
     for (let i = 1; i < lines.length; i += 1) {
       const c = lines[i]!.split(",");
@@ -72,8 +74,9 @@ function binaryLoss(p: number, y: boolean): { ll: number; brier: number; hit: bo
 
 function main(): void {
   const season = process.argv.find((a) => a.startsWith("--season="))?.split("=")[1] ?? "2324";
+  const metric = process.argv.find((a) => a.startsWith("--metric="))?.split("=")[1] ?? "corners";
   const rows = load();
-  process.stdout.write(`partite con corner: ${rows.length}\n`);
+  process.stdout.write(`metrica: ${metric} — partite: ${rows.length}\n`);
 
   const params: CountModelParams = { ...DEFAULT_COUNT_MODEL, halfLifeDays: 200, shrinkage: 8, iterations: 40 };
   const byDiv = new Map<string, Row[]>();
@@ -83,7 +86,7 @@ function main(): void {
     byDiv.set(r.div, a);
   }
 
-  const LINES = [8.5, 9.5, 10.5, 11.5];
+  const LINES = metric === "cards" ? [2.5, 3.5, 4.5, 5.5] : [8.5, 9.5, 10.5, 11.5];
   const agg = new Map<number, { m: number[]; b: number[]; mh: number; bh: number; n: number; mbr: number; bbr: number }>();
   for (const l of LINES) agg.set(l, { m: [], b: [], mh: 0, bh: 0, n: 0, mbr: 0, bbr: 0 });
 
@@ -134,11 +137,12 @@ function main(): void {
       const lam = lambdasFromCountFit(fit, t.home, t.away);
       const teamDist = totalCountDistribution(lam.lambda_home, fit.dispersion, params.maxCount);
       let pTeamOver = 0;
-      for (let k = 0; k < teamDist.length; k += 1) if (k > 4.5) pTeamOver += teamDist[k]!;
+      const teamLine = metric === "cards" ? 1.5 : 4.5;
+      for (let k = 0; k < teamDist.length; k += 1) if (k > teamLine) pTeamOver += teamDist[k]!;
       const baseTeamDist = totalCountDistribution(fit.mean / 2, fit.dispersion, params.maxCount);
       let pTeamBase = 0;
-      for (let k = 0; k < baseTeamDist.length; k += 1) if (k > 4.5) pTeamBase += baseTeamDist[k]!;
-      const teamOver = t.hc > 4.5;
+      for (let k = 0; k < baseTeamDist.length; k += 1) if (k > teamLine) pTeamBase += baseTeamDist[k]!;
+      const teamOver = t.hc > teamLine;
       const tm = binaryLoss(pTeamOver, teamOver);
       const tb = binaryLoss(pTeamBase, teamOver);
       teamTot.model.push(tm.ll); teamTot.base.push(tb.ll);
@@ -192,8 +196,8 @@ function main(): void {
   process.stdout.write(`\nMercati dove l'effetto squadra NON si annulla:\n\n`);
   process.stdout.write(`${"mercato".padEnd(26)} ${"n".padStart(7)} ${"modello".padStart(9)} ${"base".padStart(9)} ${"delta".padStart(9)} ${"p(migl.)".padStart(9)}\n`);
   process.stdout.write("-".repeat(74) + "\n");
-  process.stdout.write(`${"Corner 1X2 (chi ne ha piu)".padEnd(26)} ${String(winner.n).padStart(7)} ${mw.toFixed(5).padStart(9)} ${bw.toFixed(5).padStart(9)} ${((mw - bw >= 0 ? "+" : "") + (mw - bw).toFixed(5)).padStart(9)} ${bootW.p_first_better.toFixed(3).padStart(9)}\n`);
-  process.stdout.write(`${"Corner casa Over 4.5".padEnd(26)} ${String(teamTot.n).padStart(7)} ${mt.toFixed(5).padStart(9)} ${bt.toFixed(5).padStart(9)} ${((mt - bt >= 0 ? "+" : "") + (mt - bt).toFixed(5)).padStart(9)} ${bootT.p_first_better.toFixed(3).padStart(9)}\n`);
+  process.stdout.write(`${(metric === "cards" ? "Chi prende piu gialli" : "Corner 1X2 (chi ne ha piu)").padEnd(26)} ${String(winner.n).padStart(7)} ${mw.toFixed(5).padStart(9)} ${bw.toFixed(5).padStart(9)} ${((mw - bw >= 0 ? "+" : "") + (mw - bw).toFixed(5)).padStart(9)} ${bootW.p_first_better.toFixed(3).padStart(9)}\n`);
+  process.stdout.write(`${(metric === "cards" ? "Gialli casa Over 1.5" : "Corner casa Over 4.5").padEnd(26)} ${String(teamTot.n).padStart(7)} ${mt.toFixed(5).padStart(9)} ${bt.toFixed(5).padStart(9)} ${((mt - bt >= 0 ? "+" : "") + (mt - bt).toFixed(5)).padStart(9)} ${bootT.p_first_better.toFixed(3).padStart(9)}\n`);
   process.stdout.write("-".repeat(74) + "\n");
   process.stdout.write(`  Corner 1X2  IC95 [${bootW.ci_low.toFixed(5)}, ${bootW.ci_high.toFixed(5)}]   accuratezza ${(100 * winner.mh / winner.n).toFixed(1)}% contro ${(100 * winner.bh / winner.n).toFixed(1)}%\n`);
   process.stdout.write(`  Corner casa IC95 [${bootT.ci_low.toFixed(5)}, ${bootT.ci_high.toFixed(5)}]   accuratezza ${(100 * teamTot.mh / teamTot.n).toFixed(1)}% contro ${(100 * teamTot.bh / teamTot.n).toFixed(1)}%\n`);

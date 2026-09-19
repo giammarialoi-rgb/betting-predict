@@ -204,3 +204,76 @@ Sostituito con mulberry32 in `validation/rng.ts`, con quattro test fra cui uno d
 regressione sulla copertura. Le stime puntuali non cambiano, gli intervalli si allargano:
 l'1X2 su holdout passa da [0,0217, 0,0328] a [0,0212, 0,0354]. **Nessuna conclusione
 riportata in precedenza cambia di segno o di verdetto.**
+
+---
+
+# Verifica sui prezzi reali (The Odds API, 42 crediti su 20.000)
+
+## 12. I mercati corner esistono, ma solo dove non servono
+
+Sondaggio su 20 campionati, 1 evento ciascuno. Costo: 24 crediti, perché i mercati
+assenti non vengono addebitati.
+
+| campionato | mercati corner/cartellini | bookmaker |
+|---|---|---|
+| EPL, Championship, Serie A, La Liga, Ligue 1, Bundesliga | sì | **Pinnacle** (+ MyBookie su EPL) |
+| League 1, League 2, La Liga 2, Serie B, Bundesliga 2, Eredivisie, Primeira Liga, Belgio, Turchia, Grecia, Scozia | **nessuno** | — |
+
+Due fatti che ribaltano il piano:
+
+**`corners_1x2` non esiste da nessuna parte.** È il mercato su cui il modello aveva il
+segnale più forte misurato (−0,035, IC [−0,0444, −0,0256]). Non è acquistabile.
+
+**Le sei leghe con i corner sono le sei dove il modello va peggio sull'1X2.** Bundesliga
++0,0428, La Liga +0,0293, Serie A +0,0253, EPL +0,0237. Le divisioni minori, dove il divario
+si stringeva fino a +0,0031, non hanno mercati corner.
+
+## 13. Il margine sui mercati corner, dallo stesso bookmaker
+
+Pinnacle, Bournemouth–Liverpool:
+
+| mercato | linea migliore | margine |
+|---|---|---|
+| 1X2 gol (riferimento) | — | **2,70%** |
+| Totale corner | 10.5 | 4,82% |
+| Corner squadra | 4.5 | 6,97% |
+| Totale cartellini | 3.5 | 9,50% |
+| Cartellini, linee estreme | 2.5 / 4.5 | 11,4-11,6% |
+
+Lo stesso bookmaker che prende il 2,7% sui gol ne prende il 5-7% sui corner e il 9,5-11,6%
+sui cartellini: prezza la propria incertezza dentro il margine.
+
+Il modello ha segnale sul corner della squadra (−0,0244 contro la media di lega), e quel
+mercato esiste — ma **solo da Pinnacle, al 7%, senza nessun altro con cui confrontarsi**.
+Il vantaggio da esecuzione, che vale 3,5 punti, qui non è disponibile: non si può cercare il
+miglior prezzo quando il prezzo è uno solo.
+
+## 14. Cartellini: segnale reale ma tre volte più debole
+
+| mercato | modello | base | delta | p(migliore) |
+|---|---|---|---|---|
+| Chi prende più gialli | 1,05417 | 1,06605 | −0,01187 | 1,000 |
+| Gialli casa Over 1.5 | 0,66371 | 0,66960 | −0,00588 | 0,996 |
+| Totale gialli O/U 2.5-5.5 | — | — | ~0 | 0,87-0,96 |
+
+Il totale cartellini — l'unico mercato ampiamente quotato — è proprio quello dove il segnale
+è più debole, e costa il 9,5-11,6%.
+
+## 15. Dove invece il vantaggio misurato c'è davvero
+
+Mercato 1X2, Premier League, **42 bookmaker**:
+
+| partita | miglior book singolo (Pinnacle) | miglior prezzo combinato | guadagno |
+|---|---|---|---|
+| Bournemouth–Liverpool | 3,49% | −0,17% | **3,66 punti** |
+| Leeds–Crystal Palace | 3,70% | −0,20% | **3,90 punti** |
+| Man City–Sunderland | 3,84% | +0,34% | **3,51 punti** |
+
+Conferma dal vivo della misura storica: prendere il miglior prezzo invece di uno solo vale
+**3,5-3,9 punti**, contro i 3,5 misurati sullo storico Over/Under. Due metodi indipendenti,
+stesso numero.
+
+**Avvertenza**: i margini prossimi allo zero includono Betfair, Smarkets e Matchbook, che
+sono exchange. La loro commissione sulle vincite (tipicamente 2-5%) non è nel prezzo
+esposto e va sottratta. Il vantaggio reale resta, ma è inferiore a quanto suggerisce un
+overround negativo.
