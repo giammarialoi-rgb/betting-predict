@@ -23,6 +23,7 @@ import {
   type CountSample,
 } from "@/domain/eval/predictive-intelligence/models/count-model";
 import { matchTeam } from "@/domain/eval/predictive-intelligence/models/team-matching";
+import { assertFresh } from "@/domain/eval/predictive-intelligence/dataset/freshness";
 import type { PiMatchRow } from "@/domain/eval/predictive-intelligence/types";
 
 const ROOT = process.cwd();
@@ -75,6 +76,14 @@ async function main(): Promise<void> {
       nameToId.set(nm, id);
     }
   }
+
+  // Nessuna previsione live con dati vecchi: un dataset fermo supera tutti i
+  // backtest e sbaglia solo sul presente, che e l'unico momento che conta.
+  const fresh = assertFresh({
+    seasons: [...new Set(history.map((m) => m.season))],
+    latestMatchIso: history.map((m) => m.event_time).sort().at(-1) ?? null,
+  });
+  process.stdout.write(`dataset: stagione ${fresh.latestSeason}, ultima partita ${fresh.daysSinceLatestMatch} giorni fa\n`);
 
   let written = 0;
   let noMatch = 0;
