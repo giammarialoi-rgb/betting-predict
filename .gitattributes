@@ -1,0 +1,15 @@
+# Normalizzazione fine riga.
+# Senza questo file il checkout su Windows scrive CRLF mentre l'albero di lavoro
+# viene letto anche da strumenti che scrivono LF: git segnala allora migliaia di
+# file "modificati" con conteggi identici di aggiunte e rimozioni, e ogni diff
+# diventa illeggibile. Il repo tiene LF; Windows resta libero di usare CRLF in locale.
+* text=auto eol=lf
+
+*.png  binary
+*.jpg  binary
+*.jpeg binary
+*.gif  binary
+*.ico  binary
+*.pdf  binary
+*.xlsx binary
+*.zip  binary
