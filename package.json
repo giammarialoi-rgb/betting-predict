@@ -89,7 +89,8 @@
     "data:build-expanded": "tsx src/scripts/build-expanded-dataset.ts",
     "lab:league-coverage": "tsx src/scripts/lab-league-coverage.ts",
     "lab:corners": "tsx src/scripts/lab-corners.ts",
-    "board:7days": "tsx src/scripts/board-7days.ts"
+    "board:7days": "tsx src/scripts/board-7days.ts",
+    "odds:probe": "tsx src/scripts/odds-probe.ts"
   },
   "dependencies": {
     "@neondatabase/serverless": "^1.1.0",
