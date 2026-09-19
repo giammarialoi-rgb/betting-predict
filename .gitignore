@@ -69,3 +69,6 @@ next-env.d.ts
 
 .vercel
 .env*
+
+# checkpoint dei lab (non versionati)
+audit/.*-state.json

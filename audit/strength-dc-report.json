@@ -1,0 +1,551 @@
+{
+  "generated_at": "2026-09-19T14:20:00.446Z",
+  "protocol": {
+    "tune_train": [
+      "1920",
+      "2021",
+      "2122"
+    ],
+    "tune_validate": "2223",
+    "holdout": "2324",
+    "confirm": "2425",
+    "note": "hyperparameters + temperature fitted on tune split only; holdout and confirm scored once"
+  },
+  "selected": {
+    "params": {
+      "halfLifeDays": 150,
+      "rho": -0.12,
+      "shrinkage": 9,
+      "sotWeight": 0.8,
+      "maxGoals": 10,
+      "iterations": 60,
+      "minMatches": 80
+    },
+    "temperature": 0.7
+  },
+  "tuning_trials": [
+    {
+      "half_life_days": 90,
+      "shrinkage": 3,
+      "rho": -0.06,
+      "sot_weight": 0.35,
+      "log_loss": 0.992184309616793,
+      "brier": 0.19738555312285072,
+      "temperature": 1
+    },
+    {
+      "half_life_days": 90,
+      "shrinkage": 6,
+      "rho": -0.06,
+      "sot_weight": 0.35,
+      "log_loss": 0.991199790627349,
+      "brier": 0.19712391737509982,
+      "temperature": 0.85
+    },
+    {
+      "half_life_days": 90,
+      "shrinkage": 12,
+      "rho": -0.06,
+      "sot_weight": 0.35,
+      "log_loss": 0.9922414678475772,
+      "brier": 0.19725275524558888,
+      "temperature": 0.7
+    },
+    {
+      "half_life_days": 150,
+      "shrinkage": 3,
+      "rho": -0.06,
+      "sot_weight": 0.35,
+      "log_loss": 0.9904488998923047,
+      "brier": 0.19692284824538436,
+      "temperature": 1
+    },
+    {
+      "half_life_days": 150,
+      "shrinkage": 6,
+      "rho": -0.06,
+      "sot_weight": 0.35,
+      "log_loss": 0.9891338887010555,
+      "brier": 0.19660594659141534,
+      "temperature": 0.85
+    },
+    {
+      "half_life_days": 150,
+      "shrinkage": 12,
+      "rho": -0.06,
+      "sot_weight": 0.35,
+      "log_loss": 0.9898934672370765,
+      "brier": 0.19671563915765578,
+      "temperature": 0.7
+    },
+    {
+      "half_life_days": 240,
+      "shrinkage": 3,
+      "rho": -0.06,
+      "sot_weight": 0.35,
+      "log_loss": 0.9913804985540469,
+      "brier": 0.1970504274503153,
+      "temperature": 1
+    },
+    {
+      "half_life_days": 240,
+      "shrinkage": 6,
+      "rho": -0.06,
+      "sot_weight": 0.35,
+      "log_loss": 0.9901059896629053,
+      "brier": 0.1967432002247277,
+      "temperature": 0.85
+    },
+    {
+      "half_life_days": 240,
+      "shrinkage": 12,
+      "rho": -0.06,
+      "sot_weight": 0.35,
+      "log_loss": 0.989944150036003,
+      "brier": 0.19668057370742745,
+      "temperature": 0.85
+    },
+    {
+      "half_life_days": 400,
+      "shrinkage": 3,
+      "rho": -0.06,
+      "sot_weight": 0.35,
+      "log_loss": 0.9936632200495346,
+      "brier": 0.19750848497159162,
+      "temperature": 1
+    },
+    {
+      "half_life_days": 400,
+      "shrinkage": 6,
+      "rho": -0.06,
+      "sot_weight": 0.35,
+      "log_loss": 0.9927565407336351,
+      "brier": 0.19727305405997833,
+      "temperature": 0.85
+    },
+    {
+      "half_life_days": 400,
+      "shrinkage": 12,
+      "rho": -0.06,
+      "sot_weight": 0.35,
+      "log_loss": 0.9918857815515368,
+      "brier": 0.1970826721691775,
+      "temperature": 0.85
+    },
+    {
+      "half_life_days": 150,
+      "shrinkage": 6,
+      "rho": -0.12,
+      "sot_weight": 0,
+      "log_loss": 0.9947741159785238,
+      "brier": 0.19789411685812702,
+      "temperature": 1
+    },
+    {
+      "half_life_days": 150,
+      "shrinkage": 6,
+      "rho": -0.12,
+      "sot_weight": 0.35,
+      "log_loss": 0.9893916394243447,
+      "brier": 0.19669117229111904,
+      "temperature": 0.85
+    },
+    {
+      "half_life_days": 150,
+      "shrinkage": 6,
+      "rho": -0.12,
+      "sot_weight": 0.6,
+      "log_loss": 0.9881522729119319,
+      "brier": 0.19641116265695044,
+      "temperature": 0.85
+    },
+    {
+      "half_life_days": 150,
+      "shrinkage": 6,
+      "rho": -0.12,
+      "sot_weight": 0.8,
+      "log_loss": 0.9873565416043155,
+      "brier": 0.1962281358427465,
+      "temperature": 0.7
+    },
+    {
+      "half_life_days": 150,
+      "shrinkage": 6,
+      "rho": -0.12,
+      "sot_weight": 1,
+      "log_loss": 0.9890928682473378,
+      "brier": 0.19660598531043383,
+      "temperature": 0.7
+    },
+    {
+      "half_life_days": 150,
+      "shrinkage": 6,
+      "rho": -0.06,
+      "sot_weight": 0,
+      "log_loss": 0.9938373514932304,
+      "brier": 0.1976794150388013,
+      "temperature": 1
+    },
+    {
+      "half_life_days": 150,
+      "shrinkage": 6,
+      "rho": -0.06,
+      "sot_weight": 0.35,
+      "log_loss": 0.9891338887010555,
+      "brier": 0.19660594659141534,
+      "temperature": 0.85
+    },
+    {
+      "half_life_days": 150,
+      "shrinkage": 6,
+      "rho": -0.06,
+      "sot_weight": 0.6,
+      "log_loss": 0.9879293934749012,
+      "brier": 0.19629387496777118,
+      "temperature": 0.85
+    },
+    {
+      "half_life_days": 150,
+      "shrinkage": 6,
+      "rho": -0.06,
+      "sot_weight": 0.8,
+      "log_loss": 0.988342760633514,
+      "brier": 0.1963797037195211,
+      "temperature": 0.7
+    },
+    {
+      "half_life_days": 150,
+      "shrinkage": 6,
+      "rho": -0.06,
+      "sot_weight": 1,
+      "log_loss": 0.9900010457120318,
+      "brier": 0.19672069478136017,
+      "temperature": 0.7
+    },
+    {
+      "half_life_days": 150,
+      "shrinkage": 6,
+      "rho": 0,
+      "sot_weight": 0,
+      "log_loss": 0.9938653962390576,
+      "brier": 0.1976429041616321,
+      "temperature": 1
+    },
+    {
+      "half_life_days": 150,
+      "shrinkage": 6,
+      "rho": 0,
+      "sot_weight": 0.35,
+      "log_loss": 0.9901952451050932,
+      "brier": 0.19675296736122258,
+      "temperature": 0.85
+    },
+    {
+      "half_life_days": 150,
+      "shrinkage": 6,
+      "rho": 0,
+      "sot_weight": 0.6,
+      "log_loss": 0.9890216156322015,
+      "brier": 0.19641388653204966,
+      "temperature": 0.85
+    },
+    {
+      "half_life_days": 150,
+      "shrinkage": 6,
+      "rho": 0,
+      "sot_weight": 0.8,
+      "log_loss": 0.9900025019132234,
+      "brier": 0.1965750657113395,
+      "temperature": 0.85
+    },
+    {
+      "half_life_days": 150,
+      "shrinkage": 6,
+      "rho": 0,
+      "sot_weight": 1,
+      "log_loss": 0.9927337238651035,
+      "brier": 0.19715279783005882,
+      "temperature": 0.85
+    },
+    {
+      "half_life_days": 110,
+      "shrinkage": 4,
+      "rho": -0.12,
+      "sot_weight": 0.8,
+      "log_loss": 0.9885759807406643,
+      "brier": 0.19654205803575206,
+      "temperature": 0.7
+    },
+    {
+      "half_life_days": 110,
+      "shrinkage": 6,
+      "rho": -0.12,
+      "sot_weight": 0.8,
+      "log_loss": 0.9877877653066041,
+      "brier": 0.19635615198945228,
+      "temperature": 0.7
+    },
+    {
+      "half_life_days": 110,
+      "shrinkage": 9,
+      "rho": -0.12,
+      "sot_weight": 0.8,
+      "log_loss": 0.9882734379802648,
+      "brier": 0.19642456309235556,
+      "temperature": 0.7
+    },
+    {
+      "half_life_days": 150,
+      "shrinkage": 4,
+      "rho": -0.12,
+      "sot_weight": 0.8,
+      "log_loss": 0.9882723660334486,
+      "brier": 0.19642938833886736,
+      "temperature": 0.7
+    },
+    {
+      "half_life_days": 150,
+      "shrinkage": 6,
+      "rho": -0.12,
+      "sot_weight": 0.8,
+      "log_loss": 0.9873565416043155,
+      "brier": 0.1962281358427465,
+      "temperature": 0.7
+    },
+    {
+      "half_life_days": 150,
+      "shrinkage": 9,
+      "rho": -0.12,
+      "sot_weight": 0.8,
+      "log_loss": 0.9872496702365402,
+      "brier": 0.1961851035485805,
+      "temperature": 0.7
+    },
+    {
+      "half_life_days": 190,
+      "shrinkage": 4,
+      "rho": -0.12,
+      "sot_weight": 0.8,
+      "log_loss": 0.9887374849273508,
+      "brier": 0.19651803896954767,
+      "temperature": 0.85
+    },
+    {
+      "half_life_days": 190,
+      "shrinkage": 6,
+      "rho": -0.12,
+      "sot_weight": 0.8,
+      "log_loss": 0.9878677019075012,
+      "brier": 0.1963054711440018,
+      "temperature": 0.7
+    },
+    {
+      "half_life_days": 190,
+      "shrinkage": 9,
+      "rho": -0.12,
+      "sot_weight": 0.8,
+      "log_loss": 0.9874580276127081,
+      "brier": 0.1962098148619639,
+      "temperature": 0.7
+    },
+    {
+      "half_life_days": 230,
+      "shrinkage": 4,
+      "rho": -0.12,
+      "sot_weight": 0.8,
+      "log_loss": 0.9894116335673565,
+      "brier": 0.19664671375763337,
+      "temperature": 0.85
+    },
+    {
+      "half_life_days": 230,
+      "shrinkage": 6,
+      "rho": -0.12,
+      "sot_weight": 0.8,
+      "log_loss": 0.9887196708980075,
+      "brier": 0.19646288341523443,
+      "temperature": 0.7
+    },
+    {
+      "half_life_days": 230,
+      "shrinkage": 9,
+      "rho": -0.12,
+      "sot_weight": 0.8,
+      "log_loss": 0.9881395251145662,
+      "brier": 0.19633951128625002,
+      "temperature": 0.7
+    }
+  ],
+  "seasons": {
+    "2324": {
+      "n": 1752,
+      "fits": 600,
+      "metrics": {
+        "strength_dc": {
+          "log_loss": 0.9831115517593251,
+          "brier": 0.19548387324085734,
+          "calibration_error": 0.02602985742798122,
+          "accuracy": 0.5273972602739726,
+          "balanced_accuracy": 0.45646317726831276,
+          "roc_auc_ovr": 0.6749341942786472,
+          "n": 1752
+        },
+        "market_devig": {
+          "log_loss": 0.9548194630614498,
+          "brier": 0.1889765028738292,
+          "calibration_error": 0.026939571696230073,
+          "accuracy": 0.5525114155251142,
+          "balanced_accuracy": 0.4874004989936396,
+          "roc_auc_ovr": 0.6971117000595947,
+          "n": 1752
+        },
+        "rolling_avg": {
+          "log_loss": 1.0210532514447195,
+          "brier": 0.2037577157269149,
+          "calibration_error": 0.03264197313512116,
+          "accuracy": 0.5057077625570776,
+          "balanced_accuracy": 0.4629783962100355,
+          "roc_auc_ovr": 0.6521859845717175,
+          "n": 1752
+        },
+        "naive": {
+          "log_loss": 1.0764187373669332,
+          "brier": 0.2171664737050919,
+          "calibration_error": 0.001150947313472872,
+          "accuracy": 0.4309360730593607,
+          "balanced_accuracy": 0.3333333333333333,
+          "roc_auc_ovr": 0.5072680085904525,
+          "n": 1752
+        }
+      },
+      "delta_vs_market": {
+        "log_loss": 0.02829208869787525,
+        "brier": 0.006507370367028142,
+        "bootstrap": {
+          "mean_diff": 0.028292088697873956,
+          "ci_low": 0.021665829011063592,
+          "ci_high": 0.032816555720211735,
+          "p_model_better": 0
+        }
+      },
+      "delta_vs_rolling": {
+        "log_loss": -0.0379416996853944,
+        "brier": -0.008273842486057559,
+        "bootstrap": {
+          "mean_diff": -0.03794169968539238,
+          "ci_low": -0.0492961179232241,
+          "ci_high": -0.03154536263566967,
+          "p_model_better": 1
+        }
+      },
+      "clv": {
+        "edge_0_02": {
+          "n_bets": 1424,
+          "mean_clv_pct": -3.9912259823395435,
+          "beat_close_rate": 0.28651685393258425,
+          "flat_yield": -0.18471207865168546,
+          "clv_n": 1424
+        },
+        "edge_0_04": {
+          "n_bets": 957,
+          "mean_clv_pct": -3.7865440469069425,
+          "beat_close_rate": 0.290491118077325,
+          "flat_yield": -0.25095088819226763,
+          "clv_n": 957
+        },
+        "edge_0_06": {
+          "n_bets": 627,
+          "mean_clv_pct": -3.6570074390279506,
+          "beat_close_rate": 0.2934609250398724,
+          "flat_yield": -0.338580542264753,
+          "clv_n": 627
+        }
+      }
+    },
+    "2425": {
+      "n": 1752,
+      "fits": 584,
+      "metrics": {
+        "strength_dc": {
+          "log_loss": 0.987412073758855,
+          "brier": 0.19630759344293258,
+          "calibration_error": 0.01152510220362282,
+          "accuracy": 0.519406392694064,
+          "balanced_accuracy": 0.4466463605416635,
+          "roc_auc_ovr": 0.6702930815257764,
+          "n": 1752
+        },
+        "market_devig": {
+          "log_loss": 0.9647237829167192,
+          "brier": 0.1911219664463626,
+          "calibration_error": 0.024485532666513817,
+          "accuracy": 0.5342465753424658,
+          "balanced_accuracy": 0.4639480238291907,
+          "roc_auc_ovr": 0.688388892314585,
+          "n": 1752
+        },
+        "rolling_avg": {
+          "log_loss": 1.0192028357708154,
+          "brier": 0.2035830258294641,
+          "calibration_error": 0.020775647476229616,
+          "accuracy": 0.502283105022831,
+          "balanced_accuracy": 0.44890146679682613,
+          "roc_auc_ovr": 0.640349175219067,
+          "n": 1752
+        },
+        "naive": {
+          "log_loss": 1.0774087516568314,
+          "brier": 0.21754985283628892,
+          "calibration_error": 0.010792897768472087,
+          "accuracy": 0.4200913242009132,
+          "balanced_accuracy": 0.3333333333333333,
+          "roc_auc_ovr": 0.49961486144045475,
+          "n": 1752
+        }
+      },
+      "delta_vs_market": {
+        "log_loss": 0.02268829084213575,
+        "brier": 0.005185626996569992,
+        "bootstrap": {
+          "mean_diff": 0.022688290842133477,
+          "ci_low": 0.016314144997440074,
+          "ci_high": 0.027763617191119923,
+          "p_model_better": 0
+        }
+      },
+      "delta_vs_rolling": {
+        "log_loss": -0.031790762011960405,
+        "brier": -0.007275432386531527,
+        "bootstrap": {
+          "mean_diff": -0.03179076201195896,
+          "ci_low": -0.04476008667707236,
+          "ci_high": -0.02221077897210735,
+          "p_model_better": 1
+        }
+      },
+      "clv": {
+        "edge_0_02": {
+          "n_bets": 1449,
+          "mean_clv_pct": -4.218175519780072,
+          "beat_close_rate": 0.2663906142167012,
+          "flat_yield": -0.12518288474810227,
+          "clv_n": 1449
+        },
+        "edge_0_04": {
+          "n_bets": 972,
+          "mean_clv_pct": -4.01100974055845,
+          "beat_close_rate": 0.2654320987654321,
+          "flat_yield": -0.1493621399176956,
+          "clv_n": 972
+        },
+        "edge_0_06": {
+          "n_bets": 613,
+          "mean_clv_pct": -4.258466114619743,
+          "beat_close_rate": 0.27895595432300163,
+          "flat_yield": -0.14951060358890722,
+          "clv_n": 613
+        }
+      }
+    }
+  }
+}
