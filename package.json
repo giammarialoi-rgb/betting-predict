@@ -92,7 +92,8 @@
     "board:7days": "tsx src/scripts/board-7days.ts",
     "odds:probe": "tsx src/scripts/odds-probe.ts",
     "dispersion:scan": "tsx src/scripts/dispersion-scan.ts",
-    "lab:dispersion-backtest": "tsx src/scripts/lab-dispersion-backtest.ts"
+    "lab:dispersion-backtest": "tsx src/scripts/lab-dispersion-backtest.ts",
+    "corners:collect": "tsx src/scripts/corners-collect.ts"
   },
   "dependencies": {
     "@neondatabase/serverless": "^1.1.0",
