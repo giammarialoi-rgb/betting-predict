@@ -124,3 +124,52 @@ Due trappole gia trovate e chiuse, entrambe con test di regressione:
 
 **Stato generatore casuale**: usare sempre `validation/rng.ts`. Un LCG scritto a mano
 degenera in copertura e falsa gli intervalli di confidenza.
+
+---
+
+## Ipotesi provate e RIGETTATE — non ripeterle
+
+**Giorni di riposo come feature.** Diagnosi su 7.797 partite di holdout: il divario dal
+mercato e piatto rispetto al riposo minimo fra le due squadre — 3 giorni o meno +0,0191,
+4-6 giorni +0,0150, 7-9 giorni +0,0182, oltre 9 +0,0167. Nessun segnale. Era una delle
+indicazioni iniziali; i dati non la sostengono.
+
+**Fit cross-divisione (forze squadra condivise fra campionati).** L'idea: poiche le forze
+sono aggiustate per l'avversario, il rating dovrebbe essere confrontabile fra divisioni, e
+una promossa dovrebbe portarsi il proprio invece di ripartire dalla media di lega.
+Implementato in `fitCrossDivisionStrength`, misurato a parita di condizioni (stessa
+granularita di rifit per entrambi):
+
+  per divisione    log loss 1,01417
+  cross-divisione  log loss 1,01845
+  differenza       +0,00429  IC [0,00212, 0,00648]  p(migliore) = 0,000
+
+Peggiora, e peggiora anche sul sottogruppo delle promosse. Il primo test regalava al
+per-divisione sei giorni di dati in piu; pareggiando il confronto il divario e passato da
+0,00468 a 0,00429, quindi l'handicap spiegava meno del 10%. L'ipotesi e sbagliata, non
+mal misurata. La funzione resta nel repo per non riscriverla a chi ritentasse.
+
+## Debolezze note del modello, misurate
+
+Divario dal mercato per gruppo, holdout 2324:
+
+| gruppo | n | divario | IC 95% |
+|---|---|---|---|
+| tutte | 7.797 | +0,0173 | [0,0136, 0,0210] |
+| entrambe con storico in divisione | 6.081 | +0,0154 | [0,0115, 0,0196] |
+| una squadra senza storico | 1.614 | +0,0224 | [0,0134, 0,0317] |
+| entrambe senza storico | 102 | +0,0455 | [0,0023, 0,0853] |
+| prime 60 partite di stagione | 1.320 | +0,0278 | [0,0177, 0,0371] |
+| dopo la 60esima | 6.477 | +0,0150 | [0,0105, 0,0214] |
+| favorito netto secondo il mercato | 1.435 | +0,0219 | [0,0140, 0,0297] |
+
+Le due debolezze vere sono l'inizio stagione e le squadre senza storico nella divisione, e
+si sovrappongono. Il cross-divisione era il tentativo di risolverle ed e fallito: serve
+un'altra strada.
+
+## Prestazioni del fit
+
+`decayWeight` azzera i pesi oltre otto emivite. Sotto quella soglia il peso e inferiore
+allo 0,4% e il contributo e trascurabile, mentre il costo di calcolo no. Verificato: log
+loss 0,98315 col taglio contro 0,98311 senza, cioe 0,00004. A cinque emivite invece il
+costo era 0,0008, non accettabile per una pura ottimizzazione.

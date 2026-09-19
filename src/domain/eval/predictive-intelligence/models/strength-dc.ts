@@ -64,6 +64,8 @@ export type LeagueStrengthFit = {
   totalWeight: number;
   conversionRate: number;
   supported: boolean;
+  /** Baseline e vantaggio casa per divisione, quando il fit e cross-divisione. */
+  perDivision?: Map<string, { mu: number; gamma: number }>;
 };
 
 /** Blend actual goals with a self-calibrated shots-on-target expectation. */
@@ -77,9 +79,18 @@ function targetGoals(
   return (1 - sotWeight) * goals + sotWeight * (conversionRate * sot);
 }
 
+/**
+ * Peso di decadimento, con taglio netto oltre otto emivite.
+ *
+ * A quel punto il peso e sotto lo 0,4% e il contributo e trascurabile, mentre il
+ * costo di calcolo no: su un fit cross-divisione la coda vecchia era la maggior
+ * parte delle righe. Tagliarla rende il fit praticabile senza cambiare il
+ * risultato in modo apprezzabile.
+ */
 function decayWeight(matchMs: number, asOfMs: number, halfLifeDays: number): number {
   const ageDays = (asOfMs - matchMs) / 86_400_000;
   if (!Number.isFinite(ageDays) || ageDays < 0) return 0;
+  if (ageDays > halfLifeDays * 8) return 0;
   return Math.pow(0.5, ageDays / Math.max(1, halfLifeDays));
 }
 
@@ -87,6 +98,154 @@ function decayWeight(matchMs: number, asOfMs: number, halfLifeDays: number): num
  * Weighted Poisson MLE for attack/defence/home-advantage by iterative scaling.
  * `matches` MUST already be as-of filtered and single-league.
  */
+/**
+ * Fit CROSS-DIVISIONE: un solo insieme di forze squadra, un baseline e un
+ * vantaggio casa per ciascuna divisione.
+ *
+ * Nasce da una debolezza misurata. Con un fit per divisione, una squadra appena
+ * promossa o retrocessa non ha storico nel campionato di destinazione e lo
+ * shrinkage la riporta alla media di lega, che e quasi sempre sbagliata. Il
+ * divario dal mercato passa da +0,0154 quando entrambe hanno storico a +0,0224
+ * con una nuova e +0,0455 con due. Sono il 22% delle partite.
+ *
+ * Poiche le forze sono gia aggiustate per l'avversario, il rating di una squadra
+ * e confrontabile fra divisioni: un attacco che segna contro difese di Serie B
+ * viene valutato per le difese che ha incontrato. La differenza di livello fra
+ * campionati finisce nel baseline mu di ciascuna divisione, e le squadre che si
+ * spostano fanno da ponte fra i due insiemi.
+ */
+export function fitCrossDivisionStrength(input: {
+  matches: readonly PiMatchRow[];
+  asOfIso: string;
+  params?: StrengthDcParams;
+}): LeagueStrengthFit {
+  const p = input.params ?? DEFAULT_STRENGTH_DC;
+  const asOfMs = Date.parse(input.asOfIso);
+
+  let wGoals = 0;
+  let wSot = 0;
+  for (const m of input.matches) {
+    const w = decayWeight(Date.parse(m.event_time), asOfMs, p.halfLifeDays);
+    if (w <= 1e-6) continue;
+    if (m.hst != null && m.ast != null) {
+      wGoals += w * (m.fthg + m.ftag);
+      wSot += w * (m.hst + m.ast);
+    }
+  }
+  const conversionRate = wSot > 0 ? wGoals / wSot : 0.33;
+
+  type Row = { home: string; away: string; div: string; gh: number; ga: number; w: number };
+  const rows: Row[] = [];
+  let totalWeight = 0;
+  for (const m of input.matches) {
+    const w = decayWeight(Date.parse(m.event_time), asOfMs, p.halfLifeDays);
+    if (w <= 1e-6) continue;
+    rows.push({
+      home: m.home_team_id, away: m.away_team_id, div: m.league,
+      gh: targetGoals(m.fthg, m.hst, conversionRate, p.sotWeight),
+      ga: targetGoals(m.ftag, m.ast, conversionRate, p.sotWeight),
+      w,
+    });
+    totalWeight += w;
+  }
+
+  const teams = new Map<string, TeamStrength>();
+  const divs = new Map<string, { mu: number; gamma: number; w: number; goals: number; home: number }>();
+  for (const r of rows) {
+    if (!teams.has(r.home)) teams.set(r.home, { attack: 1, defence: 1, weight: 0 });
+    if (!teams.has(r.away)) teams.set(r.away, { attack: 1, defence: 1, weight: 0 });
+    teams.get(r.home)!.weight += r.w;
+    teams.get(r.away)!.weight += r.w;
+    const d = divs.get(r.div) ?? { mu: 1.3, gamma: 1.2, w: 0, goals: 0, home: 0 };
+    d.w += r.w;
+    d.goals += r.w * (r.gh + r.ga);
+    d.home += r.w * r.gh;
+    divs.set(r.div, d);
+  }
+  for (const d of divs.values()) {
+    d.mu = d.w > 0 ? d.goals / (2 * d.w) : 1.3;
+    d.gamma = d.goals - d.home > 0 ? d.home / (d.goals - d.home) : 1.2;
+  }
+
+  if (!rows.length) {
+    return { league: "ALL", mu: 1.35, gamma: 1.2, teams, n: 0, totalWeight: 0, conversionRate, supported: false };
+  }
+
+  const K = p.shrinkage;
+  for (let it = 0; it < p.iterations; it += 1) {
+    const aN = new Map<string, number>();
+    const aD = new Map<string, number>();
+    for (const r of rows) {
+      const d = divs.get(r.div)!;
+      const dh = teams.get(r.home)!.defence;
+      const da = teams.get(r.away)!.defence;
+      aN.set(r.home, (aN.get(r.home) ?? 0) + r.w * r.gh);
+      aD.set(r.home, (aD.get(r.home) ?? 0) + r.w * d.mu * d.gamma * da);
+      aN.set(r.away, (aN.get(r.away) ?? 0) + r.w * r.ga);
+      aD.set(r.away, (aD.get(r.away) ?? 0) + r.w * d.mu * dh);
+    }
+    for (const [id, t] of teams) {
+      t.attack = Math.max(0.15, Math.min(4, ((aN.get(id) ?? 0) + K) / ((aD.get(id) ?? 0) + K)));
+    }
+    const dN = new Map<string, number>();
+    const dD = new Map<string, number>();
+    for (const r of rows) {
+      const d = divs.get(r.div)!;
+      const ah = teams.get(r.home)!.attack;
+      const aa = teams.get(r.away)!.attack;
+      dN.set(r.home, (dN.get(r.home) ?? 0) + r.w * r.ga);
+      dD.set(r.home, (dD.get(r.home) ?? 0) + r.w * d.mu * aa);
+      dN.set(r.away, (dN.get(r.away) ?? 0) + r.w * r.gh);
+      dD.set(r.away, (dD.get(r.away) ?? 0) + r.w * d.mu * d.gamma * ah);
+    }
+    for (const [id, t] of teams) {
+      t.defence = Math.max(0.15, Math.min(4, ((dN.get(id) ?? 0) + K) / ((dD.get(id) ?? 0) + K)));
+    }
+    let wa = 0, wd = 0, wt = 0;
+    for (const t of teams.values()) { wa += t.weight * t.attack; wd += t.weight * t.defence; wt += t.weight; }
+    const ma = wt > 0 ? wa / wt : 1;
+    const md = wt > 0 ? wd / wt : 1;
+    if (ma > 0 && md > 0) {
+      for (const t of teams.values()) { t.attack /= ma; t.defence /= md; }
+      for (const d of divs.values()) d.mu *= ma * md;
+    }
+    // baseline e vantaggio casa, per divisione
+    const acc = new Map<string, { gN: number; gD: number; tN: number; tD: number }>();
+    for (const r of rows) {
+      const d = divs.get(r.div)!;
+      const ah = teams.get(r.home)!.attack, dh = teams.get(r.home)!.defence;
+      const aa = teams.get(r.away)!.attack, da = teams.get(r.away)!.defence;
+      const a = acc.get(r.div) ?? { gN: 0, gD: 0, tN: 0, tD: 0 };
+      a.gN += r.w * r.gh;
+      a.gD += r.w * d.mu * ah * da;
+      a.tN += r.w * (r.gh + r.ga);
+      a.tD += r.w * (d.gamma * ah * da + aa * dh);
+      acc.set(r.div, a);
+    }
+    for (const [dv, a] of acc) {
+      const d = divs.get(dv)!;
+      if (a.gD > 0) d.gamma = Math.max(0.6, Math.min(2.5, (a.gN + K) / (a.gD + K)));
+      if (a.tD > 0) d.mu = Math.max(0.3, Math.min(4, a.tN / a.tD));
+    }
+  }
+
+  const perDivision = new Map<string, { mu: number; gamma: number }>();
+  for (const [dv, d] of divs) perDivision.set(dv, { mu: d.mu, gamma: d.gamma });
+  const main = [...divs.values()].sort((a, b) => b.w - a.w)[0]!;
+  return {
+    league: "ALL", mu: main.mu, gamma: main.gamma, teams,
+    n: rows.length, totalWeight, conversionRate,
+    supported: rows.length >= p.minMatches, perDivision,
+  };
+}
+
+/** Vista su una divisione specifica di un fit cross-divisione. */
+export function viewDivision(fit: LeagueStrengthFit, division: string): LeagueStrengthFit {
+  const pd = fit.perDivision?.get(division);
+  if (!pd) return fit;
+  return { ...fit, league: division, mu: pd.mu, gamma: pd.gamma };
+}
+
 export function fitLeagueStrength(input: {
   league: string;
   matches: readonly PiMatchRow[];
