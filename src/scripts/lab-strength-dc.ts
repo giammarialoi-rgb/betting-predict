@@ -34,6 +34,7 @@ import {
 } from "@/domain/eval/predictive-intelligence/models/promotion-registry";
 import { STRENGTH_DC_MODEL_ID } from "@/domain/eval/predictive-intelligence/models/strength-dc";
 import { computeMetrics, logLossOne, brierOne } from "@/domain/eval/predictive-intelligence/validation/metrics";
+import { pairedBootstrap as sharedPairedBootstrap } from "@/domain/eval/predictive-intelligence/validation/rng";
 import type { PiLabel, PiMatchRow, PiProb3 } from "@/domain/eval/predictive-intelligence/types";
 
 const DATASET = join(
@@ -208,28 +209,12 @@ function pairedBootstrap(
   iters = 3000,
 ): { mean_diff: number; ci_low: number; ci_high: number; p_model_better: number } {
   const d = a.map((r, i) => logLossOne(r.p, r.y) - logLossOne(b[i]!.p, b[i]!.y));
-  const n = d.length;
-  if (!n) return { mean_diff: 0, ci_low: 0, ci_high: 0, p_model_better: 0 };
-  const means: number[] = [];
-  let seed = 12345;
-  const rnd = () => {
-    seed = (seed * 1103515245 + 12345) & 0x7fffffff;
-    return seed / 0x7fffffff;
-  };
-  let better = 0;
-  for (let it = 0; it < iters; it += 1) {
-    let s = 0;
-    for (let i = 0; i < n; i += 1) s += d[Math.floor(rnd() * n)]!;
-    const m = s / n;
-    means.push(m);
-    if (m < 0) better += 1;
-  }
-  means.sort((x, y) => x - y);
+  const r = sharedPairedBootstrap(d, { iters, seed: 12345 });
   return {
-    mean_diff: d.reduce((x, y) => x + y, 0) / n,
-    ci_low: means[Math.floor(0.025 * iters)]!,
-    ci_high: means[Math.floor(0.975 * iters)]!,
-    p_model_better: better / iters,
+    mean_diff: r.mean_diff,
+    ci_low: r.ci_low,
+    ci_high: r.ci_high,
+    p_model_better: r.p_first_better,
   };
 }
 

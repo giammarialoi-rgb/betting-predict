@@ -20,6 +20,7 @@ import {
   type StrengthDcParams,
 } from "@/domain/eval/predictive-intelligence/models/strength-dc";
 import { featureCutoffForMatch } from "@/domain/eval/predictive-intelligence/features/asof";
+import { pairedBootstrap as sharedPairedBootstrap } from "@/domain/eval/predictive-intelligence/validation/rng";
 import type { PiMatchRow } from "@/domain/eval/predictive-intelligence/types";
 
 const ROOT = process.cwd();
@@ -225,29 +226,8 @@ function pairedBootstrap(rows: Row[], iters = 3000): {
     const lb = -(y * Math.log(b) + (1 - y) * Math.log(1 - b));
     return la - lb;
   });
-  const n = d.length;
-  if (!n) return { mean_diff: 0, ci_low: 0, ci_high: 0, p_model_better: 0 };
-  let seed = 991;
-  const rnd = () => {
-    seed = (seed * 1103515245 + 12345) & 0x7fffffff;
-    return seed / 0x7fffffff;
-  };
-  const means: number[] = [];
-  let better = 0;
-  for (let it = 0; it < iters; it += 1) {
-    let s = 0;
-    for (let i = 0; i < n; i += 1) s += d[Math.floor(rnd() * n)]!;
-    const mm = s / n;
-    means.push(mm);
-    if (mm < 0) better += 1;
-  }
-  means.sort((x, y) => x - y);
-  return {
-    mean_diff: d.reduce((x, y) => x + y, 0) / n,
-    ci_low: means[Math.floor(0.025 * iters)]!,
-    ci_high: means[Math.floor(0.975 * iters)]!,
-    p_model_better: better / iters,
-  };
+  const r = sharedPairedBootstrap(d, { iters, seed: 991 });
+  return { mean_diff: r.mean_diff, ci_low: r.ci_low, ci_high: r.ci_high, p_model_better: r.p_first_better };
 }
 
 function betting(rows: Row[], edge: number): {

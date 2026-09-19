@@ -145,3 +145,62 @@ delle schedine storiche sono esattamente combinazioni della stessa partita.
 
 **Da verificare prima di usarlo**: se un dato book prezzi davvero questi combo come
 indipendenti. Va confrontato con i suoi prezzi combo reali, non assunto.
+
+---
+
+# Corner e cartellini — cosa vale la pena comprare
+
+## 9. Il modello corner esiste già: mancano solo i prezzi
+
+Il dataset esteso contiene i conteggi su cui costruirlo, senza comprare nulla:
+
+| dato | partite | copertura |
+|---|---|---|
+| Corner casa/trasferta | 42.093 | 93,1% |
+| Cartellini gialli e rossi | 45.186 | 99,9% |
+| Tiri e tiri in porta | 42.093 | 93,1% |
+
+Corner totali per partita: media 9,77, varianza 11,5 — **sovradispersi**, quindi il totale
+va letto da una negativa binomiale, non da una Poisson.
+
+## 10. Dove il modello corner sa qualcosa, e dove no
+
+Stagione 2023/24, 7.247 partite, contro la sola media di lega:
+
+| mercato | modello | base | delta | p(migliore) | IC 95% |
+|---|---|---|---|---|---|
+| Over/Under 8.5 totali | 0,64549 | 0,64554 | −0,00005 | 0,527 | [−0,0049, +0,0046] |
+| Over/Under 9.5 totali | 0,68913 | 0,68651 | +0,00262 | 0,178 | [−0,0026, +0,0076] |
+| Over/Under 10.5 totali | 0,67458 | 0,67472 | −0,00014 | 0,536 | [−0,0054, +0,0050] |
+| Over/Under 11.5 totali | 0,61639 | 0,61496 | +0,00143 | 0,314 | [−0,0038, +0,0063] |
+| **Corner 1X2 (chi ne ha più)** | **0,88510** | 0,91995 | **−0,03486** | **1,000** | [−0,0444, −0,0256] |
+| **Corner casa Over 4.5** | **0,65871** | 0,68313 | **−0,02442** | **1,000** | [−0,0325, −0,0161] |
+
+Sul **totale** l'effetto squadra si annulla: chi domina prende più corner ma ne concede meno,
+e la somma torna verso la media. Sapere quali squadre giocano non aggiunge nulla.
+
+Sui mercati **direzionali** il segnale è forte e significativo. Accuratezza 57,8% contro
+54,4% sul corner 1X2, e 61,9% contro 56,5% sui corner della squadra di casa. Il
+miglioramento sul corner 1X2 (−0,035) è in valore assoluto **più grande del divario che il
+modello ha contro il mercato sull'1X2 dei gol** (+0,028).
+
+Non significa che batta il mercato dei corner: quel confronto è impossibile senza prezzi
+storici. Significa che il modello ha molto più da dire sulla dominanza territoriale che
+sui gol.
+
+**Conseguenza sull'acquisto**: le quote sui corner totali sarebbero soldi buttati. I
+mercati che vale la pena avere sono `corners_1x2` e i team total corner.
+
+## 11. Correzione: bug nel bootstrap
+
+Le prime versioni dei lab usavano un generatore congruenziale scritto come
+`seed = (seed * 1103515245 + 12345) & 0x7fffffff`. In JavaScript `seed * 1103515245` supera
+2^53 e perde precisione prima dell'AND. L'effetto non è sulla uniformità marginale, che
+regge, ma sulla **copertura**: 6.449 indici distinti su 7.247 in 50.000 estrazioni, contro
+7.240 di mulberry32. Ogni iterazione bootstrap pescava da un sottoinsieme, e gli intervalli
+risultavano stretti e spostati — in un caso non contenevano nemmeno la stima puntuale.
+
+Sostituito con mulberry32 in `validation/rng.ts`, con quattro test fra cui uno di
+regressione sulla copertura. Le stime puntuali non cambiano, gli intervalli si allargano:
+l'1X2 su holdout passa da [0,0217, 0,0328] a [0,0212, 0,0354]. **Nessuna conclusione
+riportata in precedenza cambia di segno o di verdetto.**
