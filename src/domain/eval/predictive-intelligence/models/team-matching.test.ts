@@ -93,6 +93,20 @@ test("la normalizzazione toglie sigle, numeri e accenti", () => {
   assert.ok(similarity("Bologna FC 1909", "Bologna") === 1);
 });
 
+test("un alias non deve catturare un club omonimo diverso", () => {
+  // "Paris FC" e "Paris Saint-Germain" sono due societa diverse: un alias
+  // costruito sulla sola parola "paris" le confonderebbe.
+  const FR = ["Paris SG", "Lyon", "Marseille", "Nice", "Rennes", "Brest", "Lille"];
+  const psg = matchTeam("Paris Saint-Germain FC", FR);
+  assert.equal(psg.status === "MATCHED" && psg.candidate, "Paris SG");
+  const parisFc = matchTeam("Paris FC", FR);
+  assert.notEqual(
+    parisFc.status === "MATCHED" ? parisFc.candidate : "n/a",
+    "Paris SG",
+    "Paris FC non deve diventare il PSG",
+  );
+});
+
 test("due candidati indistinguibili danno AMBIGUOUS, mai una scelta", () => {
   const r = matchTeam("United", ["United A", "United B"]);
   assert.notEqual(r.status, "MATCHED", `atteso rifiuto, ottenuto ${r.status}`);

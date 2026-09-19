@@ -78,8 +78,6 @@ export const EXPLICIT_ALIASES: Record<string, string> = {
   "stade rennais": "Rennes",
   "stade brestois 29": "Brest",
   "rc strasbourg alsace": "Strasbourg",
-  "paris": "Paris SG",
-  "olympique lyonnais": "Lyon",
   "ogc nice": "Nice",
   "cs maritimo": "Maritimo",
   "vitoria sc": "Guimaraes",
