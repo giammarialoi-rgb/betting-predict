@@ -325,10 +325,11 @@ async function requireEmptySlip(page: Page, timeout: number): Promise<void> {
   await dismissCookieBanner(page);
   await neutraliseOverlays(page);
 
-  const dentro = await slipContents(page);
+  const dentro = await waitForSlipPanel(page);
   if (!dentro.found) {
     throw new BookingError(
-      "pannello schedina non riconosciuto: non posso garantire che sia vuota",
+      "pannello schedina non comparso entro 20 secondi: non posso garantire che sia vuota",
+      { suggerimento: "connessione lenta o pagina cambiata; riprova" },
     );
   }
   if (dentro.total === null) return;
@@ -476,6 +477,26 @@ async function slipContents(page: Page): Promise<SlipContents> {
   return (await page
     .evaluate(readSlipContents)
     .catch(() => ({ total: null, lines: [], found: false }))) as SlipContents;
+}
+
+/**
+ * Aspetta che il pannello schedina sia disegnato.
+ *
+ * Con un contesto pulito la pagina parte senza cache e Angular disegna il
+ * pannello dopo il primo colpo d'occhio: leggerlo subito dava "pannello non
+ * riconosciuto", che è il modo in cui il driver dice "non posso garantire
+ * niente" — giusto come prudenza, sbagliato come diagnosi, perche' il pannello
+ * sarebbe arrivato un secondo dopo.
+ */
+async function waitForSlipPanel(page: Page, timeoutMs = 20_000): Promise<SlipContents> {
+  const scadenza = Date.now() + timeoutMs;
+  let ultimo: SlipContents = { total: null, lines: [], found: false };
+  while (Date.now() < scadenza) {
+    ultimo = await slipContents(page);
+    if (ultimo.found) return ultimo;
+    await page.waitForTimeout(500);
+  }
+  return ultimo;
 }
 
 /** La quota totale che la schedina mostra adesso, o null se non la mostra. */
