@@ -315,21 +315,21 @@ async function openEvent(page: Page, event: string, timeout: number): Promise<vo
   // La ricerca non restituisce eventi: filtra l'albero di navigazione, e i nodi
   // restano CHIUSI. L'evento è una foglia in fondo a sport → competizione →
   // evento, e solo la foglia porta il nome unito "Casa - Ospite".
-  // La foglia sta dentro la regione dei risultati, e va cliccata lì: il suo
-  // testo compare anche nel pannello schedina, accanto alla "×" che rimuove.
-  const leafVisible = async (): Promise<boolean> =>
-    (await searchResultNodes(page)).some((t) => t === leafText);
+  // Si prova direttamente a cliccare la foglia; se non c'è ancora, si apre un
+  // nodo e si riprova. Nessuna sonda separata di visibilità: marcare e cliccare
+  // sono la stessa operazione, e una sonda globale è proprio ciò che finiva nel
+  // pannello schedina cancellando una gamba.
   const visited = new Set<string>();
   let found = false;
 
   for (let round = 0; round < MAX_COMPETITIONS; round += 1) {
-    if (await leafVisible()) {
+    if (await clickSearchNode(page, leafText, timeout)) {
       found = true;
       break;
     }
     const nodes = await searchResultNodes(page);
     const next = nodes.find(
-      (t) => !visited.has(t) && t !== leafText && !NON_EVENT_NODE.test(t),
+      (t) => !visited.has(t) && t !== leafText && !NON_EVENT_NODE.test(t) && t.length > 2,
     );
     if (next === undefined) break;
     visited.add(next);
@@ -337,7 +337,7 @@ async function openEvent(page: Page, event: string, timeout: number): Promise<vo
     await page.waitForTimeout(800);
   }
 
-  if (!found && !(await leafVisible())) {
+  if (!found) {
     throw new BookingError(`evento non trovato nell'albero: "${event}"`, {
       cercato: home,
       foglia_attesa: leafText,
@@ -346,9 +346,6 @@ async function openEvent(page: Page, event: string, timeout: number): Promise<vo
     });
   }
 
-  if (!(await clickSearchNode(page, leafText, timeout))) {
-    throw new BookingError(`foglia trovata ma non cliccabile: "${leafText}"`);
-  }
   await page.waitForLoadState("domcontentloaded", { timeout });
   await neutraliseOverlays(page);
 

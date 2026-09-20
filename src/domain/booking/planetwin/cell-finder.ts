@@ -249,11 +249,11 @@ export function markSearchNode(query: { text: string | null; attr: string }): Na
     }
   }
 
-  // Regione preferita: la colonna della ricerca. Se non la si riconosce si
-  // guarda tutta la pagina, ma la zona vietata vale comunque.
-  const column = input.closest("form")?.parentElement ?? document.body;
-
-  const candidates = Array.from(column.querySelectorAll("*")).filter(
+  // Si cerca su tutta la pagina. Restringere al contenitore del form non
+  // funziona: lì dentro ci sono solo le due iconcine "search" e "close", i
+  // risultati vivono altrove nel DOM. La sicurezza non viene più da DOVE si
+  // cerca ma da dove NON si clicca, ed è la zona vietata a garantirla.
+  const candidates = Array.from(document.body.querySelectorAll("*")).filter(
     (e) =>
       e.children.length === 0 &&
       visible(e) &&
@@ -267,6 +267,7 @@ export function markSearchNode(query: { text: string | null; attr: string }): Na
   for (const e of candidates) {
     const t = norm(e.textContent);
     if (!available.includes(t)) available.push(t);
+    if (available.length >= 200) break;
   }
 
   if (text === null) return { kind: "absent", available };
