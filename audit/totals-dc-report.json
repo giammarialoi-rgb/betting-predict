@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-19T14:46:27.839Z",
+  "generated_at": "2026-09-20T20:19:56.245Z",
   "market": "over_under_2.5",
   "protocol": {
     "tune_train": [
@@ -16,8 +16,9 @@
   "selected_params": {
     "halfLifeDays": 150,
     "rho": -0.12,
-    "shrinkage": 9,
+    "shrinkage": 4,
     "sotWeight": 0.7,
+    "xgWeight": 0,
     "maxGoals": 10,
     "iterations": 60,
     "minMatches": 80
@@ -26,149 +27,232 @@
   "tuning_trials": [
     {
       "half_life_days": 110,
-      "sot_weight": 0,
-      "log_loss": 0.6841453340342255,
-      "temperature": 1.6
-    },
-    {
-      "half_life_days": 110,
-      "sot_weight": 0.4,
-      "log_loss": 0.6829103662917166,
+      "sot_weight": 0.7,
+      "xg_weight": 0,
+      "shrinkage": 4,
+      "log_loss": 0.6828478179781131,
       "temperature": 1.35
     },
     {
       "half_life_days": 110,
       "sot_weight": 0.7,
-      "log_loss": 0.6826512059279889,
+      "xg_weight": 0,
+      "shrinkage": 9,
+      "log_loss": 0.6826373409452382,
       "temperature": 1.15
     },
     {
       "half_life_days": 110,
-      "sot_weight": 1,
-      "log_loss": 0.6834168834130633,
+      "sot_weight": 0.7,
+      "xg_weight": 0.9,
+      "shrinkage": 4,
+      "log_loss": 0.6801992556546037,
       "temperature": 1.15
     },
     {
+      "half_life_days": 110,
+      "sot_weight": 0.7,
+      "xg_weight": 0.9,
+      "shrinkage": 9,
+      "log_loss": 0.6802606802229836,
+      "temperature": 1
+    },
+    {
       "half_life_days": 150,
-      "sot_weight": 0,
-      "log_loss": 0.6835620460213127,
+      "sot_weight": 0.7,
+      "xg_weight": 0,
+      "shrinkage": 4,
+      "log_loss": 0.682437873279305,
       "temperature": 1.35
     },
     {
       "half_life_days": 150,
-      "sot_weight": 0.4,
-      "log_loss": 0.6823648506733399,
+      "sot_weight": 0.7,
+      "xg_weight": 0,
+      "shrinkage": 9,
+      "log_loss": 0.6822216396822663,
       "temperature": 1.15
     },
     {
       "half_life_days": 150,
       "sot_weight": 0.7,
-      "log_loss": 0.6822186262711092,
+      "xg_weight": 0.9,
+      "shrinkage": 4,
+      "log_loss": 0.6800936520419443,
       "temperature": 1.15
     },
     {
       "half_life_days": 150,
-      "sot_weight": 1,
-      "log_loss": 0.6830673942119783,
-      "temperature": 1.15
+      "sot_weight": 0.7,
+      "xg_weight": 0.9,
+      "shrinkage": 9,
+      "log_loss": 0.6801369276698495,
+      "temperature": 1
     },
     {
       "half_life_days": 220,
-      "sot_weight": 0,
-      "log_loss": 0.6832982939962114,
-      "temperature": 1.35
-    },
-    {
-      "half_life_days": 220,
-      "sot_weight": 0.4,
-      "log_loss": 0.6822794129015328,
+      "sot_weight": 0.7,
+      "xg_weight": 0,
+      "shrinkage": 4,
+      "log_loss": 0.6824405993042595,
       "temperature": 1.15
     },
     {
       "half_life_days": 220,
       "sot_weight": 0.7,
+      "xg_weight": 0,
+      "shrinkage": 9,
       "log_loss": 0.6822495248425854,
       "temperature": 1.15
     },
     {
       "half_life_days": 220,
-      "sot_weight": 1,
-      "log_loss": 0.6831236433190283,
+      "sot_weight": 0.7,
+      "xg_weight": 0.9,
+      "shrinkage": 4,
+      "log_loss": 0.680582735259355,
       "temperature": 1.15
     },
     {
-      "half_life_days": 320,
-      "sot_weight": 0,
-      "log_loss": 0.6836547723424871,
-      "temperature": 1.35
-    },
-    {
-      "half_life_days": 320,
-      "sot_weight": 0.4,
-      "log_loss": 0.6827878674628138,
+      "half_life_days": 220,
+      "sot_weight": 0.7,
+      "xg_weight": 0.9,
+      "shrinkage": 9,
+      "log_loss": 0.6806295761005795,
       "temperature": 1.15
     },
     {
       "half_life_days": 320,
       "sot_weight": 0.7,
-      "log_loss": 0.6827744597165412,
+      "xg_weight": 0,
+      "shrinkage": 4,
+      "log_loss": 0.6829456196018422,
+      "temperature": 1.35
+    },
+    {
+      "half_life_days": 320,
+      "sot_weight": 0.7,
+      "xg_weight": 0,
+      "shrinkage": 9,
+      "log_loss": 0.6827744597165409,
       "temperature": 1.15
     },
     {
       "half_life_days": 320,
-      "sot_weight": 1,
-      "log_loss": 0.6835983570582138,
+      "sot_weight": 0.7,
+      "xg_weight": 0.9,
+      "shrinkage": 4,
+      "log_loss": 0.6816302822306278,
+      "temperature": 1.15
+    },
+    {
+      "half_life_days": 320,
+      "sot_weight": 0.7,
+      "xg_weight": 0.9,
+      "shrinkage": 9,
+      "log_loss": 0.6816096589913958,
       "temperature": 1.15
     }
   ],
+  "season_2324": {
+    "n": 1752,
+    "fits": 600,
+    "mean_overround": 1.050693602209069,
+    "metrics": {
+      "strength_dc": {
+        "log_loss": 0.6687966648075083,
+        "brier": 0.2380857332817817,
+        "accuracy": 0.5930365296803652,
+        "n": 1752
+      },
+      "market_devig": {
+        "log_loss": 0.6621692688022395,
+        "brier": 0.23483542222770093,
+        "accuracy": 0.6067351598173516,
+        "n": 1752
+      }
+    },
+    "delta_vs_market": {
+      "log_loss": 0.0066273960052688485,
+      "bootstrap": {
+        "mean_diff": 0.006627396005268817,
+        "ci_low": 0.001929929863380936,
+        "ci_high": 0.011146826369522765,
+        "p_model_better": 0.003
+      }
+    },
+    "betting": {
+      "edge_0_02": {
+        "n_bets": 1142,
+        "yield": -0.0945359019264449,
+        "mean_clv_pct": -4.9792530411965155,
+        "beat_close_rate": 0.21891418563922943,
+        "clv_n": 1142
+      },
+      "edge_0_04": {
+        "n_bets": 670,
+        "yield": -0.0902686567164179,
+        "mean_clv_pct": -4.823564225552677,
+        "beat_close_rate": 0.22835820895522388,
+        "clv_n": 670
+      },
+      "edge_0_06": {
+        "n_bets": 341,
+        "yield": -0.06008797653958944,
+        "mean_clv_pct": -4.545999640364394,
+        "beat_close_rate": 0.2404692082111437,
+        "clv_n": 341
+      }
+    }
+  },
   "season_2425": {
     "n": 1752,
     "fits": 584,
     "mean_overround": 1.048572361405477,
     "metrics": {
       "strength_dc": {
-        "log_loss": 0.6772730967995116,
-        "brier": 0.24217633323192697,
+        "log_loss": 0.6769556612327245,
+        "brier": 0.24202664534059778,
         "accuracy": 0.5684931506849316,
         "n": 1752
       },
       "market_devig": {
-        "log_loss": 0.6684435966663004,
+        "log_loss": 0.6684435966663003,
         "brier": 0.23792296056550366,
         "accuracy": 0.5901826484018264,
         "n": 1752
       }
     },
     "delta_vs_market": {
-      "log_loss": 0.008829500133211265,
+      "log_loss": 0.008512064566424282,
       "bootstrap": {
-        "mean_diff": 0.00882950013320829,
-        "ci_low": 0.005536460491137572,
-        "ci_high": 0.012273916697285833,
+        "mean_diff": 0.008512064566421802,
+        "ci_low": 0.004221813892219987,
+        "ci_high": 0.012704973246751608,
         "p_model_better": 0
       }
     },
     "betting": {
       "edge_0_02": {
-        "n_bets": 1169,
-        "yield": -0.09516680923866563,
-        "mean_clv_pct": -4.781789218835811,
-        "beat_close_rate": 0.2369546621043627,
-        "clv_n": 1169
+        "n_bets": 1139,
+        "yield": -0.11454784899034251,
+        "mean_clv_pct": -4.585103759377781,
+        "beat_close_rate": 0.2467076382791923,
+        "clv_n": 1139
       },
       "edge_0_04": {
-        "n_bets": 672,
-        "yield": -0.11281250000000002,
-        "mean_clv_pct": -4.96391097598272,
-        "beat_close_rate": 0.24553571428571427,
-        "clv_n": 672
+        "n_bets": 652,
+        "yield": -0.13208588957055217,
+        "mean_clv_pct": -4.317454974310327,
+        "beat_close_rate": 0.2668711656441718,
+        "clv_n": 652
       },
       "edge_0_06": {
-        "n_bets": 323,
-        "yield": -0.13634674922600606,
-        "mean_clv_pct": -4.754977715037261,
-        "beat_close_rate": 0.2848297213622291,
-        "clv_n": 323
+        "n_bets": 314,
+        "yield": -0.14420382165605083,
+        "mean_clv_pct": -4.665175090165611,
+        "beat_close_rate": 0.27070063694267515,
+        "clv_n": 314
       }
     }
   },
@@ -178,8 +262,8 @@
       "mean_overround": 1.050693602209069,
       "metrics": {
         "strength_dc": {
-          "log_loss": 0.669320158066225,
-          "brier": 0.23831761371323112,
+          "log_loss": 0.6687966648075083,
+          "brier": 0.2380857332817817,
           "accuracy": 0.5930365296803652,
           "n": 1752
         },
@@ -191,35 +275,35 @@
         }
       },
       "delta_vs_market": {
-        "log_loss": 0.007150889263985549,
+        "log_loss": 0.0066273960052688485,
         "bootstrap": {
-          "mean_diff": 0.007150889263985724,
-          "ci_low": 0.0026768230194189726,
-          "ci_high": 0.009808500454414669,
-          "p_model_better": 0
+          "mean_diff": 0.006627396005268817,
+          "ci_low": 0.001929929863380936,
+          "ci_high": 0.011146826369522765,
+          "p_model_better": 0.003
         }
       },
       "betting": {
         "edge_0_02": {
-          "n_bets": 1169,
-          "yield": -0.10248930710008566,
-          "mean_clv_pct": -5.414063909783538,
-          "beat_close_rate": 0.20017108639863132,
-          "clv_n": 1169
+          "n_bets": 1142,
+          "yield": -0.0945359019264449,
+          "mean_clv_pct": -4.9792530411965155,
+          "beat_close_rate": 0.21891418563922943,
+          "clv_n": 1142
         },
         "edge_0_04": {
-          "n_bets": 673,
-          "yield": -0.09606240713224369,
-          "mean_clv_pct": -5.156362231060328,
-          "beat_close_rate": 0.2139673105497771,
-          "clv_n": 673
+          "n_bets": 670,
+          "yield": -0.0902686567164179,
+          "mean_clv_pct": -4.823564225552677,
+          "beat_close_rate": 0.22835820895522388,
+          "clv_n": 670
         },
         "edge_0_06": {
-          "n_bets": 333,
-          "yield": -0.04954954954954955,
-          "mean_clv_pct": -4.845351308762948,
-          "beat_close_rate": 0.24324324324324326,
-          "clv_n": 333
+          "n_bets": 341,
+          "yield": -0.06008797653958944,
+          "mean_clv_pct": -4.545999640364394,
+          "beat_close_rate": 0.2404692082111437,
+          "clv_n": 341
         }
       }
     },
@@ -228,48 +312,48 @@
       "mean_overround": 1.048572361405477,
       "metrics": {
         "strength_dc": {
-          "log_loss": 0.6772730967995116,
-          "brier": 0.24217633323192697,
+          "log_loss": 0.6769556612327245,
+          "brier": 0.24202664534059778,
           "accuracy": 0.5684931506849316,
           "n": 1752
         },
         "market_devig": {
-          "log_loss": 0.6684435966663004,
+          "log_loss": 0.6684435966663003,
           "brier": 0.23792296056550366,
           "accuracy": 0.5901826484018264,
           "n": 1752
         }
       },
       "delta_vs_market": {
-        "log_loss": 0.008829500133211265,
+        "log_loss": 0.008512064566424282,
         "bootstrap": {
-          "mean_diff": 0.00882950013320829,
-          "ci_low": 0.005536460491137572,
-          "ci_high": 0.012273916697285833,
+          "mean_diff": 0.008512064566421802,
+          "ci_low": 0.004221813892219987,
+          "ci_high": 0.012704973246751608,
           "p_model_better": 0
         }
       },
       "betting": {
         "edge_0_02": {
-          "n_bets": 1169,
-          "yield": -0.09516680923866563,
-          "mean_clv_pct": -4.781789218835811,
-          "beat_close_rate": 0.2369546621043627,
-          "clv_n": 1169
+          "n_bets": 1139,
+          "yield": -0.11454784899034251,
+          "mean_clv_pct": -4.585103759377781,
+          "beat_close_rate": 0.2467076382791923,
+          "clv_n": 1139
         },
         "edge_0_04": {
-          "n_bets": 672,
-          "yield": -0.11281250000000002,
-          "mean_clv_pct": -4.96391097598272,
-          "beat_close_rate": 0.24553571428571427,
-          "clv_n": 672
+          "n_bets": 652,
+          "yield": -0.13208588957055217,
+          "mean_clv_pct": -4.317454974310327,
+          "beat_close_rate": 0.2668711656441718,
+          "clv_n": 652
         },
         "edge_0_06": {
-          "n_bets": 323,
-          "yield": -0.13634674922600606,
-          "mean_clv_pct": -4.754977715037261,
-          "beat_close_rate": 0.2848297213622291,
-          "clv_n": 323
+          "n_bets": 314,
+          "yield": -0.14420382165605083,
+          "mean_clv_pct": -4.665175090165611,
+          "beat_close_rate": 0.27070063694267515,
+          "clv_n": 314
         }
       }
     }

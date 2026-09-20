@@ -81,3 +81,6 @@ audit/external/task-044/corners-prospective/
 
 # profilo persistente del driver di prenotazione
 .playwright/
+
+# file temporanei lasciati dal filesystem montato
+/_tmp_*

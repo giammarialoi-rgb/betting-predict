@@ -24,7 +24,13 @@ import { pairedBootstrap as sharedPairedBootstrap } from "@/domain/eval/predicti
 import type { PiMatchRow } from "@/domain/eval/predictive-intelligence/types";
 
 const ROOT = process.cwd();
-const DATASET = join(ROOT, "audit/external/task-044/predictive-intelligence/datasets/matches.jsonl");
+/**
+ * Archivio esteso: e lo stesso storico, ma porta gli xG agganciati da
+ * Understat. Si filtra ai cinque campionati del dataset originale, cosi il
+ * confronto con le misure precedenti resta a parita di universo.
+ */
+const DATASET = join(ROOT, "audit/external/task-044/predictive-intelligence/datasets/matches-expanded.jsonl");
+const LEGHE = new Set(["E0", "I1", "SP1", "D1", "F1"]);
 const RAW_DIR = join(ROOT, "audit/external/task-044/predictive-intelligence/datasets/raw");
 const OUT_DIR = join(ROOT, "audit");
 const LINE = 2.5;
@@ -277,7 +283,9 @@ const STATE = join(OUT_DIR, ".totals-dc-state.json");
 function main(): void {
   const stage = process.argv.find((a) => a.startsWith("--stage="))?.split("=")[1] ?? "all";
   const seasonArg = process.argv.find((a) => a.startsWith("--season="))?.split("=")[1];
-  const all = (readFileSync(DATASET, "utf8").trim().split("\n").map((l) => JSON.parse(l) as PiMatchRow)).sort(
+  const all = (readFileSync(DATASET, "utf8").trim().split("\n").map((l) => JSON.parse(l) as PiMatchRow))
+    .filter((m) => LEGHE.has(String(m.league)))
+    .sort(
     (a, b) => (a.event_time < b.event_time ? -1 : 1),
   );
   const quotes = loadTotalsQuotes();
@@ -286,20 +294,23 @@ function main(): void {
   // ---- tuning on <=2122 validated on 2223 ----
   let finalParams: StrengthDcParams;
   let temperature: number;
-  let tuningTrials: { half_life_days: number; sot_weight: number; log_loss: number; temperature: number }[] = [];
+  let tuningTrials: { half_life_days: number; sot_weight: number; xg_weight: number; shrinkage: number; log_loss: number; temperature: number }[] = [];
 
   if (stage === "tune" || stage === "all") {
   const tuneIdx = new LeagueIndex(all.filter((m) => [...TUNE_TRAIN, TUNE_VALIDATE].includes(m.season)));
   type Trial = { params: StrengthDcParams; temperature: number; log_loss: number };
   const trials: Trial[] = [];
-  log("tuning (half-life x sotWeight) sul target TOTALI");
+  log("tuning (half-life x xgWeight x shrinkage) sul target TOTALI");
   for (const halfLifeDays of [110, 150, 220, 320]) {
-    for (const sotWeight of [0, 0.4, 0.7, 1.0]) {
+    for (const xgWeight of [0, 0.9]) {
+      for (const shrinkage of [4, 9]) {
+      const sotWeight = 0.7;
       const params: StrengthDcParams = {
         ...DEFAULT_STRENGTH_DC,
         halfLifeDays,
         sotWeight,
-        shrinkage: 9,
+        xgWeight,
+        shrinkage,
         rho: -0.12,
         iterations: 30,
       };
@@ -314,7 +325,8 @@ function main(): void {
         }
       }
       trials.push({ params, temperature: bestT, log_loss: bestLL });
-      log(`  hl=${halfLifeDays} sot=${sotWeight} -> ll=${bestLL.toFixed(5)} T=${bestT} (n=${s.rows.length})`);
+      log(`  hl=${halfLifeDays} xg=${xgWeight} k=${shrinkage} -> ll=${bestLL.toFixed(5)} T=${bestT} (n=${s.rows.length})`);
+      }
     }
   }
   const best = trials.reduce((a, b) => (a.log_loss <= b.log_loss ? a : b));
@@ -323,12 +335,14 @@ function main(): void {
   tuningTrials = trials.map((t) => ({
     half_life_days: t.params.halfLifeDays,
     sot_weight: t.params.sotWeight,
+    xg_weight: t.params.xgWeight,
+    shrinkage: t.params.shrinkage,
     log_loss: t.log_loss,
     temperature: t.temperature,
   }));
   mkdirSync(OUT_DIR, { recursive: true });
   writeFileSync(STATE, JSON.stringify({ finalParams, temperature, tuningTrials, seasons: {} }, null, 2));
-  log(`SELECTED hl=${finalParams.halfLifeDays} sot=${finalParams.sotWeight} T=${temperature} (val ll=${best.log_loss.toFixed(5)})`);
+  log(`SELECTED hl=${finalParams.halfLifeDays} xg=${finalParams.xgWeight} k=${finalParams.shrinkage} T=${temperature} (val ll=${best.log_loss.toFixed(5)})`);
   if (stage === "tune") return;
   } else {
     const st = JSON.parse(readFileSync(STATE, "utf8")) as {

@@ -401,3 +401,27 @@ allargato in silenzio il filtro nato dal caso Frosinone-Como.
 
 La cache Understat sta sotto `data/acquisition/` (fuori da git): si ricostruisce
 con `pnpm ingest:understat-history`, poi `tsx src/scripts/build-expanded-dataset.ts`.
+
+### Gli stessi xG sui TOTALI — migliorano, non bastano
+
+Un modello di gol dovrebbe essere strutturalmente più adatto alla somma che al
+confine del pareggio, quindi la stessa matrice è stata rimisurata su U/O 2.5
+(protocollo del lab totali: taratura ≤21/22 validata su 22/23, poi 23/24 e
+24/25 valutate una volta sola).
+
+Gli xG aiutano anche qui, e fuori campione:
+
+| stagione | divario dal mercato, prima | dopo |
+|---|---|---|
+| 2023/24 | 6,6 | 5,0 |
+| 2024/25 | 8,5 | 6,7 |
+
+Ma il mercato resta davanti, e la simulazione di gioco lo conferma senza
+ambiguità: a soglia di vantaggio 2% il rendimento è −6,1% e −8,7%, il **CLV è
+−4,6%** e la quota battuta alla chiusura è **24%**. Cioè selezionare le giocate
+sullo scarto dal mercato sceglie sistematicamente il lato sbagliato del
+movimento — la stessa firma trovata sull'1X2.
+
+**Conclusione: il motore non batte il mercato né sull'1X2 né sui totali.** Gli
+xG hanno recuperato un terzo del distacco, non l'hanno colmato. L'unico
+vantaggio misurato resta il CLV sulle scansioni prospettiche.
