@@ -42,6 +42,13 @@ export type PiMatchRow = {
   ay: number | null;
   hr: number | null;
   ar: number | null;
+  /**
+   * Expected goals della partita, quando una fonte con storico li copre.
+   * Sono un RISULTATO, non una feature pre-partita: entrano solo nei priori
+   * (partite gia concluse) per stimare la forza, mai nella riga bersaglio.
+   */
+  hxg: number | null;
+  axg: number | null;
   /** Pre-match / DATE_ONLY open odds (allowed for market baseline eval only). */
   odds_open: {
     B365: PiOddsTriple;

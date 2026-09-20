@@ -9,6 +9,8 @@
 import { readFileSync, writeFileSync, readdirSync, mkdirSync } from "node:fs";
 import { join } from "node:path";
 import { normalizeFootballDataCsv } from "@/domain/eval/predictive-intelligence/dataset/normalize";
+import { joinUnderstatXg } from "@/domain/eval/predictive-intelligence/dataset/understat-join";
+import { loadUnderstatSeason } from "@/providers/understat/history";
 import type { PiMatchRow } from "@/domain/eval/predictive-intelligence/types";
 
 const ROOT = process.cwd();
@@ -24,10 +26,53 @@ const LEAGUE_NAMES: Record<string, string> = {
   T1: "Turchia Super Lig", G1: "Grecia Super League",
 };
 
+type XgStats = { covered: number; rejected: number; seasons: Set<string> };
+
+/**
+ * Sovrappone gli xG Understat alle righe di una lega-stagione.
+ *
+ * Non tocca nulla se la stagione non e stata scaricata: il dataset resta
+ * valido senza xG, e chi li usa deve gia gestire il valore assente (le
+ * divisioni minori non li avranno mai).
+ */
+function attachUnderstatXg(
+  root: string,
+  league: string,
+  season: string,
+  matches: PiMatchRow[],
+  stats: Map<string, XgStats>,
+): void {
+  const fixtures = loadUnderstatSeason(root, league, season);
+  if (!fixtures || !fixtures.length) return;
+  const { xg, report } = joinUnderstatXg(
+    fixtures,
+    matches.map((m) => ({
+      key: m.canonical_id,
+      date: m.match_date,
+      home: m.home_team,
+      away: m.away_team,
+      goalsHome: m.fthg,
+      goalsAway: m.ftag,
+    })),
+  );
+  for (const m of matches) {
+    const hit = xg.get(m.canonical_id);
+    if (!hit) continue;
+    m.hxg = hit.hxg;
+    m.axg = hit.axg;
+  }
+  const cur = stats.get(league) ?? { covered: 0, rejected: 0, seasons: new Set<string>() };
+  cur.covered += report.joined;
+  cur.rejected += report.rejectedGoals + report.ambiguous;
+  cur.seasons.add(season);
+  stats.set(league, cur);
+}
+
 function main(): void {
   const files = readdirSync(RAW).filter((f) => /^[A-Z]+\d?-\d{4}\.csv$/.test(f)).sort();
   const all: PiMatchRow[] = [];
   const perLeague = new Map<string, { n: number; seasons: Set<string>; rejected: number }>();
+  const xgStats = new Map<string, XgStats>();
 
   for (const f of files) {
     const m = /^([A-Z]+\d?)-(\d{4})\.csv$/.exec(f);
@@ -41,6 +86,7 @@ function main(): void {
       process.stdout.write(`  SCARTATO ${f}: ${(e as Error).message}\n`);
       continue;
     }
+    attachUnderstatXg(ROOT, league, season, res.matches, xgStats);
     all.push(...res.matches);
     const cur = perLeague.get(league) ?? { n: 0, seasons: new Set<string>(), rejected: 0 };
     cur.n += res.matches.length;
@@ -71,6 +117,19 @@ function main(): void {
   }
   process.stdout.write("-".repeat(56) + "\n");
   process.stdout.write(`${"".padEnd(5)} ${"TOTALE".padEnd(22)} ${"".padStart(6)} ${String(tot).padStart(9)}\n`);
+  if (xgStats.size) {
+    process.stdout.write(`\nxG Understat agganciati\n`);
+    let xgTot = 0;
+    for (const [lg, s2] of [...xgStats.entries()].sort()) {
+      process.stdout.write(
+        `  ${lg.padEnd(5)} ${String(s2.seasons.size).padStart(2)} stagioni  ${String(s2.covered).padStart(6)} partite  (scartate ${s2.rejected})\n`,
+      );
+      xgTot += s2.covered;
+    }
+    const conXg = deduped.filter((r) => r.hxg != null && r.axg != null).length;
+    process.stdout.write(`  totale agganciate ${xgTot}  righe finali con xG ${conXg}\n`);
+  }
+
   process.stdout.write(`\nleghe: ${perLeague.size}  righe scritte: ${deduped.length}  duplicati rimossi: ${all.length - deduped.length}\n`);
   process.stdout.write(`-> ${OUT}\n`);
 }

@@ -43,10 +43,30 @@ const ROOT = process.cwd();
 const DATASET = join(ROOT, "audit/external/task-044/predictive-intelligence/datasets/matches-expanded.jsonl");
 const OUT = join(ROOT, "audit", "board-7days.json");
 
+/**
+ * Taratura del 20/09/2026, dopo l'ingresso degli xG nel fit.
+ *
+ * Con un bersaglio meno rumoroso conviene guardare piu indietro (emivita da 150
+ * a 180 giorni) e regolarizzare meno (shrinkage da 9 a 4), e serve meno
+ * forzatura in uscita (temperatura da 0,7 a 0,8). Sui big-5 il divario di log
+ * loss dal mercato scende da 11,5 a 7,7 millesimi su tre stagioni; sulle
+ * divisioni senza xG resta invariato (5,5 -> 5,6, cioe rumore).
+ */
 const PARAMS: StrengthDcParams = {
-  ...DEFAULT_STRENGTH_DC, halfLifeDays: 150, shrinkage: 9, rho: -0.12, sotWeight: 0.8, iterations: 60,
+  ...DEFAULT_STRENGTH_DC, halfLifeDays: 180, shrinkage: 4, rho: -0.12, sotWeight: 0.8, xgWeight: 0.9, iterations: 60,
 };
-const TEMPERATURE = 0.7;
+const TEMPERATURE = 0.8;
+
+/**
+ * Shrinkage usato SOLO per la quota di informazione, tenuto a 9 di proposito.
+ *
+ * Quel numero non regolarizza il fit: misura se una squadra ha abbastanza
+ * storico perche valga la pena fidarsi della previsione — il filtro nato dal
+ * caso Frosinone-Como. Agganciarlo a PARAMS.shrinkage lo renderebbe piu
+ * permissivo per un motivo che non c'entra, e passerebbero previsioni su
+ * squadre che prima venivano scartate.
+ */
+const INFORMATION_SHRINKAGE = 9;
 
 type Fixture = {
   utcDate: string;
@@ -162,8 +182,8 @@ async function main(): Promise<void> {
     const pesoCasa = effectiveSample(partiteDi(mh.candidate), kickoffMs, PARAMS.halfLifeDays);
     const pesoOspite = effectiveSample(partiteDi(ma.candidate), kickoffMs, PARAMS.halfLifeDays);
     const quotaInformazione = Math.min(
-      informationShare(pesoCasa, PARAMS.shrinkage),
-      informationShare(pesoOspite, PARAMS.shrinkage),
+      informationShare(pesoCasa, INFORMATION_SHRINKAGE),
+      informationShare(pesoOspite, INFORMATION_SHRINKAGE),
     );
     // Una squadra appena promossa o retrocessa non ha storico in QUESTA
     // divisione: lo shrinkage la riporta alla media di lega, quindi la previsione

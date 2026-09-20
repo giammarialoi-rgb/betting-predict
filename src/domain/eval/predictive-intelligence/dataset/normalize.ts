@@ -130,6 +130,10 @@ export function normalizeFootballDataCsv(input: {
       ay: num(row.AY),
       hr: num(row.HR),
       ar: num(row.AR),
+      // Football-Data pubblica xG solo dalla stagione corrente: per lo storico
+      // arrivano dall'overlay Understat in build-expanded-dataset.
+      hxg: num(row.HxG),
+      axg: num(row.AxG),
       odds_open: {
         B365: oddsTriple(row.B365H, row.B365D, row.B365A),
         PS: oddsTriple(row.PSH, row.PSD, row.PSA),

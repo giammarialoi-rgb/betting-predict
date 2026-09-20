@@ -40,16 +40,20 @@ const DATASET = join(
 const OUT = join(process.cwd(), "audit", "disagreement.json");
 
 /** Gli stessi parametri che generano le giocate vere. */
+const flag = (name: string, fallback: number): number =>
+  Number(process.argv.find((a) => a.startsWith(`--${name}=`))?.split("=")[1] ?? String(fallback));
+
 const PARAMS: StrengthDcParams = {
   ...DEFAULT_STRENGTH_DC,
-  halfLifeDays: 150,
-  shrinkage: 9,
+  halfLifeDays: flag("half-life", 180),
+  shrinkage: flag("shrinkage", 4),
   rho: -0.12,
   sotWeight: 0.8,
+  xgWeight: flag("xg-weight", 0.9),
   iterations: 60,
 };
 const TEMPERATURE = Number(
-  process.argv.find((a) => a.startsWith("--temperature="))?.split("=")[1] ?? "0.7",
+  process.argv.find((a) => a.startsWith("--temperature="))?.split("=")[1] ?? "0.8",
 );
 
 /** Fasce di scarto modello/mercato. L'ultima è quella del listone. */

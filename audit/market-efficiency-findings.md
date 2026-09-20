@@ -347,3 +347,57 @@ Due trappole trovate scrivendo il modulo, entrambe fissate da test:
   inesistente;
 - la doppia chance non è una partizione: copre ogni risultato due volte e
   letta come tale dà oltre il 100% di margine.
+
+## 20/09/2026 — Gli xG nel motore
+
+Il modello di forza si allenava sui gol, corretti con un proxy dei tiri in
+porta (`sotWeight`). I gol sono uno stimatore rumoroso del merito: un tiro
+deviato e mezz'ora di assedio contano uguale.
+
+**Prima trappola, da segnalare.** Football-Data pubblica `HxG`/`AxG` solo dalla
+stagione in corso: 893 partite su 53.962, zero sulla 2024/25 su cui si misura.
+Chi guarda le colonne del CSV e conclude "gli xG ci sono" sbaglia di due ordini
+di grandezza. Lo storico arriva da **Understat** (`getLeagueData`, lo stesso
+endpoint che chiama la pagina pubblica), cinque campionati maggiori.
+
+**Aggancio.** 12.658 partite unite su 12.659 disponibili, 2019/20 → 2026/27.
+Le anagrafiche non coincidono ("Wolves" / "Wolverhampton Wanderers"), e una
+tabella di alias invecchia a ogni promozione: le squadre si accoppiano per
+**sovrapposizione di calendario**, il nome entra solo come spareggio. La
+verifica non è il numero di righe unite ma i **gol**: coincidono su tutte tranne
+una, che viene scartata e non corretta.
+
+**Misura** (walk-forward, big-5, divario di log loss dal mercato; il mercato non
+entra mai nel modello):
+
+| stagione | prima | dopo |
+|---|---|---|
+| 2023/24 | 15,3 | 10,4 |
+| 2024/25 | 12,3 | 6,5 |
+| 2025/26 | 7,0 | 6,2 |
+| tre insieme | 11,5 | 7,7 |
+
+Solo la 2024/25 è stata usata per tarare; le altre due sono verifiche fuori
+campione e confermano.
+
+La taratura si sposta perché il bersaglio è meno rumoroso: emivita 150 → 180
+giorni, shrinkage 9 → 4, temperatura 0,7 → 0,8, peso xG 0,9. Sulle divisioni
+**senza** xG gli stessi parametri danno 5,5 → 5,6 millesimi, cioè rumore: si
+possono adottare ovunque senza un secondo profilo.
+
+**Quello che NON è cambiato.** Il disaccordo modello/mercato resta
+anti-predittivo in tutte e sei le fasce: dove il modello alza la probabilità,
+l'esito si verifica meno di quanto dice il mercato (fascia estrema: modello
+31,4%, mercato 17,7%, reale 16,0%). Il motore è più vicino al mercato, non
+davanti. **I biglietti continuano a comporsi sul prezzo de-viggato, non sul
+modello.** Quello che migliora è la frequenza del danno: le osservazioni in
+fascia estrema scendono da 214 a 94, e lo scarto reale-modello da 19,2 a 15,4
+punti.
+
+Lo shrinkage della **quota di informazione** resta a 9 di proposito
+(`INFORMATION_SHRINKAGE` in `board-7days.ts`): misura se una squadra ha
+abbastanza storico, non regolarizza il fit, e agganciarlo al nuovo 4 avrebbe
+allargato in silenzio il filtro nato dal caso Frosinone-Como.
+
+La cache Understat sta sotto `data/acquisition/` (fuori da git): si ricostruisce
+con `pnpm ingest:understat-history`, poi `tsx src/scripts/build-expanded-dataset.ts`.

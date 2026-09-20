@@ -31,6 +31,11 @@ export type StrengthDcParams = {
   shrinkage: number;
   /** 0 = fit on goals only, 1 = fit on shots-on-target proxy only. */
   sotWeight: number;
+  /**
+   * Peso degli xG quando la partita li ha: 0 = solo gol, 1 = solo xG.
+   * Dove gli xG mancano si ricade sul proxy dei tiri in porta (sotWeight).
+   */
+  xgWeight: number;
   /** Score matrix truncation. */
   maxGoals: number;
   /** Iterative scaling sweeps. */
@@ -44,6 +49,7 @@ export const DEFAULT_STRENGTH_DC: StrengthDcParams = {
   rho: -0.06,
   shrinkage: 6,
   sotWeight: 0.35,
+  xgWeight: 0,
   maxGoals: 10,
   iterations: 60,
   minMatches: 80,
@@ -68,13 +74,29 @@ export type LeagueStrengthFit = {
   perDivision?: Map<string, { mu: number; gamma: number }>;
 };
 
-/** Blend actual goals with a self-calibrated shots-on-target expectation. */
-function targetGoals(
-  goals: number,
-  sot: number | null,
-  conversionRate: number,
-  sotWeight: number,
-): number {
+/**
+ * Il bersaglio del fit: quanto una squadra ha MERITATO di segnare.
+ *
+ * I gol soli sono uno stimatore rumoroso della forza — un tiro deviato e una
+ * mezz'ora di assedio valgono lo stesso. Il proxy storico erano i tiri in
+ * porta convertiti al tasso medio della finestra. Gli xG sono la stessa idea
+ * fatta meglio, gia in unita di gol, e quando ci sono hanno la precedenza.
+ * La calibrazione riporta la fonte esterna sulla scala dei gol della finestra,
+ * cosi un eventuale scarto sistematico fra fonti non sposta il baseline.
+ */
+function targetGoals(input: {
+  goals: number;
+  xg: number | null;
+  sot: number | null;
+  conversionRate: number;
+  xgRate: number;
+  sotWeight: number;
+  xgWeight: number;
+}): number {
+  const { goals, xg, sot, conversionRate, xgRate, sotWeight, xgWeight } = input;
+  if (xgWeight > 0 && xg != null && Number.isFinite(xg)) {
+    return (1 - xgWeight) * goals + xgWeight * (xgRate * xg);
+  }
   if (sot == null || !Number.isFinite(sot) || sotWeight <= 0) return goals;
   return (1 - sotWeight) * goals + sotWeight * (conversionRate * sot);
 }
@@ -124,6 +146,8 @@ export function fitCrossDivisionStrength(input: {
 
   let wGoals = 0;
   let wSot = 0;
+  let wGoalsXg = 0;
+  let wXg = 0;
   for (const m of input.matches) {
     const w = decayWeight(Date.parse(m.event_time), asOfMs, p.halfLifeDays);
     if (w <= 1e-6) continue;
@@ -131,8 +155,13 @@ export function fitCrossDivisionStrength(input: {
       wGoals += w * (m.fthg + m.ftag);
       wSot += w * (m.hst + m.ast);
     }
+    if (m.hxg != null && m.axg != null) {
+      wGoalsXg += w * (m.fthg + m.ftag);
+      wXg += w * (m.hxg + m.axg);
+    }
   }
   const conversionRate = wSot > 0 ? wGoals / wSot : 0.33;
+  const xgRate = wXg > 0 ? wGoalsXg / wXg : 1;
 
   type Row = { home: string; away: string; div: string; gh: number; ga: number; w: number };
   const rows: Row[] = [];
@@ -142,8 +171,8 @@ export function fitCrossDivisionStrength(input: {
     if (w <= 1e-6) continue;
     rows.push({
       home: m.home_team_id, away: m.away_team_id, div: m.league,
-      gh: targetGoals(m.fthg, m.hst, conversionRate, p.sotWeight),
-      ga: targetGoals(m.ftag, m.ast, conversionRate, p.sotWeight),
+      gh: targetGoals({ goals: m.fthg, xg: m.hxg, sot: m.hst, conversionRate, xgRate, sotWeight: p.sotWeight, xgWeight: p.xgWeight }),
+      ga: targetGoals({ goals: m.ftag, xg: m.axg, sot: m.ast, conversionRate, xgRate, sotWeight: p.sotWeight, xgWeight: p.xgWeight }),
       w,
     });
     totalWeight += w;
@@ -266,6 +295,8 @@ export function fitLeagueStrength(input: {
   // Self-calibrate goals-per-shot-on-target on the same weighted window.
   let wGoals = 0;
   let wSot = 0;
+  let wGoalsXg = 0;
+  let wXg = 0;
   for (const m of input.matches) {
     const w = decayWeight(Date.parse(m.event_time), asOfMs, p.halfLifeDays);
     if (w <= 1e-6) continue;
@@ -273,8 +304,13 @@ export function fitLeagueStrength(input: {
       wGoals += w * (m.fthg + m.ftag);
       wSot += w * (m.hst + m.ast);
     }
+    if (m.hxg != null && m.axg != null) {
+      wGoalsXg += w * (m.fthg + m.ftag);
+      wXg += w * (m.hxg + m.axg);
+    }
   }
   const conversionRate = wSot > 0 ? wGoals / wSot : 0.33;
+  const xgRate = wXg > 0 ? wGoalsXg / wXg : 1;
 
   let totalWeight = 0;
   for (const m of input.matches) {
@@ -283,8 +319,8 @@ export function fitLeagueStrength(input: {
     rows.push({
       home: m.home_team_id,
       away: m.away_team_id,
-      gh: targetGoals(m.fthg, m.hst, conversionRate, p.sotWeight),
-      ga: targetGoals(m.ftag, m.ast, conversionRate, p.sotWeight),
+      gh: targetGoals({ goals: m.fthg, xg: m.hxg, sot: m.hst, conversionRate, xgRate, sotWeight: p.sotWeight, xgWeight: p.xgWeight }),
+      ga: targetGoals({ goals: m.ftag, xg: m.axg, sot: m.ast, conversionRate, xgRate, sotWeight: p.sotWeight, xgWeight: p.xgWeight }),
       w,
     });
     totalWeight += w;
