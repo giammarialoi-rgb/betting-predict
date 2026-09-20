@@ -299,9 +299,6 @@ export type BinHit =
  */
 export function markSlipBin(query: { attr: string }): BinHit {
   const { attr } = query;
-  // Dentro la funzione, non a livello di modulo: Playwright ne serializza il
-  // sorgente e lo esegue nel browser, dove le costanti del modulo non esistono.
-  const ligatures = ["delete_outline", "delete", "delete_forever", "clear_all"];
   const norm = (s: string | null): string => (s ?? "").replace(/\s+/g, " ").trim();
   const visible = (e: Element): boolean => e.getClientRects().length > 0;
 
@@ -322,20 +319,25 @@ export function markSlipBin(query: { attr: string }): BinHit {
   }
   if (!panel) return { kind: "absent", insideSlip: [] };
 
-  const leaves = Array.from(panel.querySelectorAll("*")).filter(
-    (e) => e.children.length === 0 && visible(e),
-  );
   const insideSlip: string[] = [];
-  for (const e of leaves) {
+  for (const e of Array.from(panel.querySelectorAll("*"))) {
+    if (e.children.length !== 0 || !visible(e)) continue;
     const t = norm(e.textContent);
     if (t && t.length < 40 && !insideSlip.includes(t)) insideSlip.push(t);
     if (insideSlip.length >= 40) break;
   }
 
-  const bin = leaves.find((e) => ligatures.includes(norm(e.textContent).toLowerCase()));
+  // Il cestino è un BUTTON senza testo — l'icona è un'immagine, non una
+  // legatura. Verificato sulla pagina vera: la barra strumenti della schedina
+  // ha tre bottoni senza nome e l'ultimo svuota tutto. Cercarlo per legatura
+  // testuale non trovava niente e lo svuotamento falliva in silenzio.
+  const bare = Array.from(panel.querySelectorAll("button")).filter(
+    (b) => visible(b) && norm(b.textContent).length === 0,
+  );
+  const bin = bare[bare.length - 1];
   if (!bin) return { kind: "absent", insideSlip };
   bin.setAttribute(attr, "1");
-  return { kind: "marked", label: norm(bin.textContent) };
+  return { kind: "marked", label: "bottone senza nome #" + bare.length };
 }
 
 export type SlipContents = {

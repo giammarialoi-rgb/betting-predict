@@ -219,7 +219,11 @@ const PAGINA_CON_RESIDUO = `<!doctype html><html><body>
   <div class="left"><form><input placeholder="Ricerca"></form></div>
   <div class="slip">
     <span>SCHEDINA</span>
-    <span class="material-icons">delete_outline</span>
+    <div class="toolbar">
+      <button class="gear"><img src="x.svg"></button>
+      <button class="copy"><img src="x.svg"></button>
+      <button class="trash"><img src="x.svg"></button>
+    </div>
     <div class="leg"><span>Milan - Lecce</span><span>1.60</span><span class="x">×</span></div>
     <div><span>Quota Tot</span><span>1.60</span></div>
   </div>
@@ -242,14 +246,17 @@ describe("cestino della schedina", { timeout: 120_000 }, () => {
     await browser3?.close();
   });
 
-  it("trova il cestino dalla legatura Material, non dalla classe", async () => {
+  it("trova il cestino: è l'ultimo bottone senza testo della barra schedina", async () => {
+    // Verificato sulla pagina vera: i tre bottoni della barra non hanno nome
+    // accessibile (l'icona è un'immagine, non una legatura testuale) e
+    // l'ultimo svuota tutto.
     const r = (await page3.evaluate(markSlipBin, { attr: BIN_ATTR })) as { kind: string };
     assert.equal(r.kind, "marked");
     assert.equal(await page3.locator(`[${BIN_ATTR}="1"]`).count(), 1);
-    assert.equal(await page3.locator(`[${BIN_ATTR}="1"]`).innerText(), "delete_outline");
+    assert.equal(await page3.locator(`button.trash[${BIN_ATTR}="1"]`).count(), 1);
   });
 
-  it("marca il cestino, non la × che rimuove una singola gamba", async () => {
+  it("non marca la × che rimuove una singola gamba", async () => {
     await page3.evaluate(markSlipBin, { attr: BIN_ATTR });
     assert.equal(await page3.locator(`.x[${BIN_ATTR}="1"]`).count(), 0);
   });

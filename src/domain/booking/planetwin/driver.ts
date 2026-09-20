@@ -65,7 +65,11 @@ export type BookingOptions = {
   /** Chromium a vista: lasciato acceso di default, così la composizione si guarda mentre accade. */
   readonly headless?: boolean;
   readonly timeoutMs?: number;
-  /** Profilo persistente, per non ripassare dal banner cookie ogni volta. */
+  /**
+   * Profilo persistente. Sconsigliato: il book conserva la schedina nel
+   * profilo, quindi una gamba di ieri si ritrova nel biglietto di oggi. Con un
+   * contesto pulito la schedina è vuota per costruzione.
+   */
   readonly profileDir?: string;
 };
 
@@ -283,37 +287,42 @@ const NON_EVENT_NODE = /antepost|capocann|giocator|marcator/i;
  * un residuo di ieri finirebbe dentro il biglietto di oggi senza che nessuno
  * se ne accorga.
  */
-async function clearSlip(page: Page, timeout: number): Promise<void> {
+/**
+ * Pretende che la schedina sia vuota prima di cominciare.
+ *
+ * Non la svuota: con un contesto pulito non c'è niente da svuotare, e se
+ * qualcosa c'è significa che stiamo girando su un profilo che si porta dietro
+ * una sessione precedente — nel qual caso costruire il biglietto sopra un
+ * residuo è il modo esatto in cui si prenota una gamba che nessuno ha scelto.
+ * Meglio fermarsi e dirlo.
+ */
+async function requireEmptySlip(page: Page, timeout: number): Promise<void> {
   await page.goto(SPORT_PAGE, { waitUntil: "domcontentloaded", timeout });
   await dismissCookieBanner(page);
   await neutraliseOverlays(page);
 
-  for (let attempt = 0; attempt < 3; attempt += 1) {
-    const dentro = await slipContents(page);
-    if (!dentro.found) {
-      throw new BookingError(
-        "pannello schedina non riconosciuto: non posso garantire che sia vuota",
-      );
-    }
-    if (dentro.total === null) return;
+  const dentro = await slipContents(page);
+  if (!dentro.found) {
+    throw new BookingError(
+      "pannello schedina non riconosciuto: non posso garantire che sia vuota",
+    );
+  }
+  if (dentro.total === null) return;
 
-    await installEvaluateHelpers(page);
-    const hit = (await page.evaluate(markSlipBin, { attr: BIN_ATTR })) as BinHit;
-    if (hit.kind !== "marked") {
-      throw new BookingError(
-        "schedina non vuota e cestino non trovato — svuotala a mano prima di riprovare",
-        { residuo: dentro.total, dentro_la_schedina: dentro.lines.slice(0, 25) },
-      );
-    }
+  // Non vuota: può succedere solo con --profile. Un tentativo di svuotarla col
+  // cestino, poi si rinuncia — costruire il biglietto sopra un residuo è il
+  // modo esatto in cui si prenota una gamba che nessuno ha scelto.
+  const hit = (await page.evaluate(markSlipBin, { attr: BIN_ATTR })) as BinHit;
+  if (hit.kind === "marked") {
     await safeClick(page.locator(`[${BIN_ATTR}="1"]`).first(), timeout);
-    await page.waitForTimeout(900);
+    await page.waitForTimeout(1000);
   }
 
-  const finale = await slipContents(page);
-  if (finale.total !== null) {
+  const dopo = await slipContents(page);
+  if (dopo.total !== null) {
     throw new BookingError(
-      `la schedina contiene ancora qualcosa (quota ${finale.total}) dopo tre tentativi di svuotarla`,
-      { residuo: finale.total, dentro_la_schedina: finale.lines.slice(0, 25) },
+      `la schedina non è vuota (quota ${dopo.total}): svuotala a mano, o togli --profile per partire da un contesto pulito`,
+      { residuo: dopo.total, dentro_la_schedina: dopo.lines.slice(0, 25) },
     );
   }
 }
@@ -527,6 +536,16 @@ async function pressBookButton(page: Page, timeout: number): Promise<void> {
     ? button
     : page.getByText(new RegExp(`^\\s*${BOOK_BUTTON}\\s*$`, "i")).first();
 
+  // Se il book segnala quote cambiate, il bottone di gioco diventa "Accetta e
+  // scommetti" e la schedina è in uno stato che non rispecchia più quello che
+  // abbiamo deciso. Non si prenota in quello stato.
+  const body = await page.locator("body").innerText().catch(() => "");
+  if (/quote .*sono cambiate|accetta e scommetti/i.test(body)) {
+    throw new BookingError(
+      "il book segnala che alcune quote sono cambiate: il biglietto non è più quello deciso",
+    );
+  }
+
   const label = (await target.innerText().catch(() => "")).trim().toUpperCase();
   if (FORBIDDEN_BUTTONS.some((f) => label.includes(f))) {
     throw new BookingError(`rifiutato: il selettore ha raggiunto "${label}", non ${BOOK_BUTTON}`);
@@ -583,7 +602,7 @@ export async function bookTicket(
   }
 
   try {
-    await clearSlip(page, timeout);
+    await requireEmptySlip(page, timeout);
     const taken: number[] = [];
     for (let i = 0; i < legs.length; i += 1) {
       const leg = legs[i]!;

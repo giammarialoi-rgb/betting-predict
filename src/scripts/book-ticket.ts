@@ -64,7 +64,9 @@ async function main(): Promise<void> {
   const booked = await bookTicket(legs, {
     tolerance,
     headless: process.argv.includes("--headless"),
-    profileDir: arg("profile") ?? ".playwright/planetwin",
+    // Nessun profilo di default: il book conserva la schedina nel profilo, e
+    // una gamba della corsa precedente finirebbe nel biglietto nuovo.
+    ...(arg("profile") ? { profileDir: arg("profile") as string } : {}),
   });
 
   console.log(`\nCODICE      ${booked.code}`);
