@@ -12,7 +12,12 @@
 import assert from "node:assert/strict";
 import { after, before, describe, it } from "node:test";
 import type { Browser, Page } from "playwright";
-import { findCellInPage, TARGET_ATTR } from "@/domain/booking/planetwin/cell-finder";
+import {
+  findCellInPage,
+  markSearchNode,
+  NAV_ATTR,
+  TARGET_ATTR,
+} from "@/domain/booking/planetwin/cell-finder";
 
 const BOARD = `<!doctype html><html><body>
   <div class="mk"><span class="title">1X2</span><div class="cells">
@@ -121,5 +126,78 @@ describe("trova-cella su DOM reale", { timeout: 120_000 }, () => {
   it("GG/NG: due esiti, nessuna ambiguità", async () => {
     assert.equal((await find("GG/NG", "GG")).odds, 1.62);
     assert.equal((await find("GG/NG", "NG")).odds, 2.2);
+  });
+});
+
+/**
+ * La regione dei risultati contro il pannello schedina.
+ *
+ * Il difetto che questo test fissa: cliccare per testo su tutta la pagina
+ * finiva nel pannello schedina, dove gli stessi nomi compaiono accanto alla
+ * "×" che rimuove la gamba. Nella corsa reale la gamba 1 spariva mentre si
+ * cercava l'evento della gamba 2.
+ */
+const PAGINA_CON_SCHEDINA = `<!doctype html><html><body>
+  <div class="left">
+    <form><input placeholder="Ricerca" value="Milan"></form>
+    <div>
+      <span>Ricerca per eventi sportivi</span>
+      <span>Calcio</span>
+      <span>Serie A</span>
+      <span class="event-name">Milan - Lecce</span>
+      <span>Campionati:</span>
+      <span>Tutti</span>
+    </div>
+  </div>
+  <div class="slip">
+    <div class="leg"><span>Serie A</span><span>Milan - Lecce</span><span class="x">×</span></div>
+  </div>
+</body></html>`;
+
+describe("nodi della ricerca contro pannello schedina", { timeout: 120_000 }, () => {
+  let browser2: Browser;
+  let page2: Page;
+
+  before(async () => {
+    const { chromium } = await import("playwright");
+    browser2 = await chromium.launch();
+    page2 = await browser2.newPage();
+    await page2.addInitScript("window.__name = window.__name || function (f) { return f; };");
+    await page2.setContent(PAGINA_CON_SCHEDINA);
+    await page2.evaluate("window.__name = window.__name || function (f) { return f; };");
+  });
+
+  after(async () => {
+    await browser2?.close();
+  });
+
+  const mark = (text: string | null): Promise<{ kind: string; available?: string[] }> =>
+    page2.evaluate(markSearchNode, { text, attr: NAV_ATTR }) as Promise<{
+      kind: string;
+      available?: string[];
+    }>;
+
+  it("elenca solo i nodi tra le due ancore", async () => {
+    const r = await mark(null);
+    assert.deepEqual(r.available, ["Calcio", "Serie A", "Milan - Lecce"]);
+    assert.ok(!r.available?.includes("Tutti"), "oltre l'ancora di chiusura");
+    assert.ok(!r.available?.includes("×"), "il pannello schedina non è nella regione");
+  });
+
+  it("marca il nodo nella barra laterale, non l'omonimo nella schedina", async () => {
+    const r = await mark("Milan - Lecce");
+    assert.equal(r.kind, "marked");
+    assert.equal(await page2.locator(`[${NAV_ATTR}="1"]`).count(), 1);
+    // Deve essere quello con class="event-name", non quello dentro .slip
+    const dentroSchedina = await page2.locator(`.slip [${NAV_ATTR}="1"]`).count();
+    assert.equal(dentroSchedina, 0, "ha marcato la gamba nella schedina");
+    const classe = await page2.locator(`[${NAV_ATTR}="1"]`).getAttribute("class");
+    assert.equal(classe, "event-name");
+  });
+
+  it("non marca niente se il testo non è nella regione", async () => {
+    const r = await mark("×");
+    assert.equal(r.kind, "absent");
+    assert.equal(await page2.locator(`[${NAV_ATTR}="1"]`).count(), 0);
   });
 });

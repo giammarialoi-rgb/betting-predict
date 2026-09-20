@@ -198,3 +198,64 @@ export function findCellInPage(query: {
   cell.setAttribute(attr, "1");
   return { kind: "found", odds, cellText: norm(cell.textContent) };
 }
+
+
+/** L'attributo con cui viene marcato un nodo dell'albero di ricerca. */
+export const NAV_ATTR = "data-betmind-nav";
+
+export type NavHit =
+  | { readonly kind: "marked"; readonly text: string }
+  | { readonly kind: "absent"; readonly available: readonly string[] };
+
+/**
+ * Marca un nodo DENTRO i risultati della ricerca, e solo lì.
+ *
+ * Cliccare per testo su tutta la pagina è pericoloso qui: il pannello schedina
+ * ripete gli stessi testi — nome squadra, campionato — e ogni gamba ha la sua
+ * "×" per rimuoverla. Un getByText(...).first() non scoped finisce lì dentro e
+ * CANCELLA una gamba già inserita, in silenzio. È successo: la gamba 1 spariva
+ * mentre si cercava l'evento della gamba 2.
+ *
+ * La regione è delimitata da "Ricerca per eventi sportivi" sopra e
+ * "Campionati:" sotto. Se le ancore non si trovano, non si clicca niente.
+ */
+export function markSearchNode(query: { text: string | null; attr: string }): NavHit {
+  const { text, attr } = query;
+  const norm = (s: string | null): string => (s ?? "").replace(/\s+/g, " ").trim();
+  const visible = (e: Element): boolean => e.getClientRects().length > 0;
+
+  document.querySelectorAll("[" + attr + "]").forEach((e) => e.removeAttribute(attr));
+
+  const input = document.querySelector('input[placeholder="Ricerca" i]');
+  const column = input?.closest("form")?.parentElement ?? null;
+  if (!column) return { kind: "absent", available: [] };
+
+  const inRegion: Element[] = [];
+  const walker = document.createTreeWalker(column, NodeFilter.SHOW_ELEMENT);
+  let started = false;
+  let node = walker.nextNode();
+  while (node) {
+    const el = node as Element;
+    const t = norm(el.textContent);
+    if (!started) {
+      if (t === "Ricerca per eventi sportivi") started = true;
+    } else if (t.startsWith("Campionati")) {
+      break;
+    } else if (el.children.length === 0 && t.length > 0 && t.length < 80 && visible(el)) {
+      inRegion.push(el);
+    }
+    node = walker.nextNode();
+  }
+
+  const available: string[] = [];
+  for (const e of inRegion) {
+    const t = norm(e.textContent);
+    if (!available.includes(t)) available.push(t);
+  }
+  if (text === null) return { kind: "absent", available };
+
+  const hit = inRegion.find((e) => norm(e.textContent) === norm(text));
+  if (!hit) return { kind: "absent", available };
+  hit.setAttribute(attr, "1");
+  return { kind: "marked", text: norm(hit.textContent) };
+}

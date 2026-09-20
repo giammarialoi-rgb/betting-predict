@@ -23,8 +23,11 @@ import type { Browser, Locator, Page } from "playwright";
 import { locateSelection, type CatalogEntry } from "@/domain/booking/planetwin/catalog";
 import {
   findCellInPage,
+  markSearchNode,
+  NAV_ATTR,
   TARGET_ATTR,
   type CellHit,
+  type NavHit,
 } from "@/domain/booking/planetwin/cell-finder";
 import {
   BookingError,
@@ -242,36 +245,29 @@ export function splitEvent(event: string): readonly [string, string] {
 }
 
 /**
- * I nodi dell'albero comparsi sotto la ricerca, e solo quelli.
- *
- * La regione è delimitata da due ancore di testo: "Ricerca per eventi
- * sportivi" sopra e "Campionati:" sotto. Serve perché cliccare per indice su
- * tutta la pagina può finire su una cella di quota del pannello centrale e
- * infilare una gamba non voluta nella schedina — il guasto peggiore possibile
- * qui, perché sarebbe silenzioso.
+ * I nodi dell'albero comparsi sotto la ricerca, letti dalla regione delimitata.
+ * Nessun clic qui: solo lettura.
  */
 async function searchResultNodes(page: Page): Promise<readonly string[]> {
-  return page.evaluate(() => {
-    const input = document.querySelector('input[placeholder="Ricerca" i]');
-    const column = input?.closest("form")?.parentElement ?? document.body;
-    const out: string[] = [];
-    const walker = document.createTreeWalker(column, NodeFilter.SHOW_ELEMENT);
-    let started = false;
-    let node = walker.nextNode();
-    while (node) {
-      const el = node as HTMLElement;
-      const text = (el.textContent ?? "").trim();
-      if (!started) {
-        if (text === "Ricerca per eventi sportivi") started = true;
-      } else if (text.startsWith("Campionati")) {
-        break;
-      } else if (el.children.length === 0 && text.length > 0 && text.length < 80) {
-        if (!out.includes(text)) out.push(text);
-      }
-      node = walker.nextNode();
-    }
-    return out;
-  });
+  await installEvaluateHelpers(page);
+  const hit = (await page.evaluate(markSearchNode, { text: null, attr: NAV_ATTR })) as NavHit;
+  return hit.kind === "absent" ? hit.available : [];
+}
+
+/**
+ * Clicca un nodo dell'albero. Il nodo viene prima marcato DENTRO la regione dei
+ * risultati, poi cliccato per attributo: un getByText non delimitato finirebbe
+ * nel pannello schedina, dove gli stessi testi compaiono accanto a una "×" che
+ * rimuove la gamba.
+ */
+async function clickSearchNode(page: Page, text: string, timeout: number): Promise<boolean> {
+  await installEvaluateHelpers(page);
+  const hit = (await page.evaluate(markSearchNode, { text, attr: NAV_ATTR })) as NavHit;
+  if (hit.kind !== "marked") return false;
+  const marked = page.locator(`[${NAV_ATTR}="1"]`).first();
+  if (!(await marked.isVisible().catch(() => false))) return false;
+  await safeClick(marked, timeout);
+  return true;
 }
 
 /** Nodi che non portano mai a una partita: antepost, capocannonieri, giocatori. */
@@ -319,17 +315,15 @@ async function openEvent(page: Page, event: string, timeout: number): Promise<vo
   // La ricerca non restituisce eventi: filtra l'albero di navigazione, e i nodi
   // restano CHIUSI. L'evento è una foglia in fondo a sport → competizione →
   // evento, e solo la foglia porta il nome unito "Casa - Ospite".
-  // La foglia è <span class="event-name">Casa - Ospite</span>: classe letta
-  // dalla pagina vera, con ripiego sul testo se il markup cambia.
-  const leaf = page
-    .locator("span.event-name", { hasText: new RegExp(`^\\s*${escapeRegExp(leafText)}\\s*$`) })
-    .or(page.getByText(leafText, { exact: true }))
-    .first();
+  // La foglia sta dentro la regione dei risultati, e va cliccata lì: il suo
+  // testo compare anche nel pannello schedina, accanto alla "×" che rimuove.
+  const leafVisible = async (): Promise<boolean> =>
+    (await searchResultNodes(page)).some((t) => t === leafText);
   const visited = new Set<string>();
   let found = false;
 
   for (let round = 0; round < MAX_COMPETITIONS; round += 1) {
-    if (await leaf.isVisible().catch(() => false)) {
+    if (await leafVisible()) {
       found = true;
       break;
     }
@@ -339,11 +333,11 @@ async function openEvent(page: Page, event: string, timeout: number): Promise<vo
     );
     if (next === undefined) break;
     visited.add(next);
-    await safeClick(page.getByText(next, { exact: true }).first(), timeout).catch(() => undefined);
+    await clickSearchNode(page, next, timeout).catch(() => false);
     await page.waitForTimeout(800);
   }
 
-  if (!found && !(await leaf.isVisible().catch(() => false))) {
+  if (!found && !(await leafVisible())) {
     throw new BookingError(`evento non trovato nell'albero: "${event}"`, {
       cercato: home,
       foglia_attesa: leafText,
@@ -352,7 +346,9 @@ async function openEvent(page: Page, event: string, timeout: number): Promise<vo
     });
   }
 
-  await safeClick(leaf, timeout);
+  if (!(await clickSearchNode(page, leafText, timeout))) {
+    throw new BookingError(`foglia trovata ma non cliccabile: "${leafText}"`);
+  }
   await page.waitForLoadState("domcontentloaded", { timeout });
   await neutraliseOverlays(page);
 
