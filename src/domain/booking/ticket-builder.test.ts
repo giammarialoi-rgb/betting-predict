@@ -19,7 +19,14 @@ const sel = (
   odds: number,
   probability: number,
   ore = 6,
-): RatedSelection => ({ event, selection: "1", odds, probability, kickoff: fra(ore) });
+): RatedSelection => ({
+  event,
+  selection: "1",
+  odds,
+  probability,
+  kickoff: fra(ore),
+  informationShare: 0.8,
+});
 
 describe("costo di una gamba", () => {
   it("vale esattamente 1 su una gamba prezzata equamente", () => {
@@ -54,6 +61,43 @@ describe("dalla puntata alla quota da raggiungere", () => {
     assert.throws(() => targetFromStake(10, 10), /deve superare/);
     assert.throws(() => targetFromStake(10, 5), /deve superare/);
     assert.throws(() => targetFromStake(0, 100), /importo non valido/);
+  });
+});
+
+describe("filtro sulla quota di informazione", () => {
+  const conQuota = (event: string, share: number | null): RatedSelection => ({
+    event,
+    selection: "1",
+    odds: 2.0,
+    probability: 0.55,
+    kickoff: fra(6),
+    informationShare: share,
+  });
+
+  it("scarta le selezioni su squadre che il modello non conosce", () => {
+    // Il caso Frosinone: quota di informazione 0.31, sotto la metà.
+    const pool = [conQuota("Frosinone - Como", 0.31), conQuota("Milan - Lecce", 0.31)];
+    assert.throws(() => bestSingle(pool, undefined, ORA), /nessuna selezione/);
+  });
+
+  it("tiene quelle su squadre con storico vero", () => {
+    const pool = [conQuota("Juventus - Atalanta", 0.68)];
+    assert.equal(bestSingle(pool, undefined, ORA).legs.length, 1);
+  });
+
+  it("una selezione senza quota calcolata non passa", () => {
+    // Meglio perdere una gamba che infilarne una di valore ignoto.
+    assert.throws(() => bestSingle([conQuota("A - B", null)], undefined, ORA), /nessuna selezione/);
+  });
+
+  it("la soglia si può alzare ma non aggirare", () => {
+    const pool = [conQuota("A - B", 0.55), conQuota("C - D", 0.9)];
+    const t = buildTicket(
+      pool,
+      { minOdds: 1.9, maxOdds: 2.1, maxLegs: 1, minLegs: 1, minInformationShare: 0.8 },
+      ORA,
+    );
+    assert.equal(t.legs[0]?.event, "C - D");
   });
 });
 

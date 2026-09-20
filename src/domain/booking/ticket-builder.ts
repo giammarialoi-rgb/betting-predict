@@ -29,6 +29,8 @@
  */
 
 /** Una selezione già valutata dal motore, con il suo prezzo. */
+import { MIN_INFORMATION_SHARE } from "@/domain/eval/predictive-intelligence/models/effective-sample";
+
 export type RatedSelection = {
   /** Evento come lo scrive il book, es. "Fiorentina - Napoli". */
   readonly event: string;
@@ -40,6 +42,13 @@ export type RatedSelection = {
   readonly probability: number;
   /** Inizio evento ISO, per l'orizzonte e per la scadenza del codice. */
   readonly kickoff: string;
+  /**
+   * Quanta parte della stima viene dalla squadra e non dalla media di lega.
+   * null quando non è stata calcolata. Sotto la soglia la selezione non entra
+   * in nessun biglietto: uno scarto dal mercato su una squadra che il modello
+   * non conosce misura la nostra ignoranza, non un vantaggio.
+   */
+  readonly informationShare?: number | null;
 };
 
 export type TicketTarget = {
@@ -53,6 +62,11 @@ export type TicketTarget = {
   readonly minLegs?: number;
   /** Orizzonte in giorni dal momento della composizione. */
   readonly horizonDays?: number;
+  /**
+   * Quota minima di informazione richiesta a ogni gamba. Sotto, la previsione
+   * è in prevalenza la media del campionato. Default: metà.
+   */
+  readonly minInformationShare?: number;
 };
 
 export type BuiltTicket = {
@@ -119,6 +133,7 @@ function eligible(
   pool: readonly RatedSelection[],
   horizonDays: number | undefined,
   now: Date,
+  minInformationShare = MIN_INFORMATION_SHARE,
 ): readonly RatedSelection[] {
   const limite =
     horizonDays === undefined ? null : now.getTime() + horizonDays * 86_400_000;
@@ -126,7 +141,11 @@ function eligible(
     const t = Date.parse(s.kickoff);
     if (!Number.isFinite(t)) return false;
     if (t <= now.getTime()) return false;
-    return limite === null || t <= limite;
+    if (limite !== null && t > limite) return false;
+    // Una selezione senza quota di informazione calcolata NON passa: meglio
+    // perdere una gamba che infilarne una di cui non sappiamo quanto vale.
+    if (s.informationShare == null) return false;
+    return s.informationShare >= minInformationShare;
   });
 }
 
@@ -169,7 +188,7 @@ export function buildTicket(
   }
   const minLegs = target.minLegs ?? 1;
 
-  const candidati = [...eligible(pool, target.horizonDays, now)].sort(
+  const candidati = [...eligible(pool, target.horizonDays, now, target.minInformationShare)].sort(
     (a, b) => legCost(a) - legCost(b),
   );
   if (candidati.length === 0) {

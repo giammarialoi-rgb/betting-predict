@@ -33,6 +33,10 @@ import {
   matchTeam,
 } from "@/domain/eval/predictive-intelligence/models/team-matching";
 import { assertFresh } from "@/domain/eval/predictive-intelligence/dataset/freshness";
+import {
+  effectiveSample,
+  informationShare,
+} from "@/domain/eval/predictive-intelligence/models/effective-sample";
 import type { PiMatchRow } from "@/domain/eval/predictive-intelligence/types";
 
 const ROOT = process.cwd();
@@ -144,6 +148,23 @@ async function main(): Promise<void> {
     }
     const homeId = nameToId.get(mh.candidate)!;
     const awayId = nameToId.get(ma.candidate)!;
+
+    // Quanta squadra c'è davvero nella stima. Il flag "senza storico" non basta:
+    // il Frosinone aveva 42 partite in Serie A e pesava 4.11 contro uno
+    // shrinkage di 9, cioè due terzi di media di lega. Il flag valeva 0 e la
+    // previsione sembrava una previsione.
+    const kickoffMs = Date.parse(f.utcDate);
+    const partiteDi = (nome: string): number[] =>
+      (byLeague.get(div) ?? [])
+        .filter((m) => m.home_team === nome || m.away_team === nome)
+        .map((m) => Date.parse(m.match_date))
+        .filter((t) => Number.isFinite(t) && t < kickoffMs);
+    const pesoCasa = effectiveSample(partiteDi(mh.candidate), kickoffMs, PARAMS.halfLifeDays);
+    const pesoOspite = effectiveSample(partiteDi(ma.candidate), kickoffMs, PARAMS.halfLifeDays);
+    const quotaInformazione = Math.min(
+      informationShare(pesoCasa, PARAMS.shrinkage),
+      informationShare(pesoOspite, PARAMS.shrinkage),
+    );
     // Una squadra appena promossa o retrocessa non ha storico in QUESTA
     // divisione: lo shrinkage la riporta alla media di lega, quindi la previsione
     // esiste ma vale poco. Va detto, non nascosto.
@@ -187,6 +208,9 @@ async function main(): Promise<void> {
       source_away: f.awayTeam.name,
       match_confidence: Math.min(mh.score, ma.score),
       teams_without_history_in_division: newToDivision.length,
+      effective_sample_home: pesoCasa,
+      effective_sample_away: pesoOspite,
+      information_share: quotaInformazione,
       model: {
         home: prob.HOME, draw: prob.DRAW, away: prob.AWAY,
         over_2_5: tot.p_over,

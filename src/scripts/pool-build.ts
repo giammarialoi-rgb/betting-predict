@@ -40,6 +40,7 @@ type BoardRow = {
   competition: string;
   home: string;
   away: string;
+  information_share?: number;
   model: {
     home: number;
     draw: number;
@@ -146,7 +147,14 @@ async function main(): Promise<void> {
 
     for (const [selection, probability, odds] of candidati) {
       if (odds === null || !(probability > 0) || probability >= 1) continue;
-      pool.push({ event: nome, selection, odds, probability, kickoff: ev.commence_time });
+      pool.push({
+        event: nome,
+        selection,
+        odds,
+        probability,
+        kickoff: ev.commence_time,
+        informationShare: r.information_share ?? null,
+      });
     }
   }
 
