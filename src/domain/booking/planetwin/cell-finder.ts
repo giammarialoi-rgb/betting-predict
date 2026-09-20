@@ -232,8 +232,19 @@ export function markSearchNode(query: {
    * abbinare una partita sbagliata non dà errore, dà una scommessa sbagliata.
    */
   teams?: readonly [string, string] | null;
+  /**
+   * Quanti candidati corrispondenti saltare.
+   *
+   * Lo stesso nome compare in più punti della pagina e non tutti sono
+   * cliccabili: la riga del palinsesto, la foglia dell'albero, un titolo. Chi
+   * chiama prova 0, poi 1, poi 2, verificando ogni volta di essere arrivato
+   * davvero sulla pagina partita. Senza questo, il primo candidato sbagliato
+   * bloccava tutto il biglietto.
+   */
+  skip?: number;
 }): NavHit {
   const { text, attr, teams } = query;
+  const skip = query.skip ?? 0;
   const norm = (s: string | null): string => (s ?? "").replace(/\s+/g, " ").trim();
   const visible = (e: Element): boolean => e.getClientRects().length > 0;
 
@@ -293,7 +304,8 @@ export function markSearchNode(query: {
       .replace(/[^a-z0-9]+/g, " ")
       .trim();
 
-  let hit = candidates.find((e) => norm(e.textContent) === norm(text));
+  const esatti = candidates.filter((e) => norm(e.textContent) === norm(text));
+  let hit = esatti[skip];
 
   if (!hit && teams) {
     const [casa, ospite] = teams;
@@ -307,10 +319,11 @@ export function markSearchNode(query: {
     const ka = chiave(a);
     const kb = chiave(b);
     if (ka.length >= 4 && kb.length >= 4) {
-      hit = candidates.find((e) => {
+      const perSquadre = candidates.filter((e) => {
         const t = semplifica(norm(e.textContent));
         return t.includes(ka) && t.includes(kb);
       });
+      hit = perSquadre[Math.max(0, skip - esatti.length)];
     }
   }
 

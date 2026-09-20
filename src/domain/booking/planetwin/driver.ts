@@ -257,6 +257,23 @@ function siteSearchBox(page: Page): Locator {
   return page.locator(searchSelector()).filter({ visible: true }).first();
 }
 
+/**
+ * Siamo su una pagina partita, o ancora sul palinsesto?
+ *
+ * Controllare che i nomi delle squadre compaiano NON basta: compaiono anche
+ * nella riga del palinsesto. Il driver si è dichiarato "sulla partita" restando
+ * sulla pagina scommesse, e poi ovviamente non trovava il blocco 1X2 — con un
+ * elenco di blocchi visti che erano tutti voci di menu.
+ *
+ * "1X2 Builder" è una scheda di mercato: esiste solo sulla pagina di un evento.
+ */
+const MATCH_PAGE_MARKERS = [/1X2\s*Builder/i, /CREA\s+SUPERCOMBO/i, /Ris\.\s*Esatto/i];
+
+async function onMatchPage(page: Page): Promise<boolean> {
+  const body = await page.locator("body").innerText().catch(() => "");
+  return MATCH_PAGE_MARKERS.some((re) => re.test(body));
+}
+
 /** "Fiorentina - Napoli" → ["Fiorentina", "Napoli"] */
 export function splitEvent(event: string): readonly [string, string] {
   const parts = event.split(/\s+[-–—vs.]+\s+/i).map((p) => p.trim()).filter(Boolean);
@@ -289,12 +306,14 @@ async function clickSearchNode(
   text: string,
   timeout: number,
   teams?: readonly [string, string],
+  skip = 0,
 ): Promise<boolean> {
   await installEvaluateHelpers(page);
   const hit = (await page.evaluate(markSearchNode, {
     text,
     attr: NAV_ATTR,
     teams: teams ?? null,
+    skip,
   })) as NavHit;
   if (hit.kind !== "marked") return false;
   const marked = page.locator(`[${NAV_ATTR}="1"]`).first();
@@ -383,14 +402,37 @@ async function openEvent(page: Page, event: string, timeout: number): Promise<vo
   let found = false;
 
   for (let round = 0; round < MAX_COMPETITIONS; round += 1) {
-    if (await clickSearchNode(page, leafText, timeout, [home, away])) {
-      found = true;
-      break;
+    // Si prova ogni candidato col nome giusto, verificando DOPO il clic di
+    // essere usciti dal palinsesto. Lo stesso nome compare nella riga del
+    // palinsesto, nella foglia dell'albero e altrove, e non tutti navigano.
+    for (let skip = 0; skip < 4; skip += 1) {
+      if (!(await clickSearchNode(page, leafText, timeout, [home, away], skip))) break;
+      await page.waitForTimeout(1200);
+      if (await onMatchPage(page)) {
+        found = true;
+        break;
+      }
+      // Non ha navigato: si torna al palinsesto e si prova il prossimo.
+      await page.goto(SPORT_PAGE, { waitUntil: "domcontentloaded", timeout });
+      await dismissCookieBanner(page);
+      await neutraliseOverlays(page);
+      await search.fill(home);
+      await page.waitForTimeout(1200);
     }
+    if (found) break;
+    // Solo nodi che riguardano questa ricerca: la squadra di casa, o il nodo
+    // sport. Allargando la ricerca a tutta la pagina, "il prossimo nodo" era
+    // diventato una voce di menu — e cliccarla porta fuori dal palinsesto.
+    const semplice = (v: string): string =>
+      v.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, " ").trim();
+    const chiaveCasa = semplice(home).split(" ").sort((a, b) => b.length - a.length)[0] ?? "";
     const nodes = await searchResultNodes(page);
-    const next = nodes.find(
-      (t) => !visited.has(t) && t !== leafText && !NON_EVENT_NODE.test(t) && t.length > 2,
-    );
+    const next = nodes.find((t) => {
+      if (visited.has(t) || t === leafText || NON_EVENT_NODE.test(t) || t.length <= 2) return false;
+      const st = semplice(t);
+      if (/^calcio$/.test(st)) return true;
+      return chiaveCasa.length >= 4 && st.includes(chiaveCasa);
+    });
     if (next === undefined) break;
     visited.add(next);
     await clickSearchNode(page, next, timeout).catch(() => false);
@@ -409,6 +451,7 @@ async function openEvent(page: Page, event: string, timeout: number): Promise<vo
   await page.waitForLoadState("domcontentloaded", { timeout });
   await neutraliseOverlays(page);
 
+  // È l'evento giusto?
   const body = await page.locator("body").innerText();
   const onRightEvent =
     new RegExp(escapeRegExp(home), "i").test(body) && new RegExp(escapeRegExp(away), "i").test(body);
