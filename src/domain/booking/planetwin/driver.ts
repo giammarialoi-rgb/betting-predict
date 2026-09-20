@@ -409,6 +409,39 @@ async function clickOutcome(page: Page, entry: CatalogEntry, timeout: number): P
   return hit.odds;
 }
 
+/** La quota totale che la schedina mostra adesso, o null se non la mostra. */
+export function parseSlipTotal(bodyText: string): number | null {
+  const m = /Quota\s*Tot[^\d]*(\d+[.,]\d+)/i.exec(bodyText);
+  const raw = m?.[1];
+  if (raw === undefined) return null;
+  const n = Number(raw.replace(",", "."));
+  return Number.isFinite(n) && n > 1 ? n : null;
+}
+
+/**
+ * Aspetta che la schedina rifletta le gambe inserite finora.
+ *
+ * Verificare solo alla fine dice che qualcosa non torna, non QUALE gamba non è
+ * entrata: la prima corsa reale si è fermata con "3.25 invece di 9.52" senza
+ * modo di sapere se fosse la seconda o la terza. Controllare dopo ogni clic
+ * nomina il colpevole, e ferma il lavoro prima di sprecare le gambe successive.
+ */
+async function waitForSlipTotal(
+  page: Page,
+  expected: number,
+  timeoutMs: number,
+): Promise<number | null> {
+  const deadline = Date.now() + timeoutMs;
+  let last: number | null = null;
+  while (Date.now() < deadline) {
+    const body = await page.locator("body").innerText().catch(() => "");
+    last = parseSlipTotal(body);
+    if (last !== null && totalOddsMatches(last, expected)) return last;
+    await page.waitForTimeout(400);
+  }
+  return last;
+}
+
 /** Rilegge la schedina e verifica che contenga esattamente le gambe decise. */
 async function verifySlip(
   page: Page,
@@ -529,6 +562,23 @@ export async function bookTicket(
       const leg = legs[i]!;
       await openEvent(page, leg.event, timeout);
       taken.push(await clickOutcome(page, entries[i]!, timeout));
+
+      const atteso = expectedTotalOdds(taken);
+      const mostrato = await waitForSlipTotal(page, atteso, 8_000);
+      if (mostrato === null || !totalOddsMatches(mostrato, atteso)) {
+        throw new BookingError(
+          `la gamba ${i + 1} non è entrata nella schedina: ${leg.event} ${leg.selection}`,
+          {
+            gamba: i + 1,
+            evento: leg.event,
+            selezione: leg.selection,
+            quota_letta_sulla_cella: taken[i],
+            schedina_attesa: Number(atteso.toFixed(2)),
+            schedina_mostrata: mostrato,
+            gambe_entrate_finora: i,
+          },
+        );
+      }
     }
 
     const placed = await verifySlip(page, legs, taken, tolerance);

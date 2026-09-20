@@ -26,6 +26,10 @@ const BOARD = `<!doctype html><html><body>
   <div class="mk"><span class="title">GG/NG</span><div class="cells">
     <div class="c"><span>GG</span><span>1.62</span></div>
     <div class="c"><span>NG</span><span>2.20</span></div></div></div>
+  <div class="mk" style="display:none"><span class="title">1X2</span><div class="cells">
+    <div class="c"><span>1</span><span>99.00</span></div>
+    <div class="c"><span>X</span><span>99.00</span></div>
+    <div class="c"><span>2</span><span>99.00</span></div></div></div>
   <div class="mk"><span class="title">U/O ANGOLI</span><div class="rows">
     <div class="r"><span>8.5</span><div class="c"><span>U</span><span>1.90</span></div><div class="c"><span>O</span><span>1.77</span></div></div>
     <div class="r"><span>9.5</span><div class="c"><span>U</span><span>1.50</span></div><div class="c"><span>O</span><span>2.35</span></div></div>
@@ -102,6 +106,16 @@ describe("trova-cella su DOM reale", { timeout: 120_000 }, () => {
   it("rifiuta una linea non quotata invece di ripiegare sulla più vicina", async () => {
     const r = await find("U/O ANGOLI", "O", "6.5");
     assert.notEqual(r.kind, "found");
+  });
+
+  it("ignora un blocco identico dentro una scheda non attiva", async () => {
+    // Sulla pagina partita le schede non attive restano nel DOM. Se il finder
+    // le vedesse, marcherebbe una cella invisibile: la quota si leggerebbe, il
+    // clic non farebbe niente, e la gamba non entrerebbe mai nella schedina.
+    // Il blocco nascosto qui quota 99.00 — se compare, il finder guarda dove
+    // non deve.
+    assert.equal((await find("1X2", "1")).odds, 3.2);
+    assert.equal((await find("1X2", "X")).odds, 3.4);
   });
 
   it("GG/NG: due esiti, nessuna ambiguità", async () => {

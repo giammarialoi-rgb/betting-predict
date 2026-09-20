@@ -72,13 +72,19 @@ export function findCellInPage(query: {
 
   document.querySelectorAll("[" + attr + "]").forEach((e) => e.removeAttribute(attr));
 
+  // Solo ciò che è davvero a schermo. La pagina partita tiene in DOM anche le
+  // schede non attive: lì il blocco esiste, la quota si legge, ma il clic non
+  // fa niente perche' l'elemento è nascosto — la cella finirebbe marcata e la
+  // gamba non entrerebbe mai nella schedina, senza un errore.
+  const visible = (e: Element): boolean => e.getClientRects().length > 0;
+
   const leavesIn = (root: Element): Element[] =>
-    Array.from(root.querySelectorAll("*")).filter((e) => e.children.length === 0);
+    Array.from(root.querySelectorAll("*")).filter((e) => e.children.length === 0 && visible(e));
   const oddsLeaves = (root: Element): Element[] =>
     leavesIn(root).filter((e) => isOdds(e.textContent));
 
   const allLeaves = Array.from(document.querySelectorAll("*")).filter(
-    (e) => e.children.length === 0,
+    (e) => e.children.length === 0 && visible(e),
   );
 
   // 1. Il titolo del blocco.
@@ -183,6 +189,12 @@ export function findCellInPage(query: {
     return { kind: "no-cell", cellsSeen: seen };
   }
 
+  if (!visible(cell)) {
+    return {
+      kind: "no-cell",
+      cellsSeen: ["cella trovata ma non visibile: la scheda di mercato non è attiva"],
+    };
+  }
   cell.setAttribute(attr, "1");
   return { kind: "found", odds, cellText: norm(cell.textContent) };
 }
