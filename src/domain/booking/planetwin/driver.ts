@@ -122,6 +122,50 @@ const CONSENT_DECLINE = [
   /solo (i )?necessari/i,
 ];
 
+/**
+ * Le barre fisse del sito — il banner legale, "Gioca Intelligente", l'header —
+ * restano sopra a tutto e intercettano i clic: Playwright scrolla l'elemento
+ * nella vista, ci trova sopra un overlay e riprova finche' scade il timeout.
+ * Non vanno nascoste (servono a chi guarda), va tolto il posizionamento fisso
+ * che le fa galleggiare sopra il contenuto.
+ */
+async function neutraliseOverlays(page: Page): Promise<void> {
+  await page
+    .addStyleTag({
+      content: `
+        .legal--container, app-header, .discipline-container,
+        [class*="sticky"], [class*="banner"] {
+          position: static !important;
+        }
+        #onetrust-consent-sdk, [id*="onetrust"] { display: none !important; }
+      `,
+    })
+    .catch(() => undefined);
+}
+
+/**
+ * Clic che non si lascia bloccare da un overlay residuo.
+ *
+ * Prima il clic vero, con tutti i controlli di Playwright. Se un overlay lo
+ * intercetta comunque, il fallback invoca il gestore direttamente sull'elemento:
+ * salta il test di collisione, non la logica della pagina. Non uso force:true
+ * perche' quello spara il clic alle coordinate e puo' colpire l'overlay.
+ */
+async function safeClick(target: Locator, timeout: number): Promise<void> {
+  try {
+    await target.click({ timeout: Math.min(timeout, 8_000) });
+    return;
+  } catch (first) {
+    const handled = await target
+      .evaluate((el) => {
+        (el as HTMLElement).click();
+        return true;
+      })
+      .catch(() => false);
+    if (!handled) throw first;
+  }
+}
+
 async function dismissCookieBanner(page: Page): Promise<void> {
   for (const label of CONSENT_DECLINE) {
     const button = page.getByText(label).first();
@@ -216,6 +260,7 @@ const NON_EVENT_NODE = /antepost|capocann|giocator|marcator/i;
 async function clearSlip(page: Page, timeout: number): Promise<void> {
   await page.goto(SPORT_PAGE, { waitUntil: "domcontentloaded", timeout });
   await dismissCookieBanner(page);
+  await neutraliseOverlays(page);
   const bin = page
     .locator('[class*=trash], [class*=delete], [title*="vuota" i], [aria-label*="vuota" i]')
     .filter({ visible: true })
@@ -232,6 +277,7 @@ async function openEvent(page: Page, event: string, timeout: number): Promise<vo
 
   await page.goto(SPORT_PAGE, { waitUntil: "domcontentloaded", timeout });
   await dismissCookieBanner(page);
+  await neutraliseOverlays(page);
 
   const search = siteSearchBox(page);
   try {
@@ -248,7 +294,12 @@ async function openEvent(page: Page, event: string, timeout: number): Promise<vo
   // La ricerca non restituisce eventi: filtra l'albero di navigazione, e i nodi
   // restano CHIUSI. L'evento è una foglia in fondo a sport → competizione →
   // evento, e solo la foglia porta il nome unito "Casa - Ospite".
-  const leaf = page.getByText(leafText, { exact: true }).first();
+  // La foglia è <span class="event-name">Casa - Ospite</span>: classe letta
+  // dalla pagina vera, con ripiego sul testo se il markup cambia.
+  const leaf = page
+    .locator("span.event-name", { hasText: new RegExp(`^\\s*${escapeRegExp(leafText)}\\s*$`) })
+    .or(page.getByText(leafText, { exact: true }))
+    .first();
   const visited = new Set<string>();
   let found = false;
 
@@ -263,7 +314,7 @@ async function openEvent(page: Page, event: string, timeout: number): Promise<vo
     );
     if (next === undefined) break;
     visited.add(next);
-    await page.getByText(next, { exact: true }).first().click().catch(() => undefined);
+    await safeClick(page.getByText(next, { exact: true }).first(), timeout).catch(() => undefined);
     await page.waitForTimeout(800);
   }
 
@@ -276,8 +327,9 @@ async function openEvent(page: Page, event: string, timeout: number): Promise<vo
     });
   }
 
-  await leaf.click();
+  await safeClick(leaf, timeout);
   await page.waitForLoadState("domcontentloaded", { timeout });
+  await neutraliseOverlays(page);
 
   const body = await page.locator("body").innerText();
   const onRightEvent =
@@ -302,10 +354,10 @@ function marketBlock(page: Page, block: string): Locator {
 async function clickOutcome(page: Page, entry: CatalogEntry, timeout: number): Promise<number> {
   const tab = page.getByRole("tab", { name: new RegExp(`^${escapeRegExp(entry.tab)}$`, "i") }).first();
   if (await tab.isVisible().catch(() => false)) {
-    await tab.click();
+    await safeClick(tab, timeout);
   } else {
     const fallback = page.getByText(new RegExp(`^\\s*${escapeRegExp(entry.tab)}\\s*$`, "i")).first();
-    await fallback.click({ timeout });
+    await safeClick(fallback, timeout);
   }
 
   const block = marketBlock(page, entry.block);
@@ -326,7 +378,7 @@ async function clickOutcome(page: Page, entry: CatalogEntry, timeout: number): P
     );
   }
   const odds = parseOdds(await cell.innerText());
-  await cell.click();
+  await safeClick(cell, timeout);
   return odds;
 }
 
@@ -395,7 +447,7 @@ async function pressBookButton(page: Page, timeout: number): Promise<void> {
   if (!label.includes(BOOK_BUTTON)) {
     throw new BookingError(`bottone ${BOOK_BUTTON} non trovato (letto "${label}")`);
   }
-  await target.click({ timeout });
+  await safeClick(target, timeout);
 }
 
 async function readBookingCode(page: Page, timeout: number): Promise<{ code: string; expiry: string }> {
