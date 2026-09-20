@@ -97,7 +97,8 @@
     "lab:multiples": "tsx src/scripts/lab-multiples.ts",
     "book:ticket": "tsx src/scripts/book-ticket.ts",
     "tickets": "tsx src/scripts/tickets.ts",
-    "pool:build": "tsx src/scripts/pool-build.ts"
+    "pool:build": "tsx src/scripts/pool-build.ts",
+    "lab:disagreement": "tsx src/scripts/lab-disagreement.ts"
   },
   "dependencies": {
     "@neondatabase/serverless": "^1.1.0",

@@ -1,0 +1,649 @@
+{
+  "generated_at": "2026-09-20T10:08:11.629Z",
+  "from_board": "2026-09-20T10:08:08.912Z",
+  "selections": 80,
+  "events": 16,
+  "discarded": 13,
+  "pool": [
+    {
+      "event": "Feyenoord - FC Utrecht",
+      "selection": "1",
+      "odds": 1.33,
+      "probability": 0.6728812928637068,
+      "kickoff": "2026-09-20T10:15:00Z",
+      "informationShare": 0.672835338473125
+    },
+    {
+      "event": "Feyenoord - FC Utrecht",
+      "selection": "X",
+      "odds": 6.2,
+      "probability": 0.17290719706939492,
+      "kickoff": "2026-09-20T10:15:00Z",
+      "informationShare": 0.672835338473125
+    },
+    {
+      "event": "Feyenoord - FC Utrecht",
+      "selection": "2",
+      "odds": 10,
+      "probability": 0.15421151006689832,
+      "kickoff": "2026-09-20T10:15:00Z",
+      "informationShare": 0.672835338473125
+    },
+    {
+      "event": "Feyenoord - FC Utrecht",
+      "selection": "O2.5",
+      "odds": 1.34,
+      "probability": 0.6774516606580672,
+      "kickoff": "2026-09-20T10:15:00Z",
+      "informationShare": 0.672835338473125
+    },
+    {
+      "event": "Feyenoord - FC Utrecht",
+      "selection": "U2.5",
+      "odds": 3.14,
+      "probability": 0.32254833934193283,
+      "kickoff": "2026-09-20T10:15:00Z",
+      "informationShare": 0.672835338473125
+    },
+    {
+      "event": "Fiorentina - Napoli",
+      "selection": "1",
+      "odds": 3.45,
+      "probability": 0.25825862234779756,
+      "kickoff": "2026-09-20T10:30:00Z",
+      "informationShare": 0.6788056138882373
+    },
+    {
+      "event": "Fiorentina - Napoli",
+      "selection": "X",
+      "odds": 3.45,
+      "probability": 0.27665321572125134,
+      "kickoff": "2026-09-20T10:30:00Z",
+      "informationShare": 0.6788056138882373
+    },
+    {
+      "event": "Fiorentina - Napoli",
+      "selection": "2",
+      "odds": 2.4,
+      "probability": 0.46508816193095115,
+      "kickoff": "2026-09-20T10:30:00Z",
+      "informationShare": 0.6788056138882373
+    },
+    {
+      "event": "Fiorentina - Napoli",
+      "selection": "O2.5",
+      "odds": 2.02,
+      "probability": 0.4628769124727886,
+      "kickoff": "2026-09-20T10:30:00Z",
+      "informationShare": 0.6788056138882373
+    },
+    {
+      "event": "Fiorentina - Napoli",
+      "selection": "U2.5",
+      "odds": 2,
+      "probability": 0.5371230875272114,
+      "kickoff": "2026-09-20T10:30:00Z",
+      "informationShare": 0.6788056138882373
+    },
+    {
+      "event": "Getafe - Málaga",
+      "selection": "1",
+      "odds": 2.08,
+      "probability": 0.4709780694611233,
+      "kickoff": "2026-09-20T12:00:00Z",
+      "informationShare": 0.3806654617150532
+    },
+    {
+      "event": "Getafe - Málaga",
+      "selection": "X",
+      "odds": 3.26,
+      "probability": 0.3325295010212059,
+      "kickoff": "2026-09-20T12:00:00Z",
+      "informationShare": 0.3806654617150532
+    },
+    {
+      "event": "Getafe - Málaga",
+      "selection": "2",
+      "odds": 4.62,
+      "probability": 0.19649242951767082,
+      "kickoff": "2026-09-20T12:00:00Z",
+      "informationShare": 0.3806654617150532
+    },
+    {
+      "event": "Getafe - Málaga",
+      "selection": "O2.5",
+      "odds": 2.6,
+      "probability": 0.3094646791052484,
+      "kickoff": "2026-09-20T12:00:00Z",
+      "informationShare": 0.3806654617150532
+    },
+    {
+      "event": "Getafe - Málaga",
+      "selection": "U2.5",
+      "odds": 1.58,
+      "probability": 0.6905353208947516,
+      "kickoff": "2026-09-20T12:00:00Z",
+      "informationShare": 0.3806654617150532
+    },
+    {
+      "event": "Auxerre - Brest",
+      "selection": "1",
+      "odds": 3.21,
+      "probability": 0.39945357346264043,
+      "kickoff": "2026-09-20T13:00:00Z",
+      "informationShare": 0.6494382671306488
+    },
+    {
+      "event": "Auxerre - Brest",
+      "selection": "X",
+      "odds": 3.6,
+      "probability": 0.2582410753208575,
+      "kickoff": "2026-09-20T13:00:00Z",
+      "informationShare": 0.6494382671306488
+    },
+    {
+      "event": "Auxerre - Brest",
+      "selection": "2",
+      "odds": 2.43,
+      "probability": 0.3423053512165021,
+      "kickoff": "2026-09-20T13:00:00Z",
+      "informationShare": 0.6494382671306488
+    },
+    {
+      "event": "Auxerre - Brest",
+      "selection": "O2.5",
+      "odds": 1.83,
+      "probability": 0.5361515898301082,
+      "kickoff": "2026-09-20T13:00:00Z",
+      "informationShare": 0.6494382671306488
+    },
+    {
+      "event": "Auxerre - Brest",
+      "selection": "U2.5",
+      "odds": 2.19,
+      "probability": 0.46384841016989176,
+      "kickoff": "2026-09-20T13:00:00Z",
+      "informationShare": 0.6494382671306488
+    },
+    {
+      "event": "Parma - Genoa",
+      "selection": "1",
+      "odds": 3.3,
+      "probability": 0.3492657245684949,
+      "kickoff": "2026-09-20T13:00:00Z",
+      "informationShare": 0.6737978035863581
+    },
+    {
+      "event": "Parma - Genoa",
+      "selection": "X",
+      "odds": 3.1,
+      "probability": 0.32483783649366543,
+      "kickoff": "2026-09-20T13:00:00Z",
+      "informationShare": 0.6737978035863581
+    },
+    {
+      "event": "Parma - Genoa",
+      "selection": "2",
+      "odds": 2.68,
+      "probability": 0.32589643893783976,
+      "kickoff": "2026-09-20T13:00:00Z",
+      "informationShare": 0.6737978035863581
+    },
+    {
+      "event": "Parma - Genoa",
+      "selection": "O2.5",
+      "odds": 2.68,
+      "probability": 0.3645008266986453,
+      "kickoff": "2026-09-20T13:00:00Z",
+      "informationShare": 0.6737978035863581
+    },
+    {
+      "event": "Parma - Genoa",
+      "selection": "U2.5",
+      "odds": 1.58,
+      "probability": 0.6354991733013546,
+      "kickoff": "2026-09-20T13:00:00Z",
+      "informationShare": 0.6737978035863581
+    },
+    {
+      "event": "Bournemouth - Liverpool",
+      "selection": "1",
+      "odds": 3.25,
+      "probability": 0.44615569738926397,
+      "kickoff": "2026-09-20T13:00:00Z",
+      "informationShare": 0.6746004073845114
+    },
+    {
+      "event": "Bournemouth - Liverpool",
+      "selection": "X",
+      "odds": 3.9,
+      "probability": 0.24019372650522705,
+      "kickoff": "2026-09-20T13:00:00Z",
+      "informationShare": 0.6746004073845114
+    },
+    {
+      "event": "Bournemouth - Liverpool",
+      "selection": "2",
+      "odds": 2.26,
+      "probability": 0.31365057610550906,
+      "kickoff": "2026-09-20T13:00:00Z",
+      "informationShare": 0.6746004073845114
+    },
+    {
+      "event": "Bournemouth - Liverpool",
+      "selection": "O2.5",
+      "odds": 1.52,
+      "probability": 0.5832413733415113,
+      "kickoff": "2026-09-20T13:00:00Z",
+      "informationShare": 0.6746004073845114
+    },
+    {
+      "event": "Bournemouth - Liverpool",
+      "selection": "U2.5",
+      "odds": 2.57,
+      "probability": 0.41675862665848873,
+      "kickoff": "2026-09-20T13:00:00Z",
+      "informationShare": 0.6746004073845114
+    },
+    {
+      "event": "Frosinone - Como",
+      "selection": "1",
+      "odds": 6.8,
+      "probability": 0.26567073899755306,
+      "kickoff": "2026-09-20T13:00:00Z",
+      "informationShare": 0.31311627385441493
+    },
+    {
+      "event": "Frosinone - Como",
+      "selection": "X",
+      "odds": 4.9,
+      "probability": 0.2594863354044078,
+      "kickoff": "2026-09-20T13:00:00Z",
+      "informationShare": 0.31311627385441493
+    },
+    {
+      "event": "Frosinone - Como",
+      "selection": "2",
+      "odds": 1.57,
+      "probability": 0.4748429255980392,
+      "kickoff": "2026-09-20T13:00:00Z",
+      "informationShare": 0.31311627385441493
+    },
+    {
+      "event": "Frosinone - Como",
+      "selection": "O2.5",
+      "odds": 1.44,
+      "probability": 0.5113895664058884,
+      "kickoff": "2026-09-20T13:00:00Z",
+      "informationShare": 0.31311627385441493
+    },
+    {
+      "event": "Frosinone - Como",
+      "selection": "U2.5",
+      "odds": 2.84,
+      "probability": 0.4886104335941116,
+      "kickoff": "2026-09-20T13:00:00Z",
+      "informationShare": 0.31311627385441493
+    },
+    {
+      "event": "CF Estrela - Académico de Viseu",
+      "selection": "1",
+      "odds": 2.14,
+      "probability": 0.474652634689531,
+      "kickoff": "2026-09-20T14:30:00Z",
+      "informationShare": 0.37213984385899407
+    },
+    {
+      "event": "CF Estrela - Académico de Viseu",
+      "selection": "X",
+      "odds": 3.5,
+      "probability": 0.24521352252209014,
+      "kickoff": "2026-09-20T14:30:00Z",
+      "informationShare": 0.37213984385899407
+    },
+    {
+      "event": "CF Estrela - Académico de Viseu",
+      "selection": "2",
+      "odds": 3.9,
+      "probability": 0.28013384278837894,
+      "kickoff": "2026-09-20T14:30:00Z",
+      "informationShare": 0.37213984385899407
+    },
+    {
+      "event": "CF Estrela - Académico de Viseu",
+      "selection": "O2.5",
+      "odds": 2.02,
+      "probability": 0.5574467011043458,
+      "kickoff": "2026-09-20T14:30:00Z",
+      "informationShare": 0.37213984385899407
+    },
+    {
+      "event": "CF Estrela - Académico de Viseu",
+      "selection": "U2.5",
+      "odds": 1.95,
+      "probability": 0.4425532988956542,
+      "kickoff": "2026-09-20T14:30:00Z",
+      "informationShare": 0.37213984385899407
+    },
+    {
+      "event": "Nice - Lille",
+      "selection": "1",
+      "odds": 3.7,
+      "probability": 0.2512940918823069,
+      "kickoff": "2026-09-20T15:15:00Z",
+      "informationShare": 0.6544566797451373
+    },
+    {
+      "event": "Nice - Lille",
+      "selection": "X",
+      "odds": 3.55,
+      "probability": 0.27689228952396006,
+      "kickoff": "2026-09-20T15:15:00Z",
+      "informationShare": 0.6544566797451373
+    },
+    {
+      "event": "Nice - Lille",
+      "selection": "2",
+      "odds": 2.25,
+      "probability": 0.4718136185937331,
+      "kickoff": "2026-09-20T15:15:00Z",
+      "informationShare": 0.6544566797451373
+    },
+    {
+      "event": "Nice - Lille",
+      "selection": "O2.5",
+      "odds": 1.91,
+      "probability": 0.45903617318256956,
+      "kickoff": "2026-09-20T15:15:00Z",
+      "informationShare": 0.6544566797451373
+    },
+    {
+      "event": "Nice - Lille",
+      "selection": "U2.5",
+      "odds": 2.06,
+      "probability": 0.5409638268174304,
+      "kickoff": "2026-09-20T15:15:00Z",
+      "informationShare": 0.6544566797451373
+    },
+    {
+      "event": "FC Schalke 04 - Elversberg",
+      "selection": "1",
+      "odds": 2,
+      "probability": 0.45510844913827664,
+      "kickoff": "2026-09-20T15:30:00Z",
+      "informationShare": 0.23673658049665133
+    },
+    {
+      "event": "FC Schalke 04 - Elversberg",
+      "selection": "X",
+      "odds": 4,
+      "probability": 0.194927446608482,
+      "kickoff": "2026-09-20T15:30:00Z",
+      "informationShare": 0.23673658049665133
+    },
+    {
+      "event": "FC Schalke 04 - Elversberg",
+      "selection": "2",
+      "odds": 3.95,
+      "probability": 0.34996410425324126,
+      "kickoff": "2026-09-20T15:30:00Z",
+      "informationShare": 0.23673658049665133
+    },
+    {
+      "event": "FC Schalke 04 - Elversberg",
+      "selection": "O2.5",
+      "odds": 1.54,
+      "probability": 0.7303641367332315,
+      "kickoff": "2026-09-20T15:30:00Z",
+      "informationShare": 0.23673658049665133
+    },
+    {
+      "event": "FC Schalke 04 - Elversberg",
+      "selection": "U2.5",
+      "odds": 2.52,
+      "probability": 0.26963586326676847,
+      "kickoff": "2026-09-20T15:30:00Z",
+      "informationShare": 0.23673658049665133
+    },
+    {
+      "event": "Juventus - Atalanta BC",
+      "selection": "1",
+      "odds": 1.77,
+      "probability": 0.6108686296849898,
+      "kickoff": "2026-09-20T16:00:00Z",
+      "informationShare": 0.678301106462171
+    },
+    {
+      "event": "Juventus - Atalanta BC",
+      "selection": "X",
+      "odds": 3.95,
+      "probability": 0.22692795073268385,
+      "kickoff": "2026-09-20T16:00:00Z",
+      "informationShare": 0.678301106462171
+    },
+    {
+      "event": "Juventus - Atalanta BC",
+      "selection": "2",
+      "odds": 5.4,
+      "probability": 0.16220341958232648,
+      "kickoff": "2026-09-20T16:00:00Z",
+      "informationShare": 0.678301106462171
+    },
+    {
+      "event": "Juventus - Atalanta BC",
+      "selection": "O2.5",
+      "odds": 1.97,
+      "probability": 0.5207594793970062,
+      "kickoff": "2026-09-20T16:00:00Z",
+      "informationShare": 0.678301106462171
+    },
+    {
+      "event": "Juventus - Atalanta BC",
+      "selection": "U2.5",
+      "odds": 2.02,
+      "probability": 0.4792405206029938,
+      "kickoff": "2026-09-20T16:00:00Z",
+      "informationShare": 0.678301106462171
+    },
+    {
+      "event": "Villarreal - Levante",
+      "selection": "1",
+      "odds": 1.56,
+      "probability": 0.6541268091511188,
+      "kickoff": "2026-09-20T16:30:00Z",
+      "informationShare": 0.657216780185231
+    },
+    {
+      "event": "Villarreal - Levante",
+      "selection": "X",
+      "odds": 4.93,
+      "probability": 0.1934127438914687,
+      "kickoff": "2026-09-20T16:30:00Z",
+      "informationShare": 0.657216780185231
+    },
+    {
+      "event": "Villarreal - Levante",
+      "selection": "2",
+      "odds": 6.2,
+      "probability": 0.1524604469574125,
+      "kickoff": "2026-09-20T16:30:00Z",
+      "informationShare": 0.657216780185231
+    },
+    {
+      "event": "Villarreal - Levante",
+      "selection": "O2.5",
+      "odds": 1.46,
+      "probability": 0.608594249104211,
+      "kickoff": "2026-09-20T16:30:00Z",
+      "informationShare": 0.657216780185231
+    },
+    {
+      "event": "Villarreal - Levante",
+      "selection": "U2.5",
+      "odds": 2.77,
+      "probability": 0.391405750895789,
+      "kickoff": "2026-09-20T16:30:00Z",
+      "informationShare": 0.657216780185231
+    },
+    {
+      "event": "Estoril - Casa Pia",
+      "selection": "1",
+      "odds": 1.76,
+      "probability": 0.5603731201765905,
+      "kickoff": "2026-09-20T17:00:00Z",
+      "informationShare": 0.6761132449167623
+    },
+    {
+      "event": "Estoril - Casa Pia",
+      "selection": "X",
+      "odds": 4.1,
+      "probability": 0.25172376865154894,
+      "kickoff": "2026-09-20T17:00:00Z",
+      "informationShare": 0.6761132449167623
+    },
+    {
+      "event": "Estoril - Casa Pia",
+      "selection": "2",
+      "odds": 5.1,
+      "probability": 0.18790311117186065,
+      "kickoff": "2026-09-20T17:00:00Z",
+      "informationShare": 0.6761132449167623
+    },
+    {
+      "event": "Estoril - Casa Pia",
+      "selection": "O2.5",
+      "odds": 1.87,
+      "probability": 0.48028702865535344,
+      "kickoff": "2026-09-20T17:00:00Z",
+      "informationShare": 0.6761132449167623
+    },
+    {
+      "event": "Estoril - Casa Pia",
+      "selection": "U2.5",
+      "odds": 2.12,
+      "probability": 0.5197129713446466,
+      "kickoff": "2026-09-20T17:00:00Z",
+      "informationShare": 0.6761132449167623
+    },
+    {
+      "event": "Santa Clara - Braga",
+      "selection": "1",
+      "odds": 3.95,
+      "probability": 0.3078550652172798,
+      "kickoff": "2026-09-20T17:00:00Z",
+      "informationShare": 0.667876210261962
+    },
+    {
+      "event": "Santa Clara - Braga",
+      "selection": "X",
+      "odds": 3.26,
+      "probability": 0.3088665121500572,
+      "kickoff": "2026-09-20T17:00:00Z",
+      "informationShare": 0.667876210261962
+    },
+    {
+      "event": "Santa Clara - Braga",
+      "selection": "2",
+      "odds": 2.28,
+      "probability": 0.383278422632663,
+      "kickoff": "2026-09-20T17:00:00Z",
+      "informationShare": 0.667876210261962
+    },
+    {
+      "event": "Santa Clara - Braga",
+      "selection": "O2.5",
+      "odds": 2.48,
+      "probability": 0.3990486816303184,
+      "kickoff": "2026-09-20T17:00:00Z",
+      "informationShare": 0.667876210261962
+    },
+    {
+      "event": "Santa Clara - Braga",
+      "selection": "U2.5",
+      "odds": 1.55,
+      "probability": 0.6009513183696815,
+      "kickoff": "2026-09-20T17:00:00Z",
+      "informationShare": 0.667876210261962
+    },
+    {
+      "event": "AC Milan - Lecce",
+      "selection": "1",
+      "odds": 1.31,
+      "probability": 0.6245585112835338,
+      "kickoff": "2026-09-20T18:45:00Z",
+      "informationShare": 0.6786156781724912
+    },
+    {
+      "event": "AC Milan - Lecce",
+      "selection": "X",
+      "odds": 6.4,
+      "probability": 0.2409050763305195,
+      "kickoff": "2026-09-20T18:45:00Z",
+      "informationShare": 0.6786156781724912
+    },
+    {
+      "event": "AC Milan - Lecce",
+      "selection": "2",
+      "odds": 13.5,
+      "probability": 0.13453641238594682,
+      "kickoff": "2026-09-20T18:45:00Z",
+      "informationShare": 0.6786156781724912
+    },
+    {
+      "event": "AC Milan - Lecce",
+      "selection": "O2.5",
+      "odds": 1.66,
+      "probability": 0.4473517463242951,
+      "kickoff": "2026-09-20T18:45:00Z",
+      "informationShare": 0.6786156781724912
+    },
+    {
+      "event": "AC Milan - Lecce",
+      "selection": "U2.5",
+      "odds": 2.43,
+      "probability": 0.5526482536757049,
+      "kickoff": "2026-09-20T18:45:00Z",
+      "informationShare": 0.6786156781724912
+    },
+    {
+      "event": "FC Porto - Benfica",
+      "selection": "1",
+      "odds": 3.05,
+      "probability": 0.3746466020705487,
+      "kickoff": "2026-09-20T19:30:00Z",
+      "informationShare": 0.6758374812452767
+    },
+    {
+      "event": "FC Porto - Benfica",
+      "selection": "X",
+      "odds": 3.45,
+      "probability": 0.26591378664418613,
+      "kickoff": "2026-09-20T19:30:00Z",
+      "informationShare": 0.6758374812452767
+    },
+    {
+      "event": "FC Porto - Benfica",
+      "selection": "2",
+      "odds": 2.62,
+      "probability": 0.35943961128526525,
+      "kickoff": "2026-09-20T19:30:00Z",
+      "informationShare": 0.6758374812452767
+    },
+    {
+      "event": "FC Porto - Benfica",
+      "selection": "O2.5",
+      "odds": 1.95,
+      "probability": 0.5154776620199136,
+      "kickoff": "2026-09-20T19:30:00Z",
+      "informationShare": 0.6758374812452767
+    },
+    {
+      "event": "FC Porto - Benfica",
+      "selection": "U2.5",
+      "odds": 2.02,
+      "probability": 0.48452233798008637,
+      "kickoff": "2026-09-20T19:30:00Z",
+      "informationShare": 0.6758374812452767
+    }
+  ]
+}
