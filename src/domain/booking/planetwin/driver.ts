@@ -22,6 +22,11 @@
 import type { Browser, Locator, Page } from "playwright";
 import { locateSelection, type CatalogEntry } from "@/domain/booking/planetwin/catalog";
 import {
+  findCellInPage,
+  TARGET_ATTR,
+  type CellHit,
+} from "@/domain/booking/planetwin/cell-finder";
+import {
   BookingError,
   DEFAULT_ODDS_TOLERANCE,
   driftIsAcceptable,
@@ -129,7 +134,27 @@ const CONSENT_DECLINE = [
  * Non vanno nascoste (servono a chi guarda), va tolto il posizionamento fisso
  * che le fa galleggiare sopra il contenuto.
  */
+/**
+ * Definisce nella pagina l'helper __name.
+ *
+ * tsx compila con esbuild, che avvolge le funzioni in __name(fn, "nome") per
+ * conservarne il nome nei tracciati. Playwright serializza il sorgente della
+ * funzione e lo esegue nel browser, dove quell'helper non esiste: senza questo,
+ * ogni page.evaluate di una nostra funzione muore con
+ * "ReferenceError: __name is not defined".
+ *
+ * Passato come stringa perche' una funzione verrebbe avvolta a sua volta, ed è
+ * proprio quello che stiamo rimediando.
+ */
+const NAME_HELPER = "window.__name = window.__name || function (f) { return f; };";
+
+async function installEvaluateHelpers(page: Page): Promise<void> {
+  await page.addInitScript(NAME_HELPER).catch(() => undefined);
+  await page.evaluate(NAME_HELPER).catch(() => undefined);
+}
+
 async function neutraliseOverlays(page: Page): Promise<void> {
+  await installEvaluateHelpers(page);
   await page
     .addStyleTag({
       content: `
@@ -343,14 +368,6 @@ function escapeRegExp(s: string): string {
   return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
-/** Il blocco mercato con quel titolo esatto. */
-function marketBlock(page: Page, block: string): Locator {
-  return page
-    .locator("section, div")
-    .filter({ has: page.getByText(new RegExp(`^\\s*${escapeRegExp(block)}\\s*$`, "i")) })
-    .last();
-}
-
 async function clickOutcome(page: Page, entry: CatalogEntry, timeout: number): Promise<number> {
   const tab = page.getByRole("tab", { name: new RegExp(`^${escapeRegExp(entry.tab)}$`, "i") }).first();
   if (await tab.isVisible().catch(() => false)) {
@@ -359,27 +376,37 @@ async function clickOutcome(page: Page, entry: CatalogEntry, timeout: number): P
     const fallback = page.getByText(new RegExp(`^\\s*${escapeRegExp(entry.tab)}\\s*$`, "i")).first();
     await safeClick(fallback, timeout);
   }
+  await page.waitForTimeout(900);
 
-  const block = marketBlock(page, entry.block);
-  await block.waitFor({ state: "visible", timeout });
+  // Il DOM decide QUALE cella, e la marca. Il clic resta un clic vero, fatto da
+  // Playwright sull'attributo: non ci si fida della pagina per l'azione, solo
+  // per l'identificazione — che è l'unica cosa che le classi Angular rendono
+  // impossibile fare da fuori.
+  await installEvaluateHelpers(page);
+  const hit = (await page.evaluate(findCellInPage, {
+    block: entry.block,
+    outcome: entry.outcome,
+    line: entry.line ?? null,
+    attr: TARGET_ATTR,
+  })) as CellHit;
 
-  const scope = entry.line
-    ? block.locator("tr, [class*=row]").filter({ hasText: new RegExp(`\\b${escapeRegExp(entry.line)}\\b`) }).first()
-    : block;
+  const where = `${entry.tab} → ${entry.block}${entry.line ? ` (${entry.line})` : ""} → ${entry.outcome}`;
 
-  const cell = scope
-    .locator("button, [role=button], [class*=quota], [class*=odd]")
-    .filter({ hasText: new RegExp(`^\\s*${escapeRegExp(entry.outcome)}\\s`, "i") })
-    .first();
-
-  if (!(await cell.isVisible().catch(() => false))) {
-    throw new BookingError(
-      `cella non trovata: ${entry.tab} → ${entry.block}${entry.line ? ` (${entry.line})` : ""} → ${entry.outcome}`,
-    );
+  if (hit.kind === "no-block") {
+    throw new BookingError(`blocco mercato non trovato: ${where}`, {
+      blocchi_visti: hit.blocksSeen.slice(0, 30),
+    });
   }
-  const odds = parseOdds(await cell.innerText());
-  await safeClick(cell, timeout);
-  return odds;
+  if (hit.kind === "no-cell") {
+    throw new BookingError(`cella non trovata dentro il blocco: ${where}`, {
+      celle_viste: hit.cellsSeen.slice(0, 30),
+    });
+  }
+
+  const marked = page.locator(`[${TARGET_ATTR}="1"]`).first();
+  await marked.waitFor({ state: "visible", timeout: Math.min(timeout, 10_000) });
+  await safeClick(marked, timeout);
+  return hit.odds;
 }
 
 /** Rilegge la schedina e verifica che contenga esattamente le gambe decise. */
