@@ -195,56 +195,72 @@ export function buildTicket(
     throw new TicketBuildError("nessuna selezione disponibile nell'orizzonte richiesto");
   }
 
-  // Ricerca a fascio, non avidità pura.
+  // Programmazione dinamica a fasce di quota.
   //
-  // Prendere sempre la gamba col costo più basso sembra ragionevole e non lo è:
-  // con quote [1.45, 1.42, 1.30] e obiettivo 1.90-2.20 il raddoppio ESISTE
-  // (1.45 x 1.42 = 2.06), ma l'avidità parte da 1.30, arriva a 1.85 e si blocca
-  // perche' ogni aggiunta sfonda il tetto. Dichiarare impossibile un biglietto
-  // che si può comporre è un guasto, non una prudenza.
+  // L'avidità pura si perde biglietti che esistono. Ma anche una ricerca a
+  // fascio ordinata per probabilità sbaglia, e sbaglia in modo sistematico:
+  // le combinazioni più probabili sono quelle a quota più BASSA, quindi il
+  // fascio si riempie di parziali che non arriveranno mai a un obiettivo alto
+  // e scarta proprio quelle che servono. Con 12 eventi disponibili e obiettivo
+  // 1600-2400 dichiarava impossibile un biglietto raggiungibile.
   //
-  // Il fascio tiene le migliori combinazioni parziali invece di una sola strada.
-  const LARGHEZZA = 250;
-  type Stato = { legs: RatedSelection[]; quota: number; logP: number; usati: Set<string> };
+  // Qui lo spazio delle quote viene diviso in fasce logaritmiche e si tiene la
+  // combinazione più probabile PER OGNI FASCIA. Così ogni livello di quota
+  // resta rappresentato, e alla fine si legge la migliore tra quelle che
+  // cadono nell'intervallo richiesto.
+  const FASCE = 600;
+  const logMax = Math.log(target.maxOdds);
+  const fasciaDi = (logQuota: number): number =>
+    Math.min(FASCE - 1, Math.max(0, Math.floor((logQuota / logMax) * FASCE)));
 
-  let fascio: Stato[] = [{ legs: [], quota: 1, logP: 0, usati: new Set() }];
+  type Stato = {
+    legs: RatedSelection[];
+    logQuota: number;
+    logP: number;
+    usati: Set<string>;
+  };
+
+  let livello = new Map<number, Stato>();
+  livello.set(0, { legs: [], logQuota: 0, logP: 0, usati: new Set() });
   let migliore: Stato | null = null;
 
-  const consideraCompleto = (st: Stato): void => {
+  const considera = (st: Stato): void => {
     if (st.legs.length < minLegs) return;
-    if (st.quota < target.minOdds || st.quota > target.maxOdds) return;
+    const quota = Math.exp(st.logQuota);
+    if (quota < target.minOdds || quota > target.maxOdds) return;
     if (migliore === null || st.logP > migliore.logP) migliore = st;
   };
 
   for (let profondita = 0; profondita < target.maxLegs; profondita += 1) {
-    const prossimo: Stato[] = [];
-    for (const st of fascio) {
+    const prossimo = new Map<number, Stato>();
+    for (const st of livello.values()) {
       for (const s of candidati) {
         if (st.usati.has(s.event)) continue;
-        const quota = st.quota * s.odds;
-        if (quota > target.maxOdds) continue;
+        const logQuota = st.logQuota + Math.log(s.odds);
+        if (logQuota > logMax) continue;
         const usati = new Set(st.usati);
         usati.add(s.event);
         const nuovo: Stato = {
           legs: [...st.legs, s],
-          quota,
+          logQuota,
           logP: st.logP + Math.log(s.probability),
           usati,
         };
-        consideraCompleto(nuovo);
-        prossimo.push(nuovo);
+        considera(nuovo);
+        const f = fasciaDi(logQuota);
+        const attuale = prossimo.get(f);
+        if (attuale === undefined || nuovo.logP > attuale.logP) prossimo.set(f, nuovo);
       }
     }
-    if (prossimo.length === 0) break;
-    // Si tengono le parziali con la probabilità più alta a parità di profondità.
-    prossimo.sort((x, y) => y.logP - x.logP);
-    fascio = prossimo.slice(0, LARGHEZZA);
+    if (prossimo.size === 0) break;
+    livello = prossimo;
   }
 
   if (migliore === null) {
     const massimaRaggiungibile = candidati
       .slice()
       .sort((x, y) => y.odds - x.odds)
+      .filter((s, i, arr) => arr.findIndex((z) => z.event === s.event) === i)
       .slice(0, target.maxLegs)
       .reduce((a, l) => a * l.odds, 1);
     throw new TicketBuildError(
@@ -253,6 +269,7 @@ export function buildTicket(
         : `nessuna combinazione cade tra ${target.minOdds.toFixed(2)} e ${target.maxOdds.toFixed(2)} con al più ${target.maxLegs} gambe`,
       {
         disponibili: candidati.length,
+        eventi: new Set(candidati.map((c) => c.event)).size,
         massimo_gambe: target.maxLegs,
         gambe_minime: minLegs,
       },
