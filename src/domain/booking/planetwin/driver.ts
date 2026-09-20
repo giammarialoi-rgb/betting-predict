@@ -421,29 +421,51 @@ function escapeRegExp(s: string): string {
   return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
-async function clickOutcome(page: Page, entry: CatalogEntry, timeout: number): Promise<number> {
-  const tab = page.getByRole("tab", { name: new RegExp(`^${escapeRegExp(entry.tab)}$`, "i") }).first();
-  if (await tab.isVisible().catch(() => false)) {
-    await safeClick(tab, timeout);
-  } else {
-    const fallback = page.getByText(new RegExp(`^\\s*${escapeRegExp(entry.tab)}\\s*$`, "i")).first();
-    await safeClick(fallback, timeout);
-  }
-  await page.waitForTimeout(900);
-
-  // Il DOM decide QUALE cella, e la marca. Il clic resta un clic vero, fatto da
-  // Playwright sull'attributo: non ci si fida della pagina per l'azione, solo
-  // per l'identificazione — che è l'unica cosa che le classi Angular rendono
-  // impossibile fare da fuori.
+/** Prova a cercare la cella nello stato attuale della pagina. */
+async function cercaCella(page: Page, entry: CatalogEntry): Promise<CellHit> {
   await installEvaluateHelpers(page);
-  const hit = (await page.evaluate(findCellInPage, {
+  return (await page.evaluate(findCellInPage, {
     block: entry.block,
     outcome: entry.outcome,
     line: entry.line ?? null,
     attr: TARGET_ATTR,
   })) as CellHit;
+}
 
+/**
+ * Apre la scheda di mercato. Tentativo, non obbligo.
+ *
+ * "Principali" è la scheda GIA' aperta su ogni pagina partita: cliccarla non
+ * serve, e pretenderlo faceva fallire tutto il biglietto su un bottone che non
+ * andava premuto. Per questo la cella si cerca PRIMA: se è già a schermo, la
+ * scheda giusta è già quella e non si tocca niente.
+ */
+async function provaApriScheda(page: Page, tab: string, timeout: number): Promise<void> {
+  const perRuolo = page.getByRole("tab", { name: new RegExp(`^\\s*${escapeRegExp(tab)}\\s*$`, "i") }).first();
+  if (await perRuolo.isVisible().catch(() => false)) {
+    await safeClick(perRuolo, timeout).catch(() => undefined);
+    await page.waitForTimeout(900);
+    return;
+  }
+  const perTesto = page
+    .getByText(new RegExp(`^\\s*${escapeRegExp(tab)}\\s*$`, "i"))
+    .filter({ visible: true })
+    .first();
+  if (await perTesto.isVisible().catch(() => false)) {
+    await safeClick(perTesto, timeout).catch(() => undefined);
+    await page.waitForTimeout(900);
+  }
+}
+
+async function clickOutcome(page: Page, entry: CatalogEntry, timeout: number): Promise<number> {
   const where = `${entry.tab} → ${entry.block}${entry.line ? ` (${entry.line})` : ""} → ${entry.outcome}`;
+
+  // Prima si guarda: se il blocco è già visibile, la scheda giusta è aperta.
+  let hit = await cercaCella(page, entry);
+  if (hit.kind !== "found") {
+    await provaApriScheda(page, entry.tab, timeout);
+    hit = await cercaCella(page, entry);
+  }
 
   if (hit.kind === "no-block") {
     throw new BookingError(`blocco mercato non trovato: ${where}`, {
