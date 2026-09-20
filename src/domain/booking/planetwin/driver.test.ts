@@ -99,3 +99,24 @@ describe("nome evento", () => {
     assert.throws(() => splitEvent("Fiorentina"), /non interpretabile/);
   });
 });
+
+describe("selettore della ricerca", () => {
+  it("esclude la casella di ricerca del banner cookie da ogni candidato", async () => {
+    const { searchSelector } = await import("@/domain/booking/planetwin/driver");
+    const parts = searchSelector().split(", ");
+    assert.ok(parts.length >= 3, "più di un candidato");
+    // È l'input che ha fatto fallire il primo giro reale: nascosto, dentro il
+    // widget di consenso, con aria-label "Ricerca nell'elenco dei cookie".
+    for (const part of parts) {
+      assert.ok(part.includes(':not([aria-label*="cookie" i])'), `esclusione mancante in: ${part}`);
+      assert.ok(part.includes(':not([id*="vendor" i])'), `esclusione mancante in: ${part}`);
+    }
+  });
+
+  it("non concatena le esclusioni come discendenti", async () => {
+    const { searchSelector } = await import("@/domain/booking/planetwin/driver");
+    // Uno spazio prima di ":not" trasformerebbe il filtro in un selettore di
+    // discendenti e non escluderebbe niente.
+    assert.ok(!/\s:not\(/.test(searchSelector()), searchSelector());
+  });
+});

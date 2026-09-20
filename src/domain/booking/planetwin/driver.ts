@@ -83,11 +83,56 @@ export function planTicket(legs: readonly TicketLeg[]): readonly CatalogEntry[] 
   return legs.map((leg) => locateSelection(leg.selection));
 }
 
+/**
+ * Il widget di consenso non è solo un fastidio visivo: porta con sé una propria
+ * casella di ricerca ("Ricerca nell'elenco dei cookie"), nascosta ma presente
+ * nel DOM. Un selettore generico sulla ricerca la aggancia e aspetta per sempre
+ * un input che non diventerà mai visibile. Va tolto di mezzo per primo, e i
+ * selettori successivi devono comunque escluderlo.
+ */
+const CONSENT_DECLINE = [
+  /continua senza accettare/i,
+  /rifiuta tutt/i,
+  /solo (i )?necessari/i,
+];
+
 async function dismissCookieBanner(page: Page): Promise<void> {
-  const decline = page.getByText(/continua senza accettare/i).first();
-  if (await decline.isVisible().catch(() => false)) {
-    await decline.click().catch(() => undefined);
+  for (const label of CONSENT_DECLINE) {
+    const button = page.getByText(label).first();
+    if (await button.isVisible().catch(() => false)) {
+      await button.click().catch(() => undefined);
+      await page.waitForTimeout(600);
+      return;
+    }
   }
+}
+
+/**
+ * La casella di ricerca del sito: visibile, e non quella del widget cookie.
+ * Entrambe le condizioni servono — l'esclusione per id da sola non basta se il
+ * widget cambia nome, la visibilità da sola non basta se il banner è aperto.
+ */
+const SEARCH_CANDIDATES = [
+  'input[type="search"]',
+  'input[placeholder*="erca" i]',
+  'input[aria-label*="erca" i]',
+];
+/** Gli input del widget di consenso, da escludere ovunque. */
+const CONSENT_INPUT_EXCLUSIONS = [
+  ':not([aria-label*="cookie" i])',
+  ':not([id*="vendor" i])',
+  ':not([id*="onetrust" i])',
+].join("");
+
+export function searchSelector(): string {
+  return SEARCH_CANDIDATES.map((c) => c + CONSENT_INPUT_EXCLUSIONS).join(", ");
+}
+
+function siteSearchBox(page: Page): Locator {
+  // Le esclusioni vanno attaccate a OGNI candidato nella stessa stringa CSS:
+  // concatenare un .locator(":not(...)") cercherebbe i discendenti dell'input,
+  // non filtrerebbe l'input stesso.
+  return page.locator(searchSelector()).filter({ visible: true }).first();
 }
 
 /** "Fiorentina - Napoli" → ["Fiorentina", "Napoli"] */
@@ -107,10 +152,15 @@ async function openEvent(page: Page, event: string, timeout: number): Promise<vo
   await page.goto(HOME, { waitUntil: "domcontentloaded", timeout });
   await dismissCookieBanner(page);
 
-  const search = page
-    .locator('input[type="search"], input[placeholder*="erca" i], input[aria-label*="erca" i]')
-    .first();
-  await search.waitFor({ state: "visible", timeout });
+  const search = siteSearchBox(page);
+  try {
+    await search.waitFor({ state: "visible", timeout: Math.min(timeout, 15_000) });
+  } catch {
+    throw new BookingError(
+      "casella di ricerca del sito non trovata — il banner cookie potrebbe essere ancora aperto",
+      { evento: event },
+    );
+  }
   await search.fill(home);
   await page.waitForTimeout(1500);
 
