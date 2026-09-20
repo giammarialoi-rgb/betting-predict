@@ -78,3 +78,6 @@ audit/odds-api-probe.json
 audit/external/task-044/dispersion/
 audit/dispersion-backtest.json
 audit/external/task-044/corners-prospective/
+
+# profilo persistente del driver di prenotazione
+.playwright/
