@@ -343,25 +343,50 @@ describe("abbinamento tollerante dell'evento", { timeout: 120_000 }, () => {
  * lì mette la selezione in schedina allo stesso modo. Questo test fissa la
  * struttura osservata: due nomi su righe distinte, poi le celle.
  */
-const PALINSESTO = `<!doctype html><html><body>
+/**
+ * Griglia come la disegna davvero il book: i NOMI in una colonna e le QUOTE in
+ * un'altra, allineate solo visivamente. Nessun elemento contiene insieme i due
+ * nomi e le loro quote — per questo la riga va individuata geometricamente.
+ * Cercando "il più piccolo elemento che contiene entrambi i nomi e tre quote"
+ * si otteneva l'intera griglia, e la prima cella "1" era quella della PRIMA
+ * partita: quota giusta, partita sbagliata, in silenzio.
+ */
+const PALINSESTO = `<!doctype html><html><head><style>
+  .riga { position: absolute; left: 0; width: 900px; height: 60px; }
+  .r1 { top: 0px; } .r2 { top: 60px; } .r3 { top: 120px; }
+  .nomi { position: absolute; left: 0; width: 220px; }
+  .quote { position: absolute; left: 240px; width: 400px; }
+  .ou { position: absolute; left: 660px; width: 240px; }
+  .c { display: inline-block; width: 90px; }
+</style></head><body>
   <div class="left"><form><input placeholder="Ricerca"></form></div>
-  <div class="grid">
-    <div class="row">
-      <span>20 SET | 15:00</span>
-      <div class="teams"><span>Parma</span><span>Genoa</span></div>
-      <div class="c"><span>1</span><span>3.10</span></div>
-      <div class="c"><span>X</span><span>2.95</span></div>
-      <div class="c"><span>2</span><span>2.50</span></div>
+  <div class="grid" style="position:relative; height:200px">
+    <div class="riga r1">
+      <div class="nomi"><span>Parma</span><span>Genoa</span></div>
+      <div class="quote">
+        <div class="c"><span>1</span><span>3.10</span></div>
+        <div class="c"><span>X</span><span>2.95</span></div>
+        <div class="c"><span>2</span><span>2.50</span></div></div>
       <div class="ou"><span>2.5</span>
         <div class="c"><span>U</span><span>1.85</span></div>
         <div class="c"><span>O</span><span>1.90</span></div></div>
     </div>
-    <div class="row">
-      <span>20 SET | 18:00</span>
-      <div class="teams"><span>Juventus</span><span>Atalanta</span></div>
-      <div class="c"><span>1</span><span>1.73</span></div>
-      <div class="c"><span>X</span><span>3.60</span></div>
-      <div class="c"><span>2</span><span>5.00</span></div>
+    <div class="riga r2">
+      <div class="nomi"><span>Juventus</span><span>Atalanta</span></div>
+      <div class="quote">
+        <div class="c"><span>1</span><span>1.73</span></div>
+        <div class="c"><span>X</span><span>3.60</span></div>
+        <div class="c"><span>2</span><span>5.00</span></div></div>
+    </div>
+    <div class="riga r3">
+      <div class="nomi"><span>Nice</span><span>Lille</span></div>
+      <div class="quote">
+        <div class="c"><span>1</span><span>2.75</span></div>
+        <div class="c"><span>X</span><span>3.35</span></div>
+        <div class="c"><span>2</span><span>2.55</span></div></div>
+      <div class="ou"><span>2.5</span>
+        <div class="c"><span>U</span><span>2.06</span></div>
+        <div class="c"><span>O</span><span>1.75</span></div></div>
     </div>
   </div>
 </body></html>`;
@@ -404,8 +429,15 @@ describe("cella dal palinsesto, senza navigare", { timeout: 120_000 }, () => {
   });
 
   it("non prende le quote della riga accanto", async () => {
+    // Il guasto reale: leggeva 3.10 (Parma, prima riga) per Juventus-Atalanta.
     assert.equal((await cerca("Juventus", "Atalanta", "1")).odds, 1.73);
     assert.equal((await cerca("Juventus", "Atalanta", "2")).odds, 5.0);
+    assert.equal((await cerca("Nice", "Lille", "1")).odds, 2.75);
+  });
+
+  it("prende la U/O della riga giusta, non della prima con quella linea", async () => {
+    assert.equal((await cerca("Nice", "Lille", "U", "2.5")).odds, 2.06);
+    assert.equal((await cerca("Parma", "Genoa", "U", "2.5")).odds, 1.85);
   });
 
   it("regge i nomi lunghi di The Odds API", async () => {

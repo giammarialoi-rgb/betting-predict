@@ -467,12 +467,13 @@ export function findGridCellInPage(query: {
   const up = (s: string | null): string => norm(s).toUpperCase();
   const isOdds = (s: string | null): boolean => /^\d+[.,]\d{1,2}$/.test(norm(s));
   const oddsOf = (s: string | null): number => Number(norm(s).replace(",", "."));
+  const rect = (e: Element): DOMRect => e.getBoundingClientRect();
   const visible = (e: Element): boolean => e.getClientRects().length > 0;
   const semplifica = (v: string): string =>
     v
       .toLowerCase()
       .normalize("NFD")
-      .replace(/[̀-ͯ]/g, "")
+      .replace(/[\u0300-\u036f]/g, "")
       .replace(/[^a-z0-9]+/g, " ")
       .trim();
   const chiave = (v: string): string =>
@@ -483,73 +484,94 @@ export function findGridCellInPage(query: {
   const ka = chiave(home);
   const kb = chiave(away);
   if (ka.length < 3 || kb.length < 3) {
-    return { kind: "no-block", blocksSeen: ["nomi squadra troppo corti per cercarli"] };
+    return { kind: "no-block", blocksSeen: ["nomi squadra troppo corti"] };
   }
 
-  const leavesIn = (root: Element): Element[] =>
-    Array.from(root.querySelectorAll("*")).filter((e) => e.children.length === 0 && visible(e));
-  const oddsLeaves = (root: Element): Element[] => leavesIn(root).filter((e) => isOdds(e.textContent));
-
-  // La riga: il più PICCOLO elemento che contiene entrambi i nomi e almeno tre
-  // quote. Più piccolo perche' i suoi antenati contengono anche le altre righe.
-  const candidateRows = Array.from(document.querySelectorAll("*")).filter((e) => {
-    if (!visible(e)) return false;
-    const t = semplifica(norm(e.textContent));
-    if (!t.includes(ka) || !t.includes(kb)) return false;
-    return oddsLeaves(e).length >= 3;
-  });
-  if (candidateRows.length === 0) {
-    const viste: string[] = [];
-    for (const e of Array.from(document.querySelectorAll("*"))) {
-      if (e.children.length !== 0 || !visible(e)) continue;
-      const t = norm(e.textContent);
-      if (t.length > 3 && t.length < 40 && semplifica(t).includes(ka) && !viste.includes(t)) viste.push(t);
-      if (viste.length >= 20) break;
-    }
-    return { kind: "no-block", blocksSeen: viste.length > 0 ? viste : ["partita non presente nel palinsesto"] };
-  }
-  const row = candidateRows.reduce((best, e) =>
-    norm(e.textContent).length < norm(best.textContent).length ? e : best,
+  const foglie = Array.from(document.querySelectorAll("*")).filter(
+    (e) => e.children.length === 0 && visible(e),
   );
 
-  // Con una linea (U/O 2.5) ci si restringe alla sua parte di riga.
-  let scope: Element = row;
-  if (line) {
-    const lineLeaf = leavesIn(row).find((e) => norm(e.textContent) === norm(line));
-    if (!lineLeaf) {
-      return { kind: "no-cell", cellsSeen: ["linea " + line + " non mostrata nel palinsesto"] };
-    }
-    let node: Element | null = lineLeaf.parentElement;
-    for (let i = 0; i < 4 && node; i += 1) {
-      if (oddsLeaves(node).length >= 1) {
-        scope = node;
-        break;
-      }
-      node = node.parentElement;
-    }
+  // La riga si individua GEOMETRICAMENTE, non per contenimento.
+  //
+  // Nella griglia del palinsesto i nomi e le quote stanno in colonne separate:
+  // nessun elemento contiene insieme i due nomi E le loro quote, quindi
+  // cercare "il più piccolo che contiene entrambi" restituiva l'intera
+  // griglia, e la prima cella "1" trovata era quella della PRIMA partita
+  // dell'elenco. Si legge una quota giusta di una partita sbagliata, in
+  // silenzio: il guasto peggiore che questo modulo possa produrre.
+  const nomiCasa = foglie.filter((e) => semplifica(norm(e.textContent)).includes(ka));
+  const nomiOspite = foglie.filter((e) => semplifica(norm(e.textContent)).includes(kb));
+  if (nomiCasa.length === 0 || nomiOspite.length === 0) {
+    return {
+      kind: "no-block",
+      blocksSeen: ["partita non presente nel palinsesto prepartita (iniziata?)"],
+    };
   }
 
-  // La cella: stessa regola della pagina evento — dall'etichetta si sale al
-  // primo antenato con UNA sola quota.
+  // I due nomi devono stare vicini in verticale: sono le due righe della
+  // stessa cella squadre.
+  let banda: { top: number; bottom: number } | null = null;
+  for (const c of nomiCasa) {
+    const rc = rect(c);
+    for (const o of nomiOspite) {
+      const ro = rect(o);
+      if (Math.abs(ro.top - rc.top) > 60) continue;
+      banda = { top: Math.min(rc.top, ro.top) - 6, bottom: Math.max(rc.bottom, ro.bottom) + 6 };
+      break;
+    }
+    if (banda) break;
+  }
+  if (!banda) {
+    return { kind: "no-block", blocksSeen: ["i due nomi non compaiono sulla stessa riga"] };
+  }
+
+  /** Un elemento sta sulla riga della partita? */
+  const sullaRiga = (e: Element): boolean => {
+    const r = rect(e);
+    const centro = (r.top + r.bottom) / 2;
+    return centro >= banda.top && centro <= banda.bottom;
+  };
+
+  // Con una linea (U/O 2.5) la cella giusta è accanto all'etichetta di quella
+  // linea, sempre sulla stessa riga.
+  let limiteSinistro = -Infinity;
+  if (line) {
+    const etichetta = foglie.find((e) => norm(e.textContent) === norm(line) && sullaRiga(e));
+    if (!etichetta) {
+      return { kind: "no-cell", cellsSeen: ["linea " + line + " non mostrata su questa riga"] };
+    }
+    limiteSinistro = rect(etichetta).left - 2;
+  }
+
   let cell: Element | null = null;
   let odds: number | null = null;
-  for (const label of leavesIn(scope).filter((e) => up(e.textContent) === up(outcome))) {
+  const etichette = foglie
+    .filter((e) => up(e.textContent) === up(outcome) && sullaRiga(e) && rect(e).left >= limiteSinistro)
+    .sort((x, y) => rect(x).left - rect(y).left);
+
+  for (const label of etichette) {
     let node: Element | null = label.parentElement;
     for (let i = 0; i < 3 && node; i += 1) {
-      const found = oddsLeaves(node);
-      if (found.length === 1) {
+      const quote = Array.from(node.querySelectorAll("*")).filter(
+        (e) => e.children.length === 0 && visible(e) && isOdds(e.textContent) && sullaRiga(e),
+      );
+      if (quote.length === 1) {
         cell = node;
-        odds = oddsOf(found[0]?.textContent ?? null);
+        odds = oddsOf(quote[0]?.textContent ?? null);
         break;
       }
-      if (found.length > 1) break;
+      if (quote.length > 1) break;
       node = node.parentElement;
     }
     if (cell) break;
   }
 
   if (!cell || odds === null || !(odds > 1)) {
-    const viste = leavesIn(scope).map((e) => norm(e.textContent)).filter((t) => t.length > 0).slice(0, 25);
+    const viste = foglie
+      .filter((e) => sullaRiga(e))
+      .map((e) => norm(e.textContent))
+      .filter((t) => t.length > 0)
+      .slice(0, 25);
     return { kind: "no-cell", cellsSeen: viste };
   }
 
@@ -564,8 +586,8 @@ export const STAKE_ATTR = "data-betmind-stake";
  * Marca il campo dove si scrive l'importo, DENTRO il pannello schedina.
  *
  * Il book ne propone 3,00 € di suo. Cercare "un input di testo visibile" sulla
- * pagina pesca la casella di ricerca o altro; l'unico modo affidabile è
- * restringersi al pannello, come per il cestino.
+ * pagina pesca la casella di ricerca; l'unico modo affidabile è restringersi
+ * al pannello, come per il cestino.
  */
 export function markStakeField(query: { attr: string }): NavHit {
   const { attr } = query;
@@ -591,7 +613,6 @@ export function markStakeField(query: { attr: string }): NavHit {
 
   const inputs = Array.from(panel.querySelectorAll("input")).filter((e) => visible(e));
   const valori = inputs.map((e) => norm((e as HTMLInputElement).value));
-  // Il campo importo è quello il cui valore è una cifra in euro.
   const campo =
     inputs.find((e) => /^\d+[.,]\d{2}\s*€?$/.test(norm((e as HTMLInputElement).value))) ?? inputs[0];
   if (!campo) return { kind: "absent", available: valori };

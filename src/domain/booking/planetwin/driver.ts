@@ -533,10 +533,12 @@ async function clickFromGrid(
   timeout: number,
 ): Promise<number | null> {
   const [home, away] = splitEvent(event);
-  await page.goto(SPORT_PAGE, { waitUntil: "domcontentloaded", timeout });
-  await dismissCookieBanner(page);
-  await neutraliseOverlays(page);
-
+  // NESSUN ricaricamento qui.
+  //
+  // Rifiutando i cookie la schedina non sopravvive a un page.goto: la gamba
+  // precedente spariva e il biglietto si svuotava a ogni giro. Le selezioni di
+  // griglia si aggiungono tutte dalla stessa pagina, filtrando la ricerca —
+  // che è anche molto più veloce.
   const search = siteSearchBox(page);
   await search.waitFor({ state: "visible", timeout: Math.min(timeout, 15_000) }).catch(() => undefined);
   await search.fill(home).catch(() => undefined);
@@ -806,6 +808,8 @@ export async function bookTicket(
 
   try {
     await requireEmptySlip(page, timeout);
+    // requireEmptySlip ha gia' aperto il palinsesto: da qui in avanti non si
+    // ricarica più, altrimenti la schedina si svuota.
     const taken: number[] = [];
     for (let i = 0; i < legs.length; i += 1) {
       const leg = legs[i]!;
