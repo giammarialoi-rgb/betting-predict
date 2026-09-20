@@ -13,8 +13,10 @@ import assert from "node:assert/strict";
 import { after, before, describe, it } from "node:test";
 import type { Browser, Page } from "playwright";
 import {
+  BIN_ATTR,
   findCellInPage,
   markSearchNode,
+  markSlipBin,
   NAV_ATTR,
   TARGET_ATTR,
 } from "@/domain/booking/planetwin/cell-finder";
@@ -201,5 +203,60 @@ describe("nodi della ricerca contro pannello schedina", { timeout: 120_000 }, ()
     const r = await mark("×");
     assert.equal(r.kind, "absent");
     assert.equal(await page2.locator(`[${NAV_ATTR}="1"]`).count(), 0);
+  });
+});
+
+/**
+ * Il cestino della schedina.
+ *
+ * Nella corsa reale una gamba della sessione precedente restava dentro e
+ * finiva nel biglietto nuovo: la schedina mostrava 5.20 quando la prima gamba
+ * valeva 3.25. Il cestino non ha una classe riconoscibile — è un'icona
+ * Material, il cui testo è la legatura.
+ */
+const PAGINA_CON_RESIDUO = `<!doctype html><html><body>
+  <div class="left"><form><input placeholder="Ricerca"></form></div>
+  <div class="slip">
+    <span>SCHEDINA</span>
+    <span class="material-icons">delete_outline</span>
+    <div class="leg"><span>Milan - Lecce</span><span>1.60</span><span class="x">×</span></div>
+    <div><span>Quota Tot</span><span>1.60</span></div>
+  </div>
+</body></html>`;
+
+describe("cestino della schedina", { timeout: 120_000 }, () => {
+  let browser3: Browser;
+  let page3: Page;
+
+  before(async () => {
+    const { chromium } = await import("playwright");
+    browser3 = await chromium.launch();
+    page3 = await browser3.newPage();
+    await page3.addInitScript("window.__name = window.__name || function (f) { return f; };");
+    await page3.setContent(PAGINA_CON_RESIDUO);
+    await page3.evaluate("window.__name = window.__name || function (f) { return f; };");
+  });
+
+  after(async () => {
+    await browser3?.close();
+  });
+
+  it("trova il cestino dalla legatura Material, non dalla classe", async () => {
+    const r = (await page3.evaluate(markSlipBin, { attr: BIN_ATTR })) as { kind: string };
+    assert.equal(r.kind, "marked");
+    assert.equal(await page3.locator(`[${BIN_ATTR}="1"]`).count(), 1);
+    assert.equal(await page3.locator(`[${BIN_ATTR}="1"]`).innerText(), "delete_outline");
+  });
+
+  it("marca il cestino, non la × che rimuove una singola gamba", async () => {
+    await page3.evaluate(markSlipBin, { attr: BIN_ATTR });
+    assert.equal(await page3.locator(`.x[${BIN_ATTR}="1"]`).count(), 0);
+  });
+
+  it("i nodi di navigazione restano fuori dalla schedina anche qui", async () => {
+    const r = (await page3.evaluate(markSearchNode, { text: "Milan - Lecce", attr: NAV_ATTR })) as {
+      kind: string;
+    };
+    assert.equal(r.kind, "absent", "l'unico Milan - Lecce è dentro la schedina");
   });
 });

@@ -22,10 +22,13 @@
 import type { Browser, Locator, Page } from "playwright";
 import { locateSelection, type CatalogEntry } from "@/domain/booking/planetwin/catalog";
 import {
+  BIN_ATTR,
   findCellInPage,
   markSearchNode,
+  markSlipBin,
   NAV_ATTR,
   TARGET_ATTR,
+  type BinHit,
   type CellHit,
   type NavHit,
 } from "@/domain/booking/planetwin/cell-finder";
@@ -282,13 +285,29 @@ async function clearSlip(page: Page, timeout: number): Promise<void> {
   await page.goto(SPORT_PAGE, { waitUntil: "domcontentloaded", timeout });
   await dismissCookieBanner(page);
   await neutraliseOverlays(page);
-  const bin = page
-    .locator('[class*=trash], [class*=delete], [title*="vuota" i], [aria-label*="vuota" i]')
-    .filter({ visible: true })
-    .first();
-  if (await bin.isVisible().catch(() => false)) {
-    await bin.click().catch(() => undefined);
-    await page.waitForTimeout(600);
+
+  for (let attempt = 0; attempt < 3; attempt += 1) {
+    const body = await page.locator("body").innerText().catch(() => "");
+    if (parseSlipTotal(body) === null) return;
+
+    const hit = (await page.evaluate(markSlipBin, { attr: BIN_ATTR })) as BinHit;
+    if (hit.kind !== "marked") {
+      throw new BookingError(
+        "schedina non vuota e cestino non trovato — svuotala a mano prima di riprovare",
+        { residuo: parseSlipTotal(body), dentro_la_schedina: hit.insideSlip.slice(0, 20) },
+      );
+    }
+    await safeClick(page.locator(`[${BIN_ATTR}="1"]`).first(), timeout);
+    await page.waitForTimeout(900);
+  }
+
+  const body = await page.locator("body").innerText().catch(() => "");
+  const residuo = parseSlipTotal(body);
+  if (residuo !== null) {
+    throw new BookingError(
+      `la schedina contiene ancora qualcosa (quota ${residuo}) dopo tre tentativi di svuotarla`,
+      { residuo },
+    );
   }
 }
 

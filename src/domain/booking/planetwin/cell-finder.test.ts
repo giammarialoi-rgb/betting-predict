@@ -3,6 +3,8 @@ import { describe, it } from "node:test";
 import {
   cellMatchesOutcome,
   findCellInPage,
+  markSearchNode,
+  markSlipBin,
   oddsFromCellText,
   TARGET_ATTR,
 } from "@/domain/booking/planetwin/cell-finder";
@@ -48,14 +50,29 @@ describe("corrispondenza dell'esito", () => {
 });
 
 describe("la funzione eseguita nella pagina", () => {
-  it("non chiude su niente del modulo", () => {
+  it("nessuna delle funzioni serializzate chiude sul modulo", () => {
     // Playwright ne serializza il sorgente e lo esegue nel browser, dove questo
-    // modulo non esiste: un riferimento esterno esploderebbe lì dentro.
-    const src = findCellInPage.toString();
-    assert.ok(!/\bTARGET_ATTR\b/.test(src), "deve usare query.attr");
-    assert.ok(!/\boddsFromCellText\b/.test(src));
-    assert.ok(!/\bcellMatchesOutcome\b/.test(src));
-    assert.ok(!/\bimport\b/.test(src));
+    // modulo non esiste: un riferimento esterno esplode lì dentro. È già
+    // successo con una costante di legature lasciata fuori dalla funzione, e il
+    // controllo copriva solo findCellInPage.
+    const fuori = [
+      "TARGET_ATTR",
+      "NAV_ATTR",
+      "BIN_ATTR",
+      "BIN_LIGATURES",
+      "oddsFromCellText",
+      "cellMatchesOutcome",
+    ];
+    for (const fn of [findCellInPage, markSearchNode, markSlipBin]) {
+      const src = fn.toString();
+      for (const nome of fuori) {
+        assert.ok(
+          !new RegExp(`\\b${nome}\\b`).test(src),
+          `${fn.name} fa riferimento a ${nome}, che nel browser non esiste`,
+        );
+      }
+      assert.ok(!/\bimport\b/.test(src), `${fn.name} contiene un import`);
+    }
   });
 
   it("ripulisce le marcature precedenti prima di marcare", () => {

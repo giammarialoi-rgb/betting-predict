@@ -278,3 +278,62 @@ export function markSearchNode(query: { text: string | null; attr: string }): Na
   hit.setAttribute(attr, "1");
   return { kind: "marked", text: norm(hit.textContent) };
 }
+
+/** L'attributo con cui viene marcato il cestino della schedina. */
+export const BIN_ATTR = "data-betmind-bin";
+
+export type BinHit =
+  | { readonly kind: "marked"; readonly label: string }
+  | { readonly kind: "absent"; readonly insideSlip: readonly string[] };
+
+/**
+ * Marca il cestino DENTRO il pannello schedina.
+ *
+ * Il cestino non ha una classe riconoscibile: è un'icona Material, cioè un
+ * elemento il cui TESTO è la legatura ("delete_outline"). Cercarlo per classe
+ * non trovava nulla e la schedina non veniva mai svuotata — una gamba di una
+ * corsa precedente restava dentro e finiva nel biglietto successivo.
+ *
+ * È l'unico punto in cui si clicca volontariamente nel pannello schedina,
+ * quindi qui il pannello va trovato, non evitato.
+ */
+export function markSlipBin(query: { attr: string }): BinHit {
+  const { attr } = query;
+  // Dentro la funzione, non a livello di modulo: Playwright ne serializza il
+  // sorgente e lo esegue nel browser, dove le costanti del modulo non esistono.
+  const ligatures = ["delete_outline", "delete", "delete_forever", "clear_all"];
+  const norm = (s: string | null): string => (s ?? "").replace(/\s+/g, " ").trim();
+  const visible = (e: Element): boolean => e.getClientRects().length > 0;
+
+  document.querySelectorAll("[" + attr + "]").forEach((e) => e.removeAttribute(attr));
+
+  const input = document.querySelector('input[placeholder="Ricerca" i]');
+  const marker = Array.from(document.querySelectorAll("*")).find((e) => {
+    const t = norm(e.textContent).toUpperCase();
+    return e.children.length === 0 && (t === "BETSCANNER" || t === "SCHEDINA");
+  });
+  if (!marker) return { kind: "absent", insideSlip: [] };
+
+  let panel: Element | null = null;
+  let node: Element | null = marker.parentElement;
+  while (node && (!input || !node.contains(input))) {
+    panel = node;
+    node = node.parentElement;
+  }
+  if (!panel) return { kind: "absent", insideSlip: [] };
+
+  const leaves = Array.from(panel.querySelectorAll("*")).filter(
+    (e) => e.children.length === 0 && visible(e),
+  );
+  const insideSlip: string[] = [];
+  for (const e of leaves) {
+    const t = norm(e.textContent);
+    if (t && t.length < 40 && !insideSlip.includes(t)) insideSlip.push(t);
+    if (insideSlip.length >= 40) break;
+  }
+
+  const bin = leaves.find((e) => ligatures.includes(norm(e.textContent).toLowerCase()));
+  if (!bin) return { kind: "absent", insideSlip };
+  bin.setAttribute(attr, "1");
+  return { kind: "marked", label: norm(bin.textContent) };
+}
