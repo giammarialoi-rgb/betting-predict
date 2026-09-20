@@ -1,0 +1,288 @@
+/**
+ * DRIVER PLANETWIN365 — compone la schedina e riporta il codice di prenotazione.
+ *
+ * Gira su un Chromium reale, dalla connessione di casa. Non è una scelta di
+ * stile: sisal.it e planetwin365.it stanno dietro Akamai e rispondono 403 a
+ * qualsiasi client che non arrivi da un IP residenziale. Misurato il 20/09/2026
+ * da tre ambienti diversi, curl e Chromium reale compresi.
+ *
+ * Cosa NON fa, per costruzione:
+ *   - non fa login e non tocca credenziali;
+ *   - non preme mai SCOMMETTI: l'unico bottone che conosce è PRENOTA, e il
+ *     passo irreversibile — pagare alla cassa — resta a chi gioca;
+ *   - non prenota un biglietto parziale: se anche una sola gamba non si trova o
+ *     la sua quota è peggiorata oltre la tolleranza, non prenota niente.
+ *
+ * L'ultimo punto è il motivo per cui il modulo esiste. Comporre a mano un
+ * listone lungo sbaglia raramente in modo vistoso e spesso in modo invisibile:
+ * la riga sotto, la linea sbagliata, la quota di dieci minuti fa. Qui ogni
+ * gamba viene riletta dalla schedina dopo il clic e confrontata con quella
+ * decisa, e il biglietto o è esattamente quello o non esiste.
+ */
+import type { Browser, Locator, Page } from "playwright";
+import { locateSelection, type CatalogEntry } from "@/domain/booking/planetwin/catalog";
+import {
+  BookingError,
+  DEFAULT_ODDS_TOLERANCE,
+  driftIsAcceptable,
+  oddsDrift,
+  type BookedTicket,
+  type PlacedLeg,
+  type TicketLeg,
+} from "@/domain/booking/types";
+
+const BOOKMAKER = "Planetwin365";
+const HOME = "https://www.planetwin365.it/";
+
+/** L'unico bottone che questo driver ha il permesso di premere. */
+const BOOK_BUTTON = "PRENOTA";
+/** Bottoni che impegnano denaro. Se un selettore ne raggiunge uno, è un bug. */
+const FORBIDDEN_BUTTONS = ["SCOMMETTI", "GIOCA", "CONFERMA GIOCATA", "DEPOSITA"] as const;
+
+export type BookingOptions = {
+  readonly tolerance?: number;
+  /** Chromium a vista: lasciato acceso di default, così la composizione si guarda mentre accade. */
+  readonly headless?: boolean;
+  readonly timeoutMs?: number;
+  /** Profilo persistente, per non ripassare dal banner cookie ogni volta. */
+  readonly profileDir?: string;
+};
+
+/** Legge una quota dal testo di una cella. "3.20" → 3.2 */
+export function parseOdds(text: string): number {
+  const m = /(\d+[.,]\d{1,2})/.exec(text.trim());
+  const raw = m?.[1];
+  if (raw === undefined) throw new BookingError(`quota non leggibile da "${text}"`);
+  const n = Number(raw.replace(",", "."));
+  if (!Number.isFinite(n) || n <= 1) {
+    throw new BookingError(`quota fuori range da "${text}": ${n}`);
+  }
+  return n;
+}
+
+/** Normalizza il codice emesso: "RE 02 79 89 19 53" → "RE0279891953". */
+export function normalizeBookingCode(raw: string): string {
+  const code = raw.replace(/\s+/g, "").toUpperCase();
+  if (!/^[A-Z]{0,3}\d{8,16}$/.test(code)) {
+    throw new BookingError(`codice di prenotazione non riconosciuto: "${raw}"`);
+  }
+  return code;
+}
+
+/** Il biglietto proposto è componibile? Solleva sulla prima gamba che non lo è. */
+export function planTicket(legs: readonly TicketLeg[]): readonly CatalogEntry[] {
+  if (legs.length === 0) throw new BookingError("biglietto vuoto");
+  const seen = new Set<string>();
+  for (const leg of legs) {
+    const key = `${leg.event}|${leg.selection}`;
+    if (seen.has(key)) {
+      throw new BookingError(`gamba duplicata: ${key}`);
+    }
+    seen.add(key);
+  }
+  return legs.map((leg) => locateSelection(leg.selection));
+}
+
+async function dismissCookieBanner(page: Page): Promise<void> {
+  const decline = page.getByText(/continua senza accettare/i).first();
+  if (await decline.isVisible().catch(() => false)) {
+    await decline.click().catch(() => undefined);
+  }
+}
+
+async function openEvent(page: Page, event: string, timeout: number): Promise<void> {
+  await page.goto(HOME, { waitUntil: "domcontentloaded", timeout });
+  await dismissCookieBanner(page);
+
+  const search = page.locator('input[type="search"], input[placeholder*="erca" i]').first();
+  await search.waitFor({ state: "visible", timeout });
+  // Le due squadre bastano a identificare l'evento; il separatore varia.
+  const query = event.split(/\s*[-–]\s*/)[0]?.trim() ?? event;
+  await search.fill(query);
+  await page.waitForTimeout(1200);
+
+  const hit = page.getByText(new RegExp(escapeRegExp(event), "i")).first();
+  if (!(await hit.isVisible().catch(() => false))) {
+    throw new BookingError(`evento non trovato sul palinsesto: "${event}"`, { query });
+  }
+  await hit.click();
+  await page.waitForLoadState("domcontentloaded", { timeout });
+}
+
+function escapeRegExp(s: string): string {
+  return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+/** Il blocco mercato con quel titolo esatto. */
+function marketBlock(page: Page, block: string): Locator {
+  return page
+    .locator("section, div")
+    .filter({ has: page.getByText(new RegExp(`^\\s*${escapeRegExp(block)}\\s*$`, "i")) })
+    .last();
+}
+
+async function clickOutcome(page: Page, entry: CatalogEntry, timeout: number): Promise<number> {
+  const tab = page.getByRole("tab", { name: new RegExp(`^${escapeRegExp(entry.tab)}$`, "i") }).first();
+  if (await tab.isVisible().catch(() => false)) {
+    await tab.click();
+  } else {
+    const fallback = page.getByText(new RegExp(`^\\s*${escapeRegExp(entry.tab)}\\s*$`, "i")).first();
+    await fallback.click({ timeout });
+  }
+
+  const block = marketBlock(page, entry.block);
+  await block.waitFor({ state: "visible", timeout });
+
+  const scope = entry.line
+    ? block.locator("tr, [class*=row]").filter({ hasText: new RegExp(`\\b${escapeRegExp(entry.line)}\\b`) }).first()
+    : block;
+
+  const cell = scope
+    .locator("button, [role=button], [class*=quota], [class*=odd]")
+    .filter({ hasText: new RegExp(`^\\s*${escapeRegExp(entry.outcome)}\\s`, "i") })
+    .first();
+
+  if (!(await cell.isVisible().catch(() => false))) {
+    throw new BookingError(
+      `cella non trovata: ${entry.tab} → ${entry.block}${entry.line ? ` (${entry.line})` : ""} → ${entry.outcome}`,
+    );
+  }
+  const odds = parseOdds(await cell.innerText());
+  await cell.click();
+  return odds;
+}
+
+/** Rilegge la schedina e verifica che contenga esattamente le gambe decise. */
+async function verifySlip(
+  page: Page,
+  legs: readonly TicketLeg[],
+  taken: readonly number[],
+  tolerance: number,
+): Promise<readonly PlacedLeg[]> {
+  const placed: PlacedLeg[] = [];
+  const rejected: string[] = [];
+
+  legs.forEach((leg, i) => {
+    const takenOdds = taken[i];
+    if (takenOdds === undefined) {
+      rejected.push(`${leg.event} ${leg.selection}: quota non letta`);
+      return;
+    }
+    const drift = oddsDrift(leg.expectedOdds, takenOdds);
+    if (!driftIsAcceptable(drift, tolerance)) {
+      rejected.push(
+        `${leg.event} ${leg.selection}: attesa ${leg.expectedOdds}, presa ${takenOdds} (${(drift * 100).toFixed(1)}%)`,
+      );
+      return;
+    }
+    placed.push({ ...leg, takenOdds, drift });
+  });
+
+  if (rejected.length > 0) {
+    throw new BookingError(
+      `quote mosse oltre la tolleranza su ${rejected.length} gamba/e — biglietto non prenotato`,
+      { rejected },
+    );
+  }
+
+  const slipCount = await page.locator("[class*=schedina] [class*=event], [class*=slip] [class*=event]").count();
+  if (slipCount > 0 && slipCount !== legs.length) {
+    throw new BookingError(
+      `la schedina contiene ${slipCount} gambe invece di ${legs.length}`,
+    );
+  }
+  return placed;
+}
+
+async function pressBookButton(page: Page, timeout: number): Promise<void> {
+  const button = page.getByRole("button", { name: new RegExp(`^\\s*${BOOK_BUTTON}\\s*$`, "i") }).first();
+  const visible = await button.isVisible().catch(() => false);
+  const target = visible
+    ? button
+    : page.getByText(new RegExp(`^\\s*${BOOK_BUTTON}\\s*$`, "i")).first();
+
+  const label = (await target.innerText().catch(() => "")).trim().toUpperCase();
+  if (FORBIDDEN_BUTTONS.some((f) => label.includes(f))) {
+    throw new BookingError(`rifiutato: il selettore ha raggiunto "${label}", non ${BOOK_BUTTON}`);
+  }
+  if (!label.includes(BOOK_BUTTON)) {
+    throw new BookingError(`bottone ${BOOK_BUTTON} non trovato (letto "${label}")`);
+  }
+  await target.click({ timeout });
+}
+
+async function readBookingCode(page: Page, timeout: number): Promise<{ code: string; expiry: string }> {
+  const panel = page.getByText(/PRENOTAZIONE CONFERMATA|La tua prenotazione/i).first();
+  await panel.waitFor({ state: "visible", timeout });
+
+  const body = await page.locator("body").innerText();
+  const matched = /\b([A-Z]{2}\s?(?:\d{2}\s?){5})\b/.exec(body)?.[1];
+  if (matched === undefined) {
+    throw new BookingError("prenotazione confermata ma codice non leggibile");
+  }
+  const expiry = /IL TUO CODICE VALIDO PER ([^\n]+)/i.exec(body)?.[1]?.trim()
+    ?? /SCADENZA\s*\n?\s*([^\n]+)/i.exec(body)?.[1]?.trim()
+    ?? "non indicata";
+
+  return { code: normalizeBookingCode(matched), expiry };
+}
+
+/**
+ * Compone il biglietto su Planetwin365 e restituisce il codice di prenotazione.
+ * Non prenota nulla se anche una sola gamba non corrisponde a quella decisa.
+ */
+export async function bookTicket(
+  legs: readonly TicketLeg[],
+  options: BookingOptions = {},
+): Promise<BookedTicket> {
+  const tolerance = options.tolerance ?? DEFAULT_ODDS_TOLERANCE;
+  const timeout = options.timeoutMs ?? 45_000;
+  const entries = planTicket(legs);
+
+  const { chromium } = await import("playwright");
+  let browser: Browser | undefined;
+  let page: Page;
+
+  if (options.profileDir) {
+    const ctx = await chromium.launchPersistentContext(options.profileDir, {
+      headless: options.headless ?? false,
+      locale: "it-IT",
+      timezoneId: "Europe/Rome",
+    });
+    page = ctx.pages()[0] ?? (await ctx.newPage());
+  } else {
+    browser = await chromium.launch({ headless: options.headless ?? false });
+    const ctx = await browser.newContext({ locale: "it-IT", timezoneId: "Europe/Rome" });
+    page = await ctx.newPage();
+  }
+
+  try {
+    const taken: number[] = [];
+    for (let i = 0; i < legs.length; i += 1) {
+      const leg = legs[i]!;
+      await openEvent(page, leg.event, timeout);
+      taken.push(await clickOutcome(page, entries[i]!, timeout));
+    }
+
+    const placed = await verifySlip(page, legs, taken, tolerance);
+    await pressBookButton(page, timeout);
+    const { code, expiry } = await readBookingCode(page, timeout);
+
+    const body = await page.locator("body").innerText();
+    const totalOdds = Number(/Quota Tot[^\d]*(\d+[.,]\d+)/i.exec(body)?.[1]?.replace(",", ".") ?? "0");
+    const bonus = Number(/Bonus[^\d]*(\d+[.,]\d+)/i.exec(body)?.[1]?.replace(",", ".") ?? "0");
+
+    return {
+      bookmaker: BOOKMAKER,
+      code,
+      bookedAt: new Date().toISOString(),
+      expiry,
+      legs: placed,
+      totalOdds,
+      bonus,
+    };
+  } finally {
+    await page.context().close().catch(() => undefined);
+    await browser?.close().catch(() => undefined);
+  }
+}

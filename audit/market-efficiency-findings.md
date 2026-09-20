@@ -277,3 +277,73 @@ stesso numero.
 sono exchange. La loro commissione sulle vincite (tipicamente 2-5%) non è nel prezzo
 esposto e va sottratta. Il vantaggio reale resta, ma è inferiore a quanto suggerisce un
 overround negativo.
+
+## Prenotazione e margini reali sui book italiani — 20/09/2026
+
+### Il codice schedina esiste, ma è solo da agenzia
+
+Prenotazione composta e codice ottenuto su entrambi i book, **senza login**:
+
+| book | codice | formato | validità |
+|---|---|---|---|
+| Sisal | `D 463 5637 050` | 11 caratteri + barcode | fino al via del primo evento |
+| Planetwin365 | `RE0279891953` | `RE` + 10 cifre + barcode | 14 giorni e 23 ore, max 10 in memoria |
+
+Il codice **non si ricarica sul conto online**: va comunicato alla cassa di un
+punto vendita e pagato lì. Il *BetScanner* di Planetwin fa il percorso inverso
+— legge un biglietto già giocato in ricevitoria per seguirlo e fare cashout —
+ma non carica nulla. Il "booking code" che si ricarica online è dei book
+internazionali, non degli ADM.
+
+Conseguenza operativa: la prenotazione non passa da un conto, quindi non è
+soggetta a limitazione. Per un giocatore vincente non è un dettaglio.
+
+### Dove può girare un driver
+
+Akamai su entrambi i domini. Tre ambienti provati, tutti 403:
+
+| ambiente | client | esito |
+|---|---|---|
+| container cloud | curl | 403 Access Denied |
+| VM del desktop | curl | 403 Access Denied |
+| VM del desktop | Chromium reale | 403 Access Denied |
+| desktop dell'utente | browser reale | funziona |
+
+Il blocco è sull'**IP**, non sull'impronta del client: un Chromium vero preso
+dallo stesso IP viene rifiutato uguale. Il driver gira solo da connessione
+residenziale.
+
+### Margini misurati — Fiorentina-Napoli, board Planetwin365
+
+Riferimento sulla stessa partita: 1X2 **5.11%**, U/O 2.5 **6.84%**, GG/NG
+**7.18%**, doppia chance **12.3%** (su copertura 2).
+
+Angoli:
+
+| mercato | esiti | overround | per esito |
+|---|---|---|---|
+| P/D ANGOLI | 2 | 7.78% | 3.89% |
+| U/O ANGOLI 8.5 | 2 | 9.13% | 4.56% |
+| U/O ANGOLI 9.5 | 2 | 9.22% | 4.61% |
+| ANGOLI 1X2 | 3 | 11.76% | 3.92% |
+| SOMMA ANGOLI 3 ESITI | 3 | 16.28% | 5.43% |
+| TOTALE ANGOLI 1T | 3 | 20.56% | 6.85% |
+| TOTALE ANGOLI (5 bande) | 5 | 22.81% | 4.56% |
+| TOTALE ANGOLI CASA | 4 | 34.55% | 8.64% |
+
+**L'overround grezzo misura il numero di esiti, non quanto è caro il mercato.**
+Le bande a 5 esiti sembrano 2.5 volte più care di un due-vie e per esito costano
+uguale (4.56% contro 4.56%). Questo invalida il modo intuitivo di scegliere i
+mercati "meno efficienti" guardando l'overround totale.
+
+Il dato che conta per il modello: **ANGOLI 1X2 sta all'11.76%**, contro il 5-7%
+a cui era stato misurato il vantaggio di −0.035 di log loss sugli angoli. Lo
+stesso segnale contro una tassa doppia. Prima di giocarlo va rimisurato contro
+questi prezzi, non contro quelli di Pinnacle.
+
+Due trappole trovate scrivendo il modulo, entrambe fissate da test:
+- un blocco con esiti mancanti (`SQUADRA CON PIÙ ANGOLI`, solo 1 e 2, somma
+  0.43) letto come partizione dà un margine negativo del 57% — un arbitraggio
+  inesistente;
+- la doppia chance non è una partizione: copre ogni risultato due volte e
+  letta come tale dà oltre il 100% di margine.

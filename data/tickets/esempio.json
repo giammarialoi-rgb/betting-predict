@@ -1,0 +1,5 @@
+[
+  { "event": "Fiorentina - Napoli", "selection": "1",            "expectedOdds": 3.20 },
+  { "event": "Milan - Lecce",       "selection": "O2.5",         "expectedOdds": 1.80 },
+  { "event": "Juventus - Atalanta", "selection": "CORNERS_O9.5", "expectedOdds": 2.35 }
+]
