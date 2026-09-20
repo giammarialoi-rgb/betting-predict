@@ -103,6 +103,7 @@ class LeagueIndex {
 }
 
 function main(): void {
+  const t0 = Date.now();
   const rows = readFileSync(DATASET, "utf8")
     .trim()
     .split("\n")
@@ -111,7 +112,20 @@ function main(): void {
     (process.argv.find((a) => a.startsWith("--seasons="))?.split("=")[1] ?? "2324,2425,2526")
       .split(","),
   );
-  const index = new LeagueIndex(rows);
+  // Il costo sta nei rifit: uno per lega e per giornata, ciascuno su tutto lo
+  // storico precedente di quella lega. Sull'intero archivio (22 divisioni, tre
+  // stagioni) sono decine di migliaia di fit e non finisce: la prima versione
+  // ha girato sette ore senza produrre una riga. Si misura sui campionati
+  // maggiori, che è dove il modello viene poi usato.
+  const leghe = new Set(
+    (process.argv.find((a) => a.startsWith("--leagues="))?.split("=")[1] ?? "E0,I1,SP1,D1,F1")
+      .split(","),
+  );
+  const universo = rows.filter((m) => leghe.has(String(m.league)));
+  process.stdout.write(
+    `archivio ${rows.length} partite -> ${universo.length} nei campionati ${[...leghe].join(",")}\n`,
+  );
+  const index = new LeagueIndex(universo);
   const cache = new StrengthFitCache((lg, cut) => index.priors(lg, cut), PARAMS);
 
   const oss: Osservazione[] = [];
@@ -130,6 +144,11 @@ function main(): void {
     });
     const pMd = applyTemperature(pred.probability, TEMPERATURE);
     valutate += 1;
+    if (valutate % 200 === 0) {
+      process.stdout.write(
+        `  ${valutate} partite valutate (${Math.round((Date.now() - t0) / 1000)}s)\n`,
+      );
+    }
 
     for (const esito of ["HOME", "DRAW", "AWAY"] as const) {
       const a = pMd[esito];

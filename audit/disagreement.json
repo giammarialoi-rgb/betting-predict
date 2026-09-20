@@ -1,0 +1,57 @@
+{
+  "generated_at": "2026-09-20T18:48:26.370Z",
+  "seasons": [
+    "2425"
+  ],
+  "matches": 1752,
+  "bands": [
+    {
+      "fascia": "modello molto più basso",
+      "n": 122,
+      "mercato": 0.2933023172956336,
+      "modello": 0.18723164943929155,
+      "reale": 0.3360655737704918,
+      "piu_vicino": "mercato"
+    },
+    {
+      "fascia": "modello più basso",
+      "n": 1181,
+      "mercato": 0.34154114480744563,
+      "modello": 0.285865376826238,
+      "reale": 0.3607112616426757,
+      "piu_vicino": "mercato"
+    },
+    {
+      "fascia": "accordo",
+      "n": 2612,
+      "mercato": 0.3642791121074739,
+      "modello": 0.3607828536512317,
+      "reale": 0.37021439509954057,
+      "piu_vicino": "mercato"
+    },
+    {
+      "fascia": "modello più alto",
+      "n": 934,
+      "mercato": 0.29537773213895957,
+      "modello": 0.3465951364389118,
+      "reale": 0.2633832976445396,
+      "piu_vicino": "mercato"
+    },
+    {
+      "fascia": "modello molto più alto",
+      "n": 312,
+      "mercato": 0.2230003108465827,
+      "modello": 0.3112799838140099,
+      "reale": 0.1955128205128205,
+      "piu_vicino": "mercato"
+    },
+    {
+      "fascia": "modello estremo",
+      "n": 95,
+      "mercato": 0.16737984890207086,
+      "modello": 0.2983863433230283,
+      "reale": 0.11578947368421053,
+      "piu_vicino": "mercato"
+    }
+  ]
+}
