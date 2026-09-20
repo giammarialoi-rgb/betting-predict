@@ -28,6 +28,12 @@ export type CatalogEntry = {
   readonly line?: string;
   /** Quante volte gli esiti del blocco coprono lo spazio: 2 per la doppia chance. */
   readonly coverage: number;
+  /**
+   * Il palinsesto mostra gia' questo mercato: si può cliccare dalla lista,
+   * senza aprire la pagina della partita. Vale per 1X2 e U/O 2.5, che sono le
+   * colonne della griglia.
+   */
+  readonly onGrid?: boolean;
 };
 
 const RE_GOALS_OU = /^([OU])(\d+\.5)$/;
@@ -35,9 +41,9 @@ const RE_CORNERS_OU = /^CORNERS_([OU])(\d+\.5)$/;
 
 /** Mercati a riga unica, mappati uno a uno. */
 const FIXED: Readonly<Record<string, CatalogEntry>> = {
-  "1": { tab: "Principali", block: "1X2", outcome: "1", coverage: 1 },
-  X: { tab: "Principali", block: "1X2", outcome: "X", coverage: 1 },
-  "2": { tab: "Principali", block: "1X2", outcome: "2", coverage: 1 },
+  "1": { tab: "Principali", block: "1X2", outcome: "1", coverage: 1, onGrid: true },
+  X: { tab: "Principali", block: "1X2", outcome: "X", coverage: 1, onGrid: true },
+  "2": { tab: "Principali", block: "1X2", outcome: "2", coverage: 1, onGrid: true },
 
   "1X": { tab: "Principali", block: "DC", outcome: "1X", coverage: 2 },
   "12": { tab: "Principali", block: "DC", outcome: "12", coverage: 2 },

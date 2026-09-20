@@ -15,6 +15,7 @@ import type { Browser, Page } from "playwright";
 import {
   BIN_ATTR,
   findCellInPage,
+  findGridCellInPage,
   markSearchNode,
   markSlipBin,
   NAV_ATTR,
@@ -330,5 +331,99 @@ describe("abbinamento tollerante dell'evento", { timeout: 120_000 }, () => {
   it("senza le squadre resta il confronto letterale", async () => {
     assert.equal((await cerca("ACF Fiorentina - SSC Napoli")).kind, "absent");
     assert.equal((await cerca("Fiorentina - Napoli")).kind, "marked");
+  });
+});
+
+/**
+ * La riga del palinsesto.
+ *
+ * Aprire la pagina della partita richiede di indovinare quale elemento, tra i
+ * molti che portano il nome delle squadre, è quello che naviga: otto tentativi
+ * falliti. Il palinsesto mostra gia' 1X2 e U/O sulla stessa pagina, e cliccare
+ * lì mette la selezione in schedina allo stesso modo. Questo test fissa la
+ * struttura osservata: due nomi su righe distinte, poi le celle.
+ */
+const PALINSESTO = `<!doctype html><html><body>
+  <div class="left"><form><input placeholder="Ricerca"></form></div>
+  <div class="grid">
+    <div class="row">
+      <span>20 SET | 15:00</span>
+      <div class="teams"><span>Parma</span><span>Genoa</span></div>
+      <div class="c"><span>1</span><span>3.10</span></div>
+      <div class="c"><span>X</span><span>2.95</span></div>
+      <div class="c"><span>2</span><span>2.50</span></div>
+      <div class="ou"><span>2.5</span>
+        <div class="c"><span>U</span><span>1.85</span></div>
+        <div class="c"><span>O</span><span>1.90</span></div></div>
+    </div>
+    <div class="row">
+      <span>20 SET | 18:00</span>
+      <div class="teams"><span>Juventus</span><span>Atalanta</span></div>
+      <div class="c"><span>1</span><span>1.73</span></div>
+      <div class="c"><span>X</span><span>3.60</span></div>
+      <div class="c"><span>2</span><span>5.00</span></div>
+    </div>
+  </div>
+</body></html>`;
+
+describe("cella dal palinsesto, senza navigare", { timeout: 120_000 }, () => {
+  let browser5: Browser;
+  let page5: Page;
+
+  before(async () => {
+    const { chromium } = await import("playwright");
+    browser5 = await chromium.launch();
+    page5 = await browser5.newPage();
+    await page5.addInitScript("window.__name = window.__name || function (f) { return f; };");
+    await page5.setContent(PALINSESTO);
+    await page5.evaluate("window.__name = window.__name || function (f) { return f; };");
+  });
+
+  after(async () => {
+    await browser5?.close();
+  });
+
+  const cerca = (
+    home: string,
+    away: string,
+    outcome: string,
+    line: string | null = null,
+  ): Promise<{ kind: string; odds?: number }> =>
+    page5.evaluate(findGridCellInPage, {
+      home,
+      away,
+      outcome,
+      line,
+      attr: TARGET_ATTR,
+    }) as Promise<{ kind: string; odds?: number }>;
+
+  it("trova l'1X2 nella riga giusta", async () => {
+    assert.equal((await cerca("Parma", "Genoa", "1")).odds, 3.1);
+    assert.equal((await cerca("Parma", "Genoa", "X")).odds, 2.95);
+    assert.equal((await cerca("Parma", "Genoa", "2")).odds, 2.5);
+  });
+
+  it("non prende le quote della riga accanto", async () => {
+    assert.equal((await cerca("Juventus", "Atalanta", "1")).odds, 1.73);
+    assert.equal((await cerca("Juventus", "Atalanta", "2")).odds, 5.0);
+  });
+
+  it("regge i nomi lunghi di The Odds API", async () => {
+    assert.equal((await cerca("Juventus FC", "Atalanta BC", "1")).odds, 1.73);
+  });
+
+  it("trova U/O sulla linea giusta", async () => {
+    assert.equal((await cerca("Parma", "Genoa", "O", "2.5")).odds, 1.9);
+    assert.equal((await cerca("Parma", "Genoa", "U", "2.5")).odds, 1.85);
+  });
+
+  it("dice che la partita non c'è invece di prendere un'altra riga", async () => {
+    const r = await cerca("Milan", "Lecce", "1");
+    assert.notEqual(r.kind, "found");
+  });
+
+  it("dice che la linea non c'è invece di ripiegare", async () => {
+    const r = await cerca("Juventus", "Atalanta", "O", "2.5");
+    assert.notEqual(r.kind, "found");
   });
 });

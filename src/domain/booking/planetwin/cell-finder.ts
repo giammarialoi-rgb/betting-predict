@@ -441,3 +441,118 @@ export function readSlipContents(): SlipContents {
 
   return { total: Number.isFinite(total as number) ? total : null, lines, found: true };
 }
+
+/**
+ * Trova la cella 1X2 (o U/O) direttamente nella RIGA DEL PALINSESTO.
+ *
+ * Perche' esiste: aprire la pagina della partita richiede di indovinare quale
+ * elemento, tra i molti che portano il nome delle squadre, è quello che naviga.
+ * Ci ho sbattuto otto volte. Ma il palinsesto mostra gia' 1X2 e U/O di ogni
+ * partita sulla stessa pagina, e cliccare lì mette la selezione in schedina
+ * esattamente come dalla pagina evento — verificato a mano.
+ *
+ * Quindi per questi mercati non si naviga affatto. La pagina partita resta
+ * necessaria solo per i mercati che il palinsesto non mostra (angoli,
+ * sanzioni), dove la navigazione vale la fatica.
+ */
+export function findGridCellInPage(query: {
+  home: string;
+  away: string;
+  outcome: string;
+  line: string | null;
+  attr: string;
+}): CellHit {
+  const { home, away, outcome, line, attr } = query;
+  const norm = (s: string | null): string => (s ?? "").replace(/\s+/g, " ").trim();
+  const up = (s: string | null): string => norm(s).toUpperCase();
+  const isOdds = (s: string | null): boolean => /^\d+[.,]\d{1,2}$/.test(norm(s));
+  const oddsOf = (s: string | null): number => Number(norm(s).replace(",", "."));
+  const visible = (e: Element): boolean => e.getClientRects().length > 0;
+  const semplifica = (v: string): string =>
+    v
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[̀-ͯ]/g, "")
+      .replace(/[^a-z0-9]+/g, " ")
+      .trim();
+  const chiave = (v: string): string =>
+    semplifica(v).split(" ").sort((a, b) => b.length - a.length)[0] ?? "";
+
+  document.querySelectorAll("[" + attr + "]").forEach((e) => e.removeAttribute(attr));
+
+  const ka = chiave(home);
+  const kb = chiave(away);
+  if (ka.length < 3 || kb.length < 3) {
+    return { kind: "no-block", blocksSeen: ["nomi squadra troppo corti per cercarli"] };
+  }
+
+  const leavesIn = (root: Element): Element[] =>
+    Array.from(root.querySelectorAll("*")).filter((e) => e.children.length === 0 && visible(e));
+  const oddsLeaves = (root: Element): Element[] => leavesIn(root).filter((e) => isOdds(e.textContent));
+
+  // La riga: il più PICCOLO elemento che contiene entrambi i nomi e almeno tre
+  // quote. Più piccolo perche' i suoi antenati contengono anche le altre righe.
+  const candidateRows = Array.from(document.querySelectorAll("*")).filter((e) => {
+    if (!visible(e)) return false;
+    const t = semplifica(norm(e.textContent));
+    if (!t.includes(ka) || !t.includes(kb)) return false;
+    return oddsLeaves(e).length >= 3;
+  });
+  if (candidateRows.length === 0) {
+    const viste: string[] = [];
+    for (const e of Array.from(document.querySelectorAll("*"))) {
+      if (e.children.length !== 0 || !visible(e)) continue;
+      const t = norm(e.textContent);
+      if (t.length > 3 && t.length < 40 && semplifica(t).includes(ka) && !viste.includes(t)) viste.push(t);
+      if (viste.length >= 20) break;
+    }
+    return { kind: "no-block", blocksSeen: viste.length > 0 ? viste : ["partita non presente nel palinsesto"] };
+  }
+  const row = candidateRows.reduce((best, e) =>
+    norm(e.textContent).length < norm(best.textContent).length ? e : best,
+  );
+
+  // Con una linea (U/O 2.5) ci si restringe alla sua parte di riga.
+  let scope: Element = row;
+  if (line) {
+    const lineLeaf = leavesIn(row).find((e) => norm(e.textContent) === norm(line));
+    if (!lineLeaf) {
+      return { kind: "no-cell", cellsSeen: ["linea " + line + " non mostrata nel palinsesto"] };
+    }
+    let node: Element | null = lineLeaf.parentElement;
+    for (let i = 0; i < 4 && node; i += 1) {
+      if (oddsLeaves(node).length >= 1) {
+        scope = node;
+        break;
+      }
+      node = node.parentElement;
+    }
+  }
+
+  // La cella: stessa regola della pagina evento — dall'etichetta si sale al
+  // primo antenato con UNA sola quota.
+  let cell: Element | null = null;
+  let odds: number | null = null;
+  for (const label of leavesIn(scope).filter((e) => up(e.textContent) === up(outcome))) {
+    let node: Element | null = label.parentElement;
+    for (let i = 0; i < 3 && node; i += 1) {
+      const found = oddsLeaves(node);
+      if (found.length === 1) {
+        cell = node;
+        odds = oddsOf(found[0]?.textContent ?? null);
+        break;
+      }
+      if (found.length > 1) break;
+      node = node.parentElement;
+    }
+    if (cell) break;
+  }
+
+  if (!cell || odds === null || !(odds > 1)) {
+    const viste = leavesIn(scope).map((e) => norm(e.textContent)).filter((t) => t.length > 0).slice(0, 25);
+    return { kind: "no-cell", cellsSeen: viste };
+  }
+
+  cell.setAttribute(attr, "1");
+  return { kind: "found", odds, cellText: norm(cell.textContent) };
+}

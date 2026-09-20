@@ -24,6 +24,7 @@ import { locateSelection, type CatalogEntry } from "@/domain/booking/planetwin/c
 import {
   BIN_ATTR,
   findCellInPage,
+  findGridCellInPage,
   markSearchNode,
   markSlipBin,
   NAV_ATTR,
@@ -500,6 +501,42 @@ async function provaApriScheda(page: Page, tab: string, timeout: number): Promis
   }
 }
 
+/**
+ * Mette la selezione in schedina partendo dal palinsesto, senza aprire la
+ * pagina della partita. Restituisce null se la partita non è nella lista.
+ */
+async function clickFromGrid(
+  page: Page,
+  event: string,
+  entry: CatalogEntry,
+  timeout: number,
+): Promise<number | null> {
+  const [home, away] = splitEvent(event);
+  await page.goto(SPORT_PAGE, { waitUntil: "domcontentloaded", timeout });
+  await dismissCookieBanner(page);
+  await neutraliseOverlays(page);
+
+  const search = siteSearchBox(page);
+  await search.waitFor({ state: "visible", timeout: Math.min(timeout, 15_000) }).catch(() => undefined);
+  await search.fill(home).catch(() => undefined);
+  await page.waitForTimeout(1500);
+
+  await installEvaluateHelpers(page);
+  const hit = (await page.evaluate(findGridCellInPage, {
+    home,
+    away,
+    outcome: entry.outcome,
+    line: entry.line ?? null,
+    attr: TARGET_ATTR,
+  })) as CellHit;
+  if (hit.kind !== "found") return null;
+
+  const marked = page.locator(`[${TARGET_ATTR}="1"]`).first();
+  await marked.waitFor({ state: "visible", timeout: Math.min(timeout, 10_000) });
+  await safeClick(marked, timeout);
+  return hit.odds;
+}
+
 async function clickOutcome(page: Page, entry: CatalogEntry, timeout: number): Promise<number> {
   const where = `${entry.tab} → ${entry.block}${entry.line ? ` (${entry.line})` : ""} → ${entry.outcome}`;
 
@@ -725,8 +762,19 @@ export async function bookTicket(
     const taken: number[] = [];
     for (let i = 0; i < legs.length; i += 1) {
       const leg = legs[i]!;
-      await openEvent(page, leg.event, timeout);
-      taken.push(await clickOutcome(page, entries[i]!, timeout));
+      const entry = entries[i]!;
+
+      // Prima si prova dal palinsesto: niente navigazione, niente da
+      // indovinare. Solo se il mercato non è in griglia si apre la partita.
+      let presa: number | null = null;
+      if (entry.onGrid === true) {
+        presa = await clickFromGrid(page, leg.event, entry, timeout).catch(() => null);
+      }
+      if (presa === null) {
+        await openEvent(page, leg.event, timeout);
+        presa = await clickOutcome(page, entry, timeout);
+      }
+      taken.push(presa);
 
       const atteso = expectedTotalOdds(taken);
       const mostrato = await waitForSlipTotal(page, atteso, 8_000);
