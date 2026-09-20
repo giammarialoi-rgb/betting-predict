@@ -98,7 +98,8 @@
     "book:ticket": "tsx src/scripts/book-ticket.ts",
     "tickets": "tsx src/scripts/tickets.ts",
     "pool:build": "tsx src/scripts/pool-build.ts",
-    "lab:disagreement": "tsx src/scripts/lab-disagreement.ts"
+    "lab:disagreement": "tsx src/scripts/lab-disagreement.ts",
+    "clv:settle": "tsx src/scripts/clv-settle.ts"
   },
   "dependencies": {
     "@neondatabase/serverless": "^1.1.0",
