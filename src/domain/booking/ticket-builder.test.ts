@@ -1,0 +1,166 @@
+import assert from "node:assert/strict";
+import { describe, it } from "node:test";
+import {
+  bestSingle,
+  buildTicket,
+  legCost,
+  PRESETS,
+  targetFromStake,
+  TicketBuildError,
+  type RatedSelection,
+} from "@/domain/booking/ticket-builder";
+
+const ORA = new Date("2026-09-20T09:00:00Z");
+const fra = (ore: number): string =>
+  new Date(ORA.getTime() + ore * 3_600_000).toISOString();
+
+const sel = (
+  event: string,
+  odds: number,
+  probability: number,
+  ore = 6,
+): RatedSelection => ({ event, selection: "1", odds, probability, kickoff: fra(ore) });
+
+describe("costo di una gamba", () => {
+  it("vale esattamente 1 su una gamba prezzata equamente", () => {
+    assert.ok(Math.abs(legCost(sel("A", 2, 0.5)) - 1) < 1e-12);
+    assert.ok(Math.abs(legCost(sel("B", 4, 0.25)) - 1) < 1e-12);
+  });
+
+  it("sta sotto 1 quando il modello valuta meglio del prezzo", () => {
+    // quota 2.00 ma il modello dà 55%: vantaggio.
+    assert.ok(legCost(sel("A", 2, 0.55)) < 1);
+  });
+
+  it("sta sopra 1 quando il prezzo è peggiore del modello", () => {
+    assert.ok(legCost(sel("A", 2, 0.45)) > 1);
+  });
+
+  it("rifiuta quote e probabilità impossibili", () => {
+    assert.throws(() => legCost(sel("A", 1, 0.5)), /quota non valida/);
+    assert.throws(() => legCost(sel("A", 2, 0)), /probabilità fuori range/);
+    assert.throws(() => legCost(sel("A", 2, 1)), /probabilità fuori range/);
+  });
+});
+
+describe("dalla puntata alla quota da raggiungere", () => {
+  it("10 euro per vincerne 100 significa quota 10", () => {
+    const t = targetFromStake(10, 100, 0.15);
+    assert.ok(t.minOdds < 10 && t.maxOdds > 10);
+    assert.ok(Math.abs((t.minOdds + t.maxOdds) / 2 - 10) < 1e-9);
+  });
+
+  it("non accetta di vincere meno di quanto si punta", () => {
+    assert.throws(() => targetFromStake(10, 10), /deve superare/);
+    assert.throws(() => targetFromStake(10, 5), /deve superare/);
+    assert.throws(() => targetFromStake(0, 100), /importo non valido/);
+  });
+});
+
+describe("composizione del biglietto", () => {
+  const pool: readonly RatedSelection[] = [
+    sel("A - B", 1.5, 0.72), // p*q = 1.08
+    sel("C - D", 1.6, 0.70), // p*q = 1.12  <- valore atteso più alto
+    sel("E - F", 2.0, 0.50), // equo
+    sel("G - H", 3.0, 0.25), // negativo
+    sel("I - J", 1.4, 0.60), // negativo
+  ];
+
+  it("la singola prende il valore atteso più alto, non la quota più bassa", () => {
+    const t = bestSingle(pool, undefined, ORA);
+    assert.equal(t.legs.length, 1);
+    assert.equal(t.legs[0]?.event, "C - D", "1.6 x 0.70 rende più di 1.5 x 0.72");
+    assert.ok(Math.abs(t.edgePerEuro - 0.12) < 1e-9);
+  });
+
+  it("il raddoppio cade nell'intervallo e non lo sfora mai", () => {
+    const adatte = [
+      sel("A - B", 1.45, 0.72),
+      sel("C - D", 1.42, 0.74),
+      sel("E - F", 1.30, 0.80),
+    ];
+    const t = buildTicket(adatte, PRESETS.raddoppio(), ORA);
+    assert.ok(t.totalOdds >= 1.9 && t.totalOdds <= 2.2, `quota ${t.totalOdds}`);
+    assert.ok(t.legs.length >= 2);
+  });
+
+  it("preferisce fallire piuttosto che sforare il tetto", () => {
+    // 1.5 x 1.6 = 2.40, oltre il massimo di 2.20: nessuna coppia va bene.
+    const troppo = [sel("A - B", 1.5, 0.72), sel("C - D", 1.6, 0.70)];
+    assert.throws(() => buildTicket(troppo, PRESETS.raddoppio(), ORA), /nessuna combinazione/);
+  });
+
+  it("trova il raddoppio che l'avidità pura si perdeva", () => {
+    // 1.30 ha il costo più basso, ma prenderla per prima blocca a 1.85.
+    // La coppia giusta è 1.45 x 1.42 = 2.06.
+    const trappola = [
+      sel("A - B", 1.45, 0.72),
+      sel("C - D", 1.42, 0.74),
+      sel("E - F", 1.30, 0.80),
+    ];
+    const t = buildTicket(trappola, PRESETS.raddoppio(), ORA);
+    assert.equal(t.legs.length, 2);
+    assert.ok(t.totalOdds >= 1.9 && t.totalOdds <= 2.2, `quota ${t.totalOdds}`);
+  });
+
+  it("non mette mai due gambe sulla stessa partita", () => {
+    const stessoEvento = [
+      sel("A - B", 1.45, 0.72),
+      { ...sel("A - B", 1.42, 0.74), selection: "O2.5" },
+      sel("C - D", 1.42, 0.74),
+    ];
+    const t = buildTicket(stessoEvento, PRESETS.raddoppio(), ORA);
+    const eventi = t.legs.map((l) => l.event);
+    assert.equal(new Set(eventi).size, eventi.length, "gambe correlate moltiplicate");
+  });
+
+  it("riporta probabilità, pareggio e valore atteso senza addolcirli", () => {
+    const t = buildTicket(pool, PRESETS.multipla(5), ORA);
+    assert.ok(Math.abs(t.breakEvenProbability - 1 / t.totalOdds) < 1e-12);
+    assert.ok(Math.abs(t.oneWinEvery - 1 / t.probability) < 1e-9);
+    assert.ok(Math.abs(t.edgePerEuro - (t.probability * t.totalOdds - 1)) < 1e-12);
+  });
+
+  it("esclude gli eventi fuori orizzonte", () => {
+    const lontani = [sel("A - B", 2.0, 0.55, 24 * 20), sel("C - D", 2.0, 0.55, 24 * 21)];
+    assert.throws(
+      () => bestSingle(lontani, 14, ORA),
+      /nessuna selezione disponibile/,
+    );
+    // Senza orizzonte gli stessi eventi sono ammessi.
+    assert.equal(bestSingle(lontani, undefined, ORA).legs.length, 1);
+  });
+
+  it("esclude gli eventi già iniziati", () => {
+    const passati = [sel("A - B", 2.0, 0.55, -1), sel("C - D", 2.0, 0.55, -2)];
+    assert.throws(() => buildTicket(passati, PRESETS.raddoppio(), ORA), /nessuna selezione/);
+    assert.throws(() => bestSingle(passati, undefined, ORA), /nessuna selezione/);
+  });
+
+  it("dice che la quota non è raggiungibile invece di consegnare un biglietto sbagliato", () => {
+    const corti = [sel("A - B", 1.1, 0.95), sel("C - D", 1.1, 0.95)];
+    assert.throws(
+      () => buildTicket(corti, { minOdds: 50, maxOdds: 60, maxLegs: 2 }, ORA),
+      /sotto il minimo richiesto/,
+    );
+  });
+
+  it("rifiuta un intervallo invertito o gambe impossibili", () => {
+    assert.throws(
+      () => buildTicket(pool, { minOdds: 10, maxOdds: 2, maxLegs: 3 }, ORA),
+      /intervallo invertito/,
+    );
+    assert.throws(
+      () => buildTicket(pool, { minOdds: 2, maxOdds: 3, maxLegs: 0 }, ORA),
+      /numero di gambe non valido/,
+    );
+  });
+
+  it("un listone lungo è improbabile, e lo dichiara", () => {
+    const tanti = Array.from({ length: 20 }, (_, i) => sel(`E${i} - F${i}`, 1.8, 0.56));
+    const t = buildTicket(tanti, { minOdds: 100, maxOdds: 400, maxLegs: 20 }, ORA);
+    assert.ok(t.totalOdds >= 100);
+    assert.ok(t.probability < 0.05, `p = ${t.probability}`);
+    assert.ok(t.oneWinEvery > 20, `una vincita ogni ${t.oneWinEvery}`);
+  });
+});
