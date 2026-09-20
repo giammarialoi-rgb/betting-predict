@@ -103,6 +103,21 @@ export function totalOddsMatches(shown: number, expected: number): boolean {
   return Math.abs(shown - expected) / expected < 0.01;
 }
 
+/**
+ * Ripulisce la scadenza dalle legature delle icone Material.
+ *
+ * Il book scrive la scadenza accanto a un'icona il cui testo È il nome
+ * dell'icona: innerText restituisce "14 GIORNI E 23 ORE schedule". Quel
+ * "schedule" finiva stampato all'utente.
+ */
+export function cleanExpiry(raw: string): string {
+  const senzaIcone = raw
+    .replace(/\b(schedule|timer|access_time|event|info|help)\b/gi, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+  return senzaIcone.length > 0 ? senzaIcone : "non indicata";
+}
+
 /** Normalizza il codice emesso: "RE 02 79 89 19 53" → "RE0279891953". */
 export function normalizeBookingCode(raw: string): string {
   const code = raw.replace(/\s+/g, "").toUpperCase();
@@ -437,6 +452,15 @@ async function clickOutcome(page: Page, entry: CatalogEntry, timeout: number): P
   return hit.odds;
 }
 
+/** Il bonus multipla che la schedina dichiara adesso. */
+export function parseSlipBonus(bodyText: string): number {
+  const m = /Bonus[^\d]*(\d+[.,]\d+)/i.exec(bodyText);
+  const raw = m?.[1];
+  if (raw === undefined) return 0;
+  const n = Number(raw.replace(",", "."));
+  return Number.isFinite(n) ? n : 0;
+}
+
 /** Le righe della schedina, per dire cosa c'è dentro quando qualcosa non torna. */
 async function slipContents(page: Page): Promise<SlipContents> {
   await installEvaluateHelpers(page);
@@ -565,11 +589,11 @@ async function readBookingCode(page: Page, timeout: number): Promise<{ code: str
   if (matched === undefined) {
     throw new BookingError("prenotazione confermata ma codice non leggibile");
   }
-  const expiry = /IL TUO CODICE VALIDO PER ([^\n]+)/i.exec(body)?.[1]?.trim()
-    ?? /SCADENZA\s*\n?\s*([^\n]+)/i.exec(body)?.[1]?.trim()
-    ?? "non indicata";
+  const grezza = /IL TUO CODICE VALIDO PER ([^\n]+)/i.exec(body)?.[1]
+    ?? /SCADENZA\s*\n?\s*([^\n]+)/i.exec(body)?.[1]
+    ?? "";
 
-  return { code: normalizeBookingCode(matched), expiry };
+  return { code: normalizeBookingCode(matched), expiry: cleanExpiry(grezza) };
 }
 
 /**
@@ -631,12 +655,15 @@ export async function bookTicket(
     }
 
     const placed = await verifySlip(page, legs, taken, tolerance);
+
+    // Letti ORA, non dopo: premuto PRENOTA la schedina si svuota e questi
+    // numeri spariscono dalla pagina. Venivano stampati a zero.
+    const primaDiPrenotare = await page.locator("body").innerText().catch(() => "");
+    const totalOdds = parseSlipTotal(primaDiPrenotare) ?? expectedTotalOdds(taken);
+    const bonus = parseSlipBonus(primaDiPrenotare);
+
     await pressBookButton(page, timeout);
     const { code, expiry } = await readBookingCode(page, timeout);
-
-    const body = await page.locator("body").innerText();
-    const totalOdds = Number(/Quota Tot[^\d]*(\d+[.,]\d+)/i.exec(body)?.[1]?.replace(",", ".") ?? "0");
-    const bonus = Number(/Bonus[^\d]*(\d+[.,]\d+)/i.exec(body)?.[1]?.replace(",", ".") ?? "0");
 
     return {
       bookmaker: BOOKMAKER,

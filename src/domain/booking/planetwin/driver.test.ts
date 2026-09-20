@@ -156,3 +156,28 @@ describe("controllo aritmetico della schedina", () => {
     assert.throws(() => expectedTotalOdds([]), /nessuna gamba/);
   });
 });
+
+describe("uscita per l'utente", () => {
+  it("toglie le legature delle icone dalla scadenza", async () => {
+    const { cleanExpiry } = await import("@/domain/booking/planetwin/driver");
+    // È quello che è uscito davvero alla prima prenotazione riuscita.
+    assert.equal(cleanExpiry("14 GIORNI E 23 ORE schedule"), "14 GIORNI E 23 ORE");
+    assert.equal(cleanExpiry("7 GIORNI timer"), "7 GIORNI");
+    assert.equal(cleanExpiry("  "), "non indicata");
+  });
+
+  it("legge il bonus multipla dalla schedina", async () => {
+    const { parseSlipBonus } = await import("@/domain/booking/planetwin/driver");
+    assert.equal(parseSlipBonus("Quota Tot 9.52 Bonus 0,00€ Vincita"), 0);
+    assert.equal(parseSlipBonus("Quota Tot 12.00 Bonus 1,20€"), 1.2);
+    assert.equal(parseSlipBonus("niente bonus qui"), 0);
+  });
+
+  it("legge il totale della schedina", async () => {
+    const { parseSlipTotal } = await import("@/domain/booking/planetwin/driver");
+    assert.equal(parseSlipTotal("Quota Tot 9,52 Bonus 0,00"), 9.52);
+    assert.equal(parseSlipTotal("Quota Tot. 3.25"), 3.25);
+    assert.equal(parseSlipTotal("schedina vuota"), null);
+    assert.equal(parseSlipTotal("Quota Tot 1,00"), null, "1.00 non è un totale valido");
+  });
+});
