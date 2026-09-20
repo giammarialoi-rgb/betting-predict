@@ -150,6 +150,7 @@ const PAGINA_CON_SCHEDINA = `<!doctype html><html><body>
     </div>
   </div>
   <div class="slip">
+    <span>SCHEDINA</span>
     <div class="leg"><span>Serie A</span><span>Milan - Lecce</span><span class="x">×</span></div>
   </div>
 </body></html>`;
@@ -177,11 +178,12 @@ describe("nodi della ricerca contro pannello schedina", { timeout: 120_000 }, ()
       available?: string[];
     }>;
 
-  it("elenca solo i nodi tra le due ancore", async () => {
+  it("elenca i nodi della barra laterale e mai quelli della schedina", async () => {
     const r = await mark(null);
-    assert.deepEqual(r.available, ["Calcio", "Serie A", "Milan - Lecce"]);
-    assert.ok(!r.available?.includes("Tutti"), "oltre l'ancora di chiusura");
-    assert.ok(!r.available?.includes("×"), "il pannello schedina non è nella regione");
+    assert.ok(r.available?.includes("Milan - Lecce"), "la foglia dell'evento");
+    assert.ok(r.available?.includes("Calcio"));
+    assert.ok(!r.available?.includes("×"), "la × che rimuove una gamba");
+    assert.ok(!r.available?.includes("SCHEDINA"), "il pannello schedina è zona vietata");
   });
 
   it("marca il nodo nella barra laterale, non l'omonimo nella schedina", async () => {

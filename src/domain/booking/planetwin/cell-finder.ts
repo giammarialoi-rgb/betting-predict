@@ -227,35 +227,53 @@ export function markSearchNode(query: { text: string | null; attr: string }): Na
   document.querySelectorAll("[" + attr + "]").forEach((e) => e.removeAttribute(attr));
 
   const input = document.querySelector('input[placeholder="Ricerca" i]');
-  const column = input?.closest("form")?.parentElement ?? null;
-  if (!column) return { kind: "absent", available: [] };
+  if (!input) return { kind: "absent", available: [] };
 
-  const inRegion: Element[] = [];
-  const walker = document.createTreeWalker(column, NodeFilter.SHOW_ELEMENT);
-  let started = false;
-  let node = walker.nextNode();
-  while (node) {
-    const el = node as Element;
-    const t = norm(el.textContent);
-    if (!started) {
-      if (t === "Ricerca per eventi sportivi") started = true;
-    } else if (t.startsWith("Campionati")) {
-      break;
-    } else if (el.children.length === 0 && t.length > 0 && t.length < 80 && visible(el)) {
-      inRegion.push(el);
+  // ZONA VIETATA: il pannello schedina. È l'unico posto dove un clic fa danno,
+  // perche' ripete gli stessi nomi degli eventi accanto alla "×" che rimuove la
+  // gamba. Definire per esclusione invece che per inclusione: una regione
+  // delimitata da ancore di testo si rompe appena il book cambia una scritta,
+  // e quando si rompe non si trova più niente. Questa regge finche' la schedina
+  // resta riconoscibile, e se non la si riconosce si rinuncia del tutto.
+  const slipMarker = Array.from(document.querySelectorAll("*")).find((e) => {
+    const t = norm(e.textContent).toUpperCase();
+    return e.children.length === 0 && (t === "BETSCANNER" || t === "SCHEDINA");
+  });
+  let forbidden: Element | null = null;
+  if (slipMarker) {
+    let node: Element | null = slipMarker.parentElement;
+    // Il contenitore più ampio della schedina che NON contiene la ricerca.
+    while (node && !node.contains(input)) {
+      forbidden = node;
+      node = node.parentElement;
     }
-    node = walker.nextNode();
   }
 
+  // Regione preferita: la colonna della ricerca. Se non la si riconosce si
+  // guarda tutta la pagina, ma la zona vietata vale comunque.
+  const column = input.closest("form")?.parentElement ?? document.body;
+
+  const candidates = Array.from(column.querySelectorAll("*")).filter(
+    (e) =>
+      e.children.length === 0 &&
+      visible(e) &&
+      norm(e.textContent).length > 0 &&
+      norm(e.textContent).length < 80 &&
+      !(forbidden && forbidden.contains(e)) &&
+      e !== input,
+  );
+
   const available: string[] = [];
-  for (const e of inRegion) {
+  for (const e of candidates) {
     const t = norm(e.textContent);
     if (!available.includes(t)) available.push(t);
   }
+
   if (text === null) return { kind: "absent", available };
 
-  const hit = inRegion.find((e) => norm(e.textContent) === norm(text));
+  const hit = candidates.find((e) => norm(e.textContent) === norm(text));
   if (!hit) return { kind: "absent", available };
+  if (forbidden && forbidden.contains(hit)) return { kind: "absent", available };
   hit.setAttribute(attr, "1");
   return { kind: "marked", text: norm(hit.textContent) };
 }
