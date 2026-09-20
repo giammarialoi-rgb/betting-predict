@@ -17,6 +17,7 @@ import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { OddsApiClient, type OddsApiEvent } from "@/providers/the-odds-api/client";
 import { matchTeam, normalizeTeamName } from "@/domain/eval/predictive-intelligence/models/team-matching";
+import { devig } from "@/domain/odds/devig";
 import type { RatedSelection } from "@/domain/booking/ticket-builder";
 
 const ROOT = process.cwd();
@@ -137,21 +138,40 @@ async function main(): Promise<void> {
     // stringa con cui il driver andrà a cercarlo.
     const nome = `${ev.home_team} - ${ev.away_team}`;
 
-    const candidati: Array<[string, number, number | null]> = [
-      ["1", m.home, priceOf(ev, "h2h", ev.home_team)],
-      ["X", m.draw, priceOf(ev, "h2h", "Draw")],
-      ["2", m.away, priceOf(ev, "h2h", ev.away_team)],
-      ["O2.5", m.over_2_5, priceOf(ev, "totals", "Over", 2.5)],
-      ["U2.5", 1 - m.over_2_5, priceOf(ev, "totals", "Under", 2.5)],
-    ];
+    // La probabilità che conta è quella EQUA DEL MERCATO: il prezzo ripulito
+    // dal margine. Il modello resta accanto, per confronto, ma non sceglie —
+    // misurato che il suo disaccordo punta dalla parte sbagliata.
+    const q1 = priceOf(ev, "h2h", ev.home_team);
+    const qx = priceOf(ev, "h2h", "Draw");
+    const q2 = priceOf(ev, "h2h", ev.away_team);
+    const qo = priceOf(ev, "totals", "Over", 2.5);
+    const qu = priceOf(ev, "totals", "Under", 2.5);
 
-    for (const [selection, probability, odds] of candidati) {
-      if (odds === null || !(probability > 0) || probability >= 1) continue;
+    const candidati: Array<[string, number | null, number | null, number]> = [];
+    if (q1 !== null && qx !== null && q2 !== null) {
+      const eque = devig([q1, qx, q2], "shin").probabilities;
+      candidati.push(
+        ["1", q1, eque[0] ?? null, m.home],
+        ["X", qx, eque[1] ?? null, m.draw],
+        ["2", q2, eque[2] ?? null, m.away],
+      );
+    }
+    if (qo !== null && qu !== null) {
+      const eque = devig([qo, qu], "shin").probabilities;
+      candidati.push(
+        ["O2.5", qo, eque[0] ?? null, m.over_2_5],
+        ["U2.5", qu, eque[1] ?? null, 1 - m.over_2_5],
+      );
+    }
+
+    for (const [selection, odds, fair, modello] of candidati) {
+      if (odds === null || fair === null || !(fair > 0) || fair >= 1) continue;
       pool.push({
         event: nome,
         selection,
         odds,
-        probability,
+        probability: fair,
+        modelProbability: modello,
         kickoff: ev.commence_time,
         informationShare: r.information_share ?? null,
       });

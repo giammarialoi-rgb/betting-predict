@@ -38,8 +38,24 @@ export type RatedSelection = {
   readonly selection: string;
   /** Quota decimale offerta dal book. */
   readonly odds: number;
-  /** Probabilità che il modello assegna all'esito. */
+  /**
+   * Probabilità usata per comporre e valutare il biglietto.
+   *
+   * È la probabilità EQUA DEL MERCATO — il prezzo ripulito dal margine — non
+   * quella del modello. Misurato su 5256 osservazioni (stagione 2425, cinque
+   * campionati maggiori): dove il modello alza la probabilità rispetto al
+   * mercato, l'esito si verifica MENO spesso di quanto dica il mercato; dove la
+   * abbassa, si verifica di più. Nella fascia estrema il modello diceva 29.8%,
+   * il mercato 16.7%, la realtà 11.6%. Scegliere le gambe dove il modello
+   * dissente di più significava selezionare sistematicamente le peggiori.
+   */
   readonly probability: number;
+  /**
+   * Cosa dice il modello, tenuto solo per mostrarlo accanto al prezzo. NON
+   * entra nella scelta delle gambe finche' non esiste una misura che dica che
+   * aggiunge qualcosa.
+   */
+  readonly modelProbability?: number | null;
   /** Inizio evento ISO, per l'orizzonte e per la scadenza del codice. */
   readonly kickoff: string;
   /**
@@ -92,7 +108,22 @@ export class TicketBuildError extends Error {
   }
 }
 
-/** Il costo in probabilità di ogni unità di quota. Sotto 1 = vantaggio. */
+/**
+ * Quanto margine si paga su questa gamba, per unità di quota.
+ *
+ *     costo = -ln(p_equa) / ln(quota)
+ *
+ * Con p_equa presa dal mercato ripulito, vale 1 su un prezzo senza margine e
+ * cresce con la tassa incorporata. Scegliere le gambe col costo più basso
+ * significa comporre la quota voluta pagando meno tassa possibile — che è
+ * l'unica cosa che possiamo davvero ottimizzare, dato che una multipla si
+ * gioca su un book solo e il vantaggio del confronto prezzi non si applica.
+ *
+ * Prima questa funzione confrontava il modello col prezzo e i valori sotto 1
+ * venivano letti come vantaggio. Con p equa di mercato NON scende mai sotto 1:
+ * un biglietto a valore atteso positivo su un singolo book non esiste, e ora
+ * il numero lo dice invece di prometterlo.
+ */
 export function legCost(selection: RatedSelection): number {
   const { odds, probability } = selection;
   if (!Number.isFinite(odds) || odds <= 1) {
@@ -297,9 +328,9 @@ export function bestSingle(
   if (candidati.length === 0) {
     throw new TicketBuildError("nessuna selezione disponibile nell'orizzonte richiesto");
   }
-  const migliore = candidati.reduce((best, s) =>
-    s.probability * s.odds > best.probability * best.odds ? s : best,
-  );
+  // Col prezzo equo di mercato tutte le singole hanno valore atteso negativo:
+  // la migliore è quella che paga meno margine, cioè il costo più basso.
+  const migliore = candidati.reduce((best, s) => (legCost(s) < legCost(best) ? s : best));
   return describe([migliore]);
 }
 

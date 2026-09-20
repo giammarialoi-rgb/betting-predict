@@ -28,19 +28,26 @@ const sel = (
   informationShare: 0.8,
 });
 
-describe("costo di una gamba", () => {
-  it("vale esattamente 1 su una gamba prezzata equamente", () => {
+describe("margine di una gamba", () => {
+  it("vale esattamente 1 su un prezzo senza margine", () => {
     assert.ok(Math.abs(legCost(sel("A", 2, 0.5)) - 1) < 1e-12);
     assert.ok(Math.abs(legCost(sel("B", 4, 0.25)) - 1) < 1e-12);
   });
 
-  it("sta sotto 1 quando il modello valuta meglio del prezzo", () => {
-    // quota 2.00 ma il modello dà 55%: vantaggio.
-    assert.ok(legCost(sel("A", 2, 0.55)) < 1);
+  it("cresce col margine incorporato nel prezzo", () => {
+    // Probabilità equa 55% pagata 1.75 invece di 1.82: il book trattiene.
+    const caro = legCost(sel("A", 1.75, 0.55));
+    const meno = legCost(sel("B", 1.8, 0.55));
+    assert.ok(caro > 1 && meno > 1);
+    assert.ok(caro > meno, "la quota più bassa a parità di probabilità costa di più");
   });
 
-  it("sta sopra 1 quando il prezzo è peggiore del modello", () => {
-    assert.ok(legCost(sel("A", 2, 0.45)) > 1);
+  it("con probabilità eque di mercato non scende mai sotto 1", () => {
+    // Un biglietto a valore atteso positivo su un singolo book non esiste:
+    // la funzione ora lo dice invece di prometterlo.
+    for (const [q, p] of [[1.75, 0.55], [3.0, 0.32], [10.0, 0.095]] as const) {
+      assert.ok(legCost(sel("X", q, p)) > 1, `quota ${q} con equa ${p}`);
+    }
   });
 
   it("rifiuta quote e probabilità impossibili", () => {
@@ -102,26 +109,30 @@ describe("filtro sulla quota di informazione", () => {
 });
 
 describe("composizione del biglietto", () => {
+  // Probabilità EQUE di mercato: ogni prezzo incorpora un margine, quindi
+  // p * quota < 1 sempre. Cambia solo quanto margine si paga.
   const pool: readonly RatedSelection[] = [
-    sel("A - B", 1.5, 0.72), // p*q = 1.08
-    sel("C - D", 1.6, 0.70), // p*q = 1.12  <- valore atteso più alto
-    sel("E - F", 2.0, 0.50), // equo
-    sel("G - H", 3.0, 0.25), // negativo
-    sel("I - J", 1.4, 0.60), // negativo
+    sel("A - B", 1.5, 0.65), // margine contenuto
+    sel("C - D", 1.6, 0.60),
+    sel("E - F", 2.0, 0.48),
+    sel("G - H", 3.0, 0.31),
+    sel("I - J", 1.4, 0.68),
   ];
 
-  it("la singola prende il valore atteso più alto, non la quota più bassa", () => {
+  it("la singola prende quella che paga meno margine", () => {
     const t = bestSingle(pool, undefined, ORA);
     assert.equal(t.legs.length, 1);
-    assert.equal(t.legs[0]?.event, "C - D", "1.6 x 0.70 rende più di 1.5 x 0.72");
-    assert.ok(Math.abs(t.edgePerEuro - 0.12) < 1e-9);
+    // Col prezzo equo di mercato nessuna singola è in vantaggio: si sceglie la
+    // meno tassata, e il valore atteso resta negativo. Dirlo è il punto.
+    const costi = pool.map((p) => legCost(p));
+    assert.ok(Math.abs(legCost(t.legs[0]!) - Math.min(...costi)) < 1e-12);
   });
 
   it("il raddoppio cade nell'intervallo e non lo sfora mai", () => {
     const adatte = [
-      sel("A - B", 1.45, 0.72),
-      sel("C - D", 1.42, 0.74),
-      sel("E - F", 1.30, 0.80),
+      sel("A - B", 1.45, 0.67),
+      sel("C - D", 1.42, 0.68),
+      sel("E - F", 1.30, 0.75),
     ];
     const t = buildTicket(adatte, PRESETS.raddoppio(), ORA);
     assert.ok(t.totalOdds >= 1.9 && t.totalOdds <= 2.2, `quota ${t.totalOdds}`);
@@ -130,7 +141,7 @@ describe("composizione del biglietto", () => {
 
   it("preferisce fallire piuttosto che sforare il tetto", () => {
     // 1.5 x 1.6 = 2.40, oltre il massimo di 2.20: nessuna coppia va bene.
-    const troppo = [sel("A - B", 1.5, 0.72), sel("C - D", 1.6, 0.70)];
+    const troppo = [sel("A - B", 1.5, 0.65), sel("C - D", 1.6, 0.60)];
     assert.throws(() => buildTicket(troppo, PRESETS.raddoppio(), ORA), /nessuna combinazione/);
   });
 
@@ -138,9 +149,9 @@ describe("composizione del biglietto", () => {
     // 1.30 ha il costo più basso, ma prenderla per prima blocca a 1.85.
     // La coppia giusta è 1.45 x 1.42 = 2.06.
     const trappola = [
-      sel("A - B", 1.45, 0.72),
-      sel("C - D", 1.42, 0.74),
-      sel("E - F", 1.30, 0.80),
+      sel("A - B", 1.45, 0.67),
+      sel("C - D", 1.42, 0.68),
+      sel("E - F", 1.30, 0.75),
     ];
     const t = buildTicket(trappola, PRESETS.raddoppio(), ORA);
     assert.equal(t.legs.length, 2);
@@ -149,17 +160,18 @@ describe("composizione del biglietto", () => {
 
   it("non mette mai due gambe sulla stessa partita", () => {
     const stessoEvento = [
-      sel("A - B", 1.45, 0.72),
-      { ...sel("A - B", 1.42, 0.74), selection: "O2.5" },
-      sel("C - D", 1.42, 0.74),
+      sel("A - B", 1.45, 0.67),
+      { ...sel("A - B", 1.42, 0.68), selection: "O2.5" },
+      sel("C - D", 1.42, 0.68),
     ];
     const t = buildTicket(stessoEvento, PRESETS.raddoppio(), ORA);
     const eventi = t.legs.map((l) => l.event);
     assert.equal(new Set(eventi).size, eventi.length, "gambe correlate moltiplicate");
   });
 
-  it("riporta probabilità, pareggio e valore atteso senza addolcirli", () => {
+  it("il valore atteso di una multipla è sempre negativo, e lo dice", () => {
     const t = buildTicket(pool, PRESETS.multipla(5), ORA);
+    assert.ok(t.edgePerEuro < 0, `valore atteso ${t.edgePerEuro}`);
     assert.ok(Math.abs(t.breakEvenProbability - 1 / t.totalOdds) < 1e-12);
     assert.ok(Math.abs(t.oneWinEvery - 1 / t.probability) < 1e-9);
     assert.ok(Math.abs(t.edgePerEuro - (t.probability * t.totalOdds - 1)) < 1e-12);
@@ -182,7 +194,7 @@ describe("composizione del biglietto", () => {
   });
 
   it("dice che la quota non è raggiungibile invece di consegnare un biglietto sbagliato", () => {
-    const corti = [sel("A - B", 1.1, 0.95), sel("C - D", 1.1, 0.95)];
+    const corti = [sel("A - B", 1.1, 0.88), sel("C - D", 1.1, 0.88)];
     assert.throws(
       () => buildTicket(corti, { minOdds: 50, maxOdds: 60, maxLegs: 2 }, ORA),
       /sotto il minimo richiesto/,
@@ -201,7 +213,7 @@ describe("composizione del biglietto", () => {
   });
 
   it("un listone lungo è improbabile, e lo dichiara", () => {
-    const tanti = Array.from({ length: 20 }, (_, i) => sel(`E${i} - F${i}`, 1.8, 0.56));
+    const tanti = Array.from({ length: 20 }, (_, i) => sel(`E${i} - F${i}`, 1.8, 0.53));
     const t = buildTicket(tanti, { minOdds: 100, maxOdds: 400, maxLegs: 20 }, ORA);
     assert.ok(t.totalOdds >= 100);
     assert.ok(t.probability < 0.05, `p = ${t.probability}`);

@@ -32,10 +32,12 @@ function stampa(titolo: string, t: BuiltTicket, stake: number): void {
   process.stdout.write(`\n${titolo}\n${"-".repeat(titolo.length)}\n`);
   for (const l of t.legs) {
     const costo = legCost(l);
-    const segno = costo < 1 ? "+" : " ";
+    const segno = " ";
+    const mod = l.modelProbability == null ? "    -" : `${(l.modelProbability * 100).toFixed(1)}%`;
     process.stdout.write(
-      `  ${segno} ${l.event.padEnd(34).slice(0, 34)} ${l.selection.padEnd(7)} @ ${l.odds.toFixed(2).padStart(6)}` +
-        `   modello ${(l.probability * 100).toFixed(1).padStart(5)}%   costo ${costo.toFixed(3)}\n`,
+      `  ${segno} ${l.event.padEnd(32).slice(0, 32)} ${l.selection.padEnd(6)} @ ${l.odds.toFixed(2).padStart(6)}` +
+        `   equa ${(l.probability * 100).toFixed(1).padStart(5)}%   modello ${mod.padStart(6)}` +
+        `   margine ${((costo - 1) * 100).toFixed(1).padStart(4)}%\n`,
     );
   }
   const vincita = stake * t.totalOdds;
@@ -49,13 +51,12 @@ function stampa(titolo: string, t: BuiltTicket, stake: number): void {
   );
   process.stdout.write(
     `  serve ${(t.breakEvenProbability * 100).toFixed(3)}% per andare in pari   ` +
-      `valore atteso ${t.edgePerEuro >= 0 ? "+" : ""}${(t.edgePerEuro * 100).toFixed(1)}% per euro\n`,
+      `margine totale pagato ${(-t.edgePerEuro * 100).toFixed(1)}%\n`,
   );
-  if (t.edgePerEuro < 0) {
-    process.stdout.write(
-      `  su ${stake.toFixed(2)}€ il valore atteso è ${(stake * (1 + t.edgePerEuro)).toFixed(2)}€\n`,
-    );
-  }
+  process.stdout.write(
+    `  su ${stake.toFixed(2)}€ il valore atteso è ${(stake * (1 + t.edgePerEuro)).toFixed(2)}€ ` +
+      `(le probabilità sono quelle del mercato, non del modello)\n`,
+  );
 }
 
 function main(): void {
