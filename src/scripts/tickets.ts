@@ -118,6 +118,7 @@ function main(): void {
             event: l.event,
             selection: l.selection,
             expectedOdds: l.odds,
+            kickoff: l.kickoff,
           })),
           null,
           2,

@@ -1,27 +1,38 @@
 [
   {
-    "event": "Auxerre - Brest",
+    "event": "Bournemouth - Liverpool",
     "selection": "1",
-    "expectedOdds": 3.21
+    "expectedOdds": 3.25,
+    "kickoff": "2026-09-20T13:00:00Z"
   },
   {
-    "event": "Fiorentina - Napoli",
-    "selection": "2",
-    "expectedOdds": 2.4
+    "event": "Juventus - Atalanta BC",
+    "selection": "1",
+    "expectedOdds": 1.77,
+    "kickoff": "2026-09-20T16:00:00Z"
+  },
+  {
+    "event": "Nice - Lille",
+    "selection": "U2.5",
+    "expectedOdds": 2.06,
+    "kickoff": "2026-09-20T15:15:00Z"
   },
   {
     "event": "AC Milan - Lecce",
-    "selection": "X",
-    "expectedOdds": 6.4
-  },
-  {
-    "event": "Feyenoord - FC Utrecht",
     "selection": "2",
-    "expectedOdds": 10
+    "expectedOdds": 13.5,
+    "kickoff": "2026-09-20T18:45:00Z"
   },
   {
-    "event": "Bournemouth - Liverpool",
+    "event": "Auxerre - Brest",
     "selection": "1",
-    "expectedOdds": 3.25
+    "expectedOdds": 3.21,
+    "kickoff": "2026-09-20T13:00:00Z"
+  },
+  {
+    "event": "FC Porto - Benfica",
+    "selection": "1",
+    "expectedOdds": 3.05,
+    "kickoff": "2026-09-20T19:30:00Z"
   }
 ]

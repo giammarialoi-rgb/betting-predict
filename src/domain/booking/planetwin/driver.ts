@@ -133,8 +133,25 @@ export function normalizeBookingCode(raw: string): string {
 }
 
 /** Il biglietto proposto è componibile? Solleva sulla prima gamba che non lo è. */
-export function planTicket(legs: readonly TicketLeg[]): readonly CatalogEntry[] {
+export function planTicket(
+  legs: readonly TicketLeg[],
+  now: Date = new Date(),
+): readonly CatalogEntry[] {
   if (legs.length === 0) throw new BookingError("biglietto vuoto");
+  const iniziate = legs.filter((l) => {
+    if (l.kickoff === undefined) return false;
+    const t = Date.parse(l.kickoff);
+    return Number.isFinite(t) && t <= now.getTime();
+  });
+  if (iniziate.length > 0) {
+    throw new BookingError(
+      `${iniziate.length} gamba/e sono gia' iniziate: il biglietto non è più giocabile`,
+      {
+        iniziate: iniziate.map((l) => `${l.event} (${l.kickoff})`),
+        rimedio: "ricomponi il biglietto con pnpm tickets",
+      },
+    );
+  }
   const seen = new Set<string>();
   for (const leg of legs) {
     const key = `${leg.event}|${leg.selection}`;

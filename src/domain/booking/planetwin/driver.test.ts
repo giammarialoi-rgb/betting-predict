@@ -181,3 +181,42 @@ describe("uscita per l'utente", () => {
     assert.equal(parseSlipTotal("Quota Tot 1,00"), null, "1.00 non è un totale valido");
   });
 });
+
+describe("gambe gia' iniziate", () => {
+  const ORA = new Date("2026-09-20T13:00:00+02:00");
+  const gamba = (event: string, kickoff: string): TicketLeg => ({
+    event,
+    selection: "1",
+    expectedOdds: 2,
+    kickoff,
+  });
+
+  it("rifiuta il biglietto se una partita è gia' iniziata", async () => {
+    const { planTicket } = await import("@/domain/booking/planetwin/driver");
+    assert.throws(
+      () =>
+        planTicket(
+          [
+            gamba("Fiorentina - Napoli", "2026-09-20T10:30:00Z"),
+            gamba("Milan - Lecce", "2026-09-20T18:45:00Z"),
+          ],
+          ORA,
+        ),
+      /gia' iniziate/,
+    );
+  });
+
+  it("passa quando sono tutte future", async () => {
+    const { planTicket } = await import("@/domain/booking/planetwin/driver");
+    const plan = planTicket(
+      [gamba("Milan - Lecce", "2026-09-20T18:45:00Z"), gamba("Porto - Benfica", "2026-09-20T19:30:00Z")],
+      ORA,
+    );
+    assert.equal(plan.length, 2);
+  });
+
+  it("una gamba senza orario non blocca nulla", async () => {
+    const { planTicket } = await import("@/domain/booking/planetwin/driver");
+    assert.equal(planTicket([{ event: "A - B", selection: "1", expectedOdds: 2 }], ORA).length, 1);
+  });
+});

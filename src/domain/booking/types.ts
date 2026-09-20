@@ -19,6 +19,12 @@ export type TicketLeg = {
   readonly selection: string;
   /** La quota su cui il motore ha calcolato il valore. */
   readonly expectedOdds: number;
+  /**
+   * Inizio evento ISO, quando noto. Serve a rifiutare subito una gamba gia'
+   * iniziata: una partita in corso esce dal palinsesto prepartita, e senza
+   * questo il driver la cercherebbe invano dando un errore che parla d'altro.
+   */
+  readonly kickoff?: string;
 };
 
 /** Una gamba come risulta dopo essere finita nella schedina del book. */
