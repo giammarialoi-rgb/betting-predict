@@ -219,8 +219,21 @@ export type NavHit =
  * La regione è delimitata da "Ricerca per eventi sportivi" sopra e
  * "Campionati:" sotto. Se le ancore non si trovano, non si clicca niente.
  */
-export function markSearchNode(query: { text: string | null; attr: string }): NavHit {
-  const { text, attr } = query;
+export function markSearchNode(query: {
+  text: string | null;
+  attr: string;
+  /**
+   * Le due squadre, per l'abbinamento tollerante.
+   *
+   * Serve perche' i nomi differiscono tra i sistemi: lo storico dice
+   * "Fiorentina", The Odds API "ACF Fiorentina", il book scrive
+   * "Fiorentina - Napoli". Un confronto letterale fallisce su differenze che
+   * per una persona non esistono. Si richiede comunque che ENTRAMBE compaiano:
+   * abbinare una partita sbagliata non dà errore, dà una scommessa sbagliata.
+   */
+  teams?: readonly [string, string] | null;
+}): NavHit {
+  const { text, attr, teams } = query;
   const norm = (s: string | null): string => (s ?? "").replace(/\s+/g, " ").trim();
   const visible = (e: Element): boolean => e.getClientRects().length > 0;
 
@@ -272,7 +285,35 @@ export function markSearchNode(query: { text: string | null; attr: string }): Na
 
   if (text === null) return { kind: "absent", available };
 
-  const hit = candidates.find((e) => norm(e.textContent) === norm(text));
+  const semplifica = (v: string): string =>
+    v
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/[^a-z0-9]+/g, " ")
+      .trim();
+
+  let hit = candidates.find((e) => norm(e.textContent) === norm(text));
+
+  if (!hit && teams) {
+    const [casa, ospite] = teams;
+    const a = semplifica(casa);
+    const b = semplifica(ospite);
+    // Il nome più lungo di ciascuna squadra è spesso un sovrainsieme dell'altro
+    // ("ACF Fiorentina" contro "Fiorentina"): basta che la parola più
+    // caratterizzante di entrambe compaia nel nodo.
+    const chiave = (v: string): string =>
+      v.split(" ").sort((x, y) => y.length - x.length)[0] ?? v;
+    const ka = chiave(a);
+    const kb = chiave(b);
+    if (ka.length >= 4 && kb.length >= 4) {
+      hit = candidates.find((e) => {
+        const t = semplifica(norm(e.textContent));
+        return t.includes(ka) && t.includes(kb);
+      });
+    }
+  }
+
   if (!hit) return { kind: "absent", available };
   if (forbidden && forbidden.contains(hit)) return { kind: "absent", available };
   hit.setAttribute(attr, "1");

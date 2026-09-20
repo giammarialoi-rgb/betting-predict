@@ -95,7 +95,9 @@
     "lab:dispersion-backtest": "tsx src/scripts/lab-dispersion-backtest.ts",
     "corners:collect": "tsx src/scripts/corners-collect.ts",
     "lab:multiples": "tsx src/scripts/lab-multiples.ts",
-    "book:ticket": "tsx src/scripts/book-ticket.ts"
+    "book:ticket": "tsx src/scripts/book-ticket.ts",
+    "tickets": "tsx src/scripts/tickets.ts",
+    "pool:build": "tsx src/scripts/pool-build.ts"
   },
   "dependencies": {
     "@neondatabase/serverless": "^1.1.0",

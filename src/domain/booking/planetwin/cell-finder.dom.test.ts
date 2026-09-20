@@ -279,3 +279,56 @@ describe("cestino della schedina", { timeout: 120_000 }, () => {
     assert.equal(r.kind, "absent", "l'unico Milan - Lecce è dentro la schedina");
   });
 });
+
+/**
+ * Abbinamento tollerante: i nomi differiscono tra i sistemi.
+ * Lo storico dice "Fiorentina", The Odds API "ACF Fiorentina", il book scrive
+ * "Fiorentina - Napoli". Un confronto letterale fallisce su differenze che per
+ * una persona non esistono.
+ */
+const PAGINA_NOMI_DIVERSI = `<!doctype html><html><body>
+  <div class="left"><form><input placeholder="Ricerca"></form></div>
+  <div><span class="event-name">Fiorentina - Napoli</span>
+       <span class="event-name">Milan - Lecce</span></div>
+</body></html>`;
+
+describe("abbinamento tollerante dell'evento", { timeout: 120_000 }, () => {
+  let browser4: Browser;
+  let page4: Page;
+
+  before(async () => {
+    const { chromium } = await import("playwright");
+    browser4 = await chromium.launch();
+    page4 = await browser4.newPage();
+    await page4.addInitScript("window.__name = window.__name || function (f) { return f; };");
+    await page4.setContent(PAGINA_NOMI_DIVERSI);
+    await page4.evaluate("window.__name = window.__name || function (f) { return f; };");
+  });
+
+  after(async () => {
+    await browser4?.close();
+  });
+
+  const cerca = (text: string, teams?: [string, string]): Promise<{ kind: string; text?: string }> =>
+    page4.evaluate(markSearchNode, { text, attr: NAV_ATTR, teams: teams ?? null }) as Promise<{
+      kind: string;
+      text?: string;
+    }>;
+
+  it("trova l'evento anche con i nomi lunghi di The Odds API", async () => {
+    const r = await cerca("ACF Fiorentina - SSC Napoli", ["ACF Fiorentina", "SSC Napoli"]);
+    assert.equal(r.kind, "marked");
+    assert.equal(r.text, "Fiorentina - Napoli");
+  });
+
+  it("pretende che compaiano ENTRAMBE le squadre", async () => {
+    // Napoli c'è, ma l'avversario no: non deve abbinare niente.
+    const r = await cerca("Fiorentina - Juventus", ["ACF Fiorentina", "Juventus FC"]);
+    assert.equal(r.kind, "absent", "abbinata una partita sbagliata");
+  });
+
+  it("senza le squadre resta il confronto letterale", async () => {
+    assert.equal((await cerca("ACF Fiorentina - SSC Napoli")).kind, "absent");
+    assert.equal((await cerca("Fiorentina - Napoli")).kind, "marked");
+  });
+});

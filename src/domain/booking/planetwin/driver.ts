@@ -284,9 +284,18 @@ async function searchResultNodes(page: Page): Promise<readonly string[]> {
  * nel pannello schedina, dove gli stessi testi compaiono accanto a una "×" che
  * rimuove la gamba.
  */
-async function clickSearchNode(page: Page, text: string, timeout: number): Promise<boolean> {
+async function clickSearchNode(
+  page: Page,
+  text: string,
+  timeout: number,
+  teams?: readonly [string, string],
+): Promise<boolean> {
   await installEvaluateHelpers(page);
-  const hit = (await page.evaluate(markSearchNode, { text, attr: NAV_ATTR })) as NavHit;
+  const hit = (await page.evaluate(markSearchNode, {
+    text,
+    attr: NAV_ATTR,
+    teams: teams ?? null,
+  })) as NavHit;
   if (hit.kind !== "marked") return false;
   const marked = page.locator(`[${NAV_ATTR}="1"]`).first();
   if (!(await marked.isVisible().catch(() => false))) return false;
@@ -373,7 +382,7 @@ async function openEvent(page: Page, event: string, timeout: number): Promise<vo
   let found = false;
 
   for (let round = 0; round < MAX_COMPETITIONS; round += 1) {
-    if (await clickSearchNode(page, leafText, timeout)) {
+    if (await clickSearchNode(page, leafText, timeout, [home, away])) {
       found = true;
       break;
     }

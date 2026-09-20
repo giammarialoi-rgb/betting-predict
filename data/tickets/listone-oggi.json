@@ -1,0 +1,62 @@
+[
+  {
+    "event": "Getafe - Málaga",
+    "selection": "U2.5",
+    "expectedOdds": 1.58
+  },
+  {
+    "event": "Villarreal - Levante",
+    "selection": "1",
+    "expectedOdds": 1.56
+  },
+  {
+    "event": "FC Schalke 04 - Elversberg",
+    "selection": "O2.5",
+    "expectedOdds": 1.54
+  },
+  {
+    "event": "Parma - Genoa",
+    "selection": "U2.5",
+    "expectedOdds": 1.61
+  },
+  {
+    "event": "AC Milan - Lecce",
+    "selection": "1",
+    "expectedOdds": 1.31
+  },
+  {
+    "event": "Juventus - Atalanta BC",
+    "selection": "1",
+    "expectedOdds": 1.75
+  },
+  {
+    "event": "Santa Clara - Braga",
+    "selection": "U2.5",
+    "expectedOdds": 1.55
+  },
+  {
+    "event": "Bournemouth - Liverpool",
+    "selection": "O2.5",
+    "expectedOdds": 1.52
+  },
+  {
+    "event": "CF Estrela - Académico de Viseu",
+    "selection": "O2.5",
+    "expectedOdds": 2.02
+  },
+  {
+    "event": "Estoril - Casa Pia",
+    "selection": "1",
+    "expectedOdds": 1.76
+  },
+  {
+    "event": "Nice - Lille",
+    "selection": "U2.5",
+    "expectedOdds": 2.06
+  },
+  {
+    "event": "Frosinone - Como",
+    "selection": "1",
+    "expectedOdds": 6.6
+  }
+]
