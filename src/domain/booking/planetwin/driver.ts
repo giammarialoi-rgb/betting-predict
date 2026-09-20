@@ -90,23 +90,56 @@ async function dismissCookieBanner(page: Page): Promise<void> {
   }
 }
 
+/** "Fiorentina - Napoli" → ["Fiorentina", "Napoli"] */
+export function splitEvent(event: string): readonly [string, string] {
+  const parts = event.split(/\s+[-–—vs.]+\s+/i).map((p) => p.trim()).filter(Boolean);
+  const home = parts[0];
+  const away = parts[1];
+  if (home === undefined || away === undefined) {
+    throw new BookingError(`nome evento non interpretabile: "${event}" — atteso "Casa - Ospite"`);
+  }
+  return [home, away];
+}
+
 async function openEvent(page: Page, event: string, timeout: number): Promise<void> {
+  const [home, away] = splitEvent(event);
+
   await page.goto(HOME, { waitUntil: "domcontentloaded", timeout });
   await dismissCookieBanner(page);
 
-  const search = page.locator('input[type="search"], input[placeholder*="erca" i]').first();
+  const search = page
+    .locator('input[type="search"], input[placeholder*="erca" i], input[aria-label*="erca" i]')
+    .first();
   await search.waitFor({ state: "visible", timeout });
-  // Le due squadre bastano a identificare l'evento; il separatore varia.
-  const query = event.split(/\s*[-–]\s*/)[0]?.trim() ?? event;
-  await search.fill(query);
-  await page.waitForTimeout(1200);
+  await search.fill(home);
+  await page.waitForTimeout(1500);
 
-  const hit = page.getByText(new RegExp(escapeRegExp(event), "i")).first();
-  if (!(await hit.isVisible().catch(() => false))) {
-    throw new BookingError(`evento non trovato sul palinsesto: "${event}"`, { query });
+  // Sul palinsesto le due squadre stanno su righe distinte dentro la stessa
+  // card: cercare la stringa unita "Casa - Ospite" non trova nulla. Si cerca
+  // l'elemento che le contiene ENTRAMBE, che è quello che identifica l'evento.
+  const card = page
+    .locator("a, tr, li, [class*=event], [class*=match]")
+    .filter({ hasText: new RegExp(escapeRegExp(home), "i") })
+    .filter({ hasText: new RegExp(escapeRegExp(away), "i") })
+    .first();
+
+  if (!(await card.isVisible().catch(() => false))) {
+    throw new BookingError(`evento non trovato sul palinsesto: "${event}"`, {
+      cercato: home,
+      attese: [home, away],
+      suggerimento: "usa i nomi esattamente come li scrive Planetwin365",
+    });
   }
-  await hit.click();
+  await card.click();
   await page.waitForLoadState("domcontentloaded", { timeout });
+
+  // Verifica di essere finito sull'evento giusto, non su uno omonimo.
+  const heading = await page.locator("body").innerText();
+  const onRightEvent =
+    new RegExp(escapeRegExp(home), "i").test(heading) && new RegExp(escapeRegExp(away), "i").test(heading);
+  if (!onRightEvent) {
+    throw new BookingError(`aperta la pagina sbagliata per "${event}"`);
+  }
 }
 
 function escapeRegExp(s: string): string {

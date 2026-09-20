@@ -77,3 +77,25 @@ describe("pianificazione del biglietto", () => {
     assert.throws(() => planTicket([]), /vuoto/);
   });
 });
+
+describe("nome evento", () => {
+  it("separa le squadre qualunque trattino usi il book", async () => {
+    const { splitEvent } = await import("@/domain/booking/planetwin/driver");
+    assert.deepEqual(splitEvent("Fiorentina - Napoli"), ["Fiorentina", "Napoli"]);
+    assert.deepEqual(splitEvent("Milan – Lecce"), ["Milan", "Lecce"]);
+    assert.deepEqual(splitEvent("Deportivo La Coruña - Real Betis"), [
+      "Deportivo La Coruña",
+      "Real Betis",
+    ]);
+  });
+
+  it("non spezza un nome che contiene un trattino attaccato", async () => {
+    const { splitEvent } = await import("@/domain/booking/planetwin/driver");
+    assert.deepEqual(splitEvent("Saint-Etienne - Paris FC"), ["Saint-Etienne", "Paris FC"]);
+  });
+
+  it("rifiuta un nome senza avversario invece di cercare a caso", async () => {
+    const { splitEvent } = await import("@/domain/booking/planetwin/driver");
+    assert.throws(() => splitEvent("Fiorentina"), /non interpretabile/);
+  });
+});
