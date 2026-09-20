@@ -74,6 +74,71 @@ function simulate(input: {
   };
 }
 
+/** Tutte le combinazioni di k elementi su n (sistema integrale). */
+function combinations(n: number, k: number): number[][] {
+  const out: number[][] = [];
+  const cur: number[] = [];
+  const rec = (start: number) => {
+    if (cur.length === k) { out.push([...cur]); return; }
+    for (let i = start; i < n; i += 1) { cur.push(i); rec(i + 1); cur.pop(); }
+  };
+  rec(0);
+  return out;
+}
+
+/**
+ * Sistema integrale: k su n, ogni combinazione con la stessa puntata.
+ *
+ * Il valore atteso e IDENTICO a quello delle multiple singole a k gambe — ogni
+ * combinazione ha lo stesso moltiplicatore (1+e)^k, quindi la media non cambia.
+ * Cio che cambia e la VARIANZA: si vince parzialmente, e per la crescita
+ * composta del capitale la varianza e un costo. E' una differenza reale, che
+ * pero non trasforma un valore atteso negativo in positivo.
+ */
+function simulateSystem(input: {
+  n: number;
+  k: number;
+  overround: number;
+  trueEdgePerLeg: number;
+  legsPerYear: number;
+  stakeFraction: number;
+  trials: number;
+  seed: number;
+}): { median: number; p05: number; p95: number; mean: number } {
+  const rnd = makeRng(input.seed);
+  const combos = combinations(input.n, input.k);
+  const finals: number[] = [];
+  const tickets = Math.max(1, Math.round(input.legsPerYear / input.n));
+
+  for (let t = 0; t < input.trials; t += 1) {
+    let bank = 1000;
+    for (let i = 0; i < tickets; i += 1) {
+      if (bank < 1) break;
+      const total = Math.max(1, bank * input.stakeFraction);
+      const per = total / combos.length;
+      const odds: number[] = [];
+      const won: boolean[] = [];
+      for (let l = 0; l < input.n; l += 1) {
+        const pTrue = 0.45 + rnd() * 0.2;
+        odds.push(legOdds(pTrue, input.overround));
+        won.push(rnd() <= Math.min(0.97, pTrue * (1 + input.trueEdgePerLeg)));
+      }
+      bank -= total;
+      for (const c of combos) {
+        if (c.every((ix) => won[ix])) {
+          let mult = 1;
+          for (const ix of c) mult *= odds[ix]!;
+          bank += per * mult;
+        }
+      }
+    }
+    finals.push(bank);
+  }
+  finals.sort((a, b) => a - b);
+  const q = (f: number) => finals[Math.min(finals.length - 1, Math.floor(f * finals.length))]!;
+  return { median: q(0.5), p05: q(0.05), p95: q(0.95), mean: finals.reduce((a, b) => a + b, 0) / finals.length };
+}
+
 function main(): void {
   const BETS = 600;   // gambe disponibili in un anno dal motore
   const YEARS = 1;
@@ -113,6 +178,29 @@ function main(): void {
     process.stdout.write(`${((edge >= 0 ? "+" : "") + (100 * edge).toFixed(1) + "% per gamba").padEnd(18)}${row.join("")}\n`);
   }
   process.stdout.write(`\n(mediana del banco finale partendo da 1000)\n`);
+
+  // ---- sistemi integrali: stesso valore atteso, varianza minore ----
+  process.stdout.write(`\n\nSistemi integrali contro multiple secche, stesso vantaggio +2,8% per gamba\n`);
+  process.stdout.write(`(il valore atteso per schedina e identico: cambia solo la varianza)\n\n`);
+  process.stdout.write(`${"strategia".padEnd(30)} ${"mediana".padStart(9)} ${"media".padStart(9)} ${"5%".padStart(8)} ${"95%".padStart(9)}\n`);
+  process.stdout.write("-".repeat(70) + "\n");
+  const single3 = simulate({ legs: 3, overround: OVERROUND_SHARP, trueEdgePerLeg: 0.028, betsPerYear: BETS, stakeFraction: 0.01, years: 1, trials: 12000, seed: 501 });
+  process.stdout.write(`${"triple secche".padEnd(30)} ${single3.median.toFixed(0).padStart(9)} ${"-".padStart(9)} ${single3.p05.toFixed(0).padStart(8)} ${single3.p95.toFixed(0).padStart(9)}\n`);
+  for (const [n, k] of [[5, 3], [8, 3], [8, 5], [10, 5]] as const) {
+    const r = simulateSystem({ n, k, overround: OVERROUND_SHARP, trueEdgePerLeg: 0.028, legsPerYear: BETS, stakeFraction: 0.01, trials: 12000, seed: 600 + n * 10 + k });
+    process.stdout.write(`${`integrale ${k} su ${n} (${combinations(n, k).length} colonne)`.padEnd(30)} ${r.median.toFixed(0).padStart(9)} ${r.mean.toFixed(0).padStart(9)} ${r.p05.toFixed(0).padStart(8)} ${r.p95.toFixed(0).padStart(9)}\n`);
+  }
+  const single1 = simulate({ legs: 1, overround: OVERROUND_BEST, trueEdgePerLeg: 0.028, betsPerYear: BETS, stakeFraction: 0.01, years: 1, trials: 12000, seed: 777 });
+  process.stdout.write(`${"singole al miglior prezzo".padEnd(30)} ${single1.median.toFixed(0).padStart(9)} ${"-".padStart(9)} ${single1.p05.toFixed(0).padStart(8)} ${single1.p95.toFixed(0).padStart(9)}\n`);
+
+  // ---- e con il bonus dell'epoca? ----
+  process.stdout.write(`\n\nE con il bonus multipla dell'epoca (vale circa 2,4 punti di margine per evento)?\n\n`);
+  process.stdout.write(`${"scenario".padEnd(38)} ${"mediana".padStart(9)}\n`);
+  process.stdout.write("-".repeat(50) + "\n");
+  for (const [label, ovr] of [["oggi, bonus zero", OVERROUND_SHARP], ["con bonus 2,4 punti per gamba", OVERROUND_SHARP - 0.024]] as const) {
+    const r = simulateSystem({ n: 8, k: 5, overround: ovr, trueEdgePerLeg: 0.028, legsPerYear: BETS, stakeFraction: 0.01, trials: 12000, seed: 909 });
+    process.stdout.write(`${`integrale 5 su 8 — ${label}`.padEnd(38)} ${r.median.toFixed(0).padStart(9)}\n`);
+  }
 }
 
 main();
