@@ -32,7 +32,15 @@ import {
 } from "@/domain/booking/types";
 
 const BOOKMAKER = "Planetwin365";
-const HOME = "https://www.planetwin365.it/";
+/**
+ * La sezione scommesse, non la homepage: la casella di ricerca esiste solo qui.
+ * Partire dalla home costava 15s di attesa su un elemento che non c'è.
+ */
+const SPORT_PAGE = "https://www.planetwin365.it/scommesse/sport/";
+/** Il nodo sport da aprire nell'albero filtrato. Escludo "ANTEPOST CALCIO" e "GIOCATORI CALCIO". */
+const SPORT_NODE = /^\s*CALCIO\s*$/i;
+/** Quante competizioni provare prima di arrendersi. */
+const MAX_COMPETITIONS = 6;
 
 /** L'unico bottone che questo driver ha il permesso di premere. */
 const BOOK_BUTTON = "PRENOTA";
@@ -149,7 +157,7 @@ export function splitEvent(event: string): readonly [string, string] {
 async function openEvent(page: Page, event: string, timeout: number): Promise<void> {
   const [home, away] = splitEvent(event);
 
-  await page.goto(HOME, { waitUntil: "domcontentloaded", timeout });
+  await page.goto(SPORT_PAGE, { waitUntil: "domcontentloaded", timeout });
   await dismissCookieBanner(page);
 
   const search = siteSearchBox(page);
@@ -157,36 +165,64 @@ async function openEvent(page: Page, event: string, timeout: number): Promise<vo
     await search.waitFor({ state: "visible", timeout: Math.min(timeout, 15_000) });
   } catch {
     throw new BookingError(
-      "casella di ricerca del sito non trovata — il banner cookie potrebbe essere ancora aperto",
-      { evento: event },
+      "casella di ricerca non trovata sulla pagina scommesse",
+      { evento: event, pagina: SPORT_PAGE },
     );
   }
   await search.fill(home);
   await page.waitForTimeout(1500);
 
-  // Sul palinsesto le due squadre stanno su righe distinte dentro la stessa
-  // card: cercare la stringa unita "Casa - Ospite" non trova nulla. Si cerca
-  // l'elemento che le contiene ENTRAMBE, che è quello che identifica l'evento.
-  const card = page
-    .locator("a, tr, li, [class*=event], [class*=match]")
+  // La ricerca non restituisce una lista di eventi: filtra l'albero di
+  // navigazione a sinistra. L'evento è una FOGLIA di quell'albero, e va
+  // raggiunto scendendo: sport → competizione → evento. La foglia porta il
+  // nome unito ("Fiorentina - Napoli"), i livelli sopra no.
+  const eventLeaf = page
+    .locator("a, li, div[class*=item], span")
     .filter({ hasText: new RegExp(escapeRegExp(home), "i") })
     .filter({ hasText: new RegExp(escapeRegExp(away), "i") })
-    .first();
+    .filter({ visible: true });
 
-  if (!(await card.isVisible().catch(() => false))) {
-    throw new BookingError(`evento non trovato sul palinsesto: "${event}"`, {
+  const sportNode = page.getByText(SPORT_NODE).filter({ visible: true }).first();
+  if (!(await sportNode.isVisible().catch(() => false))) {
+    throw new BookingError(`la ricerca di "${home}" non ha prodotto nessun nodo CALCIO`, {
+      evento: event,
+    });
+  }
+  await sportNode.click();
+  await page.waitForTimeout(800);
+
+  // Le competizioni comparse sotto il nodo sport. Provate in ordine: una sola
+  // conterrà l'evento, ma quale dipende da dove gioca la squadra.
+  let opened = false;
+  for (let i = 0; i < MAX_COMPETITIONS; i += 1) {
+    if (await eventLeaf.first().isVisible().catch(() => false)) {
+      opened = true;
+      break;
+    }
+    const competition = page
+      .locator("[class*=competition], [class*=league], li")
+      .filter({ visible: true })
+      .nth(i);
+    if (!(await competition.isVisible().catch(() => false))) break;
+    await competition.click().catch(() => undefined);
+    await page.waitForTimeout(700);
+  }
+
+  if (!opened && !(await eventLeaf.first().isVisible().catch(() => false))) {
+    throw new BookingError(`evento non trovato nell'albero: "${event}"`, {
       cercato: home,
       attese: [home, away],
       suggerimento: "usa i nomi esattamente come li scrive Planetwin365",
     });
   }
-  await card.click();
+
+  await eventLeaf.first().click();
   await page.waitForLoadState("domcontentloaded", { timeout });
 
   // Verifica di essere finito sull'evento giusto, non su uno omonimo.
-  const heading = await page.locator("body").innerText();
+  const body = await page.locator("body").innerText();
   const onRightEvent =
-    new RegExp(escapeRegExp(home), "i").test(heading) && new RegExp(escapeRegExp(away), "i").test(heading);
+    new RegExp(escapeRegExp(home), "i").test(body) && new RegExp(escapeRegExp(away), "i").test(body);
   if (!onRightEvent) {
     throw new BookingError(`aperta la pagina sbagliata per "${event}"`);
   }
