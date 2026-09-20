@@ -93,7 +93,8 @@
     "odds:probe": "tsx src/scripts/odds-probe.ts",
     "dispersion:scan": "tsx src/scripts/dispersion-scan.ts",
     "lab:dispersion-backtest": "tsx src/scripts/lab-dispersion-backtest.ts",
-    "corners:collect": "tsx src/scripts/corners-collect.ts"
+    "corners:collect": "tsx src/scripts/corners-collect.ts",
+    "lab:multiples": "tsx src/scripts/lab-multiples.ts"
   },
   "dependencies": {
     "@neondatabase/serverless": "^1.1.0",
