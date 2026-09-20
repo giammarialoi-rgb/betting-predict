@@ -27,10 +27,12 @@ import {
   markSearchNode,
   markSlipBin,
   NAV_ATTR,
+  readSlipContents,
   TARGET_ATTR,
   type BinHit,
   type CellHit,
   type NavHit,
+  type SlipContents,
 } from "@/domain/booking/planetwin/cell-finder";
 import {
   BookingError,
@@ -287,26 +289,31 @@ async function clearSlip(page: Page, timeout: number): Promise<void> {
   await neutraliseOverlays(page);
 
   for (let attempt = 0; attempt < 3; attempt += 1) {
-    const body = await page.locator("body").innerText().catch(() => "");
-    if (parseSlipTotal(body) === null) return;
+    const dentro = await slipContents(page);
+    if (!dentro.found) {
+      throw new BookingError(
+        "pannello schedina non riconosciuto: non posso garantire che sia vuota",
+      );
+    }
+    if (dentro.total === null) return;
 
+    await installEvaluateHelpers(page);
     const hit = (await page.evaluate(markSlipBin, { attr: BIN_ATTR })) as BinHit;
     if (hit.kind !== "marked") {
       throw new BookingError(
         "schedina non vuota e cestino non trovato — svuotala a mano prima di riprovare",
-        { residuo: parseSlipTotal(body), dentro_la_schedina: hit.insideSlip.slice(0, 20) },
+        { residuo: dentro.total, dentro_la_schedina: dentro.lines.slice(0, 25) },
       );
     }
     await safeClick(page.locator(`[${BIN_ATTR}="1"]`).first(), timeout);
     await page.waitForTimeout(900);
   }
 
-  const body = await page.locator("body").innerText().catch(() => "");
-  const residuo = parseSlipTotal(body);
-  if (residuo !== null) {
+  const finale = await slipContents(page);
+  if (finale.total !== null) {
     throw new BookingError(
-      `la schedina contiene ancora qualcosa (quota ${residuo}) dopo tre tentativi di svuotarla`,
-      { residuo },
+      `la schedina contiene ancora qualcosa (quota ${finale.total}) dopo tre tentativi di svuotarla`,
+      { residuo: finale.total, dentro_la_schedina: finale.lines.slice(0, 25) },
     );
   }
 }
@@ -419,6 +426,14 @@ async function clickOutcome(page: Page, entry: CatalogEntry, timeout: number): P
   await marked.waitFor({ state: "visible", timeout: Math.min(timeout, 10_000) });
   await safeClick(marked, timeout);
   return hit.odds;
+}
+
+/** Le righe della schedina, per dire cosa c'è dentro quando qualcosa non torna. */
+async function slipContents(page: Page): Promise<SlipContents> {
+  await installEvaluateHelpers(page);
+  return (await page
+    .evaluate(readSlipContents)
+    .catch(() => ({ total: null, lines: [], found: false }))) as SlipContents;
 }
 
 /** La quota totale che la schedina mostra adesso, o null se non la mostra. */
@@ -578,6 +593,7 @@ export async function bookTicket(
       const atteso = expectedTotalOdds(taken);
       const mostrato = await waitForSlipTotal(page, atteso, 8_000);
       if (mostrato === null || !totalOddsMatches(mostrato, atteso)) {
+        const dentro = await slipContents(page);
         throw new BookingError(
           `la gamba ${i + 1} non è entrata nella schedina: ${leg.event} ${leg.selection}`,
           {
@@ -588,6 +604,8 @@ export async function bookTicket(
             schedina_attesa: Number(atteso.toFixed(2)),
             schedina_mostrata: mostrato,
             gambe_entrate_finora: i,
+            dentro_la_schedina: dentro.lines,
+            pannello_riconosciuto: dentro.found,
           },
         );
       }

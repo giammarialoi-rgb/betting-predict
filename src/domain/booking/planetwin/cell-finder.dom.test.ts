@@ -18,6 +18,7 @@ import {
   markSearchNode,
   markSlipBin,
   NAV_ATTR,
+  readSlipContents,
   TARGET_ATTR,
 } from "@/domain/booking/planetwin/cell-finder";
 
@@ -251,6 +252,17 @@ describe("cestino della schedina", { timeout: 120_000 }, () => {
   it("marca il cestino, non la × che rimuove una singola gamba", async () => {
     await page3.evaluate(markSlipBin, { attr: BIN_ATTR });
     assert.equal(await page3.locator(`.x[${BIN_ATTR}="1"]`).count(), 0);
+  });
+
+  it("legge le righe della schedina, non solo il totale", async () => {
+    const c = (await page3.evaluate(readSlipContents)) as {
+      total: number | null;
+      lines: string[];
+      found: boolean;
+    };
+    assert.equal(c.found, true);
+    assert.equal(c.total, 1.6);
+    assert.ok(c.lines.includes("Milan - Lecce"), "deve dire QUALE gamba c'è dentro");
   });
 
   it("i nodi di navigazione restano fuori dalla schedina anche qui", async () => {

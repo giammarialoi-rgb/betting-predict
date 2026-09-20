@@ -337,3 +337,51 @@ export function markSlipBin(query: { attr: string }): BinHit {
   bin.setAttribute(attr, "1");
   return { kind: "marked", label: norm(bin.textContent) };
 }
+
+export type SlipContents = {
+  readonly total: number | null;
+  readonly lines: readonly string[];
+  readonly found: boolean;
+};
+
+/**
+ * Cosa c'è dentro la schedina, in chiaro.
+ *
+ * Un totale da solo non basta a capire cosa è andato storto: "1.60" può essere
+ * un residuo, una gamba sbagliata o la gamba giusta con la quota mossa, e
+ * distinguerli richiedeva una corsa per ipotesi. Questo restituisce le righe.
+ */
+export function readSlipContents(): SlipContents {
+  const norm = (s: string | null): string => (s ?? "").replace(/\s+/g, " ").trim();
+  const visible = (e: Element): boolean => e.getClientRects().length > 0;
+
+  const input = document.querySelector('input[placeholder="Ricerca" i]');
+  const marker = Array.from(document.querySelectorAll("*")).find((e) => {
+    const t = norm(e.textContent).toUpperCase();
+    return e.children.length === 0 && (t === "BETSCANNER" || t === "SCHEDINA");
+  });
+  if (!marker) return { total: null, lines: [], found: false };
+
+  let panel: Element | null = null;
+  let node: Element | null = marker.parentElement;
+  while (node && (!input || !node.contains(input))) {
+    panel = node;
+    node = node.parentElement;
+  }
+  if (!panel) return { total: null, lines: [], found: false };
+
+  const lines: string[] = [];
+  for (const e of Array.from(panel.querySelectorAll("*"))) {
+    if (e.children.length !== 0 || !visible(e)) continue;
+    const t = norm(e.textContent);
+    if (t && t.length < 60 && !lines.includes(t)) lines.push(t);
+    if (lines.length >= 60) break;
+  }
+
+  const whole = norm(panel.textContent);
+  const m = /Quota\s*Tot[^\d]*(\d+[.,]\d+)/i.exec(whole);
+  const raw = m?.[1];
+  const total = raw === undefined ? null : Number(raw.replace(",", "."));
+
+  return { total: Number.isFinite(total as number) ? total : null, lines, found: true };
+}
