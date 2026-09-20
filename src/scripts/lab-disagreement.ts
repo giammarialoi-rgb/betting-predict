@@ -48,7 +48,9 @@ const PARAMS: StrengthDcParams = {
   sotWeight: 0.8,
   iterations: 60,
 };
-const TEMPERATURE = 0.7;
+const TEMPERATURE = Number(
+  process.argv.find((a) => a.startsWith("--temperature="))?.split("=")[1] ?? "0.7",
+);
 
 /** Fasce di scarto modello/mercato. L'ultima è quella del listone. */
 const FASCE: Array<[string, number, number]> = [
@@ -158,8 +160,17 @@ function main(): void {
     }
   }
 
+  // Log loss complessiva: il confronto diretto con il mercato.
+  const ll = (get: (o: Osservazione) => number): number =>
+    -oss.reduce((a, o) => a + Math.log(Math.max(1e-12, o.avvenuto ? get(o) : 1 - get(o))), 0) /
+    oss.length;
+  const llModello = ll((o) => o.pModello);
+  const llMercato = ll((o) => o.pMercato);
+
   process.stdout.write(
-    `\npartite valutate ${valutate}, osservazioni ${oss.length}, stagioni ${[...stagioni].join(",")}\n\n`,
+    `\nT=${TEMPERATURE}  partite ${valutate}  osservazioni ${oss.length}  ` +
+      `log loss modello ${llModello.toFixed(4)}  mercato ${llMercato.toFixed(4)}  ` +
+      `(${((llModello - llMercato) * 1000).toFixed(1)} millesimi)\n\n`,
   );
   process.stdout.write(
     `${"fascia di scarto".padEnd(24)}${"n".padStart(7)}${"mercato".padStart(10)}${"modello".padStart(10)}${"reale".padStart(10)}   verdetto\n`,
