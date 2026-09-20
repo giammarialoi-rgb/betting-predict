@@ -68,6 +68,24 @@ export function parseOdds(text: string): number {
   return n;
 }
 
+/**
+ * La quota totale che la schedina DEVE mostrare: il prodotto delle gambe.
+ *
+ * È il controllo che rende innocuo un clic finito dove non doveva. Contare le
+ * gambe con un selettore è fragile; il prodotto no — una gamba in più o in
+ * meno lo cambia, e il biglietto viene rifiutato invece che prenotato sbagliato.
+ */
+export function expectedTotalOdds(odds: readonly number[]): number {
+  if (odds.length === 0) throw new BookingError("nessuna gamba da moltiplicare");
+  return odds.reduce((acc, o) => acc * o, 1);
+}
+
+/** Il book arrotonda a due decimali a ogni passo: la tolleranza deve reggerlo. */
+export function totalOddsMatches(shown: number, expected: number): boolean {
+  if (!Number.isFinite(shown) || shown <= 1) return false;
+  return Math.abs(shown - expected) / expected < 0.01;
+}
+
 /** Normalizza il codice emesso: "RE 02 79 89 19 53" → "RE0279891953". */
 export function normalizeBookingCode(raw: string): string {
   const code = raw.replace(/\s+/g, "").toUpperCase();
@@ -154,8 +172,63 @@ export function splitEvent(event: string): readonly [string, string] {
   return [home, away];
 }
 
+/**
+ * I nodi dell'albero comparsi sotto la ricerca, e solo quelli.
+ *
+ * La regione è delimitata da due ancore di testo: "Ricerca per eventi
+ * sportivi" sopra e "Campionati:" sotto. Serve perché cliccare per indice su
+ * tutta la pagina può finire su una cella di quota del pannello centrale e
+ * infilare una gamba non voluta nella schedina — il guasto peggiore possibile
+ * qui, perché sarebbe silenzioso.
+ */
+async function searchResultNodes(page: Page): Promise<readonly string[]> {
+  return page.evaluate(() => {
+    const input = document.querySelector('input[placeholder="Ricerca" i]');
+    const column = input?.closest("form")?.parentElement ?? document.body;
+    const out: string[] = [];
+    const walker = document.createTreeWalker(column, NodeFilter.SHOW_ELEMENT);
+    let started = false;
+    let node = walker.nextNode();
+    while (node) {
+      const el = node as HTMLElement;
+      const text = (el.textContent ?? "").trim();
+      if (!started) {
+        if (text === "Ricerca per eventi sportivi") started = true;
+      } else if (text.startsWith("Campionati")) {
+        break;
+      } else if (el.children.length === 0 && text.length > 0 && text.length < 80) {
+        if (!out.includes(text)) out.push(text);
+      }
+      node = walker.nextNode();
+    }
+    return out;
+  });
+}
+
+/** Nodi che non portano mai a una partita: antepost, capocannonieri, giocatori. */
+const NON_EVENT_NODE = /antepost|capocann|giocator|marcator/i;
+
+/**
+ * Svuota la schedina prima di cominciare. Il book la conserva tra le sessioni:
+ * un residuo di ieri finirebbe dentro il biglietto di oggi senza che nessuno
+ * se ne accorga.
+ */
+async function clearSlip(page: Page, timeout: number): Promise<void> {
+  await page.goto(SPORT_PAGE, { waitUntil: "domcontentloaded", timeout });
+  await dismissCookieBanner(page);
+  const bin = page
+    .locator('[class*=trash], [class*=delete], [title*="vuota" i], [aria-label*="vuota" i]')
+    .filter({ visible: true })
+    .first();
+  if (await bin.isVisible().catch(() => false)) {
+    await bin.click().catch(() => undefined);
+    await page.waitForTimeout(600);
+  }
+}
+
 async function openEvent(page: Page, event: string, timeout: number): Promise<void> {
   const [home, away] = splitEvent(event);
+  const leafText = `${home} - ${away}`;
 
   await page.goto(SPORT_PAGE, { waitUntil: "domcontentloaded", timeout });
   await dismissCookieBanner(page);
@@ -164,62 +237,48 @@ async function openEvent(page: Page, event: string, timeout: number): Promise<vo
   try {
     await search.waitFor({ state: "visible", timeout: Math.min(timeout, 15_000) });
   } catch {
-    throw new BookingError(
-      "casella di ricerca non trovata sulla pagina scommesse",
-      { evento: event, pagina: SPORT_PAGE },
-    );
+    throw new BookingError("casella di ricerca non trovata sulla pagina scommesse", {
+      evento: event,
+      pagina: SPORT_PAGE,
+    });
   }
   await search.fill(home);
   await page.waitForTimeout(1500);
 
-  // La ricerca non restituisce una lista di eventi: filtra l'albero di
-  // navigazione a sinistra. L'evento è una FOGLIA di quell'albero, e va
-  // raggiunto scendendo: sport → competizione → evento. La foglia porta il
-  // nome unito ("Fiorentina - Napoli"), i livelli sopra no.
-  const eventLeaf = page
-    .locator("a, li, div[class*=item], span")
-    .filter({ hasText: new RegExp(escapeRegExp(home), "i") })
-    .filter({ hasText: new RegExp(escapeRegExp(away), "i") })
-    .filter({ visible: true });
+  // La ricerca non restituisce eventi: filtra l'albero di navigazione, e i nodi
+  // restano CHIUSI. L'evento è una foglia in fondo a sport → competizione →
+  // evento, e solo la foglia porta il nome unito "Casa - Ospite".
+  const leaf = page.getByText(leafText, { exact: true }).first();
+  const visited = new Set<string>();
+  let found = false;
 
-  const sportNode = page.getByText(SPORT_NODE).filter({ visible: true }).first();
-  if (!(await sportNode.isVisible().catch(() => false))) {
-    throw new BookingError(`la ricerca di "${home}" non ha prodotto nessun nodo CALCIO`, {
-      evento: event,
-    });
-  }
-  await sportNode.click();
-  await page.waitForTimeout(800);
-
-  // Le competizioni comparse sotto il nodo sport. Provate in ordine: una sola
-  // conterrà l'evento, ma quale dipende da dove gioca la squadra.
-  let opened = false;
-  for (let i = 0; i < MAX_COMPETITIONS; i += 1) {
-    if (await eventLeaf.first().isVisible().catch(() => false)) {
-      opened = true;
+  for (let round = 0; round < MAX_COMPETITIONS; round += 1) {
+    if (await leaf.isVisible().catch(() => false)) {
+      found = true;
       break;
     }
-    const competition = page
-      .locator("[class*=competition], [class*=league], li")
-      .filter({ visible: true })
-      .nth(i);
-    if (!(await competition.isVisible().catch(() => false))) break;
-    await competition.click().catch(() => undefined);
-    await page.waitForTimeout(700);
+    const nodes = await searchResultNodes(page);
+    const next = nodes.find(
+      (t) => !visited.has(t) && t !== leafText && !NON_EVENT_NODE.test(t),
+    );
+    if (next === undefined) break;
+    visited.add(next);
+    await page.getByText(next, { exact: true }).first().click().catch(() => undefined);
+    await page.waitForTimeout(800);
   }
 
-  if (!opened && !(await eventLeaf.first().isVisible().catch(() => false))) {
+  if (!found && !(await leaf.isVisible().catch(() => false))) {
     throw new BookingError(`evento non trovato nell'albero: "${event}"`, {
       cercato: home,
-      attese: [home, away],
+      foglia_attesa: leafText,
+      nodi_visitati: [...visited],
       suggerimento: "usa i nomi esattamente come li scrive Planetwin365",
     });
   }
 
-  await eventLeaf.first().click();
+  await leaf.click();
   await page.waitForLoadState("domcontentloaded", { timeout });
 
-  // Verifica di essere finito sull'evento giusto, non su uno omonimo.
   const body = await page.locator("body").innerText();
   const onRightEvent =
     new RegExp(escapeRegExp(home), "i").test(body) && new RegExp(escapeRegExp(away), "i").test(body);
@@ -304,10 +363,19 @@ async function verifySlip(
     );
   }
 
-  const slipCount = await page.locator("[class*=schedina] [class*=event], [class*=slip] [class*=event]").count();
-  if (slipCount > 0 && slipCount !== legs.length) {
+  // Controllo aritmetico: la quota totale mostrata dal book deve essere il
+  // prodotto delle gambe che abbiamo messo noi. Se un clic è finito su una
+  // cella sbagliata, o se la schedina si portava dietro un residuo, il prodotto
+  // non torna e il biglietto non parte.
+  const expected = expectedTotalOdds(placed.map((p) => p.takenOdds));
+  const body = await page.locator("body").innerText();
+  const shown = Number(
+    /Quota\s*Tot[^\d]*(\d+[.,]\d+)/i.exec(body)?.[1]?.replace(",", ".") ?? "0",
+  );
+  if (shown > 0 && !totalOddsMatches(shown, expected)) {
     throw new BookingError(
-      `la schedina contiene ${slipCount} gambe invece di ${legs.length}`,
+      `la schedina mostra quota ${shown} invece di ${expected.toFixed(2)} — contiene qualcosa che non abbiamo messo noi`,
+      { attesa: Number(expected.toFixed(2)), mostrata: shown, gambe: placed.length },
     );
   }
   return placed;
@@ -376,6 +444,7 @@ export async function bookTicket(
   }
 
   try {
+    await clearSlip(page, timeout);
     const taken: number[] = [];
     for (let i = 0; i < legs.length; i += 1) {
       const leg = legs[i]!;

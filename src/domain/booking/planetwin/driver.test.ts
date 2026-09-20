@@ -120,3 +120,39 @@ describe("selettore della ricerca", () => {
     assert.ok(!/\s:not\(/.test(searchSelector()), searchSelector());
   });
 });
+
+describe("controllo aritmetico della schedina", () => {
+  it("la quota totale attesa è il prodotto delle gambe", async () => {
+    const { expectedTotalOdds } = await import("@/domain/booking/planetwin/driver");
+    assert.ok(Math.abs(expectedTotalOdds([3.2, 1.27]) - 4.064) < 1e-9);
+    assert.ok(Math.abs(expectedTotalOdds([2]) - 2) < 1e-9);
+  });
+
+  it("tollera l'arrotondamento del book ma non una gamba in più", async () => {
+    const { expectedTotalOdds, totalOddsMatches } = await import(
+      "@/domain/booking/planetwin/driver"
+    );
+    const atteso = expectedTotalOdds([3.2, 1.27]); // 4.064
+    assert.equal(totalOddsMatches(4.06, atteso), true, "arrotondamento a due decimali");
+    assert.equal(totalOddsMatches(4.07, atteso), true);
+
+    // Una quarta gamba a 1.50 intrufolata: il prodotto salta e va rifiutato.
+    const conIntrusa = expectedTotalOdds([3.2, 1.27, 1.5]);
+    assert.equal(totalOddsMatches(conIntrusa, atteso), false);
+
+    // Anche una gamba MANCANTE va rifiutata.
+    assert.equal(totalOddsMatches(3.2, atteso), false);
+  });
+
+  it("rifiuta una quota totale assente o impossibile", async () => {
+    const { totalOddsMatches } = await import("@/domain/booking/planetwin/driver");
+    assert.equal(totalOddsMatches(0, 4.064), false);
+    assert.equal(totalOddsMatches(1, 4.064), false);
+    assert.equal(totalOddsMatches(Number.NaN, 4.064), false);
+  });
+
+  it("senza gambe non c'è prodotto da verificare", async () => {
+    const { expectedTotalOdds } = await import("@/domain/booking/planetwin/driver");
+    assert.throws(() => expectedTotalOdds([]), /nessuna gamba/);
+  });
+});
