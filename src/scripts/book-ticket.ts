@@ -61,8 +61,10 @@ async function main(): Promise<void> {
   }
 
   const tolerance = Number(arg("tolerance") ?? "0.02");
+  const stake = Number(arg("stake") ?? "0");
   const booked = await bookTicket(legs, {
     tolerance,
+    ...(stake > 0 ? { stake } : {}),
     headless: process.argv.includes("--headless"),
     // Nessun profilo di default: il book conserva la schedina nel profilo, e
     // una gamba della corsa precedente finirebbe nel biglietto nuovo.
@@ -72,6 +74,9 @@ async function main(): Promise<void> {
   console.log(`\nCODICE      ${booked.code}`);
   console.log(`scadenza    ${booked.expiry}`);
   console.log(`quota tot.  ${booked.totalOdds.toFixed(2)}`);
+  if (stake > 0) {
+    console.log(`puntata     ${stake.toFixed(2)}€  ->  ${(stake * booked.totalOdds).toFixed(2)}€`);
+  }
   if (booked.bonus > 0) console.log(`bonus       ${booked.bonus.toFixed(2)}`);
 
   // Cosa c'è davvero nel biglietto, con le quote PRESE: senza questo il codice

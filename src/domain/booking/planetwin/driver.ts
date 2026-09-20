@@ -28,7 +28,9 @@ import {
   markSearchNode,
   markSlipBin,
   NAV_ATTR,
+  markStakeField,
   readSlipContents,
+  STAKE_ATTR,
   TARGET_ATTR,
   type BinHit,
   type CellHit,
@@ -63,6 +65,8 @@ const FORBIDDEN_BUTTONS = ["SCOMMETTI", "GIOCA", "CONFERMA GIOCATA", "DEPOSITA"]
 
 export type BookingOptions = {
   readonly tolerance?: number;
+  /** Importo da scrivere nella schedina. Il book ne propone 3,00 di suo. */
+  readonly stake?: number;
   /** Chromium a vista: lasciato acceso di default, così la composizione si guarda mentre accade. */
   readonly headless?: boolean;
   readonly timeoutMs?: number;
@@ -623,15 +627,41 @@ async function waitForSlipTotal(
   expected: number,
   timeoutMs: number,
 ): Promise<number | null> {
+  // Il totale si legge SOLO dentro il pannello schedina. Leggerlo dal testo di
+  // tutta la pagina pescava la "Quota TOT." delle card SUPERCOMBO in cima al
+  // palinsesto: il driver confrontava la schedina con una pubblicità e
+  // rifiutava biglietti corretti.
   const deadline = Date.now() + timeoutMs;
   let last: number | null = null;
   while (Date.now() < deadline) {
-    const body = await page.locator("body").innerText().catch(() => "");
-    last = parseSlipTotal(body);
+    last = (await slipContents(page)).total;
     if (last !== null && totalOddsMatches(last, expected)) return last;
     await page.waitForTimeout(400);
   }
   return last;
+}
+
+/**
+ * Scrive l'importo nella schedina.
+ *
+ * Il book propone 3,00 € di suo: senza questo il codice di prenotazione nasce
+ * con una puntata che non è quella decisa, e alla cassa si scopre che il
+ * biglietto vale un'altra cifra.
+ */
+async function setStake(page: Page, stake: number, timeout: number): Promise<void> {
+  await installEvaluateHelpers(page);
+  const hit = (await page.evaluate(markStakeField, { attr: STAKE_ATTR })) as NavHit;
+  if (hit.kind !== "marked") {
+    throw new BookingError(
+      "non trovo dove scrivere l'importo: la schedina resterebbe alla cifra predefinita dal book",
+      { importo_voluto: stake, campi_visti: hit.available.slice(0, 10) },
+    );
+  }
+  const campo = page.locator(`[${STAKE_ATTR}="1"]`).first();
+  await campo.waitFor({ state: "visible", timeout: Math.min(timeout, 8_000) });
+  await campo.fill(stake.toFixed(2).replace(".", ","));
+  await campo.press("Tab").catch(() => undefined);
+  await page.waitForTimeout(800);
 }
 
 /** Rilegge la schedina e verifica che contenga esattamente le gambe decise. */
@@ -796,6 +826,8 @@ export async function bookTicket(
         );
       }
     }
+
+    if (options.stake !== undefined) await setStake(page, options.stake, timeout);
 
     const placed = await verifySlip(page, legs, taken, tolerance);
 

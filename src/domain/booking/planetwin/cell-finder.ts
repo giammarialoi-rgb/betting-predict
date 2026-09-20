@@ -556,3 +556,45 @@ export function findGridCellInPage(query: {
   cell.setAttribute(attr, "1");
   return { kind: "found", odds, cellText: norm(cell.textContent) };
 }
+
+/** L'attributo con cui viene marcato il campo dell'importo. */
+export const STAKE_ATTR = "data-betmind-stake";
+
+/**
+ * Marca il campo dove si scrive l'importo, DENTRO il pannello schedina.
+ *
+ * Il book ne propone 3,00 € di suo. Cercare "un input di testo visibile" sulla
+ * pagina pesca la casella di ricerca o altro; l'unico modo affidabile è
+ * restringersi al pannello, come per il cestino.
+ */
+export function markStakeField(query: { attr: string }): NavHit {
+  const { attr } = query;
+  const norm = (s: string | null): string => (s ?? "").replace(/\s+/g, " ").trim();
+  const visible = (e: Element): boolean => e.getClientRects().length > 0;
+
+  document.querySelectorAll("[" + attr + "]").forEach((e) => e.removeAttribute(attr));
+
+  const input = document.querySelector('input[placeholder="Ricerca" i]');
+  const marker = Array.from(document.querySelectorAll("*")).find((e) => {
+    const t = norm(e.textContent).toUpperCase();
+    return e.children.length === 0 && (t === "BETSCANNER" || t === "SCHEDINA");
+  });
+  if (!marker) return { kind: "absent", available: [] };
+
+  let panel: Element | null = null;
+  let node: Element | null = marker.parentElement;
+  while (node && (!input || !node.contains(input))) {
+    panel = node;
+    node = node.parentElement;
+  }
+  if (!panel) return { kind: "absent", available: [] };
+
+  const inputs = Array.from(panel.querySelectorAll("input")).filter((e) => visible(e));
+  const valori = inputs.map((e) => norm((e as HTMLInputElement).value));
+  // Il campo importo è quello il cui valore è una cifra in euro.
+  const campo =
+    inputs.find((e) => /^\d+[.,]\d{2}\s*€?$/.test(norm((e as HTMLInputElement).value))) ?? inputs[0];
+  if (!campo) return { kind: "absent", available: valori };
+  campo.setAttribute(attr, "1");
+  return { kind: "marked", text: norm((campo as HTMLInputElement).value) };
+}
