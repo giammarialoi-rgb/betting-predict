@@ -84,3 +84,6 @@ audit/external/task-044/corners-prospective/
 
 # file temporanei lasciati dal filesystem montato
 /_tmp_*
+
+# store pnpm creato nella radice quando l install parte da un mount non Windows
+/.pnpm-store/

@@ -85,6 +85,21 @@ async function main(): Promise<void> {
   });
   process.stdout.write(`dataset: stagione ${fresh.latestSeason}, ultima partita ${fresh.daysSinceLatestMatch} giorni fa\n`);
 
+  // Raccogliere linee che non si potranno mai regolare costa crediti e non avvicina
+  // la soglia del verdetto: i risultati dei corner arrivano solo dai CSV di
+  // Football-Data. Se la fonte e ferma, la raccolta si sospende da sola e riparte
+  // appena i CSV tornano ad aggiornarsi. `--force` la esegue comunque.
+  const maxStale = Number(process.argv.find((a) => a.startsWith("--max-stale-days="))?.split("=")[1] ?? 14);
+  const stale = fresh.daysSinceLatestMatch;
+  if (!process.argv.includes("--force") && stale != null && stale > maxStale) {
+    process.stdout.write(
+      `\nRACCOLTA CORNER SOSPESA: l'ultima partita con risultati e di ${stale} giorni fa (soglia ${maxStale}).\n` +
+        `Le osservazioni nuove non si potrebbero regolare. Nessun credito speso.\n` +
+        `Riprende da sola quando i CSV di Football-Data tornano ad aggiornarsi (oppure: --force).\n`,
+    );
+    return;
+  }
+
   let written = 0;
   let noMatch = 0;
   mkdirSync(DIR, { recursive: true });

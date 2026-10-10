@@ -18,23 +18,14 @@
  *     risultato e dichiarato non affidabile invece di essere restituito.
  */
 import { devig, type DevigMethod } from "@/domain/odds/devig";
+import { EXCHANGE_COMMISSION, isExchangeBook } from "@/domain/markets/exchanges";
+
+export { EXCHANGE_COMMISSION, isExchangeBook };
 
 export type BookQuote = {
   book: string;
   /** Prezzi nell'ordine degli esiti, uguale per tutti i book. */
   prices: number[];
-};
-
-/** Commissione sulle vincite nette, per piattaforma. */
-export const EXCHANGE_COMMISSION: Record<string, number> = {
-  betfair: 0.05,
-  "betfair exchange": 0.05,
-  smarkets: 0.02,
-  matchbook: 0.015,
-  betdaq: 0.02,
-  prophetx: 0.03,
-  novig: 0,
-  rebet: 0,
 };
 
 /** Quota netta dopo commissione: la vincita si riduce, la puntata no. */
@@ -109,7 +100,7 @@ export function analyseDispersion(input: {
   }
 
   // ---- consenso equo ----
-  const isExchange = (b: string) => EXCHANGE_COMMISSION[b.trim().toLowerCase()] != null;
+  const isExchange = isExchangeBook;
   const sharp = opts.sharpBook
     ? valid.find((q) => q.book.trim().toLowerCase() === opts.sharpBook!.trim().toLowerCase())
     : undefined;

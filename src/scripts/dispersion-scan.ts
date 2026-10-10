@@ -14,7 +14,8 @@ import { appendFileSync, mkdirSync, writeFileSync } from "node:fs";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { OddsApiClient, type OddsApiEvent } from "@/providers/the-odds-api/client";
-import { analyseDispersion, type BookQuote } from "@/domain/markets/dispersion";
+import { analyseDispersion, isExchangeBook, type BookQuote } from "@/domain/markets/dispersion";
+import { GATE_DEFAULTS, eventWindow, gateEdges, type GateConfig } from "@/domain/markets/scan-gates";
 
 const ROOT = process.cwd();
 const SNAP_DIR = join(ROOT, "audit/external/task-044/dispersion");
@@ -57,7 +58,19 @@ async function main(): Promise<void> {
   const client = new OddsApiClient(apiKey());
   const minEdge = Number(process.argv.find((a) => a.startsWith("--min-edge="))?.split("=")[1] ?? 0.02);
   const regions = process.argv.find((a) => a.startsWith("--regions="))?.split("=")[1] ?? "eu,uk";
+  const num = (flag: string, dflt: number): number => {
+    const v = process.argv.find((a) => a.startsWith(`--${flag}=`))?.split("=")[1];
+    return v != null && Number.isFinite(Number(v)) ? Number(v) : dflt;
+  };
+  const cfg: GateConfig = {
+    minEdge,
+    maxEdge: num("max-edge", GATE_DEFAULTS.maxEdge),
+    minBooks: num("min-books", GATE_DEFAULTS.minBooks),
+    horizonHours: num("horizon-hours", GATE_DEFAULTS.horizonHours),
+    startBufferMinutes: GATE_DEFAULTS.startBufferMinutes,
+  };
   const runAt = new Date().toISOString();
+  const nowMs = Date.parse(runAt);
 
   type Row = {
     sport: string; eventId: string; commence: string; home: string; away: string;
@@ -65,6 +78,13 @@ async function main(): Promise<void> {
     fairPrice: number; edge: number; nBooks: number; consensus: string; executionGain: number;
   };
   const rows: Row[] = [];
+  /** Quote guaste o mercati sottili: non entrano nel registro, restano nello snapshot per ispezione. */
+  const quarantine: Array<Row & { reason: string }> = [];
+  /** Vantaggi che richiedono un exchange: separati dai book, con commissione gia detratta. */
+  const exchangeRows: Row[] = [];
+  /** Prezzo equo di OGNI esito degli eventi nell'orizzonte, anche sotto soglia: e la chiusura del CLV. */
+  const marks: Array<{ eventId: string; outcome: string; commence: string; fairPrice: number; nBooks: number; consensus: string }> = [];
+  const skipped = { iniziata: 0, oltre_orizzonte: 0, data_non_valida: 0 };
   const perLeague: { league: string; events: number; withEdge: number }[] = [];
 
   for (const key of LEAGUES) {
@@ -77,8 +97,15 @@ async function main(): Promise<void> {
     }
     let withEdge = 0;
     for (const ev of evs) {
+      const win = eventWindow(ev.commence_time, nowMs, cfg);
+      if (win !== "ok") {
+        skipped[win === "iniziata" ? "iniziata" : win === "oltre_orizzonte" ? "oltre_orizzonte" : "data_non_valida"] += 1;
+        continue;
+      }
       const names = [ev.home_team, "Draw", ev.away_team];
-      const quotes = quotesFor(ev, "h2h", names);
+      const all = quotesFor(ev, "h2h", names);
+      // I book tradizionali fanno il confronto; gli exchange (lordi di commissione) vanno trattati a parte.
+      const quotes = all.filter((q) => !isExchangeBook(q.book));
       if (quotes.length < 3) continue;
       const r = analyseDispersion({
         outcomes: names,
@@ -86,24 +113,42 @@ async function main(): Promise<void> {
         options: { sharpBook: "Pinnacle", method: "shin" },
       });
       if (!r.reliable) continue;
-      let any = false;
+
       for (const e of r.edges) {
-        if (e.edge < minEdge) continue;
-        any = true;
-        rows.push({
-          sport: key, eventId: ev.id, commence: ev.commence_time,
-          home: ev.home_team, away: ev.away_team, outcome: e.outcome,
-          bestBook: e.bestBook, priceRaw: e.bestPriceRaw, priceNet: e.bestPriceNet,
-          fairPrice: e.fairPrice, edge: e.edge, nBooks: r.nBooks,
-          consensus: r.consensusSource, executionGain: r.executionGain,
+        marks.push({
+          eventId: ev.id, outcome: e.outcome, commence: ev.commence_time,
+          fairPrice: e.fairPrice, nBooks: r.nBooks, consensus: r.consensusSource,
         });
       }
-      if (any) withEdge += 1;
+
+      const toRow = (e: (typeof r.edges)[number], rr: typeof r): Row => ({
+        sport: key, eventId: ev.id, commence: ev.commence_time,
+        home: ev.home_team, away: ev.away_team, outcome: e.outcome,
+        bestBook: e.bestBook, priceRaw: e.bestPriceRaw, priceNet: e.bestPriceNet,
+        fairPrice: e.fairPrice, edge: e.edge, nBooks: rr.nBooks,
+        consensus: rr.consensusSource, executionGain: rr.executionGain,
+      });
+      const gated = gateEdges(r.edges, r.nBooks, cfg);
+      for (const e of gated.accepted) rows.push(toRow(e, r));
+      for (const q of gated.quarantined) quarantine.push({ ...toRow(q.item, r), reason: q.reason });
+      if (gated.accepted.length) withEdge += 1;
+
+      // Secondo passaggio con gli exchange, solo per segnalare dove il miglior prezzo e li.
+      if (all.length > quotes.length) {
+        const rx = analyseDispersion({ outcomes: names, quotes: all, options: { sharpBook: "Pinnacle", method: "shin" } });
+        for (const e of rx.edges) {
+          if (isExchangeBook(e.bestBook) && e.edge >= cfg.minEdge && e.edge < cfg.maxEdge && rx.nBooks >= cfg.minBooks) {
+            exchangeRows.push(toRow(e, rx));
+          }
+        }
+      }
     }
     if (evs.length) perLeague.push({ league: key, events: evs.length, withEdge });
   }
 
   rows.sort((a, b) => b.edge - a.edge);
+  const byReason: Record<string, number> = {};
+  for (const q of quarantine) byReason[q.reason] = (byReason[q.reason] ?? 0) + 1;
   process.stdout.write(`\nscansione ${runAt}   soglia edge ${(100 * minEdge).toFixed(1)}%   regioni ${regions}\n\n`);
   process.stdout.write(`${"partita".padEnd(40)} ${"esito".padEnd(22)} ${"book".padEnd(18)} ${"quota".padStart(7)} ${"equa".padStart(7)} ${"edge".padStart(7)} ${"n".padStart(3)}\n`);
   process.stdout.write("-".repeat(110) + "\n");
@@ -119,6 +164,12 @@ async function main(): Promise<void> {
   const gains = rows.map((r) => r.executionGain);
   process.stdout.write(`\neventi analizzati: ${totalEvents} in ${perLeague.length} campionati\n`);
   process.stdout.write(`selezioni sopra ${(100 * minEdge).toFixed(1)}%: ${rows.length}\n`);
+  process.stdout.write(
+    `filtri: orizzonte ${cfg.horizonHours}h, edge < ${(100 * cfg.maxEdge).toFixed(0)}%, almeno ${cfg.minBooks} book, exchange a parte\n` +
+      `  eventi scartati: gia iniziati ${skipped.iniziata}, oltre l'orizzonte ${skipped.oltre_orizzonte}\n` +
+      `  in quarantena: ${quarantine.length} (${Object.entries(byReason).map(([k, v]) => `${k} ${v}`).join(", ") || "nessuna"})\n` +
+      `  solo exchange: ${exchangeRows.length}   chiusure registrate (marks): ${marks.length}\n`,
+  );
   if (gains.length) {
     const avg = gains.reduce((a, b) => a + b, 0) / gains.length;
     process.stdout.write(`guadagno medio da esecuzione: ${(100 * avg).toFixed(2)} punti di margine\n`);
@@ -127,7 +178,10 @@ async function main(): Promise<void> {
 
   mkdirSync(SNAP_DIR, { recursive: true });
   const snapPath = join(SNAP_DIR, `scan-${runAt.replace(/[:.]/g, "-")}.json`);
-  writeFileSync(snapPath, JSON.stringify({ run_at: runAt, regions, min_edge: minEdge, per_league: perLeague, rows }, null, 2));
+  writeFileSync(snapPath, JSON.stringify({
+    run_at: runAt, regions, min_edge: minEdge, filters: cfg, skipped,
+    per_league: perLeague, rows, marks, quarantine, exchange_rows: exchangeRows,
+  }, null, 2));
   // registro append-only: ogni riga e una selezione osservata, da liquidare poi
   appendFileSync(join(SNAP_DIR, "observations.jsonl"),
     rows.map((r) => JSON.stringify({ ...r, run_at: runAt, settled: false })).join("\n") + (rows.length ? "\n" : ""));
